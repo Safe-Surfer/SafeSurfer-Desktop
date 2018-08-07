@@ -39,6 +39,8 @@ body, html {
 
 .bigText_nointernet {
 	font-size: 4em;
+	white-space: normal;
+	line-height: 100px;
 }
 
 .subText {
@@ -221,7 +223,7 @@ body, html {
 
 .topTextBox_inactive {
 	background: rgba(165, 38, 41, 0.55);
-	background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));
+	/*background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));*/
 }
 
 *, *::after, *::before {
@@ -262,5 +264,8 @@ body, html {
 	}
 	.serviceToggle:active {
 		font-size:40px;
+	}
+	.topTextBox_inactive {
+	  background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));
 	}
 }

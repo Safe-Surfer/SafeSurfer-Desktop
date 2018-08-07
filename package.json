@@ -20,17 +20,16 @@
   ],
   "author": "SafeSurfer",
   "devDependencies": {
-    "connectivity": "^1.0.1",
     "electron": "^2.0.0",
     "electron-builder": "^20.26.1",
     "electron-icon-maker": "0.0.4",
     "electron-installer-windows": "^1.1.0",
-    "electron-packager": "^12.1.0"
+    "electron-packager": "^12.1.0",
+    "internet-available": "^1.0.0"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "electron-sudo": "^4.0.12",
-    "is-online": "^7.0.0",
     "request": "^2.87.0",
     "request-promise": "^4.2.2"
   }

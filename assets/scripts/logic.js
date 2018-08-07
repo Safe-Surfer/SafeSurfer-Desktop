@@ -4,11 +4,11 @@
 const os = require('os');
 const child_process = require('child_process');
 const dns = require('dns');
-const connectivity = require('connectivity')
+const internetAvailable = require("internet-available");
 
 //const scriptRoot_linux = "/opt/safesurfer-desktop";
 //const scriptRoot_linux = "assets/osScripts";
-const scriptRoot_linux = "/home/caleb/work/safesurfer/Apps/safesurfer-desktop/assets/osScripts";
+const scriptRoot_linux = "/home/caleb/work/safesurfer/Apps/SafeSurfer-Desktop/assets/osScripts";
 const scriptRoot_macOS = "../Resources/scripts";
 //const scriptRoot_macOS = "/Users/caleb/Projects/SafeSurfers/safesurfer-desktop/assets/osScripts";
 const scriptRoot_windows = ".\\scripts";
@@ -17,6 +17,7 @@ const scriptRoot_windows = ".\\scripts";
 var serviceEnabled;
 var stateInChanging;
 var servicePreviousState;
+var userInternetCheck;
 var ENABLELOGGING = false;
 var APPHASLOADED = false;
 var NETWORKCONNECTION;
@@ -25,26 +26,30 @@ if (ENABLELOGGING == true) console.log("Platform:", os.platform());
 
 function displayProtection() {
 	// enable DNS
-	if (ENABLELOGGING == true) console.log("Protected");
-	$(".serviceActiveScreen").show();
-	$(".serviceInactiveScreen").hide();
-	document.getElementById('toggleButton').innerHTML = "STOP PROTECTION";
-	//enableServicePerPlatform();
-	$('.serviceToggle').show();
-	$('.appNoInternetConnectionScreen').hide();
-	$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+	if (userInternetCheck == true) {
+	  if (ENABLELOGGING == true) console.log("Protected");
+	  $(".serviceActiveScreen").show();
+	  $(".serviceInactiveScreen").hide();
+	  document.getElementById('toggleButton').innerHTML = "STOP PROTECTION";
+	  //enableServicePerPlatform();
+	  $('.serviceToggle').show();
+	  $('.appNoInternetConnectionScreen').hide();
+	  $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+	}
 }
 
 function displayUnprotection() {
 	// disable DNS
-	if (ENABLELOGGING == true) console.log("Unprotected");
-	$(".serviceInactiveScreen").show();
-	$(".serviceActiveScreen").hide();
-	document.getElementById('toggleButton').innerHTML = "GET PROTECTED";
-	//disableServicePerPlatform();
-	$('.serviceToggle').show();
-	$('.appNoInternetConnectionScreen').hide();
-	$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+	if (userInternetCheck == true) {
+	  if (ENABLELOGGING == true) console.log("Unprotected");
+	  $(".serviceInactiveScreen").show();
+	  $(".serviceActiveScreen").hide();
+	  document.getElementById('toggleButton').innerHTML = "GET PROTECTED";
+	  //disableServicePerPlatform();
+	  $('.serviceToggle').show();
+	  $('.appNoInternetConnectionScreen').hide();
+	  $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+	}
 }
 
 function toggleServiceState() {
@@ -100,8 +105,12 @@ function checkServiceState() {
 		}
 
 		else {
-			connectivity(function (online) {
-				if (! online) {
+		  // check internet connection
+			if (userInternetCheck == true) {
+            serviceEnabled = false;
+            if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
+      }
+			else {
 				    NETWORKCONNECTION = false;
 				    if (ENABLELOGGING == true) console.log('Network: Internet connection unavailable');
 				    $('.appNoInternetConnectionScreen').show();
@@ -109,19 +118,14 @@ function checkServiceState() {
 				    $('.serviceActiveScreen').hide();
 				    $('.serviceInactiveScreen').hide();
 				    $('.serviceToggle').hide();
-				}
 
-			  else {
-				serviceEnabled = false;
-				if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
-			  }
-			})
-		}
-		APPHASLOADED = true;
+			}
+	  }
 		$('.serviceToggle').show();
 		$('.appNoInternetConnectionScreen').hide();
 		$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
-	});
+		APPHASLOADED = true;
+  });
 }
 
 function callProgram(command) {
@@ -202,6 +206,15 @@ function disableServicePerPlatform() {
 	return 0;
 }
 
+function internetConnectionCheck() {
+  // check the user's internet connection
+  internetAvailable().then(() => {
+    userInternetCheck = true;
+  }).catch(() => {
+    userInternetCheck = false;
+  });
+}
+
 function finishedLoading() {
 	// close loading screen
 	$('.appLoadingScreen').hide();
@@ -212,6 +225,8 @@ function mainReloadProcess() {
 	// reload function
 	if (ENABLELOGGING == true) console.log("__ Refresh Start __")
 	if (APPHASLOADED == false) {
+	  if (ENABLELOGGING == true) console.log("STATE: App not loaded")
+		internetConnectionCheck();
 		setTimeout(function(){
 			checkServiceState();
 		}, 750);
@@ -219,6 +234,7 @@ function mainReloadProcess() {
 
 	else {
 		finishedLoading();
+		internetConnectionCheck();
 		checkServiceState();
 		if (serviceEnabled != servicePreviousState) affirmServiceState();
 		servicePreviousState = serviceEnabled;
