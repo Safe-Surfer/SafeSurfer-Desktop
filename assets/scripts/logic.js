@@ -4,7 +4,6 @@
 const os = require('os');
 const child_process = require('child_process');
 const dns = require('dns');
-const internetAvailable = require("internet-available");
 
 //const scriptRoot_linux = "/opt/safesurfer-desktop";
 //const scriptRoot_linux = "assets/osScripts";
@@ -208,10 +207,13 @@ function disableServicePerPlatform() {
 
 function internetConnectionCheck() {
   // check the user's internet connection
-  internetAvailable().then(() => {
-    userInternetCheck = true;
-  }).catch(() => {
-    userInternetCheck = false;
+  dns.lookup('8.8.8.8', function(err) {
+    if (err) {
+      userInternetCheck = false;
+    }
+    else {
+      userInternetCheck = true;
+    }
   });
 }
 

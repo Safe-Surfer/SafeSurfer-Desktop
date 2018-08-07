@@ -24,8 +24,7 @@
     "electron-builder": "^20.26.1",
     "electron-icon-maker": "0.0.4",
     "electron-installer-windows": "^1.1.0",
-    "electron-packager": "^12.1.0",
-    "internet-available": "^1.0.0"
+    "electron-packager": "^12.1.0"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
