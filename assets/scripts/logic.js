@@ -6,11 +6,10 @@ const child_process = require('child_process');
 const dns = require('dns');
 
 //const scriptRoot_linux = "/opt/safesurfer-desktop";
-//const scriptRoot_linux = "assets/osScripts";
-const scriptRoot_linux = "/home/caleb/work/safesurfer/Apps/SafeSurfer-Desktop/assets/osScripts";
-const scriptRoot_macOS = "../Resources/scripts";
+const scriptRoot_linux = process.cwd() + "/assets/osScripts";
+const scriptRoot_macOS = process.cwd() + "/../Resources/scripts";
 //const scriptRoot_macOS = "/Users/caleb/Projects/SafeSurfers/safesurfer-desktop/assets/osScripts";
-const scriptRoot_windows = ".\\scripts";
+const scriptRoot_windows = process.cwd() + "\\assets\\osScripts";
 //const scriptRoot_windows = "C:\\Users\\calebw\\Projects\\SafeSurfer\\safesurfer-desktop\\assets\\osScripts";
 
 var serviceEnabled;
@@ -57,17 +56,25 @@ function toggleServiceState() {
 	switch(serviceEnabled) {
 		case true:
 			if (ENABLELOGGING == true) console.log('Toggling enable');
+			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
 			disableServicePerPlatform();
 			checkServiceState();
 			affirmServiceState();
+			/*new Notification('Safe Surfer', {
+    				body: 'You are now safe to surf the internet. Safe Surfer has been setup.'
+  	  		});*/
 		break;
 
 		case false:
 			if (ENABLELOGGING == true) console.log('Toggling disable');
+			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
 			enableServicePerPlatform();
 			checkServiceState();
 			affirmServiceState();
-			break;
+			/*new Notification('Safe Surfer', {
+    				body: 'Safe Surfer has been disabled. You are now unprotected'
+  	  		});*/
+		break;
 	}
 }
 
@@ -108,7 +115,7 @@ function checkServiceState() {
 			if (userInternetCheck == true) {
             serviceEnabled = false;
             if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
-      }
+      			}
 			else {
 				    NETWORKCONNECTION = false;
 				    if (ENABLELOGGING == true) console.log('Network: Internet connection unavailable');
@@ -119,12 +126,12 @@ function checkServiceState() {
 				    $('.serviceToggle').hide();
 
 			}
-	  }
+	  	}
 		$('.serviceToggle').show();
 		$('.appNoInternetConnectionScreen').hide();
 		$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
 		APPHASLOADED = true;
-  });
+  	});
 }
 
 function callProgram(command) {

@@ -12,5 +12,5 @@ script return code
 
  program dependencies
  --------------------
-
- linux: pkexec
+ linux: polkit (for pkexec)
+ windows: elevate.exe (https://github.com/automation-stack/electron-sudo/tree/master/src/vendor/win32)

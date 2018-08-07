@@ -15,9 +15,9 @@ let childWindow;
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 530,
+    width: 550,
     height: 600,
-    minWidth: 530,
+    minWidth: 550,
     minHeight: 600,
     icon: path.join(__dirname, 'ss-logo.png')
   });
@@ -58,6 +58,13 @@ function createWindow () {
               {type:'separator'},
               {label:'Exit', click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
           ]
+      },
+      {
+          label: 'Support',
+          submenu: [
+          	{label:'Report a bug', click() {shell.openExternal('https://safesurfer.desk.com/')} }
+          ]
+
       },
       {
           label: 'Info',
