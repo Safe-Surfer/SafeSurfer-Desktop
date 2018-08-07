@@ -1,0 +1,266 @@
+* {
+	color: white;
+}
+
+body, html {
+	overflow-x: hidden;
+	overflow-y: hidden;
+}
+
+.bigText, .bigText_white, .subText, .bigText_init {
+	text-align: center;
+}
+
+.bigText, .bigText_white, .bigText_init {
+	font-family: 'Josefin Sans', sans-serif;
+	font-size: 5em;
+	color: #fff600;
+	white-space: nowrap;
+	line-height: 20px;
+	-webkit-transition: line-height 0.4s, font-size 0.2s;
+    	transition: line-height 0.4s, font-size 0.2s;
+}
+
+.bigText_white {
+	color: white;
+}
+
+.bigText_init {
+	font-size: 4em;
+}
+
+.bigText_init:hover {
+	color: #fff600;
+}
+
+.bigText_init:active {
+	color: green;
+}
+
+.bigText_nointernet {
+	font-size: 4em;
+}
+
+.subText {
+	font-family: 'Raleway', sans-serif;
+	font-size: 2.7em;
+	white-space: nowrap;
+	text-shadow: 1px 1px 50px #000000;
+}
+
+.serviceActiveScreen {
+	/*background-color: #00a7d6;*/
+	height: 100%;
+	width: 100%;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	position: absolute;
+	z-index: -50;
+
+	background: linear-gradient(270deg, #00a7d6, #0b2c72, #6dd0ed);
+	background-size: 600% 600%;
+
+	-webkit-animation: activeScroll 9s ease infinite;
+	-moz-animation: activeScroll 9s ease infinite;
+	animation: activeScroll 9s ease infinite;
+}
+
+@-webkit-keyframes activeScroll {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+@-moz-keyframes activeScroll {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+@keyframes activeScroll {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+
+.serviceInactiveScreen {
+	/*background-color: #e44145;*/
+	height: 100%;
+	width: 100%;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	position: absolute;
+	z-index: -50;
+
+	background: linear-gradient(270deg, #e44145, #a51317, #a02200);
+	background-size: 600% 600%;
+
+	-webkit-animation: inactiveScroll 8s ease infinite;
+	-moz-animation: inactiveScroll 8s ease infinite;
+	animation: inactiveScroll 8s ease infinite;
+}
+
+@-webkit-keyframes inactiveScroll {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+@-moz-keyframes inactiveScroll {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+@keyframes inactiveScroll {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+
+.appLoadingScreen {
+	background-color: white;
+	height: 100%;
+	width: 100%;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	position: absolute;
+	z-index: -50;
+}
+
+.mainCenter {
+	margin: 0;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 100%
+}
+
+.mainCenter_down {
+	margin: 0;
+	position: absolute;
+	top: 95%;
+	left: 50%;
+	transform: translate(-50%, -95%);
+}
+
+.mainCenter_halfDown {
+	margin: 0;
+	position: absolute;
+	top: 70%;
+	left: 50%;
+	transform: translate(-50%, -70%);
+}
+
+.leftCenter {
+	margin: 0;
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%);
+}
+
+.serviceToggle {
+	background-color:#fff600;
+	border-radius:0px;
+	border:0.5px solid #fff600;
+	display:inline-block;
+	cursor:pointer;
+	color:#d12d00;
+	font-family: 'BenchNine', sans-serif;
+	font-size:66px;
+	font-weight:bold;
+	padding:2px 5px;
+	text-decoration:none;
+	z-index: 50;
+	-webkit-transition: font-size 0.4s, color 0.2s, background-color 0.2s, transform 0.3s, text-shadow 0.3s;
+    	transition: font-size 0.4s, color 0.2s, background-color 0.2s, transform 0.3s, text-shadow 0.3s;
+}
+.serviceToggle:hover {
+	background-color:#d12d00;
+	color: #fff600;
+	font-size:63px;
+	text-shadow: 2px 2px 8px black;
+	-webkit-transform: rotate(2deg); /* Safari */
+    	transform: rotate(2deg);
+}
+.serviceToggle:active {
+	font-size:60px;
+	background-color:#931f00;
+	color:#bcb605;
+}
+
+.no-wrap {
+	overflow-wrap: break-word;
+	display: table-cell;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 5em;
+}
+
+.topTextBox, .topTextBox_active, .topTextBox_inactive {
+	width: 100%;
+	height: 200px;
+	top:0;
+	left:0;
+	right:0;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	-webkit-transition: height 0.3s;
+    	transition: height 0.3s;
+}
+
+.topTextBox_active {
+	background: rgba(6, 103, 130, 0.55);
+}
+
+.topTextBox_inactive {
+	background: rgba(165, 38, 41, 0.55);
+	background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));
+}
+
+*, *::after, *::before {
+	-webkit-user-select: none;
+	-webkit-user-drag: none;
+	-webkit-app-region: no-drag;
+	cursor: default;
+}
+
+@media only screen and (max-width: 1099px) {
+	.subText {
+		font-size: 1.5em;
+	}
+	.bigText, .bigText_white, .subText {
+		white-space: normal;
+	}
+	.bigText, .bigText_white {
+		line-height: 100px;
+	}
+	.topTextBox {
+		height: 500px;
+		padding-top: 1000px;
+	}
+	.topTextBox, .topTextBox_active, .topTextBox_inactive {
+		height: 370px;
+	}
+
+	.mainCenter_halfDown {
+		top: 87%;
+		transform: translate(-50%, -87%);
+	}
+
+	.serviceToggle {
+		font-size:46px;
+	}
+	.serviceToggle:hover {
+		font-size:43px;
+	}
+	.serviceToggle:active {
+		font-size:40px;
+	}
+}

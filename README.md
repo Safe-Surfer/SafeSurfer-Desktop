@@ -1,2 +1,0 @@
-# SafeSurfer-Desktop
-
