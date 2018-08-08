@@ -1,14 +1,15 @@
 {
-  "name": "safesurfer-desktop",
+  "name": "SafeSurfer-Desktop",
   "version": "1.0.0",
   "description": "The SafeSurfer desktop app",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "electron-builder": "node_modules/.bin/electron-builder",
-    "package-linux": "electron-packager . safesurfer-desktop --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/media/icons/linux/ss-logo.png --prun=true --out=release-builds",
-    "package-macos": "electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/icons/mac/icon.icns --prune=true --out=release-builds",
-    "package-win": "electron-packager . safesurfer-desktop --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\""
+    "electron-installer-redhat": "node_modules/.bin/electron-installer-redhat",
+    "package-linux": "electron-packager . SafeSurfer-Desktop --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/media/icons/linux/ss-logo.png --prun=true --out=release-builds",
+    "package-macos": "electron-packager . --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds",
+    "package-win": "electron-packager . SafeSurfer-Desktop --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\""
   },
   "repository": "",
   "keywords": [
@@ -23,12 +24,15 @@
     "electron": "^2.0.0",
     "electron-builder": "^20.26.1",
     "electron-icon-maker": "0.0.4",
+    "electron-installer-dmg": "^2.0.0",
+    "electron-installer-redhat": "^0.5.0",
     "electron-installer-windows": "^1.1.0",
     "electron-packager": "^12.1.0"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
     "electron-sudo": "^4.0.12",
+    "osmosis": "^1.1.8",
     "request": "^2.87.0",
     "request-promise": "^4.2.2"
   }

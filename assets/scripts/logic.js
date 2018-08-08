@@ -4,10 +4,19 @@
 const os = require('os');
 const child_process = require('child_process');
 const dns = require('dns');
+const rp = require('request-promise');
+const cheerio = require('cheerio');
+
+const respOptions = {
+  uri: `http://check.safesurfer.co.nz`,
+  transform: function (body) {
+    return cheerio.load(body);
+  }
+};
 
 //const scriptRoot_linux = "/opt/safesurfer-desktop";
 const scriptRoot_linux = process.cwd() + "/assets/osScripts";
-const scriptRoot_macOS = process.cwd() + "/../Resources/scripts";
+const scriptRoot_macOS = "/Applications/SafeSurfer-Desktop.app/Contents/Resources/assets/osScripts";
 //const scriptRoot_macOS = "/Users/caleb/Projects/SafeSurfers/safesurfer-desktop/assets/osScripts";
 const scriptRoot_windows = process.cwd() + "\\assets\\osScripts";
 //const scriptRoot_windows = "C:\\Users\\calebw\\Projects\\SafeSurfer\\safesurfer-desktop\\assets\\osScripts";
@@ -16,6 +25,7 @@ var serviceEnabled;
 var stateInChanging;
 var servicePreviousState;
 var userInternetCheck;
+var resp;
 var ENABLELOGGING = false;
 var APPHASLOADED = false;
 var NETWORKCONNECTION;
@@ -98,6 +108,8 @@ function affirmServiceState() {
 function checkServiceState() {
 	// check the state of the service
 	if (ENABLELOGGING == true) console.log('Getting state of service');
+  //resp = rp(respOptions)
+  //if (resp.response.body.indexOf('<meta name="ss_status" content="unprotected"><!-- DO NOTE REMOVE - USED FOR STATUS CHECK -->') > -1) {
 	dns.lookup('check.safesurfer.co.nz', function(err, address) {
 		if (ENABLELOGGING == true) console.log(address);
 		if (address == "104.197.143.234") {
@@ -172,7 +184,8 @@ function enableServicePerPlatform() {
 			break;
 		// macOS
 		case 'darwin':
-			var result = callProgram(String('osascript -e "do shell script \"' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh' + '\" with administrator privileges"'));
+			//var result = callProgram(String('osascript -e "do shell script \'' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh' + '\' with administrator privileges"'));
+			var result = callProgram(string('bash ' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh'))
 			break;
 			// windows
 		case 'win32':
@@ -197,7 +210,9 @@ function disableServicePerPlatform() {
 			break;
 		// macOS
 		case 'darwin':
-			var result = callProgram(String('osascript -e "do shell script "' + scriptRoot_macOS + '/safesurfer-disable_dns_macos.sh\' with prompt "Safe Surfer need your permission to change settings." with administrator privileges"'));
+			//var result = callProgram(String('osascript -e "do shell script "' + scriptRoot_macOS + '/safesurfer-disable_dns_macos.sh\' with prompt "Safe Surfer need your permission to change settings." with administrator privileges"'));
+				//var result = callProgram(String('osascript -e "do shell script \'' + scriptRoot_macOS + '/safesurfer-disable_dns_macos.sh' + '\' with administrator privileges"'));
+			  var result = callProgram(string('bash ' + scriptRoot_macOS + '/safesurfer-disable_dns_macos.sh'))
 			break;
 		// windows
 		case 'win32':

@@ -5,8 +5,6 @@ const electron = require('electron')
 const path = require('path')
 const url = require('url')
 
-var DEBUGENABLED = false;
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
@@ -62,7 +60,8 @@ function createWindow () {
       {
           label: 'Support',
           submenu: [
-          	{label:'Report a bug', click() {shell.openExternal('https://safesurfer.desk.com/')} }
+          	{label:'Report a bug', click() {shell.openExternal('https://safesurfer.desk.com/')} },
+          	{label: 'Dev tools', click() {mainWindow.webContents.openDevTools()} }
           ]
 
       },
@@ -74,9 +73,6 @@ function createWindow () {
           	{label:'Help', click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
           ]
 
-      },
-      {
-	  label: 'Dev tools', click() {mainWindow.webContents.openDevTools()}
       }
   ])
   Menu.setApplicationMenu(menu);
