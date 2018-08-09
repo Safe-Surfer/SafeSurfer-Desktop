@@ -1,10 +1,10 @@
-Source: safesurfer-desktop
+Source: SafeSurfer-Desktop
 Section: utils
 Priority: optional
 Maintainer: Caleb Woodbine <calebwoodbine.public@gmail.com>
 Build-Depends: debhelper (>= 9)
 
-Package: safesurfer-desktop
+Package: SafeSurfer-Desktop
 Architecture: all
 Depends: policykit-1
 Description: Keep safe in the digitial surf with Safe Surfer.
