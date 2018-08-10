@@ -55,9 +55,6 @@ build-zip:
 	@make DESTDIR=build/SafeSurfer-Desktop install
 	@cd build/SafeSurfer-Desktop && zip -r ../SafeSurfer-Desktop.zip .
 
-windows-installer:
-	electron-installer-windows --src release-builds/SafeSurfer-Desktop-win32-ia32/ --dest release-builds/installers/
-
 clean:
 	@rm -rf dist build release-builds
 

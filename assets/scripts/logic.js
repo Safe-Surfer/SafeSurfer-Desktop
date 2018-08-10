@@ -31,6 +31,7 @@ var APPHASLOADED = false;
 var NETWORKCONNECTION;
 
 if (ENABLELOGGING == true) console.log("Platform:", os.platform());
+if (ENABLELOGGING == true) console.log(process.cwd());
 
 function displayProtection() {
 	// enable DNS
@@ -69,10 +70,11 @@ function toggleServiceState() {
 			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
 			disableServicePerPlatform();
 			checkServiceState();
-			affirmServiceState();
-			/*new Notification('Safe Surfer', {
+			if (affirmServiceState() == 3) {
+			    new Notification('Safe Surfer', {
     				body: 'You are now safe to surf the internet. Safe Surfer has been setup.'
-  	  		});*/
+  	  		});
+  	  }
 		break;
 
 		case false:
@@ -80,10 +82,11 @@ function toggleServiceState() {
 			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
 			enableServicePerPlatform();
 			checkServiceState();
-			affirmServiceState();
-			/*new Notification('Safe Surfer', {
+			if (affirmServiceState() == 3) {
+			    new Notification('Safe Surfer', {
     				body: 'Safe Surfer has been disabled. You are now unprotected'
-  	  		});*/
+  	  		});
+  	  }
 		break;
 	}
 }
@@ -96,11 +99,13 @@ function affirmServiceState() {
 		case false:
 			if (ENABLELOGGING == true) console.log('Affirming disable');
 			displayUnprotection();
+			return 0;
 			break;
 
 		case true:
 			if (ENABLELOGGING == true) console.log('Affirming enable');
 			displayProtection();
+			return 0;
 			break;
 	}
 }
@@ -123,11 +128,11 @@ function checkServiceState() {
 		}
 
 		else {
+      serviceEnabled = false;
 		  // check internet connection
 			if (userInternetCheck == true) {
-            serviceEnabled = false;
             if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
-      			}
+      }
 			else {
 				    NETWORKCONNECTION = false;
 				    if (ENABLELOGGING == true) console.log('Network: Internet connection unavailable');
@@ -138,7 +143,7 @@ function checkServiceState() {
 				    $('.serviceToggle').hide();
 
 			}
-	  	}
+	  }
 		$('.serviceToggle').show();
 		$('.appNoInternetConnectionScreen').hide();
 		$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
@@ -185,12 +190,12 @@ function enableServicePerPlatform() {
 		// macOS
 		case 'darwin':
 			//var result = callProgram(String('osascript -e "do shell script \'' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh' + '\' with administrator privileges"'));
-			var result = callProgram(string('bash ' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh'))
+			var result = callProgram(String('bash ' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh'))
 			break;
 			// windows
 		case 'win32':
 			//var result = callProgram(String('powershell.exe Start-Process ' + scriptRoot_windows + '\\safesurfer-enable_dns_windows.bat -Verb runAs'));
-			var result = callProgram(scriptRoot_windows + '\\elevate.exe wscript ' + scriptRoot_windows +  '\\silent.vbs ' + scriptRoot_windows + '\\safesurfer-enable_dns_windows.bat');
+			var result = callProgram(String(scriptRoot_windows + '\\elevate.exe wscript ' + scriptRoot_windows +  '\\silent.vbs ' + scriptRoot_windows + '\\safesurfer-enable_dns_windows.bat'));
 			break;
 		// unsupported or unknown platform
 		default:
@@ -212,12 +217,12 @@ function disableServicePerPlatform() {
 		case 'darwin':
 			//var result = callProgram(String('osascript -e "do shell script "' + scriptRoot_macOS + '/safesurfer-disable_dns_macos.sh\' with prompt "Safe Surfer need your permission to change settings." with administrator privileges"'));
 				//var result = callProgram(String('osascript -e "do shell script \'' + scriptRoot_macOS + '/safesurfer-disable_dns_macos.sh' + '\' with administrator privileges"'));
-			  var result = callProgram(string('bash ' + scriptRoot_macOS + '/safesurfer-disable_dns_macos.sh'))
+			  var result = callProgram(String('bash ' + scriptRoot_macOS + '/safesurfer-disable_dns_macos.sh'))
 			break;
 		// windows
 		case 'win32':
 			//var result = callProgram(String('powershell.exe Start-Process ' + scriptRoot_windows + '\\safesurfer-disable_dns_windows.bat -Verb runAs'));
-			var result = callProgram(scriptRoot_windows + '\\elevate.exe wscript ' + scriptRoot_windows +  '\\silent.vbs ' + scriptRoot_windows + '\\safesurfer-disable_dns_windows.bat');
+			var result = callProgram(String(scriptRoot_windows + '\\elevate.exe wscript ' + scriptRoot_windows +  '\\silent.vbs ' + scriptRoot_windows + '\\safesurfer-disable_dns_windows.bat'));
 			break;
 		// unsupported or unknown platform
 		default:
@@ -229,7 +234,7 @@ function disableServicePerPlatform() {
 
 function internetConnectionCheck() {
   // check the user's internet connection
-  dns.lookup('8.8.8.8', function(err) {
+  dns.lookup('google.com', function(err) {
     if (err) {
       userInternetCheck = false;
     }
@@ -268,4 +273,3 @@ function mainReloadProcess() {
 	setTimeout(mainReloadProcess, 500);
 }
 
-if (ENABLELOGGING == true) console.log(callProgram('pwd'));
