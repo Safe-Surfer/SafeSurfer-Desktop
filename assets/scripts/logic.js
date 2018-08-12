@@ -6,6 +6,8 @@ const child_process = require('child_process');
 const dns = require('dns');
 const rp = require('request-promise');
 const cheerio = require('cheerio');
+const path = require('path');
+const hostOS = os.platform();
 
 const respOptions = {
   uri: `http://check.safesurfer.co.nz`,
@@ -14,12 +16,17 @@ const respOptions = {
   }
 };
 
-//const scriptRoot_linux = "/opt/safesurfer-desktop";
-const scriptRoot_linux = process.cwd() + "/assets/osScripts";
-const scriptRoot_macOS = "/Applications/SafeSurfer-Desktop.app/Contents/Resources/assets/osScripts";
-//const scriptRoot_macOS = "/Users/caleb/Projects/SafeSurfers/safesurfer-desktop/assets/osScripts";
-const scriptRoot_windows = process.cwd() + "\\assets\\osScripts";
-//const scriptRoot_windows = "C:\\Users\\calebw\\Projects\\SafeSurfer\\safesurfer-desktop\\assets\\osScripts";
+switch (hostOS) {
+	case 'win32':
+		process.chdir('./assets/osScripts')
+}
+
+var scriptRoot_linux = "/opt/SafeSurfer-Desktop/assets/osScripts";
+//var scriptRoot_linux = process.cwd() + "/assets/osScripts";
+var scriptRoot_macOS = "/Applications/SafeSurfer-Desktop.app/Contents/Resources/assets/osScripts";
+//var scriptRoot_macOS = "/Users/caleb/Projects/SafeSurfers/safesurfer-desktop/assets/osScripts";
+var scriptRoot_windows = process.cwd();
+//var scriptRoot_windows = "C:\\Users\\calebw\\Projects\\SafeSurfer\\safesurfer-desktop\\assets\\osScripts";
 
 var serviceEnabled;
 var stateInChanging;
@@ -177,7 +184,6 @@ function callProgram(command) {
 
 function enableServicePerPlatform() {
 	// force the DNS server addresses to config
-	hostOS = os.platform();
 	if (ENABLELOGGING == true) console.log(String('> Enabling on platform: ' + hostOS));
 	switch(hostOS) {
 		// linux
@@ -206,7 +212,6 @@ function enableServicePerPlatform() {
 
 function disableServicePerPlatform() {
 	// revoke the DNS server addresses from config
-	hostOS = os.platform();
 	if (ENABLELOGGING == true) console.log(String('> Disabling on platform: ' + hostOS));
 	switch(hostOS) {
 		// linux

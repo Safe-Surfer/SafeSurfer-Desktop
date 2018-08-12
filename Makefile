@@ -2,14 +2,15 @@ PREFIX ?= /opt/SafeSurfer-Desktop
 
 all: help
 
-build-linux:
+build-linux: build-background-service
 	npm run package-linux
 	@mkdir -p ./release-builds/SafeSurfer-Desktop-linux-x64/assets/osScripts
 	@cp ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-linux-x64/
 	@cp ./assets/osScripts/safesurfer-enable_dns_linux.sh ./release-builds/SafeSurfer-Desktop-linux-x64/assets/osScripts
 	@cp ./assets/osScripts/safesurfer-disable_dns_linux.sh ./release-builds/SafeSurfer-Desktop-linux-x64/assets/osScripts
+	@mv ./release-builds/ss-background ./release-builds/SafeSurfer-Desktop-linux-x64
 
-build-windows:
+build-windows: build-background-service
 	npm run package-win
 	@mkdir -p ./release-builds/SafeSurfer-Desktop-win32-ia32/assets/osScripts
 	@cp ./assets/osScripts/elevate.exe ./release-builds/SafeSurfer-Desktop-win32-ia32/assets/osScripts
@@ -17,12 +18,18 @@ build-windows:
 	@cp ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-win32-ia32
 	@cp ./assets/osScripts/safesurfer-enable_dns_windows.bat ./release-builds/SafeSurfer-Desktop-win32-ia32/assets/osScripts
 	@cp ./assets/osScripts/safesurfer-disable_dns_windows.bat ./release-builds/SafeSurfer-Desktop-win32-ia32/assets/osScripts
+	@mv ./release-builds/ss-background ./release-builds/SafeSurfer-Desktop-win32-ia32/ss-background.exe
 
-build-macos:
+build-macos: build-background-service
 	npm run package-macos
 	@mkdir -p ./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app/Contents/Resources/assets/osScripts
 	@cp ./assets/osScripts/safesurfer-enable_dns_macos.sh ./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app/Contents/Resources/assets/osScripts
 	@cp ./assets/osScripts/safesurfer-disable_dns_macos.sh ./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app/Contents/Resources/assets/osScripts
+	@mv ./release-builds/ss-background ./release-builds/SafeSurfer-Desktop-darwin-x64
+
+build-background-service:
+	@mkdir ./release-builds
+	npm run nexe assets/scripts/service.js -o ./release-builds/ss-background
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)
@@ -39,19 +46,19 @@ uninstall:
 	@rm -rf $(DESTDIR)$(PREFIX)
 
 prep-deb:
-	@mkdir -p build/SafeSurfer-Desktop
-	@cp -p -r support/linux/debian build/SafeSurfer-Desktop/debian
-	@mkdir build/SafeSurfer-Desktop/debian/SafeSurfer-Desktop
-	@make DESTDIR=build/SafeSurfer-Desktop/debian/SafeSurfer-Desktop install
+	@mkdir -p build/safesurfer-desktop
+	@cp -p -r support/linux/debian build/safesurfer-desktop/debian
+	@mkdir build/safesurfer-desktop/debian/safesurfer-desktop
+	@make DESTDIR=build/safesurfer-desktop/debian/safesurfer-desktop install
 
 deb-pkg: prep-deb
-	@cd build/SafeSurfer-Desktop/debian && debuild -b
+	@cd build/safesurfer-desktop/debian && debuild -b
 
 deb-src: prep-deb
-	@cd build/SafeSurfer-Desktop/debian && debuild -S
+	@cd build/safesurfer-desktop/debian && debuild -S
 
 build-zip:
-	@mkdir -p build/SafeSurfer-Desktop
+	@mkdir -p build/safesurfer-desktop
 	@make DESTDIR=build/SafeSurfer-Desktop install
 	@cd build/SafeSurfer-Desktop && zip -r ../SafeSurfer-Desktop.zip .
 

@@ -1,0 +1,13 @@
+[Unit]
+Description=Background service for SafeSurfer
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/root
+ExecStart=/opt/SafeSurfer-Desktop/ss-background
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
