@@ -28,17 +28,20 @@ build-macos: build-background-service
 	@mv ./release-builds/ss-background ./release-builds/SafeSurfer-Desktop-darwin-x64
 
 build-background-service:
-	@mkdir ./release-builds
-	npm run nexe assets/scripts/service.js -o ./release-builds/ss-background
+	@mkdir -p ./release-builds
+	npm run nexe assets/scripts/service.js
+	mv service ./release-builds/ss-background
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)
 	@mkdir -p $(DESTDIR)/usr/share/applications
+	@mkdir -p $(DESTDIR)/usr/share/pixmaps
 	@mkdir -p $(DESTDIR)/usr/bin
 	@mkdir -p $(DESTDIR)$(PREFIX)/assets/osScripts
 	@cp -p -r ./release-builds/SafeSurfer-Desktop-linux-x64/. $(DESTDIR)$(PREFIX)
 	@cp ./support/linux/shared-resources/safesurfer-desktop $(DESTDIR)/usr/bin
 	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop $(DESTDIR)/usr/share/applications
+	@cp ./assets/media/icons/all/ss-logo.png $(DESTDIR)/usr/share/pixmaps
 	@chmod 755 $(DESTDIR)$(PREFIX)/SafeSurfer-Desktop
 	@chmod 755 $(DESTDIR)/usr/bin/safesurfer-desktop
 
@@ -61,6 +64,10 @@ build-zip:
 	@mkdir -p build/safesurfer-desktop
 	@make DESTDIR=build/SafeSurfer-Desktop install
 	@cd build/SafeSurfer-Desktop && zip -r ../SafeSurfer-Desktop.zip .
+
+setup:
+	npm i
+	npm i nexe
 
 clean:
 	@rm -rf dist build release-builds

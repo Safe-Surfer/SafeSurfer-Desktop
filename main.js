@@ -52,6 +52,7 @@ function createWindow () {
           label: 'General',
           submenu: [
               {label:'Sites of concern', click() {childWindow.show()} },
+              {label:'Launch Safe Surfer Service Check Page in a browser', click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
               {label:'Force enable', click() {enableServicePerPlatform()} },
               {type:'separator'},
               {label:'Exit', click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }

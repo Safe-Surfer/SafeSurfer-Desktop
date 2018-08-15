@@ -8,6 +8,7 @@ const rp = require('request-promise');
 const cheerio = require('cheerio');
 const path = require('path');
 const hostOS = os.platform();
+const bonjour = require('bonjour')();
 
 const respOptions = {
   uri: `http://check.safesurfer.co.nz`,
@@ -21,8 +22,8 @@ switch (hostOS) {
 		process.chdir('./assets/osScripts')
 }
 
-var scriptRoot_linux = "/opt/SafeSurfer-Desktop/assets/osScripts";
-//var scriptRoot_linux = process.cwd() + "/assets/osScripts";
+//var scriptRoot_linux = "/opt/SafeSurfer-Desktop/assets/osScripts";
+var scriptRoot_linux = process.cwd() + "/assets/osScripts";
 var scriptRoot_macOS = "/Applications/SafeSurfer-Desktop.app/Contents/Resources/assets/osScripts";
 //var scriptRoot_macOS = "/Users/caleb/Projects/SafeSurfers/safesurfer-desktop/assets/osScripts";
 var scriptRoot_windows = process.cwd();
@@ -33,6 +34,7 @@ var stateInChanging;
 var servicePreviousState;
 var userInternetCheck;
 var resp;
+var hasFoundLifeGuard;
 var ENABLELOGGING = false;
 var APPHASLOADED = false;
 var NETWORKCONNECTION;
@@ -46,7 +48,12 @@ function displayProtection() {
 	  if (ENABLELOGGING == true) console.log("Protected");
 	  $(".serviceActiveScreen").show();
 	  $(".serviceInactiveScreen").hide();
-	  document.getElementById('toggleButton').innerHTML = "STOP PROTECTION";
+	  if (hasFoundLifeGuard == true) {
+	  		document.getElementById('toggleButton').innerHTML = "PROTECTED WITH LIFEGUARD";
+	  }
+	  else {
+			document.getElementById('toggleButton').innerHTML = "STOP PROTECTION";
+	  }
 	  //enableServicePerPlatform();
 	  $('.serviceToggle').show();
 	  $('.appNoInternetConnectionScreen').hide();
@@ -72,9 +79,15 @@ function toggleServiceState() {
 	// switch between states
 	if (ENABLELOGGING == true) console.log("In switch");
 	switch(serviceEnabled) {
-		case true:
+		case 0:
 			if (ENABLELOGGING == true) console.log('Toggling enable');
-			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
+			if (hasFoundLifeGuard == true) {
+				alert('Your Life Guard is already protecting you.\nEnjoy your safety!')
+				return 0;
+			}
+			else {
+				alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
+			}
 			disableServicePerPlatform();
 			checkServiceState();
 			if (affirmServiceState() == 3) {
@@ -84,7 +97,7 @@ function toggleServiceState() {
   	  }
 		break;
 
-		case false:
+		case 1:
 			if (ENABLELOGGING == true) console.log('Toggling disable');
 			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
 			enableServicePerPlatform();
@@ -103,13 +116,13 @@ function affirmServiceState() {
 	if (ENABLELOGGING == true) console.log("Affirming the state");
 	checkServiceState();
 	switch(serviceEnabled) {
-		case false:
+		case 1:
 			if (ENABLELOGGING == true) console.log('Affirming disable');
 			displayUnprotection();
 			return 0;
 			break;
 
-		case true:
+		case 0:
 			if (ENABLELOGGING == true) console.log('Affirming enable');
 			displayProtection();
 			return 0;
@@ -125,20 +138,21 @@ function checkServiceState() {
 	dns.lookup('check.safesurfer.co.nz', function(err, address) {
 		if (ENABLELOGGING == true) console.log(address);
 		if (address == "104.197.143.234") {
-			serviceEnabled = false;
+			serviceEnabled = 1;
 			if (ENABLELOGGING == true) console.log('DNS Request: Service disabled');
 		}
 
 		else if (address == "130.211.44.88") {
-			serviceEnabled = true;
+			serviceEnabled = 0;
 			if (ENABLELOGGING == true) console.log('DNS Request: Service enabled');
+			checkIfOnLifeGuardNetwork();
 		}
 
 		else {
-      serviceEnabled = false;
-		  // check internet connection
+      			serviceEnabled = 1;
+			// check internet connection
 			if (userInternetCheck == true) {
-            if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
+            		if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
       }
 			else {
 				    NETWORKCONNECTION = false;
@@ -160,14 +174,6 @@ function checkServiceState() {
 
 function callProgram(command) {
 	// call a child process
-	//return child_process.execSync(command).toString().trim();
-
-	/*var child = child_process.exec(command, function (error, stdout, stderr) {
-	if(error) console.log(error);
-	if(stderr) console.log(stderr);
-	console.log("Return of '" + command + "': " + stdout)
-	return stdout;
-	});*/
 	if (ENABLELOGGING == true) console.log(String('> Calling command: ' + command));
 	var command_split = command.split(" ");
 	var command_arg = [];
@@ -237,6 +243,28 @@ function disableServicePerPlatform() {
 	return 0;
 }
 
+function checkIfOnLifeGuardNetwork() {
+	// check if current device is on lifeguard network
+	if (ENABLELOGGING == true) console.log('Checking if on lifeguard network')
+	var result;
+	//var found = {};
+	var count = 0;
+	hasFoundLifeGuard = false;
+
+	bonjour.find({ type: "sslifeguard" }, function (service) {
+	  //if (service.fqdn in found) return
+	  //found[service.fqdn] = true
+	  count++
+	  if (ENABLELOGGING == true) console.log(String(count + " :: " + service.fqdn))
+	  if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
+		hasFoundLifeGuard=true;
+		if (ENABLELOGGING == true) console.log(String('Found status: ' + hasFoundLifeGuard))
+		return true;
+	  }
+	})
+	if (ENABLELOGGING == true) console.log('hasFoundLifeGuard is', hasFoundLifeGuard)
+}
+
 function internetConnectionCheck() {
   // check the user's internet connection
   dns.lookup('google.com', function(err) {
@@ -269,9 +297,11 @@ function mainReloadProcess() {
 	else {
 		finishedLoading();
 		internetConnectionCheck();
-		checkServiceState();
-		if (serviceEnabled != servicePreviousState) affirmServiceState();
-		servicePreviousState = serviceEnabled;
+		if (userInternetCheck == true) {
+			checkServiceState();
+			if (serviceEnabled != servicePreviousState) affirmServiceState();
+			servicePreviousState = serviceEnabled;
+		}
 	}
 
 	if (ENABLELOGGING == true) console.log("__ Refresh End   __")

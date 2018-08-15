@@ -29,8 +29,12 @@
     "electron-packager": "^12.1.0"
   },
   "dependencies": {
+    "bonjour": "^3.5.0",
     "cheerio": "^1.0.0-rc.2",
     "electron-sudo": "^4.0.12",
+    "machine-id": "^1.0.0",
+    "nexe": "^2.0.0-rc.34",
+    "node-dns-sd": "^0.2.0",
     "osmosis": "^1.1.8",
     "request": "^2.87.0",
     "request-promise": "^4.2.2"
