@@ -2,6 +2,14 @@
 // be executed in the renderer process for that window.
 // All of the Node.js APIs are available in this process.
 
-var ENABLELOGGING = false
+const {ipcRenderer} = require('electron')
+const store = require('store')
+
+var ENABLELOGGING = false;
+
+if (store.get('appUpdateAutoCheck') == true) checkForAppUpdate({
+	current: false,
+	showErrors: false
+});
 
 mainReloadProcess();

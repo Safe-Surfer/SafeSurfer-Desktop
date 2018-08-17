@@ -21,8 +21,8 @@
   ],
   "author": "SafeSurfer",
   "devDependencies": {
-    "electron": "^2.0.0",
-    "electron-builder": "^20.26.1",
+    "electron": "^2.0.7",
+    "electron-builder": "^20.28.1",
     "electron-icon-maker": "0.0.4",
     "electron-installer-dmg": "^2.0.0",
     "electron-installer-redhat": "^0.5.0",
@@ -36,7 +36,8 @@
     "nexe": "^2.0.0-rc.34",
     "node-dns-sd": "^0.2.0",
     "osmosis": "^1.1.8",
-    "request": "^2.87.0",
-    "request-promise": "^4.2.2"
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
+    "store": "^2.0.12"
   }
 }

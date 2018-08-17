@@ -17,8 +17,8 @@ body, html {
 	color: #fff600;
 	white-space: nowrap;
 	line-height: 20px;
-	-webkit-transition: line-height 0.4s, font-size 0.2s;
-    	transition: line-height 0.4s, font-size 0.2s;
+	-webkit-transition: line-height 0.4s, font-size 0.2s, color 0.3s;
+    	transition: line-height 0.4s, font-size 0.2s, color 0.3s;
 }
 
 .bigText_white {
@@ -33,14 +33,15 @@ body, html {
 	color: #fff600;
 }
 
-.bigText_init:active {
-	color: green;
-}
-
 .bigText_nointernet {
 	font-size: 4em;
 	white-space: normal;
 	line-height: 100px;
+}
+
+.bigText_nointernet:hover {
+	font-size: 3.5em;
+
 }
 
 .subText {
@@ -194,6 +195,10 @@ body, html {
 	color:#bcb605;
 }
 
+.serviceToggle_lifeguard {
+	white-space: nowrap;
+}
+
 .no-wrap {
 	overflow-wrap: break-word;
 	display: table-cell;
@@ -204,30 +209,30 @@ body, html {
 }
 
 .serviceAppStatus {
-  top:0;
-  left:0;
-  right:0;
-  margin:0;
-  padding:0;
-  width:100%;
-  padding: -20px;
-  height:20px;
-  position:absolute;
-  clear:both;
+	top:0;
+	left:0;
+	right:0;
+	margin:0;
+	padding:0;
+	width:100%;
+	padding: -20px;
+	height:20px;
+	position:absolute;
+	clear:both;
 
 
-  display: none;
+	display: none;
 }
 
 .serviceAppStatus h1 {
-  text-align: center;
+	text-align: center;
 	font-family: 'Raleway', sans-serif;
 	font-size: 20px;
 	background-color: #184896;
 }
 
 #hiddenCheckiFrame {
-  display: none;
+	display: none;
 }
 
 .topTextBox, .topTextBox_active, .topTextBox_inactive {
@@ -253,6 +258,38 @@ body, html {
 	/*background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));*/
 }
 
+.appNoInternetConnectionScreen {
+	height: 100%;
+	width: 100%;
+	top:0;
+	bottom:0;
+	left:0;
+	right:0;
+	position: absolute;
+	background: linear-gradient(270deg, #ffffff, #c6c3c3, #90ffd9, #d9a5a5);
+	background-size: 800% 800%;
+
+	-webkit-animation: noInternetGradient 30s ease infinite;
+	-moz-animation: noInternetGradient 30s ease infinite;
+	animation: noInternetGradient 30s ease infinite;
+
+}
+@-webkit-keyframes noInternetGradient {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+@-moz-keyframes noInternetGradient {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+@keyframes noInternetGradient {
+	0%{background-position:0% 50%}
+	50%{background-position:100% 50%}
+	100%{background-position:0% 50%}
+}
+
 *, *::after, *::before {
 	-webkit-user-select: none;
 	-webkit-user-drag: none;
@@ -274,8 +311,12 @@ body, html {
 		height: 500px;
 		padding-top: 1000px;
 	}
-	.topTextBox, .topTextBox_active, .topTextBox_inactive {
+	.topTextBox, .topTextBox_inactive {
 		height: 370px;
+	}
+
+	.topTextBox_active {
+		height: 340px;
 	}
 
 	.mainCenter_halfDown {

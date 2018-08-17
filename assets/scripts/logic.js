@@ -1,6 +1,8 @@
 // main.js - safesurfer
 // by safesurfer
 
+const CURRENTBUILD = 1;
+const LINUXPACKAGEFORMAT = "rpm"
 const os = require('os');
 const child_process = require('child_process');
 const dns = require('dns');
@@ -9,6 +11,11 @@ const cheerio = require('cheerio');
 const path = require('path');
 const hostOS = os.platform();
 const bonjour = require('bonjour')();
+const {dialog} = require('electron').remote
+const Request = require("request");
+const shell = require('electron').shell;
+const {ipcRenderer} = require('electron')
+const store = require('store')
 
 const respOptions = {
   uri: `http://check.safesurfer.co.nz`,
@@ -33,11 +40,12 @@ var serviceEnabled;
 var stateInChanging;
 var servicePreviousState;
 var userInternetCheck;
+var previousUserInternetCheck;
 var resp;
 var hasFoundLifeGuard;
+var remoteData;
 var ENABLELOGGING = false;
 var APPHASLOADED = false;
-var NETWORKCONNECTION;
 
 if (ENABLELOGGING == true) console.log("Platform:", os.platform());
 if (ENABLELOGGING == true) console.log(process.cwd());
@@ -50,9 +58,11 @@ function displayProtection() {
 	  $(".serviceInactiveScreen").hide();
 	  if (hasFoundLifeGuard == true) {
 	  		document.getElementById('toggleButton').innerHTML = "PROTECTED WITH LIFEGUARD";
+	  		$('.serviceToggle').addClass('serviceToggle_lifeguard')
 	  }
 	  else {
 			document.getElementById('toggleButton').innerHTML = "STOP PROTECTION";
+			$('.serviceToggle').removeClass('serviceToggle_lifeguard')
 	  }
 	  //enableServicePerPlatform();
 	  $('.serviceToggle').show();
@@ -79,7 +89,7 @@ function toggleServiceState() {
 	// switch between states
 	if (ENABLELOGGING == true) console.log("In switch");
 	switch(serviceEnabled) {
-		case 0:
+		case true:
 			if (ENABLELOGGING == true) console.log('Toggling enable');
 			if (hasFoundLifeGuard == true) {
 				alert('Your Life Guard is already protecting you.\nEnjoy your safety!')
@@ -97,7 +107,7 @@ function toggleServiceState() {
   	  }
 		break;
 
-		case 1:
+		case false:
 			if (ENABLELOGGING == true) console.log('Toggling disable');
 			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
 			enableServicePerPlatform();
@@ -116,13 +126,13 @@ function affirmServiceState() {
 	if (ENABLELOGGING == true) console.log("Affirming the state");
 	checkServiceState();
 	switch(serviceEnabled) {
-		case 1:
+		case false:
 			if (ENABLELOGGING == true) console.log('Affirming disable');
 			displayUnprotection();
 			return 0;
 			break;
 
-		case 0:
+		case true:
 			if (ENABLELOGGING == true) console.log('Affirming enable');
 			displayProtection();
 			return 0;
@@ -136,38 +146,42 @@ function checkServiceState() {
   //resp = rp(respOptions)
   //if (resp.response.body.indexOf('<meta name="ss_status" content="unprotected"><!-- DO NOTE REMOVE - USED FOR STATUS CHECK -->') > -1) {
 	dns.lookup('check.safesurfer.co.nz', function(err, address) {
-		if (ENABLELOGGING == true) console.log(address);
+		if (ENABLELOGGING == true) console.log("checkServiceState - address ::", address);
+		if (ENABLELOGGING == true) console.log("checkServiceState - err     ::", err);
+
 		if (address == "104.197.143.234") {
-			serviceEnabled = 1;
+			serviceEnabled = false;
 			if (ENABLELOGGING == true) console.log('DNS Request: Service disabled');
 		}
 
 		else if (address == "130.211.44.88") {
-			serviceEnabled = 0;
+			serviceEnabled = true;
 			if (ENABLELOGGING == true) console.log('DNS Request: Service enabled');
 			checkIfOnLifeGuardNetwork();
 		}
 
 		else {
-      			serviceEnabled = 1;
+      			serviceEnabled = false;
 			// check internet connection
 			if (userInternetCheck == true) {
-            		if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
-      }
-			else {
-				    NETWORKCONNECTION = false;
-				    if (ENABLELOGGING == true) console.log('Network: Internet connection unavailable');
-				    $('.appNoInternetConnectionScreen').show();
-				    $('.appNoInternetConnectionScreen').parent().css('z-index', 58);
-				    $('.serviceActiveScreen').hide();
-				    $('.serviceInactiveScreen').hide();
-				    $('.serviceToggle').hide();
-
+    				if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
 			}
-	  }
-		$('.serviceToggle').show();
-		$('.appNoInternetConnectionScreen').hide();
-		$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+			if (err !== undefined) {
+				if (ENABLELOGGING == true) console.log('Network: Internet connection unavailable');
+				$('.appNoInternetConnectionScreen').show();
+				$('.appNoInternetConnectionScreen').parent().css('z-index', 58);
+				$('.bigText_nointernet').show();
+				$('.serviceActiveScreen').hide();
+				$('.serviceInactiveScreen').hide();
+				$('.serviceToggle').hide();
+			}
+	  	}
+	  	if (err === undefined) {
+			$('.serviceToggle').show();
+			$('.appNoInternetConnectionScreen').hide();
+			$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+
+		}
 		APPHASLOADED = true;
   	});
 }
@@ -251,7 +265,7 @@ function checkIfOnLifeGuardNetwork() {
 	var count = 0;
 	hasFoundLifeGuard = false;
 
-	bonjour.find({ type: "sslifeguard" }, function (service) {
+	bonjour.find({ type: "sslifeguard" }, function(service) {
 	  //if (service.fqdn in found) return
 	  //found[service.fqdn] = true
 	  count++
@@ -283,6 +297,102 @@ function finishedLoading() {
 	APPHASLOADED = true;
 }
 
+function checkForAppUpdate(options) {
+	// for for app update
+
+	var baseLink;
+	var versionList = [];
+	var versionNew;
+	var serverAddress = "myserver"
+	var serverPort = 8080
+	var serverDataFile = "/version-information.json"
+
+	var updateCurrentDialog = {type: 'info', buttons: ['Ok'], message: String('You\'re up to date.')}
+	var updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String('Whoops, I couldn\'t find updates... Something seems to have gone wrong.')}
+
+	Request.get(String("http://" + serverAddress + ":" + serverPort + serverDataFile), (error, response, body) => {
+		if(error) {
+			// if something goes wrong
+			if (options.showErrors == true) {
+				dialog.showMessageBox(updateErrorDialog, updateResponse => {
+					if (ENABLELOGGING == true) console.log("UPDATE: Error with updates.")
+					return;
+				})
+			}
+			return console.dir(error);
+		}
+		//console.dir(JSON.parse(body));
+		remoteData=JSON.parse(body);
+		for (item in remoteData.versions) {
+			versionList.push(remoteData.versions[item].build);
+		}
+		var iteration;
+		for (i in remoteData.versions) {
+			if (remoteData.versions[i].build == remoteData.recommendedBuild) {
+				iteration = i;
+				//console.log(remoteData.versions[i].build);
+				break;
+			}
+		}
+		var updateAvailableDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('There is an update available (v' + remoteData.versions[iteration].version + '). Do you want to install it?')}
+		if (remoteData.recommendedBuild > CURRENTBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1) {
+			// update available
+
+			dialog.showMessageBox(updateAvailableDialog, updateResponse => {
+				if (updateResponse == 0) {
+					if (ENABLELOGGING == true) console.log("UPDATE: User wants update.")
+				}
+				else {
+					return;
+				}
+			})
+			versionNew = remoteData.versions[iteration].version;
+			switch(os.platform()) {
+				case 'linux':
+					if (ENABLELOGGING == true) console.log('UPDATE: Linux download...')
+					shell.openExternal(baseLink + remoteData.linkBase + "/" + remoteData.name + "-" + remoteData.versions[iteration].version + "-" + remoteData.versions[iteration].build + "-linux." + LINUXPACKAGEFORMAT);
+					break;
+				case 'darwin':
+					if (ENABLELOGGING == true) console.log('UPDATE: macOS download...')
+					shell.openExternal(baseLink + remoteData.linkBase + "/" + remoteData.name + "-" + remoteData.versions[iteration].version + "-" + remoteData.versions[iteration].build + "-macos.dmg");
+					break;
+				case 'win32':
+					if (ENABLELOGGING == true) console.log('UPDATE: Windows download...')
+					shell.openExternal(baseLink + remoteData.linkBase + "/" + remoteData.name + "-" + remoteData.versions[iteration].version + "-" + remoteData.versions[iteration].build + "-windows.exe");
+					break;
+			}
+
+		}
+		else if (remoteData.recommendedBuild == CURRENTBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1 && options.current == true) {
+			// up to date
+			dialog.showMessageBox(updateCurrentDialog, updateResponse => {
+				if (updateResponse == 0) {
+					if (ENABLELOGGING == true) console.log("UPDATE: User has the latest version installed.")
+					return;
+				}
+				else {
+					return;
+				}
+			})
+		}
+		else if (remoteData.recommendedBuild < CURRENTBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1) {
+			// downgrade to a lower version
+			/*console.log("/---------------------------------------\\");
+			console.log("| You must downgrade to a lower version |");
+			console.log("\\---------------------------------------/");*/
+		}
+		else {
+			// if something goes wrong
+			if (options.showErrors == true) {
+				dialog.showMessageBox(updateErrorDialog, updateResponse => {
+					if (ENABLELOGGING == true) console.log("UPDATE: Error.")
+					return;
+				})
+			}
+		}
+	});
+}
+
 function mainReloadProcess() {
 	// reload function
 	if (ENABLELOGGING == true) console.log("__ Refresh Start __")
@@ -297,14 +407,41 @@ function mainReloadProcess() {
 	else {
 		finishedLoading();
 		internetConnectionCheck();
+		checkServiceState();
 		if (userInternetCheck == true) {
-			checkServiceState();
-			if (serviceEnabled != servicePreviousState) affirmServiceState();
+			if (serviceEnabled != servicePreviousState) {
+				if (ENABLELOGGING == true) console.log('SERVICE STATE: State has changed.')
+				affirmServiceState();
+			}
 			servicePreviousState = serviceEnabled;
+		}
+		if (userInternetCheck != previousUserInternetCheck) {
+			if (ENABLELOGGING == true) console.log('INTERNET: State has changed.')
+			affirmServiceState();
+  			previousUserInternetCheck = userInternetCheck;
 		}
 	}
 
 	if (ENABLELOGGING == true) console.log("__ Refresh End   __")
-	setTimeout(mainReloadProcess, 500);
+	setTimeout(mainReloadProcess, 1000);
 }
 
+ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
+	if (arg == true) {
+		store.set('appUpdateAutoCheck', false);
+	}
+
+	else if (arg == false) {
+		store.set('appUpdateAutoCheck', true);
+	}
+})
+
+ipcRenderer.on('checkIfUpdateAvailable', (event, arg) => {
+	checkForAppUpdate({
+		current: true,
+		showErrors: true
+	});
+});
+ipcRenderer.on('goForceEnable', () => {
+	enableServicePerPlatform();
+});
