@@ -1,21 +1,20 @@
 // main.js - safesurfer
 // by safesurfer
 
+// include libraries
+const APPVERSION = "1.0.0"
 const CURRENTBUILD = 1;
-const LINUXPACKAGEFORMAT = "rpm"
 const os = require('os');
 const child_process = require('child_process');
 const dns = require('dns');
-const rp = require('request-promise');
 const cheerio = require('cheerio');
-const path = require('path');
-const hostOS = os.platform();
 const bonjour = require('bonjour')();
-const {dialog} = require('electron').remote
+const {dialog} = require('electron').remote;
 const Request = require("request");
 const shell = require('electron').shell;
-const {ipcRenderer} = require('electron')
-const store = require('store')
+const {ipcRenderer} = require('electron');
+const store = require('store');
+const encode = require('nodejs-base64-encode');
 
 const respOptions = {
   uri: `http://check.safesurfer.co.nz`,
@@ -24,6 +23,7 @@ const respOptions = {
   }
 };
 
+const hostOS = os.platform();
 switch (hostOS) {
 	case 'win32':
 		process.chdir('./assets/osScripts')
@@ -56,15 +56,15 @@ function displayProtection() {
 	  if (ENABLELOGGING == true) console.log("Protected");
 	  $(".serviceActiveScreen").show();
 	  $(".serviceInactiveScreen").hide();
+	  // if a lifeguard has been found
 	  if (hasFoundLifeGuard == true) {
-	  		document.getElementById('toggleButton').innerHTML = "PROTECTED WITH LIFEGUARD";
-	  		$('.serviceToggle').addClass('serviceToggle_lifeguard')
+	  	$("#toggleButton").html("PROTECTED WITH LIFEGUARD");
+	  	$('.serviceToggle').addClass('serviceToggle_lifeguard')
 	  }
 	  else {
-			document.getElementById('toggleButton').innerHTML = "STOP PROTECTION";
-			$('.serviceToggle').removeClass('serviceToggle_lifeguard')
+	  	$("#toggleButton").html("STOP PROTECTION");
+		$('.serviceToggle').removeClass('serviceToggle_lifeguard')
 	  }
-	  //enableServicePerPlatform();
 	  $('.serviceToggle').show();
 	  $('.appNoInternetConnectionScreen').hide();
 	  $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
@@ -77,8 +77,7 @@ function displayUnprotection() {
 	  if (ENABLELOGGING == true) console.log("Unprotected");
 	  $(".serviceInactiveScreen").show();
 	  $(".serviceActiveScreen").hide();
-	  document.getElementById('toggleButton').innerHTML = "GET PROTECTED";
-	  //disableServicePerPlatform();
+	  $("#toggleButton").html("GET PROTECTED");
 	  $('.serviceToggle').show();
 	  $('.appNoInternetConnectionScreen').hide();
 	  $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
@@ -92,7 +91,7 @@ function toggleServiceState() {
 		case true:
 			if (ENABLELOGGING == true) console.log('Toggling enable');
 			if (hasFoundLifeGuard == true) {
-				alert('Your Life Guard is already protecting you.\nEnjoy your safety!')
+				alert('Your Life Guard is already protecting you.\nEnjoy your safety!\n\nTo enable reguardless, go to \'General -> Force enable\' in the app menu.')
 				return 0;
 			}
 			else {
@@ -100,11 +99,11 @@ function toggleServiceState() {
 			}
 			disableServicePerPlatform();
 			checkServiceState();
-			if (affirmServiceState() == 3) {
-			    new Notification('Safe Surfer', {
-    				body: 'You are now safe to surf the internet. Safe Surfer has been setup.'
-  	  		});
-  	  }
+			/*if (affirmServiceState() == 0) {
+				new Notification('Safe Surfer', {
+    					body: 'You are now safe to surf the internet. Safe Surfer has been setup.'
+  	  			});
+  	  		}*/
 		break;
 
 		case false:
@@ -112,11 +111,11 @@ function toggleServiceState() {
 			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
 			enableServicePerPlatform();
 			checkServiceState();
-			if (affirmServiceState() == 3) {
-			    new Notification('Safe Surfer', {
-    				body: 'Safe Surfer has been disabled. You are now unprotected'
-  	  		});
-  	  }
+			/*if (affirmServiceState() == 0) {
+				new Notification('Safe Surfer', {
+    					body: 'Safe Surfer has been disabled. You are now unprotected'
+  	  			});
+  	  		}*/
 		break;
 	}
 }
@@ -143,23 +142,23 @@ function affirmServiceState() {
 function checkServiceState() {
 	// check the state of the service
 	if (ENABLELOGGING == true) console.log('Getting state of service');
-  //resp = rp(respOptions)
-  //if (resp.response.body.indexOf('<meta name="ss_status" content="unprotected"><!-- DO NOTE REMOVE - USED FOR STATUS CHECK -->') > -1) {
+  	//resp = rp(respOptions)
+  	//if (resp.response.body.indexOf('<meta name="ss_status" content="unprotected"><!-- DO NOTE REMOVE - USED FOR STATUS CHECK -->') > -1) {
 	dns.lookup('check.safesurfer.co.nz', function(err, address) {
 		if (ENABLELOGGING == true) console.log("checkServiceState - address ::", address);
 		if (ENABLELOGGING == true) console.log("checkServiceState - err     ::", err);
-
+		// ip address returned when service is disabled
 		if (address == "104.197.143.234") {
 			serviceEnabled = false;
 			if (ENABLELOGGING == true) console.log('DNS Request: Service disabled');
 		}
-
+		// ip address returned when service is enabled
 		else if (address == "130.211.44.88") {
 			serviceEnabled = true;
 			if (ENABLELOGGING == true) console.log('DNS Request: Service enabled');
 			checkIfOnLifeGuardNetwork();
 		}
-
+		// if neither are returned
 		else {
       			serviceEnabled = false;
 			// check internet connection
@@ -218,7 +217,7 @@ function enableServicePerPlatform() {
 			//var result = callProgram(String('osascript -e "do shell script \'' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh' + '\' with administrator privileges"'));
 			var result = callProgram(String('bash ' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh'))
 			break;
-			// windows
+		// windows
 		case 'win32':
 			//var result = callProgram(String('powershell.exe Start-Process ' + scriptRoot_windows + '\\safesurfer-enable_dns_windows.bat -Verb runAs'));
 			var result = callProgram(String(scriptRoot_windows + '\\elevate.exe wscript ' + scriptRoot_windows +  '\\silent.vbs ' + scriptRoot_windows + '\\safesurfer-enable_dns_windows.bat'));
@@ -261,13 +260,10 @@ function checkIfOnLifeGuardNetwork() {
 	// check if current device is on lifeguard network
 	if (ENABLELOGGING == true) console.log('Checking if on lifeguard network')
 	var result;
-	//var found = {};
 	var count = 0;
 	hasFoundLifeGuard = false;
-
+	// start searching for lifeguard with bonjour
 	bonjour.find({ type: "sslifeguard" }, function(service) {
-	  //if (service.fqdn in found) return
-	  //found[service.fqdn] = true
 	  count++
 	  if (ENABLELOGGING == true) console.log(String(count + " :: " + service.fqdn))
 	  if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
@@ -279,16 +275,22 @@ function checkIfOnLifeGuardNetwork() {
 	if (ENABLELOGGING == true) console.log('hasFoundLifeGuard is', hasFoundLifeGuard)
 }
 
+function publishDesktopAppOnNetwork(state) {
+	// bonjour public to network for device discovery
+	if (state == "enable") bonjour.publish({ name: 'Safe Surfer Desktop', type: 'ssdesktop', port: 3158 })
+	if (state == "disable") bonjour.unpublishAll();
+}
+
 function internetConnectionCheck() {
-  // check the user's internet connection
-  dns.lookup('google.com', function(err) {
-    if (err) {
-      userInternetCheck = false;
-    }
-    else {
-      userInternetCheck = true;
-    }
-  });
+	// check the user's internet connection
+	dns.lookup('google.com', function(err) {
+		if (err) {
+			userInternetCheck = false;
+		}
+		else {
+			userInternetCheck = true;
+		}
+	});
 }
 
 function finishedLoading() {
@@ -299,11 +301,10 @@ function finishedLoading() {
 
 function checkForAppUpdate(options) {
 	// for for app update
-
 	var baseLink;
 	var versionList = [];
 	var versionNew;
-	var serverAddress = "myserver"
+	var serverAddress = "104.236.242.185"
 	var serverPort = 8080
 	var serverDataFile = "/version-information.json"
 
@@ -334,33 +335,21 @@ function checkForAppUpdate(options) {
 				break;
 			}
 		}
-		var updateAvailableDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('There is an update available (v' + remoteData.versions[iteration].version + '). Do you want to install it?')}
+		var updateAvailableDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('There is an update available (v' + remoteData.versions[iteration].version + '). Do you want to install it now?')}
+		var updateDowngradeDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('Please downgrade to version ' + remoteData.versions[iteration].version + '. Do you want to install it now?')}
 		if (remoteData.recommendedBuild > CURRENTBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1) {
 			// update available
 
 			dialog.showMessageBox(updateAvailableDialog, updateResponse => {
 				if (updateResponse == 0) {
 					if (ENABLELOGGING == true) console.log("UPDATE: User wants update.")
+					versionNew = remoteData.versions[iteration].version;
+					shell.openExternal('https://safesurfer.co.nz/download/desktop');
 				}
 				else {
 					return;
 				}
 			})
-			versionNew = remoteData.versions[iteration].version;
-			switch(os.platform()) {
-				case 'linux':
-					if (ENABLELOGGING == true) console.log('UPDATE: Linux download...')
-					shell.openExternal(baseLink + remoteData.linkBase + "/" + remoteData.name + "-" + remoteData.versions[iteration].version + "-" + remoteData.versions[iteration].build + "-linux." + LINUXPACKAGEFORMAT);
-					break;
-				case 'darwin':
-					if (ENABLELOGGING == true) console.log('UPDATE: macOS download...')
-					shell.openExternal(baseLink + remoteData.linkBase + "/" + remoteData.name + "-" + remoteData.versions[iteration].version + "-" + remoteData.versions[iteration].build + "-macos.dmg");
-					break;
-				case 'win32':
-					if (ENABLELOGGING == true) console.log('UPDATE: Windows download...')
-					shell.openExternal(baseLink + remoteData.linkBase + "/" + remoteData.name + "-" + remoteData.versions[iteration].version + "-" + remoteData.versions[iteration].build + "-windows.exe");
-					break;
-			}
 
 		}
 		else if (remoteData.recommendedBuild == CURRENTBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1 && options.current == true) {
@@ -376,10 +365,17 @@ function checkForAppUpdate(options) {
 			})
 		}
 		else if (remoteData.recommendedBuild < CURRENTBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1) {
-			// downgrade to a lower version
-			/*console.log("/---------------------------------------\\");
-			console.log("| You must downgrade to a lower version |");
-			console.log("\\---------------------------------------/");*/
+			// user must downgrade
+			dialog.showMessageBox(updateDowngradeDialog, updateResponse => {
+				if (updateResponse == 0) {
+					if (ENABLELOGGING == true) console.log("UPDATE: User wants to downgrade.")
+				}
+				else {
+					return;
+				}
+			})
+			versionNew = remoteData.versions[iteration].version;
+			shell.openExternal('https://safesurfer.co.nz/download/desktop');
 		}
 		else {
 			// if something goes wrong
@@ -391,6 +387,23 @@ function checkForAppUpdate(options) {
 			}
 		}
 	});
+}
+
+function collectTelemetry() {
+	// if the user agrees to it, collect non identifiable information about their setup
+	var teleData = "";
+	teleData+=String("TYPE:"+os.type()+"\n");
+	teleData+=String("PLATFORM:"+os.platform()+"\n");
+	teleData+=String("RELEASE:"+os.release()+"\n");
+	teleData+=String("CPUCORES:"+os.cpus().length+"\n");
+	teleData+=String("ISSERVICEENABLED:"+serviceEnabled+"\n");
+	return teleData;
+}
+
+function sendTelemetry() {
+	// send information to server
+	var dataToSend = encode.encode(collectTelemetry(),'base64');
+	return dataToSend;
 }
 
 function mainReloadProcess() {
