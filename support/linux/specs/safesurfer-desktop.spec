@@ -36,6 +36,7 @@ npm install nexe
 /opt/%{name}/LICENSES.chromium.html
 /opt/%{name}/snapshot_blob.bin
 /opt/%{name}/content_resources_200_percent.pak
+/opt/%{name}/locales/am.pak
 /opt/%{name}/locales/cs.pak
 /opt/%{name}/locales/en-US.pak
 /opt/%{name}/locales/fa.pak
@@ -104,7 +105,9 @@ npm install nexe
 /opt/%{name}/LICENSE
 /opt/%{name}/assets/osScripts/safesurfer-disable_dns_linux.sh
 /opt/%{name}/assets/osScripts/safesurfer-enable_dns_linux.sh
-/usr/share/applications/SafeSurfer-Desktop.desktop
+/opt/%{name}/ss-background
+/usr/share/pixmaps/ss-logo.png
+/usr/share/applications/%{name}.desktop
 /usr/bin/safesurfer-desktop
 
 

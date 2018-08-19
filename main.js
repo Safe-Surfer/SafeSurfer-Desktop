@@ -11,8 +11,13 @@ const store = require('store');
 let mainWindow;
 let childWindow;
 
+const APPBUILD = 1;
+const APPVERSION = "1.0.0";
+const BUILDMODE = "pre";
+
 var appUpdateAutoCheck = store.get('appUpdateAutoCheck');
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
+var accountIsAssigned = false;
 
 function createWindow() {
 	// Create the browser window.
@@ -31,7 +36,7 @@ function createWindow() {
 	});
 
 	// create app menu
-	var menu = Menu.buildFromTemplate([
+	var menu = [
 	{
 		label: 'General',
 		submenu:
@@ -56,8 +61,7 @@ function createWindow() {
           				{label:'Automatically check for updates', type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
           			]
           		},
-			{label:'Reload', click() {mainWindow.reload()} },
-			{label: 'Dev tools', click() {mainWindow.webContents.openDevTools()}, accelerator: 'CmdOrCtrl+D' }
+			{label:'Reload', click() {mainWindow.reload()} }
         	]
 
 	},
@@ -66,20 +70,23 @@ function createWindow() {
 		submenu:
 		[
           		{label:'About us', click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
+          		{label:String("Version: "+APPVERSION+" - Build: "+APPBUILD)},
                 	{type:'separator'},
           		{label:'Help', click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
           	]
 
 	},
-	{
+	];
+	if (BUILDMODE == "pre") menu[1].submenu[4] = {label: 'Dev tools', click() {mainWindow.webContents.openDevTools()}, accelerator: 'CmdOrCtrl+D' }
+	if (accountIsAssigned == true) menu[3] = {
 		label: 'Account',
 		submenu:
 		[
 			{label:'My Account', click() {} },
 		]
 	}
-	])
-	Menu.setApplicationMenu(menu);
+	//console.log(menu.commandsMap['43'])
+	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }
 
 app.on('ready', function() {

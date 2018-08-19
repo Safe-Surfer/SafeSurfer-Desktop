@@ -1,0 +1,30 @@
+# Maintainer: Caleb Woodbine <calebwoodbine.public@gmail.com>
+pkgname=SafeSurfer-Desktop
+pkgver=1.0
+pkgrel=1
+pkgdesc="Keep safe in the digitial surf with Safe Surfer."
+arch=('x86_64')
+url="https://gitlab.com/safesurfer/${pkgname}"
+license=('GPL')
+makedepends=(npm nodejs)
+depends=(polkit)
+source=("https://gitlab.com/safesurfer/${pkgname}/-/archive/${pkgver}/${pkgname}-${pkgver}.zip")
+md5sums=('SKIP')
+
+prepare() {
+	cd "$pkgname-$pkgver"
+	npm install
+	npm install nexe
+}
+
+package() {
+	cd "$pkgname-$pkgver"
+	make DESTDIR="$pkgdir/" install
+}
+
+build() {
+	cd "$pkgname-$pkgver"
+	make build-linux
+	make build-background-service
+}
+
