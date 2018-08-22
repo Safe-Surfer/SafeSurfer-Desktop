@@ -1,2 +1,2 @@
 #!/bin/bash
-/opt/SafeSurfer-Desktop/SafeSurfer-Desktop
+sudo /opt/SafeSurfer-Desktop/SafeSurfer-Desktop

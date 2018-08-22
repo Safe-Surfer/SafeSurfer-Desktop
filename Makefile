@@ -3,6 +3,7 @@ PREFIX ?= /opt/SafeSurfer-Desktop
 all: help
 
 build-linux: build-background-service
+	@echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > support/linux/linuxpackageformat.json
 	npm run package-linux
 	@mkdir -p ./release-builds/SafeSurfer-Desktop-linux-x64/assets/osScripts
 	@cp ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-linux-x64/
@@ -52,7 +53,7 @@ prep-deb:
 	@mkdir -p build/safesurfer-desktop
 	@cp -p -r support/linux/debian build/safesurfer-desktop/debian
 	@mkdir build/safesurfer-desktop/debian/safesurfer-desktop
-	@make DESTDIR=build/safesurfer-desktop/debian/safesurfer-desktop install
+	@make DESTDIR=build/safesurfer-desktop/debian/safesurfer-desktop PACKAGEFORMAT=DEB install
 
 deb-pkg: prep-deb
 	@cd build/safesurfer-desktop/debian && debuild -b

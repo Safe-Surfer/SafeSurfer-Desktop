@@ -4,6 +4,7 @@
 // include libraries
 const APPVERSION = "1.0.0"
 const CURRENTBUILD = 1;
+const LINUXPACKAGEFORMAT = require('./buildconfig.json');
 const os = require('os');
 const child_process = require('child_process');
 const dns = require('dns');
@@ -15,6 +16,8 @@ const shell = require('electron').shell;
 const {ipcRenderer} = require('electron');
 const store = require('store');
 const encode = require('nodejs-base64-encode');
+const moment = require('moment');
+const dns_changer = require('node_dns_changer');
 
 const respOptions = {
   uri: `http://check.safesurfer.co.nz`,
@@ -58,10 +61,12 @@ function displayProtection() {
 	  $(".serviceInactiveScreen").hide();
 	  // if a lifeguard has been found
 	  if (hasFoundLifeGuard == true) {
-	  	$("#toggleButton").html("PROTECTED WITH LIFEGUARD");
+	  	$("#bigTextProtected").html("PROTECTED BY LIFEGUARD");
+	  	$("#toggleButton").html("CONFIGURE LIFEGUARD");
 	  	$('.serviceToggle').addClass('serviceToggle_lifeguard')
 	  }
 	  else {
+	  	$("#bigTextProtected").html("YOU ARE PROTECTED");
 	  	$("#toggleButton").html("STOP PROTECTION");
 		$('.serviceToggle').removeClass('serviceToggle_lifeguard')
 	  }
@@ -91,14 +96,16 @@ function toggleServiceState() {
 		case true:
 			if (ENABLELOGGING == true) console.log('Toggling enable');
 			if (hasFoundLifeGuard == true) {
-				alert('Your Life Guard is already protecting you.\nEnjoy your safety!\n\nTo enable reguardless, go to \'General -> Force enable\' in the app menu.')
+				//alert('Your Life Guard is already protecting you.\nEnjoy your safety!\n\nTo enable reguardless, go to \'General -> Force enable\' in the app menu.')
+				shell.openExternal('http://mydevice.safesurfer.co.nz/')
 				return 0;
 			}
 			else {
-				alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
+				//alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
+				disableServicePerPlatform();
+				checkServiceState();
 			}
-			disableServicePerPlatform();
-			checkServiceState();
+
 			/*if (affirmServiceState() == 0) {
 				new Notification('Safe Surfer', {
     					body: 'You are now safe to surf the internet. Safe Surfer has been setup.'
@@ -108,7 +115,7 @@ function toggleServiceState() {
 
 		case false:
 			if (ENABLELOGGING == true) console.log('Toggling disable');
-			alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
+			//alert('Safe Surfer needs your permission to make network changes.\nYou will get a prompt to allow Safe Surfer to perform the changes.')
 			enableServicePerPlatform();
 			checkServiceState();
 			/*if (affirmServiceState() == 0) {
@@ -203,35 +210,36 @@ function callProgram(command) {
 
 function enableServicePerPlatform() {
 	// force the DNS server addresses to config
-	if (ENABLELOGGING == true) console.log(String('> Enabling on platform: ' + hostOS));
+	/*if (ENABLELOGGING == true) console.log(String('> Enabling on platform: ' + hostOS));
 	switch(hostOS) {
 		// linux
 		case 'linux':
 			var result = callProgram(String('pkexec ' + scriptRoot_linux + "/safesurfer-enable_dns_linux.sh"));
-			/*if (result != "0" || result != "-1") {
-			alert("Something went wrong!")
-			}*/
 			break;
 		// macOS
 		case 'darwin':
-			//var result = callProgram(String('osascript -e "do shell script \'' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh' + '\' with administrator privileges"'));
 			var result = callProgram(String('bash ' + scriptRoot_macOS + '/safesurfer-enable_dns_macos.sh'))
 			break;
 		// windows
 		case 'win32':
-			//var result = callProgram(String('powershell.exe Start-Process ' + scriptRoot_windows + '\\safesurfer-enable_dns_windows.bat -Verb runAs'));
 			var result = callProgram(String(scriptRoot_windows + '\\elevate.exe wscript ' + scriptRoot_windows +  '\\silent.vbs ' + scriptRoot_windows + '\\safesurfer-enable_dns_windows.bat'));
 			break;
 		// unsupported or unknown platform
 		default:
 			break;
 	}
-	return 0;
+	return 0;*/
+	dns_changer.setDNSservers({
+	    DNSservers:['104.197.28.121','104.155.237.225'],
+	    DNSbackupName:'before_safesurfer',
+	    loggingEnable:ENABLELOGGING
+	});
+
 }
 
 function disableServicePerPlatform() {
 	// revoke the DNS server addresses from config
-	if (ENABLELOGGING == true) console.log(String('> Disabling on platform: ' + hostOS));
+	/*if (ENABLELOGGING == true) console.log(String('> Disabling on platform: ' + hostOS));
 	switch(hostOS) {
 		// linux
 		case 'linux':
@@ -253,7 +261,12 @@ function disableServicePerPlatform() {
 
 		break;
 	}
-	return 0;
+	return 0;*/
+	dns_changer.restoreDNSservers({
+	    DNSbackupName:'before_safesurfer',
+	    loggingEnable:ENABLELOGGING
+	});
+
 }
 
 function checkIfOnLifeGuardNetwork() {
@@ -269,6 +282,7 @@ function checkIfOnLifeGuardNetwork() {
 	  if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
 		hasFoundLifeGuard=true;
 		if (ENABLELOGGING == true) console.log(String('Found status: ' + hasFoundLifeGuard))
+		affirmServiceState();
 		return true;
 	  }
 	})
@@ -349,7 +363,7 @@ function checkForAppUpdate(options) {
 				else {
 					return;
 				}
-			})
+			});
 
 		}
 		else if (remoteData.recommendedBuild == CURRENTBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1 && options.current == true) {
@@ -391,19 +405,28 @@ function checkForAppUpdate(options) {
 
 function collectTelemetry() {
 	// if the user agrees to it, collect non identifiable information about their setup
-	var teleData = "";
-	teleData+=String("TYPE:"+os.type()+"\n");
-	teleData+=String("PLATFORM:"+os.platform()+"\n");
-	teleData+=String("RELEASE:"+os.release()+"\n");
-	teleData+=String("CPUCORES:"+os.cpus().length+"\n");
-	teleData+=String("ISSERVICEENABLED:"+serviceEnabled+"\n");
-	return teleData;
+	var teleData = {};
+	teleData.DATESENT = moment().format('X');
+	teleData.TYPE = os.type();
+	teleData.PLATFORM = os.platform();
+	teleData.RELEASE = os.release();
+	teleData.CPUCORES = os.cpus().length;
+	teleData.ISSERVICEENABLED = serviceEnabled;
+	if (os.platform() != 'win32') teleData.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
+	return JSON.stringify(teleData);
 }
 
 function sendTelemetry() {
 	// send information to server
 	var dataToSend = encode.encode(collectTelemetry(),'base64');
-	return dataToSend;
+	Request.post('http://104.236.242.185:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
+		if (response || body) console.log('TEL SEND: Sent.');
+		if (err) {
+			console.log('TEL SEND: Cannot send.');
+			return;
+		}
+	});
+	//return dataToSend;
 }
 
 function mainReloadProcess() {

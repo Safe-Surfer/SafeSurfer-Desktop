@@ -3,7 +3,7 @@ Type=Application
 Name=Safe Surfer
 GenericName=Safe Surfer
 Comment=Keep safe in the digitial surf
-Exec=/opt/SafeSurfer-Desktop/SafeSurfer-Desktop
+Exec=pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY /opt/SafeSurfer-Desktop/SafeSurfer-Desktop
 Icon=ss-logo
 Terminal=false
 Catergories=Utilities;

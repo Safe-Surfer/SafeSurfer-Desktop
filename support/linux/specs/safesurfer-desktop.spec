@@ -26,7 +26,7 @@ npm install nexe
 
 
 %install
-%{__make} DESTDIR=$RPM_BUILD_ROOT install
+%{__make} DESTDIR=$RPM_BUILD_ROOT PACKAGEFORMAT=RPM install
 
 
 %files
@@ -109,6 +109,10 @@ npm install nexe
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/%{name}.desktop
 /usr/bin/safesurfer-desktop
+
+
+%postun
+rm -rf /opt/SafeSurfer-Desktop
 
 
 %changelog

@@ -5,13 +5,14 @@
   "main": "main.js",
   "scripts": {
     "start": "electron .",
+    "start-root": "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY npm run start --prefix $(pwd)",
     "electron-builder": "node_modules/.bin/electron-builder",
     "nexe": "node_modules/.bin/nexe",
     "package-linux": "electron-packager . SafeSurfer-Desktop --overwrite --asar=true --platform=linux --arch=x64 --icon=assets/media/icons/linux/ss-logo.png --prun=true --out=release-builds",
     "package-macos": "electron-packager . --overwrite --platform=darwin --arch=x64 --prune=true --out=release-builds",
     "package-win": "electron-packager . SafeSurfer-Desktop --overwrite --asar=true --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\""
   },
-  "repository": "",
+  "repository": "https://gitlab.com/safesurfer/SafeSurfer-Desktop",
   "keywords": [
     "SafeSurfer",
     "Safesurfer",
@@ -34,12 +35,16 @@
     "electron-sudo": "^4.0.12",
     "getos": "^3.1.0",
     "machine-id": "^1.0.0",
+    "moment": "^2.22.2",
     "nexe": "^2.0.0-rc.34",
     "node-dns-sd": "^0.2.0",
+    "node_dns_changer": "file:../../../../Projects/node_dns_changer",
     "nodejs-base64-encode": "0.0.2",
+    "npm": "^6.4.0",
     "osmosis": "^1.1.8",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
+    "shelljs": "^0.8.2",
     "store": "^2.0.12"
   }
 }
