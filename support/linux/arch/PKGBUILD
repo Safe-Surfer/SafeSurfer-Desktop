@@ -17,14 +17,17 @@ prepare() {
 	npm install nexe
 }
 
-package() {
-	cd "$pkgname-$pkgver"
-	make DESTDIR="$pkgdir/" install
-}
-
 build() {
 	cd "$pkgname-$pkgver"
 	make build-linux
 	make build-background-service
 }
 
+package() {
+	cd "$pkgname-$pkgver"
+	make DESTDIR="$pkgdir/" install
+}
+
+post_remove() {
+	rm -rf /opt/SafeSurfer-Desktop
+}

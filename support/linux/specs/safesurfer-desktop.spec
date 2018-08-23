@@ -22,7 +22,7 @@ npm install nexe
 
 %build
 %{__make} build-linux
-%{__make} build-background-service
+%{__make} build-background-sscli
 
 
 %install
@@ -105,10 +105,12 @@ npm install nexe
 /opt/%{name}/LICENSE
 /opt/%{name}/assets/osScripts/safesurfer-disable_dns_linux.sh
 /opt/%{name}/assets/osScripts/safesurfer-enable_dns_linux.sh
-/opt/%{name}/ss-background
+/opt/%{name}/sscli
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/%{name}.desktop
-/usr/bin/safesurfer-desktop
+/usr/bin/sscli
+/usr/share/bash-completion/completions/sscli
+/opt/%{name}/%{name}-sudo.sh
 
 
 %postun

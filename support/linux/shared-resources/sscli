@@ -1,0 +1,31 @@
+#!/bin/bash
+
+arg="$1"
+hasSudo=$(sudo -nv 2>&1)
+if [[ "$hasSudo" = "sudo: a password is required" || "$hasSudo" = "" || -z "$hasSudo" ]] && which sudo > /dev/null
+then
+	sudo_prog="sudo -E"
+
+elif [ "$(whoami)" = "root" ]
+then
+	sudo_prog=""
+else
+	echo "${ttred}>> You must be in sudoers or be root to use some this program. ${treset}"
+	exit
+fi
+
+case "$arg" in
+	enable)
+		$sudo_prog /opt/SafeSurfer-Desktop/sscli enable
+		;;
+	disable)
+		$sudo_prog /opt/SafeSurfer-Desktop/sscli disable
+		;;
+	launch)
+		$sudo_prog /opt/SafeSurfer-Desktop/SafeSurfer-Desktop
+		;;
+	*)
+		/opt/SafeSurfer-Desktop/sscli help
+		echo " launch launch the desktop app"
+		;;
+esac

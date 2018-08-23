@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "The SafeSurfer desktop app",
   "main": "main.js",
+  "license":"GPL-3.0",
   "scripts": {
     "start": "electron .",
     "start-root": "pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY npm run start --prefix $(pwd)",
@@ -38,7 +39,7 @@
     "moment": "^2.22.2",
     "nexe": "^2.0.0-rc.34",
     "node-dns-sd": "^0.2.0",
-    "node_dns_changer": "file:../../../../Projects/node_dns_changer",
+    "node_dns_changer": "^1.0.0",
     "nodejs-base64-encode": "0.0.2",
     "npm": "^6.4.0",
     "osmosis": "^1.1.8",
