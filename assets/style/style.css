@@ -37,11 +37,7 @@ body, html {
 	font-size: 4em;
 	white-space: normal;
 	line-height: 100px;
-}
-
-.bigText_nointernet:hover {
-	font-size: 3.5em;
-
+	transition: line-height 0.4s, font-size 0.2s;
 }
 
 .subText {
@@ -219,8 +215,6 @@ body, html {
 	height:20px;
 	position:absolute;
 	clear:both;
-
-
 	display: none;
 }
 
@@ -316,6 +310,10 @@ body, html {
 	}
 
 	.topTextBox_active {
+		height: 340px;
+	}
+
+	.topTextBox_active_lifeguard {
 		height: 440px;
 	}
 

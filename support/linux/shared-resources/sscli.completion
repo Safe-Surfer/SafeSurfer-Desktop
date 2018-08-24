@@ -1,5 +1,3 @@
-#!/usr/bin/env bash
-
 _sscli()
 {
     local cur prev opts
@@ -8,7 +6,7 @@ _sscli()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     if [[ ${cur} == -* ]] ; then
-        COMPREPLY=( $(compgen -W "enable disable launch help" -- ${cur}) )
+        COMPREPLY=( $(compgen -W "enable disable launch check service help" -- ${cur}) )
         return 0
     fi
 }

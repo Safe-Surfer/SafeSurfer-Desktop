@@ -19,7 +19,7 @@ prepare() {
 
 build() {
 	cd "$pkgname-$pkgver"
-	make build-linux
+	make PACKAGEFORMAT=arch build-linux
 	make build-background-service
 }
 

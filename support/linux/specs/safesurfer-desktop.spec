@@ -21,12 +21,12 @@ npm install nexe
 
 
 %build
-%{__make} build-linux
-%{__make} build-background-sscli
+%{__make} PACKAGEFORMAT=rpm build-linux
+%{__make} build-sscli
 
 
 %install
-%{__make} DESTDIR=$RPM_BUILD_ROOT PACKAGEFORMAT=RPM install
+%{__make} DESTDIR=$RPM_BUILD_ROOT install
 
 
 %files
@@ -103,8 +103,6 @@ npm install nexe
 /opt/%{name}/views_resources_200_percent.pak
 /opt/%{name}/libnode.so
 /opt/%{name}/LICENSE
-/opt/%{name}/assets/osScripts/safesurfer-disable_dns_linux.sh
-/opt/%{name}/assets/osScripts/safesurfer-enable_dns_linux.sh
 /opt/%{name}/sscli
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/%{name}.desktop

@@ -8,3 +8,11 @@ Icon=ss-logo
 Terminal=false
 Catergories=Utilities;
 Name[en_US]=Safe Surfer
+
+[Desktop Action Enable]
+Name=Enable
+Exec=pkexec sscli enable
+
+[Desktop Action Disable]
+Name=Disable
+Exec=pkexec sscli disable

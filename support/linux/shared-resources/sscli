@@ -10,7 +10,7 @@ elif [ "$(whoami)" = "root" ]
 then
 	sudo_prog=""
 else
-	echo "${ttred}>> You must be in sudoers or be root to use some this program. ${treset}"
+	echo ">> You must be in sudoers or be root to use some this program."
 	exit
 fi
 
@@ -26,6 +26,6 @@ case "$arg" in
 		;;
 	*)
 		/opt/SafeSurfer-Desktop/sscli help
-		echo " launch launch the desktop app"
+		echo " launch   launch the desktop app"
 		;;
 esac

@@ -1,5 +1,25 @@
+// SafeSurfer-Desktop - main.js
+
+//
+// Copyright (C) 2018 MY NAME <MY EMAIL>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+//
+
 // import libraries
-const {app, BrowserWindow, Menu} = require('electron');
+const {app, BrowserWindow, Menu, clipboard} = require('electron');
 const shell = require('electron').shell;
 const electron = require('electron');
 const path = require('path');
@@ -7,13 +27,13 @@ const url = require('url');
 const ipc = require('electron').ipcRenderer;
 const {ipcRenderer} = require('electron');
 const store = require('store');
+const BUILDMODEJSON = require('./buildconfig/buildmode.json');
+const APPBUILD = BUILDMODEJSON.APPBUILD;
+const APPVERSION = BUILDMODEJSON.APPVERSION;
+const BUILDMODE = BUILDMODEJSON.BUILDMODE;
 
 let mainWindow;
 let childWindow;
-
-const APPBUILD = 1;
-const APPVERSION = "1.0.0";
-const BUILDMODE = "pre";
 
 var appUpdateAutoCheck = store.get('appUpdateAutoCheck');
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
@@ -38,51 +58,58 @@ function createWindow() {
 	// create app menu
 	var menu = [
 	{
-		label: 'General',
+		label: '&General',
 		submenu:
 		[
-			{label:'Sites of concern', click() {childWindow.show()} },
-			{label:'Force enable', click() {mainWindow.webContents.send('goForceEnable')} },
+			{label:'&Sites of &concern', click() {childWindow.show()} },
+			{
+				label: '&Toggle',
+				submenu:
+				[
+					{label:'Force &enable', click() {mainWindow.webContents.send('goForceEnable')} },
+					{label:'Force &disable', click() {mainWindow.webContents.send('goForceDisable')} }
+				]
+			},
 			{type:'separator'},
-			{label:'Exit', click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+			{label:'E&xit', click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 		]
 	},
 	{
-		label: 'Support',
+		label: '&Support',
 		submenu:
 		[
-			{label:'Check status in browser', click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
-          		{label:'Report a bug', click() {shell.openExternal('https://safesurfer.desk.com/')} },
+			{label:'&Check status in browser', click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
+          		{label:'&Report a bug', click() {shell.openExternal('https://safesurfer.desk.com/')} },
           		{
-          			label: 'Updates',
+          			label: '&Updates',
           			submenu:
           			[
-          				{label:'Check for update', click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
-          				{label:'Automatically check for updates', type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
+          				{label:'&Check for update', click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
+          				{label:'&Automatically check for updates', type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
           			]
           		},
-			{label:'Reload', click() {mainWindow.reload()} }
+			{label:'&Reload', click() {mainWindow.reload()} }
         	]
 
 	},
 	{
-		label: 'Info',
+		label: '&Info',
 		submenu:
 		[
-          		{label:'About us', click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
-          		{label:String("Version: "+APPVERSION+" - Build: "+APPBUILD)},
+          		{label:'&About us', click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
+          		{label:String("Version: "+APPVERSION+" - Build: "+APPBUILD), click() {clipboard.writeText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE))} },
                 	{type:'separator'},
-          		{label:'Help', click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
+          		{label:'&Help', click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
           	]
 
 	},
 	];
-	if (BUILDMODE == "pre") menu[1].submenu[4] = {label: 'Dev tools', click() {mainWindow.webContents.openDevTools()}, accelerator: 'CmdOrCtrl+D' }
+	if (BUILDMODE == "dev") menu[1].submenu[4] = {label: '&Dev tools', click() {mainWindow.webContents.openDevTools()}, accelerator: 'CmdOrCtrl+D' }
 	if (accountIsAssigned == true) menu[3] = {
-		label: 'Account',
+		label: '&Account',
 		submenu:
 		[
-			{label:'My Account', click() {} },
+			{label:'My &Account', click() {} },
 		]
 	}
 	//console.log(menu.commandsMap['43'])
