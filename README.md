@@ -2,7 +2,7 @@
 
 ## Information
 Safe Surfer Desktop is an Electron based app, which configures DNS settings for you.  
-To get more information about the service use the [Safe Surfer website](http://safesurfer.co.nz)  
+To get more information about the service use the [Safe Surfer website](http://safesurfer.co.nz).  
 This project's intent is for desktop users--families, persons, etc.  
 
 ### Version: 1.0.0
@@ -21,6 +21,7 @@ Windows and macOS: [NodeJS package](https://nodejs.org/en/download)
 deb:  debhelper devscripts  
 rpm:  rpmbuild  
 arch: base-devel  
+windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)
 
 ## Setting up build and development environment
 `npm i`  
