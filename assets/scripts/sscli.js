@@ -18,6 +18,10 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //
 
+/*
+	NOTE: THIS PROGRAM PROBABLY WON'T MAKE IT TO PRODUCTION
+*/
+
 const dns_changer = require('node_dns_changer');
 const dns = require('dns');
 

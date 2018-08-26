@@ -18,20 +18,25 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //
 
-const {ipcRenderer} = require('electron');
-const store = require('store');
-const USERNAME = process.env.USER;
-const os = require('os');
-const isAdmin = require('is-admin');
-const {dialog} = require('electron').remote;
-const shell = require('electron').shell;
+const {ipcRenderer} = require('electron'),
+ Store = require('electron-store'),
+ store = new Store(),
+ USERNAME = process.env.USER,
+ os = require('os'),
+ isAdmin = require('is-admin'),
+ {dialog} = require('electron').remote,
+ shell = require('electron').shell,
+ BUILDMODEJSON = require('./buildconfig/buildmode.json'),
+ updatesEnabled = BUILDMODEJSON.enableUpdates,
+ requireRoot = BUILDMODEJSON.requireRoot;
 
-var userNotRoot;
-var ENABLELOGGING = false;
-var dialogNotRunningAsAdmin = {type: 'info', buttons: ['Show me how', 'Exit'], message: 'To adjust network settings on your computer, you must run this app as admin.'};
+var userNotRoot,
+ ENABLELOGGING = false,
+ dialogNotRunningAsAdmin = {type: 'info', buttons: ['Show me how', 'Exit'], message: 'To adjust network settings on your computer, you must run this app as an Administrator or root.'};
 
 function showCloseDialog() {
 	// display dialog for if the app hasn't been started with root privileges
+	if (ENABLELOGGING == true) console.log("User is not root -- displaying dialog message.")
 	dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
 		if (updateResponse == 1) window.close();
 		if (updateResponse == 0) {
@@ -43,25 +48,27 @@ function showCloseDialog() {
 	});
 }
 
-switch(os.platform()) {
-	// display dialog per platform
-	case 'linux': case 'darwin':
-		if (USERNAME != 'root') {
-			userNotRoot=true;
-			showCloseDialog();
-		}
-		break;
-	case 'win32':
-		isAdmin().then(admin => {
-			if (admin == false) {
+if (requireRoot == true) {
+	switch(os.platform()) {
+		// display dialog per platform
+		/*case 'darwin':
+			if (USERNAME != 'root') {
 				userNotRoot=true;
 				showCloseDialog();
 			}
-		});
-		break;
+			break;*/
+		case 'win32':
+			isAdmin().then(admin => {
+				if (admin == false) {
+					userNotRoot=true;
+					showCloseDialog();
+				}
+			});
+			break;
+	}
 }
 
-if (store.get('appUpdateAutoCheck') == true) checkForAppUpdate({
+if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true) checkForAppUpdate({
 	current: false,
 	showErrors: false
 });

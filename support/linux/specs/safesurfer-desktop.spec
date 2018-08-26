@@ -17,12 +17,10 @@ Keep safe in the digitial surf with Safe Surfer.
 %prep
 %autosetup
 npm install
-npm install nexe
 
 
 %build
 %{__make} PACKAGEFORMAT=rpm build-linux
-%{__make} build-sscli
 
 
 %install
@@ -103,12 +101,11 @@ npm install nexe
 /opt/%{name}/views_resources_200_percent.pak
 /opt/%{name}/libnode.so
 /opt/%{name}/LICENSE
-/opt/%{name}/sscli
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/%{name}.desktop
 /usr/bin/sscli
 /usr/share/bash-completion/completions/sscli
-/opt/%{name}/%{name}-sudo.sh
+/usr/share/polkit-1/actions/nz.co.safesurfer.pkexec.safesurfer-desktop.policy
 
 
 %postun

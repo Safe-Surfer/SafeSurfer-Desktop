@@ -14,13 +14,11 @@ md5sums=('SKIP')
 prepare() {
 	cd "$pkgname-$pkgver"
 	npm install
-	npm install nexe
 }
 
 build() {
 	cd "$pkgname-$pkgver"
 	make PACKAGEFORMAT=arch build-linux
-	make build-background-service
 }
 
 package() {

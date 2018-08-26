@@ -19,41 +19,35 @@
 //
 
 // include libraries
-const BUILDMODEJSON = require('./buildconfig/buildmode.json');
-const APPBUILD = BUILDMODEJSON.APPBUILD;
-const APPVERSION = BUILDMODEJSON.APPVERSION;
-const BUILDMODE = BUILDMODEJSON.BUILDMODE;
-var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json');
-const os = require('os');
-const child_process = require('child_process');
-const dns = require('dns');
-const cheerio = require('cheerio');
-const bonjour = require('bonjour')();
-const {dialog} = require('electron').remote;
-const Request = require("request");
-const shell = require('electron').shell;
-const {ipcRenderer} = require('electron');
-const store = require('store');
-const encode = require('nodejs-base64-encode');
-const moment = require('moment');
-const dns_changer = require('node_dns_changer');
-
-const respOptions = {
-  uri: `http://check.safesurfer.co.nz`,
-  transform: function (body) {
-    return cheerio.load(body);
-  }
-};
-
-var serviceEnabled;
-var servicePreviousState;
-var userInternetCheck;
-var previousUserInternetCheck;
-var resp;
-var hasFoundLifeGuard;
-var remoteData;
-var ENABLELOGGING = false;
-var APPHASLOADED = false;
+const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
+ APPBUILD = BUILDMODEJSON.APPBUILD,
+ APPVERSION = BUILDMODEJSON.APPVERSION,
+ BUILDMODE = BUILDMODEJSON.BUILDMODE,
+ enableNotifications = BUILDMODEJSON.enableNotifications,
+ os = require('os'),
+ child_process = require('child_process'),
+ dns = require('dns'),
+ bonjour = require('bonjour')(),
+ {dialog} = require('electron').remote,
+ Request = require("request"),
+ shell = require('electron').shell,
+ {ipcRenderer, clipboard} = require('electron'),
+ Store = require('electron-store'),
+ store = new Store(),
+ encode = require('nodejs-base64-encode'),
+ moment = require('moment'),
+ dns_changer = require('node_dns_changer');
+var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
+ windowsNotificationCounter = 0,
+ serviceEnabled,
+ servicePreviousState,
+ userInternetCheck,
+ previousUserInternetCheck,
+ resp,
+ hasFoundLifeGuard,
+ remoteData,
+ ENABLELOGGING = false,
+ APPHASLOADED = false;
 
 if (LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
 if (ENABLELOGGING == true) console.log("Platform:", os.platform());
@@ -62,38 +56,38 @@ if (ENABLELOGGING == true) console.log(process.cwd());
 function displayProtection() {
 	// enable DNS
 	if (userInternetCheck == true) {
-	  if (ENABLELOGGING == true) console.log("Protected");
-	  $(".serviceActiveScreen").show();
-	  $(".serviceInactiveScreen").hide();
-	  // if a lifeguard has been found
-	  if (hasFoundLifeGuard == true) {
-	  	$("#bigTextProtected").html("PROTECTED BY LIFEGUARD");
-	  	$("#toggleButton").html("CONFIGURE LIFEGUARD");
-	  	$('.serviceToggle').addClass('serviceToggle_lifeguard')
-	  	$('.topTextBox_active').addClass('topTextBox_active_lifeguard');
-	  }
-	  else {
-	  	$("#bigTextProtected").html("YOU ARE PROTECTED");
-	  	$("#toggleButton").html("STOP PROTECTION");
-		$('.serviceToggle').removeClass('serviceToggle_lifeguard');
-		$('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
-	  }
-	  $('.serviceToggle').show();
-	  $('.appNoInternetConnectionScreen').hide();
-	  $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+		if (ENABLELOGGING == true) console.log("Protected");
+		$(".serviceActiveScreen").show();
+		$(".serviceInactiveScreen").hide();
+		// if a lifeguard has been found
+		if (hasFoundLifeGuard == true) {
+			$("#bigTextProtected").html("PROTECTED BY LIFEGUARD");
+			$("#toggleButton").html("CONFIGURE LIFEGUARD");
+			$('.serviceToggle').addClass('serviceToggle_lifeguard')
+			$('.topTextBox_active').addClass('topTextBox_active_lifeguard');
+		}
+		else {
+			$("#bigTextProtected").html("YOU ARE PROTECTED");
+			$("#toggleButton").html("STOP PROTECTION");
+			$('.serviceToggle').removeClass('serviceToggle_lifeguard');
+			$('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
+		}
+		$('.serviceToggle').show();
+		$('.appNoInternetConnectionScreen').hide();
+		$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
 	}
 }
 
 function displayUnprotection() {
 	// disable DNS
 	if (userInternetCheck == true) {
-	  if (ENABLELOGGING == true) console.log("Unprotected");
-	  $(".serviceInactiveScreen").show();
-	  $(".serviceActiveScreen").hide();
-	  $("#toggleButton").html("GET PROTECTED");
-	  $('.serviceToggle').show();
-	  $('.appNoInternetConnectionScreen').hide();
-	  $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+		if (ENABLELOGGING == true) console.log("Unprotected");
+		$(".serviceInactiveScreen").show();
+		$(".serviceActiveScreen").hide();
+		$("#toggleButton").html("GET PROTECTED");
+		$('.serviceToggle').show();
+		$('.appNoInternetConnectionScreen').hide();
+		$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
 	}
 }
 
@@ -197,7 +191,6 @@ function callProgram(command) {
 		command_arg.push(command_split[i]);
 	}
 	var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
-		// Node.js will invoke this callback when the
 		if (ENABLELOGGING == true) console.log(stdout);
 		return stdout;
 	});
@@ -205,21 +198,62 @@ function callProgram(command) {
 
 function enableServicePerPlatform() {
 	// apply DNS settings
-	dns_changer.setDNSservers({
-	    DNSservers:['104.197.28.121','104.155.237.225'],
-	    DNSbackupName:'before_safesurfer',
-	    loggingEnable:ENABLELOGGING
+	if (enableNotifications == true && windowsNotificationCounter == 0) new Notification('Safe Surfer', {
+		body: 'Woohoo! Getting your computer setup now.'
 	});
+	windowsNotificationCounter+=1;
+	if (os.platform() != 'linux') {
+		setTimeout(function () {
+			dns_changer.setDNSservers({
+			    DNSservers:['104.197.28.121','104.155.237.225'],
+			    DNSbackupName:'before_safesurfer',
+			    loggingEnable:ENABLELOGGING
+			});
+			if (serviceEnabled == false) {
+				if (ENABLELOGGING == true) console.log("ENABLE: Service is still not enabled.")
+				enableServicePerPlatform();
+			}
+		},1200);
+	}
 
+	else {
+		if (process.execPath.includes("/opt/SafeSurfer-Desktop") == true) {
+			callProgram('pkexec sscli enable');
+		}
+		else {
+			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli enable -- trying again'));
+		}
+	}
 }
 
 function disableServicePerPlatform() {
 	// restore DNS settings
-	dns_changer.restoreDNSservers({
-	    DNSbackupName:'before_safesurfer',
-	    loggingEnable:ENABLELOGGING
+	if (enableNotifications == true && windowsNotificationCounter == 0) new Notification('Safe Surfer', {
+		body: 'OK! Restoring your settings now.'
 	});
+	windowsNotificationCounter+=1;
+	if (os.platform() != 'linux') {
 
+		setTimeout(function () {
+			dns_changer.restoreDNSservers({
+			    DNSbackupName:'before_safesurfer',
+			    loggingEnable:ENABLELOGGING
+			});
+			if (serviceEnabled == true) {
+				if (ENABLELOGGING == true) console.log("DISABLE: Service is still not disabled -- trying again.")
+				disableServicePerPlatform();
+			}
+		},1200);
+	}
+
+	else {
+		if (process.execPath.includes("/opt/SafeSurfer-Desktop") == true) {
+			callProgram('pkexec sscli disable');
+		}
+		else {
+			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli disable'));
+		}
+	}
 }
 
 function checkIfOnLifeGuardNetwork() {
@@ -302,16 +336,20 @@ function checkForAppUpdate(options) {
 				break;
 			}
 		}
-		var updateAvailableDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('There is an update available (v' + remoteData.versions[iteration].version + '). Do you want to install it now?')};
-		var updateDowngradeDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('Please downgrade to version ' + remoteData.versions[iteration].version + '. Do you want to install it now?')};
+		var updateAvailableDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('There is an update available (v' + remoteData.versions[iteration].version + '). Do you want to install it now?')},
+		 updateDowngradeDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('Please downgrade to version ' + remoteData.versions[iteration].version + '. Do you want to install it now?')};
 		if (remoteData.recommendedBuild > APPBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1) {
 			// update available
-
 			dialog.showMessageBox(updateAvailableDialog, updateResponse => {
 				if (updateResponse == 0) {
 					if (ENABLELOGGING == true) console.log("UPDATE: User wants update.");
 					versionNew = remoteData.versions[iteration].version;
-					shell.openExternal('https://safesurfer.co.nz/download/desktop');
+					if (remoteData.versions[iteration].altLink === undefined) {
+						shell.openExternal('https://safesurfer.co.nz/download/desktop');
+					}
+					else {
+						shell.openExternal(remoteData.versions[iteration].altLink);
+					}
 				}
 				else {
 					return;
@@ -375,11 +413,33 @@ function sendTelemetry() {
 	Request.post('http://104.236.242.185:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
 		if (response || body) console.log('TEL SEND: Sent.');
 		if (err) {
-			console.log('TEL SEND: Cannot send.');
+			console.log('TEL SEND: Could not send.');
 			return;
 		}
 	});
 	//return dataToSend;
+}
+
+function versionInformationCopy() {
+	// copy app build information to clipboard
+	var dialogBuildInformationCopy = {type: 'info', buttons: ['No, return to app', 'Just copy information', 'Yes'], message: 'Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?'};
+	dialog.showMessageBox(dialogBuildInformationCopy, dialogResponse => {
+		clipboard.writeText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE))
+		if (dialogResponse == 2) shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues');
+	});
+}
+
+function forceToggleWarning({wantedState}) {
+	// display warning message as this could break settings
+	var toggleWarning = {type: 'info', buttons: ['No, nevermind', 'I understand and wish to continue'], message: 'The service is already in the state which you request.\nForcing the service to be enabled in this manner may have consequences.\nYour computer\'s network configuration could break by doing this action.'},
+	 continu = false;
+	if (wantedState == serviceEnabled) {
+		dialog.showMessageBox(toggleWarning, dialogResponse => {
+			if (dialogResponse == 1) continu = true;
+		});
+	}
+	else continu = true;
+	return continu;
 }
 
 function mainReloadProcess() {
@@ -398,16 +458,16 @@ function mainReloadProcess() {
 		internetConnectionCheck();
 		checkServiceState();
 		if (userInternetCheck == true) {
-			if (serviceEnabled != servicePreviousState) {
+			if (serviceEnabled != servicePreviousState && servicePreviousState !== undefined) {
 				if (ENABLELOGGING == true) console.log('SERVICE STATE: State has changed.');
 				affirmServiceState();
 				if (serviceEnabled == true) {
-					new Notification('Safe Surfer', {
+					if (enableNotifications == true) new Notification('Safe Surfer', {
 	    					body: 'You are now safe to surf the internet. Safe Surfer has been setup.'
 	  	  			});
 	  	  		}
 	  	  		else if (serviceEnabled == false) {
-					new Notification('Safe Surfer', {
+					if (enableNotifications == true) new Notification('Safe Surfer', {
 	    					body: 'Safe Surfer has been disabled. You are now unprotected.'
 	  	  			});
 	  	  		}
@@ -426,6 +486,7 @@ function mainReloadProcess() {
 }
 
 ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
+	if (ENABLELOGGING == true) console.log("UPDATES: Auto check stated changed to",!arg)
 	if (arg == true) {
 		store.set('appUpdateAutoCheck', false);
 	}
@@ -443,9 +504,13 @@ ipcRenderer.on('checkIfUpdateAvailable', (event, arg) => {
 });
 
 ipcRenderer.on('goForceEnable', () => {
-	enableServicePerPlatform();
+	if (forceToggleWarning({wantedState: true}) == true) enableServicePerPlatform();
 });
 
 ipcRenderer.on('goForceDisable', () => {
-	disableServicePerPlatform();
+	if (forceToggleWarning({wantedState: false}) == true) disableServicePerPlatform();
+});
+
+ipcRenderer.on('goBuildToClipboard', () => {
+	versionInformationCopy();
 });

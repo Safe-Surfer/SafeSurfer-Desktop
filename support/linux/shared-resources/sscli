@@ -1,31 +1,146 @@
 #!/bin/bash
 
-arg="$1"
-hasSudo=$(sudo -nv 2>&1)
-if [[ "$hasSudo" = "sudo: a password is required" || "$hasSudo" = "" || -z "$hasSudo" ]] && which sudo > /dev/null
-then
-	sudo_prog="sudo -E"
+# SafeSurfer-Desktop - sscli
 
-elif [ "$(whoami)" = "root" ]
+#
+# Copyright (C) 2018 MY NAME <MY EMAIL>
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+#
+
+arg="$1"
+resolvconf="/etc/resolv.conf"
+primaryDNS=104.197.28.121
+secondaryDNS=104.155.237.225
+
+function sudoUserCheck() {
+# check if user is root
+if [ ! "$(whoami)" = "root" ]
 then
-	sudo_prog=""
+	echo "ERROR: You must be in sudoers or be root to use some this program."
+	exit 1
+fi
+return 0
+}
+
+function printHelpMenu() {
+# print the help menu
+cat << EOF
+The Safe Surfer command line utility
+
+Usage: sscli [OPT]
+
+OPTS:
+help     print this menu
+enable   enable the DNS
+disable  disable the DNS
+service  check and enable as service
+check    check if DNS is set
+launch   launch the desktop app
+EOF
+}
+
+function enableBackgroundService() {
+# a process which checks if services isn't enabled, then enables it.
+while true
+do
+	if ! checkServiceState
+	then
+		echo "SERVICE: Not enabled... setting up."
+		setDNSservers
+	else
+		echo "SERVICE: User is already protected."
+	fi
+sleep 10m
+done
+}
+
+function checkServiceState() {
+# return if the service is enabled
+#remoteData=$(curl -s 104.236.242.185:8080/version-information.json | python3 -c "import sys, json; print(json.load(sys.stdin)['linkBase'])")
+if [[ "$(dig +short check.safesurfer.co.nz)" = "130.211.44.88" ]]
+then
+	return 0
 else
-	echo ">> You must be in sudoers or be root to use some this program."
-	exit
+	return 1
 fi
 
+}
+
+function setDNSservers() {
+# set DNS settings
+mv "$resolvconf"{,.before_safesurfer}
+echo -e "nameserver $primaryDNS\nnameserver $secondaryDNS" > "$resolvconf"
+
+if checkServiceState
+then
+	echo "DNS settings installed successfully."
+	chattr +i /etc/resolv.conf
+	exit 0
+else
+	echo "ERROR: DNS settings failed to install; Reverting changes."
+	mv "$resolvconf"{.before_safesurfer,}
+	exit 1
+fi
+
+which systemd-resolve && systemd-resolve --flush-caches
+which nscd && service nscd reload && service nscd restart
+
+}
+
+function restoreDNSservers() {
+# restore DNS settings
+chattr -i /etc/resolv.conf
+[ ! -f "$resolvconf.before_safesurfer" ] && echo "ERROR: Could not find DNS backup file."
+mv "$resolvconf"{.before_safesurfer,}
+if ! checkServiceState
+then
+	echo "DNS settings removed successfully."
+	exit 0
+else
+	echo "ERROR: DNS settings failed to remove."
+	exit 1
+fi
+
+which systemd-resolve && systemd-resolve --flush-caches
+which nscd && service nscd reload && service nscd restart
+
+}
+
+echo -e "sscli\n by\nSafe Surfer\n-----"
 case "$arg" in
 	enable)
-		$sudo_prog /opt/SafeSurfer-Desktop/sscli enable
+		sudoUserCheck
+		checkServiceState && echo "SERVICE: Already enabled." || setDNSservers
 		;;
 	disable)
-		$sudo_prog /opt/SafeSurfer-Desktop/sscli disable
+		sudoUserCheck
+		checkServiceState && restoreDNSservers || echo "SERVICE: Already disabled."
+		;;
+	service)
+		sudoUserCheck
+		enableBackgroundService
+		;;
+	check)
+		checkServiceState && echo "SERVICE: Enabled." || echo "SERIVCE: Disabled."
 		;;
 	launch)
-		$sudo_prog /opt/SafeSurfer-Desktop/SafeSurfer-Desktop
+		[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1
+		/opt/SafeSurfer-Desktop/SafeSurfer-Desktop
 		;;
 	*)
-		/opt/SafeSurfer-Desktop/sscli help
-		echo " launch   launch the desktop app"
+		printHelpMenu
 		;;
 esac

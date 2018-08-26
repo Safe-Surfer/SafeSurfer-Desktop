@@ -3,8 +3,9 @@ Section: utils
 Priority: optional
 Maintainer: Caleb Woodbine <calebwoodbine.public@gmail.com>
 Build-Depends: debhelper (>= 9)
+Homepage: http://safesurfer.co.nz
 
 Package: safesurfer-desktop
-Architecture: all
+Architecture: amd64
 Depends: policykit-1
 Description: Keep safe in the digitial surf with Safe Surfer.

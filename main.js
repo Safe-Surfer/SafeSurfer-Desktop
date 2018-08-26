@@ -19,18 +19,20 @@
 //
 
 // import libraries
-const {app, BrowserWindow, Menu, clipboard} = require('electron');
-const shell = require('electron').shell;
-const electron = require('electron');
-const path = require('path');
-const url = require('url');
-const ipc = require('electron').ipcRenderer;
-const {ipcRenderer} = require('electron');
-const store = require('store');
-const BUILDMODEJSON = require('./buildconfig/buildmode.json');
-const APPBUILD = BUILDMODEJSON.APPBUILD;
-const APPVERSION = BUILDMODEJSON.APPVERSION;
-const BUILDMODE = BUILDMODEJSON.BUILDMODE;
+const {app, BrowserWindow, Menu, clipboard} = require('electron'),
+ shell = require('electron').shell,
+ electron = require('electron'),
+ path = require('path'),
+ url = require('url'),
+ ipc = require('electron').ipcRenderer,
+ {ipcRenderer} = require('electron'),
+ Store = require('electron-store'),
+ store = new Store(),
+ BUILDMODEJSON = require('./buildconfig/buildmode.json'),
+ APPBUILD = BUILDMODEJSON.APPBUILD,
+ APPVERSION = BUILDMODEJSON.APPVERSION,
+ BUILDMODE = BUILDMODEJSON.BUILDMODE,
+ updatesEnabled = BUILDMODEJSON.enableUpdates;
 
 let mainWindow;
 let childWindow;
@@ -61,34 +63,26 @@ function createWindow() {
 		label: '&General',
 		submenu:
 		[
-			{label:'&Sites of &concern', click() {childWindow.show()} },
+			{label:'Sites of concern', click() {childWindow.show()} },
 			{
-				label: '&Toggle',
+				label: 'Toggle',
 				submenu:
 				[
-					{label:'Force &enable', click() {mainWindow.webContents.send('goForceEnable')} },
-					{label:'Force &disable', click() {mainWindow.webContents.send('goForceDisable')} }
+					{label:'Force enable', click() {mainWindow.webContents.send('goForceEnable')} },
+					{label:'Force disable', click() {mainWindow.webContents.send('goForceDisable')} }
 				]
 			},
 			{type:'separator'},
-			{label:'E&xit', click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+			{label:'Exit', click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 		]
 	},
 	{
 		label: '&Support',
 		submenu:
 		[
-			{label:'&Check status in browser', click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
-          		{label:'&Report a bug', click() {shell.openExternal('https://safesurfer.desk.com/')} },
-          		{
-          			label: '&Updates',
-          			submenu:
-          			[
-          				{label:'&Check for update', click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
-          				{label:'&Automatically check for updates', type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
-          			]
-          		},
-			{label:'&Reload', click() {mainWindow.reload()} }
+			{label:'Check status in browser', click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
+          		{label:'Report a bug', click() {shell.openExternal('https://safesurfer.desk.com/')} },
+			{label:'Reload', click() {mainWindow.reload()} }
         	]
 
 	},
@@ -96,23 +90,30 @@ function createWindow() {
 		label: '&Info',
 		submenu:
 		[
-          		{label:'&About us', click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
-          		{label:String("Version: "+APPVERSION+" - Build: "+APPBUILD), click() {clipboard.writeText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE))} },
+          		{label:'About us', click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
+          		{label:String("Version: "+APPVERSION+" - Build: "+APPBUILD), click() {mainWindow.webContents.send('goBuildToClipboard')} },
                 	{type:'separator'},
-          		{label:'&Help', click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
+          		{label:'Help', click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
           	]
 
 	},
 	];
+	if (updatesEnabled == true) menu[1].submenu[3] = {
+		label: 'Updates',
+		submenu:
+		[
+			{label:'Check for update', click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
+			{label:'Automatically check for updates', type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
+		]
+	};
 	if (BUILDMODE == "dev") menu[1].submenu[4] = {label: '&Dev tools', click() {mainWindow.webContents.openDevTools()}, accelerator: 'CmdOrCtrl+D' }
 	if (accountIsAssigned == true) menu[3] = {
 		label: '&Account',
 		submenu:
 		[
-			{label:'My &Account', click() {} },
+			{label:'My Account', click() {} },
 		]
 	}
-	//console.log(menu.commandsMap['43'])
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }
 
