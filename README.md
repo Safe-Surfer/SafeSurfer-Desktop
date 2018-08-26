@@ -31,10 +31,11 @@ Linux: `make build-linux`
 Windows: `make build-windows`  
 macOS: `make build-macos`  
 
-## Linux packaging
+## Packaging
 deb: `make deb-pkg`  
 arch: `make arch-pkg`  
 rpm: use spec file in 'support/linux/specs'  
+exe: use iss file in 'support\windows\build-windows-installer.iss'
 
 ## Bugs
 If you have any issues or have found bugs in this software, please report to https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues  
