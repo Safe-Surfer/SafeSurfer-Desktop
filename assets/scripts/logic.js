@@ -37,7 +37,7 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  encode = require('nodejs-base64-encode'),
  moment = require('moment'),
  dns_changer = require('node_dns_changer'),
- getMeta = require("lets-get-meta")
+ getMeta = require("lets-get-meta");
 var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
  windowsNotificationCounter = 0,
  serviceEnabled,
@@ -422,7 +422,7 @@ function collectTelemetry() {
 	teleData.RELEASE = os.release();
 	teleData.CPUCORES = os.cpus().length;
 	teleData.ISSERVICEENABLED = serviceEnabled;
-	if (os.platform() != 'win32') teleData.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
+	if (os.platform() != 'win32') teleData.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
 	return JSON.stringify(teleData);
 }
 
@@ -441,23 +441,24 @@ function sendTelemetry() {
 
 function telemetryPrompt() {
 	// ask if user wants to participate in telemetry collection
-	var teleMsg = {type: 'info', buttons: ['Yes, I will participate', 'I want to see what will be send', 'No, thanks'], message: "We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information from users"};
+	var teleMsg = {type: 'info', buttons: ['Yes, I will participate', 'I want to see what will be sent', 'No, thanks'], message: "We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team"};
 	dialog.showMessageBox(teleMsg, dialogResponse => {
 		if (ENABLELOGGING == true) console.log("TELE: User has agreed to the prompt.");
 		if (dialogResponse == 0) {
 			sendTelemetry();
 		}
 		else if (dialogResponse == 1) {
-			var previewTeleData = {type: 'info', buttons: ['Send', 'Don\'t send'], message: String("Here is what will be sent:\n\n"+collectTelemetry())};
+			var previewTeleData = {type: 'info', buttons: ['Send', 'Don\'t send'], message: String("Here is what will be sent:\n\n"+(collectTelemetry())+"\n\nIn case you don't understand this data, it includes (such things as):\n - Which operation system you use\n - How many CPU cores you have\n - If the service is setup on your computer")};
 			dialog.showMessageBox(previewTeleData, dialogResponse => {
 				if (dialogResponse == 0) sendTelemetry();
 			});
 		}
 		else if (dialogResponse == 2) {
-			var nothingSent = {type: 'info', buttons: ['Return'], message: String("Nothing has been sent")};
+			var nothingSent = {type: 'info', buttons: ['Return'], message: "Nothing has been sent."};
 			dialog.showMessageBox(nothingSent, dialogResponse => { });
 		}
 	});
+	store.set('telemetryHasAnswer', true);
 }
 
 function versionInformationCopy() {
@@ -495,6 +496,7 @@ function mainReloadProcess() {
 
 	else {
 		finishedLoading();
+		if (store.get('telemetryHasAnswer') != true) telemetryPrompt();
 		internetConnectionCheck();
 		checkServiceState();
 		if (userInternetCheck == true) {

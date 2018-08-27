@@ -69,8 +69,7 @@ done
 
 function checkServiceState() {
 # return if the service is enabled
-#remoteData=$(curl -s 104.236.242.185:8080/version-information.json | python3 -c "import sys, json; print(json.load(sys.stdin)['linkBase'])")
-if [[ "$(dig +short check.safesurfer.co.nz)" = "130.211.44.88" ]]
+if curl -s check.safesurfer.co.nz | grep -q '<meta name="ss_status" content="protected"> <!-- DO NOTE REMOVE - USED FOR STATUS CHECK -->'
 then
 	return 0
 else

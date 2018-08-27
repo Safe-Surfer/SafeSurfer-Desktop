@@ -49,9 +49,11 @@ uninstall:
 prep-deb:
 	make PACKAGEFORMAT=deb build-linux
 	@mkdir -p deb-build/safesurfer-desktop
-	@cp -p -r support/linux/debian deb-build/safesurfer-desktop/debian
+	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
 	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop
 	@make DESTDIR=deb-build/safesurfer-desktop/debian/safesurfer-desktop install
+	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop/usr/share/doc/safesurfer-desktop
+	@mv deb-build/safesurfer-desktop/debian/copyright deb-build/safesurfer-desktop/debian/safesurfer-desktop/usr/share/doc/safesurfer-desktop
 
 deb-pkg: prep-deb
 	@cd deb-build/safesurfer-desktop/debian && debuild -b
@@ -72,7 +74,7 @@ setup:
 	npm i nexe
 
 clean:
-	@rm -rf dist build release-builds
+	@rm -rf dist deb-build release-builds
 
 slim:
 	@rm -rf node_modules

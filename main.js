@@ -91,8 +91,8 @@ function createWindow() {
 		submenu:
 		[
           		{label:'About us', click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
+          		{label:'Contact', click() {shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
           		{label:String("Version: "+APPVERSION+" - Build: "+APPBUILD), click() {mainWindow.webContents.send('goBuildToClipboard')} },
-          		{label:'Contact', click() {shell.openExternal('http://www.safesurfer.co.nz/contact/')} }
                 	{type:'separator'},
           		{label:'Help', click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
           	]
