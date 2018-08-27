@@ -36,7 +36,8 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  store = new Store(),
  encode = require('nodejs-base64-encode'),
  moment = require('moment'),
- dns_changer = require('node_dns_changer');
+ dns_changer = require('node_dns_changer'),
+ getMeta = require("lets-get-meta")
 var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
  windowsNotificationCounter = 0,
  serviceEnabled,
@@ -48,6 +49,15 @@ var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
  remoteData,
  ENABLELOGGING = false,
  APPHASLOADED = false;
+
+var appStates = {
+	"serviceEnabled":true,
+	"serviceEnabled_previous":null,
+	"internet":null,
+	"internet_previous":null,
+	"lifeguardFound":null,
+	"lifeguardFound_previous":null
+}
 
 if (LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
 if (ENABLELOGGING == true) console.log("Platform:", os.platform());
@@ -105,7 +115,6 @@ function toggleServiceState() {
 				disableServicePerPlatform();
 				checkServiceState();
 			}
-
 		break;
 
 		case false:
@@ -140,45 +149,56 @@ function checkServiceState() {
 	if (ENABLELOGGING == true) console.log('Getting state of service');
   	//resp = rp(respOptions)
   	//if (resp.response.body.indexOf('<meta name="ss_status" content="unprotected"><!-- DO NOTE REMOVE - USED FOR STATUS CHECK -->') > -1) {
-	dns.lookup('check.safesurfer.co.nz', function(err, address) {
-		if (ENABLELOGGING == true) console.log("checkServiceState - address ::", address);
-		if (ENABLELOGGING == true) console.log("checkServiceState - err     ::", err);
-		// ip address returned when service is disabled
-		if (address == "104.197.143.234") {
-			serviceEnabled = false;
-			if (ENABLELOGGING == true) console.log('DNS Request: Service disabled');
-		}
-		// ip address returned when service is enabled
-		else if (address == "130.211.44.88") {
-			serviceEnabled = true;
-			if (ENABLELOGGING == true) console.log('DNS Request: Service enabled');
-			checkIfOnLifeGuardNetwork();
-		}
-		// if neither are returned
-		else {
-      			serviceEnabled = false;
-			// check internet connection
-			if (userInternetCheck == true) {
-    				if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
+  	try {
+	  	Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
+	  		var metaResponse = getMeta(body);
+		//dns.lookup('check.safesurfer.co.nz', function(err, address) {
+			if (ENABLELOGGING == true) console.log("checkServiceState - metaResponse ::", metaResponse);
+			//if (ENABLELOGGING == true) console.log("checkServiceState - address ::", address);
+			if (ENABLELOGGING == true) console.log("checkServiceState - err     ::", error);
+			// ip address returned when service is disabled
+			//console.log(getMeta(body).ss_status);
+			//if (address == "104.197.143.234") {
+			if (metaResponse.ss_status == 'unprotected') {
+				serviceEnabled = false;
+				if (ENABLELOGGING == true) console.log('DNS Request: Service disabled');
 			}
-			if (err !== undefined) {
-				if (ENABLELOGGING == true) console.log('Network: Internet connection unavailable');
-				$('.appNoInternetConnectionScreen').show();
-				$('.appNoInternetConnectionScreen').parent().css('z-index', 58);
-				$('.bigText_nointernet').show();
-				$('.serviceActiveScreen').hide();
-				$('.serviceInactiveScreen').hide();
-				$('.serviceToggle').hide();
+			// ip address returned when service is enabled
+			//else if (address == "130.211.44.88") {
+			if (metaResponse.ss_status == 'protected') {
+				serviceEnabled = true;
+				if (ENABLELOGGING == true) console.log('DNS Request: Service enabled');
+				checkIfOnLifeGuardNetwork();
 			}
-	  	}
-	  	if (err === undefined) {
-			$('.serviceToggle').show();
-			$('.appNoInternetConnectionScreen').hide();
-			$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+			// if neither are returned
+			else {
+	      			serviceEnabled = false;
+				// check internet connection
+				if (userInternetCheck == true) {
+	    				if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
+				}
+				else if (error !== undefined) {
+					if (ENABLELOGGING == true) console.log('NETWORK: Internet connection unavailable');
+					$('.appNoInternetConnectionScreen').show();
+					$('.appNoInternetConnectionScreen').parent().css('z-index', 58);
+					$('.bigText_nointernet').show();
+					$('.serviceActiveScreen').hide();
+					$('.serviceInactiveScreen').hide();
+					$('.serviceToggle').hide();
+				}
+		  	}
+		  	if (error === undefined) {
+				$('.serviceToggle').show();
+				$('.appNoInternetConnectionScreen').hide();
+				$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
 
-		}
-		APPHASLOADED = true;
-  	});
+			}
+			APPHASLOADED = true;
+	  	});
+	}
+  	catch(err) {
+  		console.log("Failed to get response :::", err)
+  	}
 }
 
 function callProgram(command) {
@@ -210,7 +230,7 @@ function enableServicePerPlatform() {
 			    loggingEnable:ENABLELOGGING
 			});
 			if (serviceEnabled == false) {
-				if (ENABLELOGGING == true) console.log("ENABLE: Service is still not enabled.")
+				if (ENABLELOGGING == true) console.log("ENABLE: Service is still not enabled -- trying again.")
 				enableServicePerPlatform();
 			}
 		},1200);
@@ -221,7 +241,7 @@ function enableServicePerPlatform() {
 			callProgram('pkexec sscli enable');
 		}
 		else {
-			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli enable -- trying again'));
+			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli enable'));
 		}
 	}
 }
@@ -302,15 +322,14 @@ function finishedLoading() {
 
 function checkForAppUpdate(options) {
 	// for for app update
-	var baseLink;
-	var versionList = [];
-	var versionNew;
-	var serverAddress = "104.236.242.185";
-	var serverPort = 8080;
-	var serverDataFile = "/version-information.json"
-
-	var updateCurrentDialog = {type: 'info', buttons: ['Ok'], message: String('You\'re up to date.')};
-	var updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String('Whoops, I couldn\'t find updates... Something seems to have gone wrong.')};
+	var baseLink,
+	 versionList = [],
+	 versionNew,
+	 serverAddress = "104.236.242.185",
+	 serverPort = 8080,
+	 serverDataFile = "/version-information.json",
+	 updateCurrentDialog = {type: 'info', buttons: ['Ok'], message: String('You\'re up to date.')},
+	 updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String('Whoops, I couldn\'t find updates... Something seems to have gone wrong.')};
 
 	Request.get(String("http://" + serverAddress + ":" + serverPort + serverDataFile), (error, response, body) => {
 		if(error) {
@@ -345,7 +364,7 @@ function checkForAppUpdate(options) {
 					if (ENABLELOGGING == true) console.log("UPDATE: User wants update.");
 					versionNew = remoteData.versions[iteration].version;
 					if (remoteData.versions[iteration].altLink === undefined) {
-						shell.openExternal('https://safesurfer.co.nz/download/desktop');
+						shell.openExternal(remoteData.baseLink);
 					}
 					else {
 						shell.openExternal(remoteData.versions[iteration].altLink);
@@ -420,6 +439,27 @@ function sendTelemetry() {
 	//return dataToSend;
 }
 
+function telemetryPrompt() {
+	// ask if user wants to participate in telemetry collection
+	var teleMsg = {type: 'info', buttons: ['Yes, I will participate', 'I want to see what will be send', 'No, thanks'], message: "We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information from users"};
+	dialog.showMessageBox(teleMsg, dialogResponse => {
+		if (ENABLELOGGING == true) console.log("TELE: User has agreed to the prompt.");
+		if (dialogResponse == 0) {
+			sendTelemetry();
+		}
+		else if (dialogResponse == 1) {
+			var previewTeleData = {type: 'info', buttons: ['Send', 'Don\'t send'], message: String("Here is what will be sent:\n\n"+collectTelemetry())};
+			dialog.showMessageBox(previewTeleData, dialogResponse => {
+				if (dialogResponse == 0) sendTelemetry();
+			});
+		}
+		else if (dialogResponse == 2) {
+			var nothingSent = {type: 'info', buttons: ['Return'], message: String("Nothing has been sent")};
+			dialog.showMessageBox(nothingSent, dialogResponse => { });
+		}
+	});
+}
+
 function versionInformationCopy() {
 	// copy app build information to clipboard
 	var dialogBuildInformationCopy = {type: 'info', buttons: ['No, return to app', 'Just copy information', 'Yes'], message: 'Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?'};
@@ -478,6 +518,10 @@ function mainReloadProcess() {
 			if (ENABLELOGGING == true) console.log('INTERNET: State has changed.');
 			affirmServiceState();
   			previousUserInternetCheck = userInternetCheck;
+		}
+		if (hasFoundLifeGuard != appStates.lifeguardFound_previous) {
+			affirmServiceState
+			appStates.lifeguardFound_previous = hasFoundLifeGuard;
 		}
 	}
 
