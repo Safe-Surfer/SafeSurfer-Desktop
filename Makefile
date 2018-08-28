@@ -9,16 +9,11 @@ build-linux:
 	@cp ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-linux-x64/
 
 build-windows:
-	npm run package-win
-	@cp ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-win32-x64
+	@[ $(ARCH) != 32 ] && npm run package-win || npm run package-win32
+	@cp -p ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop*/
 
 build-macos:
 	npm run package-macos
-
-build-sscli:
-	@mkdir -p ./release-builds
-	npm run nexe assets/scripts/sscli.js
-	mv sscli ./release-builds/sscli
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)

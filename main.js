@@ -22,9 +22,11 @@
 const {app, BrowserWindow, Menu, clipboard} = require('electron'),
  shell = require('electron').shell,
  electron = require('electron'),
+ remote = require('electron').remote,
  path = require('path'),
  url = require('url'),
  ipc = require('electron').ipcRenderer,
+ os = require('os'),
  {ipcRenderer} = require('electron'),
  Store = require('electron-store'),
  store = new Store(),
@@ -32,7 +34,8 @@ const {app, BrowserWindow, Menu, clipboard} = require('electron'),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
- updatesEnabled = BUILDMODEJSON.enableUpdates;
+ updatesEnabled = BUILDMODEJSON.enableUpdates,
+ i18n = new(require('./assets/scripts/i18n.js'));
 
 let mainWindow;
 let childWindow;
@@ -48,6 +51,7 @@ function createWindow() {
 		height: 600,
 		minWidth: 550,
 		minHeight: 600,
+		title: 'Safe Surfer',
 		icon: path.join(__dirname, 'ss-logo.png')
 	});
 
@@ -60,76 +64,76 @@ function createWindow() {
 	// create app menu
 	var menu = [
 	{
-		label: '&General',
+		label: i18n.__('General'),
 		submenu:
 		[
-			{label:'Sites of concern', click() {childWindow.show()} },
+			{label: i18n.__('Sites of concern'), click() {childWindow.show()} },
 			{
-				label: 'Toggle',
+				label: i18n.__('Toggle'),
 				submenu:
 				[
-					{label:'Force enable', click() {mainWindow.webContents.send('goForceEnable')} },
-					{label:'Force disable', click() {mainWindow.webContents.send('goForceDisable')} }
+					{label: i18n.__('Force enable'), click() {mainWindow.webContents.send('goForceEnable')} },
+					{label: i18n.__('Force disable'), click() {mainWindow.webContents.send('goForceDisable')} }
 				]
 			},
 			{type:'separator'},
-			{label:'Exit', click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+			{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 		]
 	},
 	{
-		label: '&Support',
+		label: i18n.__('Support'),
 		submenu:
 		[
-			{label:'Check status in browser', click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
-          		{label:'Report a bug', click() {shell.openExternal('https://safesurfer.desk.com/')} },
-			{label:'Reload', click() {mainWindow.reload()} }
+			{label: i18n.__('Check status in browser'), click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
+          		{label: i18n.__('Report a bug'), click() {shell.openExternal('https://safesurfer.desk.com/')} },
+			{label: i18n.__('Reload'), click() {mainWindow.reload()} }
         	]
 
 	},
 	{
-		label: '&Info',
+		label: i18n.__('Info'),
 		submenu:
 		[
-          		{label:'About us', click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
-          		{label:'Contact', click() {shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
+          		{label: i18n.__('About us'), click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
+          		{label: i18n.__('Contact'), click() {shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
           		{label:String("Version: "+APPVERSION+" - Build: "+APPBUILD), click() {mainWindow.webContents.send('goBuildToClipboard')} },
                 	{type:'separator'},
-          		{label:'Help', click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
+          		{label: i18n.__('Help'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
           	]
 
 	},
 	];
-	if (updatesEnabled == true) menu[1].submenu[3] = {
-		label: 'Updates',
+	if (updatesEnabled == true && os.platform() != 'linux') menu[1].submenu[3] = {
+		label: i18n.__('Updates'),
 		submenu:
 		[
-			{label:'Check for update', click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
-			{label:'Automatically check for updates', type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
+			{label: i18n.__('Check for update'), click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
+			{label: i18n.__('Automatically check for updates'), type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
 		]
 	};
-	if (BUILDMODE == "dev") menu[1].submenu[4] = {label: '&Dev tools', click() {mainWindow.webContents.openDevTools()}, accelerator: 'CmdOrCtrl+D' }
+	if (BUILDMODE == "dev") menu[1].submenu[4] = {label: i18n.__('Dev tools'), click() {mainWindow.webContents.openDevTools()}, accelerator: 'CmdOrCtrl+D' }
 	if (accountIsAssigned == true) menu[3] = {
-		label: '&Account',
+		label: i18n.__('Account'),
 		submenu:
 		[
-			{label:'My Account', click() {} },
+			{label: i18n.__('My Account'), click() {} },
 		]
 	}
 	Menu.setApplicationMenu(Menu.buildFromTemplate(menu));
 }
 
-app.on('ready', function() {
-	createWindow();
+	app.on('ready', function() {
+		createWindow();
+	});
+
+	app.on('window-all-closed', function () {
+	  if (process.platform !== 'darwin') {
+	    app.quit();
+	  }
+	})
+
+	app.on('activate', function () {
+	  if (mainWindow === null) {
+	    createWindow();
+	  }
 });
-
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-})
-
-app.on('activate', function () {
-  if (mainWindow === null) {
-    createWindow();
-  }
-})

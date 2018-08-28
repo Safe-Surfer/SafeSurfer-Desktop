@@ -28,7 +28,8 @@ const {ipcRenderer} = require('electron'),
  shell = require('electron').shell,
  BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  updatesEnabled = BUILDMODEJSON.enableUpdates,
- requireRoot = BUILDMODEJSON.requireRoot;
+ requireRoot = BUILDMODEJSON.requireRoot
+ i18n = new(require('./assets/scripts/i18n.js'));
 
 var userNotRoot,
  ENABLELOGGING = false,
@@ -68,7 +69,7 @@ if (requireRoot == true) {
 	}
 }
 
-if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true) checkForAppUpdate({
+if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && os.platform() != 'linux') checkForAppUpdate({
 	current: false,
 	showErrors: false
 });

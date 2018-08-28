@@ -11,7 +11,8 @@
     "nexe": "node_modules/.bin/nexe",
     "package-linux": "electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/linux/ss-logo.png --prun=true --out=release-builds",
     "package-macos": "electron-packager . --overwrite --platform=darwin --arch=x64 --prune --out=release-builds",
-    "package-win": "electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\""
+    "package-win": "electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"",
+    "package-win32": "electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\""
   },
   "repository": "https://gitlab.com/safesurfer/SafeSurfer-Desktop",
   "keywords": [
@@ -30,6 +31,7 @@
   },
   "dependencies": {
     "bonjour": "^3.5.0",
+    "electron-download-manager": "^2.2.0",
     "electron-store": "^2.0.0",
     "electron-sudo": "^4.0.12",
     "is-admin": "^2.1.1",
@@ -38,7 +40,7 @@
     "network": "^0.4.1",
     "nexe": "^2.0.0-rc.34",
     "node-dns-sd": "^0.2.0",
-    "node_dns_changer": "^1.0.4",
+    "node_dns_changer": "^1.0.5",
     "nodejs-base64-encode": "0.0.2",
     "npm": "^6.4.0",
     "request": "^2.88.0",

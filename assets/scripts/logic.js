@@ -37,7 +37,8 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  encode = require('nodejs-base64-encode'),
  moment = require('moment'),
  dns_changer = require('node_dns_changer'),
- getMeta = require("lets-get-meta");
+ getMeta = require("lets-get-meta")
+ i18n = new(require('./assets/scripts/i18n.js'));
 var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
  windowsNotificationCounter = 0,
  serviceEnabled,
@@ -71,14 +72,14 @@ function displayProtection() {
 		$(".serviceInactiveScreen").hide();
 		// if a lifeguard has been found
 		if (hasFoundLifeGuard == true) {
-			$("#bigTextProtected").html("PROTECTED BY LIFEGUARD");
-			$("#toggleButton").html("CONFIGURE LIFEGUARD");
+			$("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD"));
+			$("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD"));
 			$('.serviceToggle').addClass('serviceToggle_lifeguard')
 			$('.topTextBox_active').addClass('topTextBox_active_lifeguard');
 		}
 		else {
-			$("#bigTextProtected").html("YOU ARE PROTECTED");
-			$("#toggleButton").html("STOP PROTECTION");
+			$("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED"));
+			$("#toggleButton").html(i18n.__("STOP PROTECTION"));
 			$('.serviceToggle').removeClass('serviceToggle_lifeguard');
 			$('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
 		}
@@ -94,7 +95,7 @@ function displayUnprotection() {
 		if (ENABLELOGGING == true) console.log("Unprotected");
 		$(".serviceInactiveScreen").show();
 		$(".serviceActiveScreen").hide();
-		$("#toggleButton").html("GET PROTECTED");
+		$("#toggleButton").html(i18n.__("GET PROTECTED"));
 		$('.serviceToggle').show();
 		$('.appNoInternetConnectionScreen').hide();
 		$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
@@ -219,7 +220,7 @@ function callProgram(command) {
 function enableServicePerPlatform() {
 	// apply DNS settings
 	if (enableNotifications == true && windowsNotificationCounter == 0) new Notification('Safe Surfer', {
-		body: 'Woohoo! Getting your computer setup now.'
+		body: i18n.__('Woohoo! Getting your computer setup now.')
 	});
 	windowsNotificationCounter+=1;
 	if (os.platform() != 'linux') {
@@ -249,7 +250,7 @@ function enableServicePerPlatform() {
 function disableServicePerPlatform() {
 	// restore DNS settings
 	if (enableNotifications == true && windowsNotificationCounter == 0) new Notification('Safe Surfer', {
-		body: 'OK! Restoring your settings now.'
+		body: i18n.__('OK! Restoring your settings now.')
 	});
 	windowsNotificationCounter+=1;
 	if (os.platform() != 'linux') {
@@ -328,8 +329,8 @@ function checkForAppUpdate(options) {
 	 serverAddress = "104.236.242.185",
 	 serverPort = 8080,
 	 serverDataFile = "/version-information.json",
-	 updateCurrentDialog = {type: 'info', buttons: ['Ok'], message: String('You\'re up to date.')},
-	 updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String('Whoops, I couldn\'t find updates... Something seems to have gone wrong.')};
+	 updateCurrentDialog = {type: 'info', buttons: ['Ok'], message: String(i18n.__("You're up to date."))},
+	 updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String(i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong."))};
 
 	Request.get(String("http://" + serverAddress + ":" + serverPort + serverDataFile), (error, response, body) => {
 		if(error) {
@@ -355,8 +356,8 @@ function checkForAppUpdate(options) {
 				break;
 			}
 		}
-		var updateAvailableDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('There is an update available (v' + remoteData.versions[iteration].version + '). Do you want to install it now?')},
-		 updateDowngradeDialog = {type: 'info', buttons: ['Yes', 'No'], message: String('Please downgrade to version ' + remoteData.versions[iteration].version + '. Do you want to install it now?')};
+		var updateAvailableDialog = {type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('There is an update available' ) + '(v' + remoteData.versions[iteration].version + '). ' + i18n.__('Do you want to install it now?'))},
+		 updateDowngradeDialog = {type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('Please downgrade to version ') + remoteData.versions[iteration].version + '. ' + i18n.__('Do you want to install it now?'))};
 		if (remoteData.recommendedBuild > APPBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1) {
 			// update available
 			dialog.showMessageBox(updateAvailableDialog, updateResponse => {
@@ -441,20 +442,20 @@ function sendTelemetry() {
 
 function telemetryPrompt() {
 	// ask if user wants to participate in telemetry collection
-	var teleMsg = {type: 'info', buttons: ['Yes, I will participate', 'I want to see what will be sent', 'No, thanks'], message: "We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team"};
+	var teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team")};
 	dialog.showMessageBox(teleMsg, dialogResponse => {
 		if (ENABLELOGGING == true) console.log("TELE: User has agreed to the prompt.");
 		if (dialogResponse == 0) {
 			sendTelemetry();
 		}
 		else if (dialogResponse == 1) {
-			var previewTeleData = {type: 'info', buttons: ['Send', 'Don\'t send'], message: String("Here is what will be sent:\n\n"+(collectTelemetry())+"\n\nIn case you don't understand this data, it includes (such things as):\n - Which operation system you use\n - How many CPU cores you have\n - If the service is setup on your computer")};
+			var previewTeleData = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operation system you use\n - How many CPU cores you have\n - If the service is setup on your computer"))};
 			dialog.showMessageBox(previewTeleData, dialogResponse => {
 				if (dialogResponse == 0) sendTelemetry();
 			});
 		}
 		else if (dialogResponse == 2) {
-			var nothingSent = {type: 'info', buttons: ['Return'], message: "Nothing has been sent."};
+			var nothingSent = {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")};
 			dialog.showMessageBox(nothingSent, dialogResponse => { });
 		}
 	});
@@ -463,7 +464,7 @@ function telemetryPrompt() {
 
 function versionInformationCopy() {
 	// copy app build information to clipboard
-	var dialogBuildInformationCopy = {type: 'info', buttons: ['No, return to app', 'Just copy information', 'Yes'], message: 'Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?'};
+	var dialogBuildInformationCopy = {type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')};
 	dialog.showMessageBox(dialogBuildInformationCopy, dialogResponse => {
 		clipboard.writeText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE))
 		if (dialogResponse == 2) shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues');
@@ -472,7 +473,7 @@ function versionInformationCopy() {
 
 function forceToggleWarning({wantedState}) {
 	// display warning message as this could break settings
-	var toggleWarning = {type: 'info', buttons: ['No, nevermind', 'I understand and wish to continue'], message: 'The service is already in the state which you request.\nForcing the service to be enabled in this manner may have consequences.\nYour computer\'s network configuration could break by doing this action.'},
+	var toggleWarning = {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: i18n.__('The service is already in the state which you request.\nForcing the service to be enabled in this manner may have consequences.\nYour computer\'s network configuration could break by doing this action.')},
 	 continu = false;
 	if (wantedState == serviceEnabled) {
 		dialog.showMessageBox(toggleWarning, dialogResponse => {
@@ -505,12 +506,12 @@ function mainReloadProcess() {
 				affirmServiceState();
 				if (serviceEnabled == true) {
 					if (enableNotifications == true) new Notification('Safe Surfer', {
-	    					body: 'You are now safe to surf the internet. Safe Surfer has been setup.'
+	    					body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.')
 	  	  			});
 	  	  		}
 	  	  		else if (serviceEnabled == false) {
 					if (enableNotifications == true) new Notification('Safe Surfer', {
-	    					body: 'Safe Surfer has been disabled. You are now unprotected.'
+	    					body: i18n.__('Safe Surfer has been disabled. You are now unprotected.')
 	  	  			});
 	  	  		}
 			}
