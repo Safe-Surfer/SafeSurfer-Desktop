@@ -32,46 +32,45 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  Request = require("request"),
  shell = require('electron').shell,
  {ipcRenderer, clipboard} = require('electron'),
+ electron = require('electron'),
+ app = electron.app ? electron.app : electron.remote.app,
  Store = require('electron-store'),
  store = new Store(),
  encode = require('nodejs-base64-encode'),
  moment = require('moment'),
  dns_changer = require('node_dns_changer'),
  getMeta = require("lets-get-meta")
- i18n = new(require('./assets/scripts/i18n.js'));
+ i18n = new (require('./assets/scripts/i18n.js')),
+ logging = require('./assets/scripts/logging.js');
 var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
- windowsNotificationCounter = 0,
- serviceEnabled,
- servicePreviousState,
- userInternetCheck,
- previousUserInternetCheck,
  resp,
- hasFoundLifeGuard,
  remoteData,
- ENABLELOGGING = false,
- APPHASLOADED = false;
+ teleMsgHasBeenSummoned = false;
 
 var appStates = {
-	"serviceEnabled":true,
-	"serviceEnabled_previous":null,
-	"internet":null,
-	"internet_previous":null,
-	"lifeguardFound":null,
-	"lifeguardFound_previous":null
+	serviceEnabled: undefined,
+	serviceEnabled_previous: undefined,
+	internet: undefined,
+	internet_previous: undefined,
+	lifeguardFound: undefined,
+	lifeguardFound_previous: undefined,
+	appHasLoaded: false,
+	enableLogging: BUILDMODEJSON.enableLogging,
+	windowsNotificationCounter: 0
 }
 
 if (LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
-if (ENABLELOGGING == true) console.log("Platform:", os.platform());
-if (ENABLELOGGING == true) console.log(process.cwd());
+logging.log("Platform:", os.platform(), appStates.enableLogging);
+logging.log(process.cwd());
 
 function displayProtection() {
 	// enable DNS
-	if (userInternetCheck == true) {
-		if (ENABLELOGGING == true) console.log("Protected");
+	if (appStates.internet == true) {
+		logging.log("Protected", appStates.enableLogging);
 		$(".serviceActiveScreen").show();
 		$(".serviceInactiveScreen").hide();
 		// if a lifeguard has been found
-		if (hasFoundLifeGuard == true) {
+		if (appStates.lifeguardFound == true) {
 			$("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD"));
 			$("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD"));
 			$('.serviceToggle').addClass('serviceToggle_lifeguard')
@@ -91,8 +90,8 @@ function displayProtection() {
 
 function displayUnprotection() {
 	// disable DNS
-	if (userInternetCheck == true) {
-		if (ENABLELOGGING == true) console.log("Unprotected");
+	if (appStates.internet == true) {
+		logging.log("Unprotected", appStates.enableLogging);
 		$(".serviceInactiveScreen").show();
 		$(".serviceActiveScreen").hide();
 		$("#toggleButton").html(i18n.__("GET PROTECTED"));
@@ -104,11 +103,11 @@ function displayUnprotection() {
 
 function toggleServiceState() {
 	// switch between states
-	if (ENABLELOGGING == true) console.log("In switch");
-	switch(serviceEnabled) {
+	logging.log("In switch", appStates.enableLogging);
+	switch(appStates.serviceEnabled) {
 		case true:
-			if (ENABLELOGGING == true) console.log('Toggling enable');
-			if (hasFoundLifeGuard == true) {
+			logging.log('Toggling enable', appStates.enableLogging);
+			if (appStates.lifeguardFound == true) {
 				shell.openExternal('http://mydevice.safesurfer.co.nz/')
 				return 0;
 			}
@@ -119,7 +118,7 @@ function toggleServiceState() {
 		break;
 
 		case false:
-			if (ENABLELOGGING == true) console.log('Toggling disable');
+			logging.log('Toggling disable', appStates.enableLogging);
 			enableServicePerPlatform();
 			checkServiceState();
 		break;
@@ -128,17 +127,17 @@ function toggleServiceState() {
 
 function affirmServiceState() {
 	// affirm the state of the service
-	if (ENABLELOGGING == true) console.log("Affirming the state");
+	logging.log("Affirming the state", appStates.enableLogging);
 	checkServiceState();
-	switch(serviceEnabled) {
+	switch(appStates.serviceEnabled) {
 		case false:
-			if (ENABLELOGGING == true) console.log('Affirming disable');
+			logging.log('Affirming disable', appStates.enableLogging);
 			displayUnprotection();
 			return 0;
 			break;
 
 		case true:
-			if (ENABLELOGGING == true) console.log('Affirming enable');
+			logging.log('Affirming enable', appStates.enableLogging);
 			displayProtection();
 			return 0;
 			break;
@@ -147,39 +146,32 @@ function affirmServiceState() {
 
 function checkServiceState() {
 	// check the state of the service
-	if (ENABLELOGGING == true) console.log('Getting state of service');
-  	//resp = rp(respOptions)
-  	//if (resp.response.body.indexOf('<meta name="ss_status" content="unprotected"><!-- DO NOTE REMOVE - USED FOR STATUS CHECK -->') > -1) {
+	logging.log('Getting state of service', appStates.enableLogging);
   	try {
 	  	Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
 	  		var metaResponse = getMeta(body);
-		//dns.lookup('check.safesurfer.co.nz', function(err, address) {
-			if (ENABLELOGGING == true) console.log("checkServiceState - metaResponse ::", metaResponse);
-			//if (ENABLELOGGING == true) console.log("checkServiceState - address ::", address);
-			if (ENABLELOGGING == true) console.log("checkServiceState - err     ::", error);
-			// ip address returned when service is disabled
-			//console.log(getMeta(body).ss_status);
-			//if (address == "104.197.143.234") {
+			logging.log(String("checkServiceState - metaResponse.ss_status :: " + metaResponse.ss_status), appStates.enableLogging);
+			logging.log(String("checkServiceState - err                    :: " + error), appStates.enableLogging);
+			// if the meta tag returns unprotected
 			if (metaResponse.ss_status == 'unprotected') {
-				serviceEnabled = false;
-				if (ENABLELOGGING == true) console.log('DNS Request: Service disabled');
+				appStates.serviceEnabled = false;
+				logging.log('DNS Request: Service disabled', appStates.enableLogging);
 			}
-			// ip address returned when service is enabled
-			//else if (address == "130.211.44.88") {
+			// if the meta tag returns protected
 			if (metaResponse.ss_status == 'protected') {
-				serviceEnabled = true;
-				if (ENABLELOGGING == true) console.log('DNS Request: Service enabled');
+				appStates.serviceEnabled = true;
+				logging.log('DNS Request: Service enabled', appStates.enableLogging);
 				checkIfOnLifeGuardNetwork();
 			}
 			// if neither are returned
 			else {
-	      			serviceEnabled = false;
+	      			appStates.serviceEnabled = false;
 				// check internet connection
-				if (userInternetCheck == true) {
-	    				if (ENABLELOGGING == true) console.log('DNS Request: Unsure of state');
+				if (appStates.internet == true) {
+	    				logging.log('DNS Request: Unsure of state', appStates.enableLogging);
 				}
 				else if (error !== undefined) {
-					if (ENABLELOGGING == true) console.log('NETWORK: Internet connection unavailable');
+					logging.log('NETWORK: Internet connection unavailable', appStates.enableLogging);
 					$('.appNoInternetConnectionScreen').show();
 					$('.appNoInternetConnectionScreen').parent().css('z-index', 58);
 					$('.bigText_nointernet').show();
@@ -194,17 +186,17 @@ function checkServiceState() {
 				$('.appNoInternetConnectionScreen').parent().css('z-index', 2);
 
 			}
-			APPHASLOADED = true;
+			appStates.appHasLoaded = true;
 	  	});
 	}
   	catch(err) {
-  		console.log("Failed to get response :::", err)
+  		logging.log(String("Failed to get response :: " + err), appStates.enableLogging);
   	}
 }
 
 function callProgram(command) {
 	// call a child process
-	if (ENABLELOGGING == true) console.log(String('> Calling command: ' + command));
+	logging.log(String('> Calling command: ' + command), appStates.enableLogging);
 	var command_split = command.split(" ");
 	var command_arg = [];
 	// concatinate 2+ into a variable
@@ -212,26 +204,26 @@ function callProgram(command) {
 		command_arg.push(command_split[i]);
 	}
 	var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
-		if (ENABLELOGGING == true) console.log(stdout);
+		logging.log(stdout, appStates.enableLogging);
 		return stdout;
 	});
 }
 
 function enableServicePerPlatform() {
 	// apply DNS settings
-	if (enableNotifications == true && windowsNotificationCounter == 0) new Notification('Safe Surfer', {
+	if (enableNotifications == true && appStates.windowsNotificationCounter == 0) new Notification('Safe Surfer', {
 		body: i18n.__('Woohoo! Getting your computer setup now.')
 	});
-	windowsNotificationCounter+=1;
+	appStates.windowsNotificationCounter+=1;
 	if (os.platform() != 'linux') {
 		setTimeout(function () {
 			dns_changer.setDNSservers({
 			    DNSservers:['104.197.28.121','104.155.237.225'],
 			    DNSbackupName:'before_safesurfer',
-			    loggingEnable:ENABLELOGGING
+			    loggingEnable:appStates.enableLogging
 			});
-			if (serviceEnabled == false) {
-				if (ENABLELOGGING == true) console.log("ENABLE: Service is still not enabled -- trying again.")
+			if (appStates.serviceEnabled == false) {
+				logging.log("ENABLE: Service is still not enabled -- trying again.", appStates.enableLogging)
 				enableServicePerPlatform();
 			}
 		},1200);
@@ -249,19 +241,19 @@ function enableServicePerPlatform() {
 
 function disableServicePerPlatform() {
 	// restore DNS settings
-	if (enableNotifications == true && windowsNotificationCounter == 0) new Notification('Safe Surfer', {
+	if (enableNotifications == true && appStates.windowsNotificationCounter == 0) new Notification('Safe Surfer', {
 		body: i18n.__('OK! Restoring your settings now.')
 	});
-	windowsNotificationCounter+=1;
+	appStates.windowsNotificationCounter+=1;
 	if (os.platform() != 'linux') {
 
 		setTimeout(function () {
 			dns_changer.restoreDNSservers({
 			    DNSbackupName:'before_safesurfer',
-			    loggingEnable:ENABLELOGGING
+			    loggingEnable:appStates.enableLogging
 			});
-			if (serviceEnabled == true) {
-				if (ENABLELOGGING == true) console.log("DISABLE: Service is still not disabled -- trying again.")
+			if (appStates.serviceEnabled == true) {
+				logging.log("DISABLE: Service is still not disabled -- trying again.", appStates.enableLogging)
 				disableServicePerPlatform();
 			}
 		},1200);
@@ -279,22 +271,22 @@ function disableServicePerPlatform() {
 
 function checkIfOnLifeGuardNetwork() {
 	// check if current device is on lifeguard network
-	if (ENABLELOGGING == true) console.log('Checking if on lifeguard network');
+	logging.log('Checking if on lifeguard network', appStates.enableLogging);
 	var result;
 	var count = 0;
-	hasFoundLifeGuard = false;
+	appStates.lifeguardFound = false;
 	// start searching for lifeguard with bonjour
 	bonjour.find({ type: "sslifeguard" }, function(service) {
 	  count++;
-	  if (ENABLELOGGING == true) console.log(String(count + " :: " + service.fqdn));
+	  logging.log(String(count + " :: " + service.fqdn), appStates.enableLogging);
 	  if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
-		hasFoundLifeGuard=true;
-		if (ENABLELOGGING == true) console.log(String('Found status: ' + hasFoundLifeGuard));
+		appStates.lifeguardFound=true;
+		logging.log(String('Found status: ' + appStates.lifeguardFound), appStates.enableLogging);
 		affirmServiceState();
 		return true;
 	  }
 	})
-	if (ENABLELOGGING == true) console.log('hasFoundLifeGuard is', hasFoundLifeGuard);
+	logging.log(String('appStates.lifeguardFound is ' + appStates.lifeguardFound), appStates.enableLogging);
 }
 
 function publishDesktopAppOnNetwork(state) {
@@ -307,10 +299,10 @@ function internetConnectionCheck() {
 	// check the user's internet connection
 	dns.lookup('google.com', function(err) {
 		if (err) {
-			userInternetCheck = false;
+			appStates.internet = false;
 		}
 		else {
-			userInternetCheck = true;
+			appStates.internet = true;
 		}
 	});
 }
@@ -318,7 +310,7 @@ function internetConnectionCheck() {
 function finishedLoading() {
 	// close loading screen
 	$('.appLoadingScreen').hide();
-	APPHASLOADED = true;
+	appStates.appHasLoaded = true;
 }
 
 function checkForAppUpdate(options) {
@@ -337,7 +329,7 @@ function checkForAppUpdate(options) {
 			// if something goes wrong
 			if (options.showErrors == true) {
 				dialog.showMessageBox(updateErrorDialog, updateResponse => {
-					if (ENABLELOGGING == true) console.log("UPDATE: Error with updates.");
+					logging.log("UPDATE: Error with updates.", appStates.enableLogging);
 					return;
 				})
 			}
@@ -352,7 +344,7 @@ function checkForAppUpdate(options) {
 		for (i in remoteData.versions) {
 			if (remoteData.versions[i].build == remoteData.recommendedBuild) {
 				iteration = i;
-				//console.log(remoteData.versions[i].build);
+				//logging.log(remoteData.versions[i].build);
 				break;
 			}
 		}
@@ -362,7 +354,7 @@ function checkForAppUpdate(options) {
 			// update available
 			dialog.showMessageBox(updateAvailableDialog, updateResponse => {
 				if (updateResponse == 0) {
-					if (ENABLELOGGING == true) console.log("UPDATE: User wants update.");
+					logging.log("UPDATE: User wants update.", appStates.enableLogging);
 					versionNew = remoteData.versions[iteration].version;
 					if (remoteData.versions[iteration].altLink === undefined) {
 						shell.openExternal(remoteData.baseLink);
@@ -381,7 +373,7 @@ function checkForAppUpdate(options) {
 			// up to date
 			dialog.showMessageBox(updateCurrentDialog, updateResponse => {
 				if (updateResponse == 0) {
-					if (ENABLELOGGING == true) console.log("UPDATE: User has the latest version installed.");
+					logging.log("UPDATE: User has the latest version installed.", appStates.enableLogging);
 					return;
 				}
 				else {
@@ -393,7 +385,7 @@ function checkForAppUpdate(options) {
 			// user must downgrade
 			dialog.showMessageBox(updateDowngradeDialog, updateResponse => {
 				if (updateResponse == 0) {
-					if (ENABLELOGGING == true) console.log("UPDATE: User wants to downgrade.");
+					logging.log("UPDATE: User wants to downgrade.", appStates.enableLogging);
 				}
 				else {
 					return;
@@ -406,7 +398,7 @@ function checkForAppUpdate(options) {
 			// if something goes wrong
 			if (options.showErrors == true) {
 				dialog.showMessageBox(updateErrorDialog, updateResponse => {
-					if (ENABLELOGGING == true) console.log("UPDATE: Error.");
+					logging.log("UPDATE: Error.", appStates.enableLogging);
 					return;
 				})
 			}
@@ -422,7 +414,8 @@ function collectTelemetry() {
 	teleData.PLATFORM = os.platform();
 	teleData.RELEASE = os.release();
 	teleData.CPUCORES = os.cpus().length;
-	teleData.ISSERVICEENABLED = serviceEnabled;
+	teleData.LOCALE = app.getLocale();
+	teleData.ISSERVICEENABLED = appStates.serviceEnabled;
 	if (os.platform() != 'win32') teleData.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
 	return JSON.stringify(teleData);
 }
@@ -431,9 +424,9 @@ function sendTelemetry() {
 	// send information to server
 	var dataToSend = encode.encode(collectTelemetry(),'base64');
 	Request.post('http://104.236.242.185:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
-		if (response || body) console.log('TEL SEND: Sent.');
+		if (response || body) logging.log('TEL SEND: Sent.', appStates.enableLogging);
 		if (err) {
-			console.log('TEL SEND: Could not send.');
+			logging.log('TEL SEND: Could not send.', appStates.enableLogging);
 			return;
 		}
 	});
@@ -444,12 +437,12 @@ function telemetryPrompt() {
 	// ask if user wants to participate in telemetry collection
 	var teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team")};
 	dialog.showMessageBox(teleMsg, dialogResponse => {
-		if (ENABLELOGGING == true) console.log("TELE: User has agreed to the prompt.");
+		logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
 		if (dialogResponse == 0) {
 			sendTelemetry();
 		}
 		else if (dialogResponse == 1) {
-			var previewTeleData = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operation system you use\n - How many CPU cores you have\n - If the service is setup on your computer"))};
+			var previewTeleData = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operation system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
 			dialog.showMessageBox(previewTeleData, dialogResponse => {
 				if (dialogResponse == 0) sendTelemetry();
 			});
@@ -467,7 +460,7 @@ function versionInformationCopy() {
 	var dialogBuildInformationCopy = {type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')};
 	dialog.showMessageBox(dialogBuildInformationCopy, dialogResponse => {
 		clipboard.writeText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE))
-		if (dialogResponse == 2) shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues');
+		if (dialogResponse == 2) shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
 	});
 }
 
@@ -475,7 +468,7 @@ function forceToggleWarning({wantedState}) {
 	// display warning message as this could break settings
 	var toggleWarning = {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: i18n.__('The service is already in the state which you request.\nForcing the service to be enabled in this manner may have consequences.\nYour computer\'s network configuration could break by doing this action.')},
 	 continu = false;
-	if (wantedState == serviceEnabled) {
+	if (wantedState == appStates.serviceEnabled) {
 		dialog.showMessageBox(toggleWarning, dialogResponse => {
 			if (dialogResponse == 1) continu = true;
 		});
@@ -486,9 +479,9 @@ function forceToggleWarning({wantedState}) {
 
 function mainReloadProcess() {
 	// reload function
-	if (ENABLELOGGING == true) console.log("__ Refresh Start __");
-	if (APPHASLOADED == false) {
-	  if (ENABLELOGGING == true) console.log("STATE: App not loaded");
+	logging.log("__ Refresh Start __", appStates.enableLogging);
+	if (appStates.appHasLoaded == false) {
+	  logging.log("STATE: App not loaded", appStates.enableLogging);
 		internetConnectionCheck();
 		setTimeout(function(){
 			checkServiceState();
@@ -497,43 +490,46 @@ function mainReloadProcess() {
 
 	else {
 		finishedLoading();
-		if (store.get('telemetryHasAnswer') != true) telemetryPrompt();
+		if (store.get('telemetryHasAnswer') != true && teleMsgHasBeenSummoned == false) {
+			teleMsgHasBeenSummoned = true
+			setTimeout(() => {telemetryPrompt()},5000)
+		};
 		internetConnectionCheck();
 		checkServiceState();
-		if (userInternetCheck == true) {
-			if (serviceEnabled != servicePreviousState && servicePreviousState !== undefined) {
-				if (ENABLELOGGING == true) console.log('SERVICE STATE: State has changed.');
+		if (appStates.internet == true) {
+			if (appStates.serviceEnabled != appStates.serviceEnabled_previous && appStates.serviceEnabled_previous !== undefined) {
+				logging.log('SERVICE STATE: State has changed.', appStates.enableLogging);
 				affirmServiceState();
-				if (serviceEnabled == true) {
+				if (appStates.serviceEnabled == true) {
 					if (enableNotifications == true) new Notification('Safe Surfer', {
 	    					body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.')
 	  	  			});
 	  	  		}
-	  	  		else if (serviceEnabled == false) {
+	  	  		else if (appStates.serviceEnabled == false) {
 					if (enableNotifications == true) new Notification('Safe Surfer', {
 	    					body: i18n.__('Safe Surfer has been disabled. You are now unprotected.')
 	  	  			});
 	  	  		}
 			}
-			servicePreviousState = serviceEnabled;
+			appStates.serviceEnabled_previous = appStates.serviceEnabled;
 		}
-		if (userInternetCheck != previousUserInternetCheck) {
-			if (ENABLELOGGING == true) console.log('INTERNET: State has changed.');
+		if (appStates.internet != appStates.internet_previous) {
+			logging.log('INTERNET: State has changed.', appStates.enableLogging);
 			affirmServiceState();
-  			previousUserInternetCheck = userInternetCheck;
+  			appStates.internet_previous = appStates.internet;
 		}
-		if (hasFoundLifeGuard != appStates.lifeguardFound_previous) {
+		if (appStates.lifeguardFound != appStates.lifeguardFound_previous) {
 			affirmServiceState
-			appStates.lifeguardFound_previous = hasFoundLifeGuard;
+			appStates.lifeguardFound_previous = appStates.lifeguardFound;
 		}
 	}
 
-	if (ENABLELOGGING == true) console.log("__ Refresh End   __");
+	logging.log("__ Refresh End   __", appStates.enableLogging);
 	setTimeout(mainReloadProcess, 1000);
 }
 
 ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
-	if (ENABLELOGGING == true) console.log("UPDATES: Auto check stated changed to",!arg)
+	logging.log(String("UPDATES: Auto check stated changed to " + !arg), appStates.enableLogging);
 	if (arg == true) {
 		store.set('appUpdateAutoCheck', false);
 	}

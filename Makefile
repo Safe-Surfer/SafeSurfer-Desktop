@@ -9,8 +9,12 @@ build-linux:
 	@cp ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-linux-x64/
 
 build-windows:
-	@[ $(ARCH) != 32 ] && npm run package-win || npm run package-win32
-	@cp -p ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop*/
+	npm run package-win
+	@cp -p ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-win32-x64/
+
+build-windows32:
+	npm run package-win32
+	@cp -p ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-win32-ia32/
 
 build-macos:
 	npm run package-macos

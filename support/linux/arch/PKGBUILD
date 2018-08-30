@@ -7,7 +7,7 @@ arch=('x86_64')
 url="https://gitlab.com/safesurfer/${pkgname}"
 license=('GPL')
 makedepends=(npm nodejs)
-depends=(polkit)
+depends=(polkit, curl)
 source=("https://gitlab.com/safesurfer/${pkgname}/-/archive/${pkgver}/${pkgname}-${pkgver}.zip")
 md5sums=('SKIP')
 

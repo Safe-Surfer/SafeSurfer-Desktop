@@ -4,5 +4,6 @@
 	"APPBUILD": "1",
 	"enableUpdates": true,
 	"requireRoot": true,
-	"enableNotifications": true
+	"enableNotifications": true,
+	"enableLogging": false
 }

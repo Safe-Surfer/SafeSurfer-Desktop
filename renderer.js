@@ -29,15 +29,16 @@ const {ipcRenderer} = require('electron'),
  BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  updatesEnabled = BUILDMODEJSON.enableUpdates,
  requireRoot = BUILDMODEJSON.requireRoot
- i18n = new(require('./assets/scripts/i18n.js'));
+ i18n = new (require('./assets/scripts/i18n.js')),
+ logging = require('./assets/scripts/logging.js');
 
 var userNotRoot,
- ENABLELOGGING = false,
- dialogNotRunningAsAdmin = {type: 'info', buttons: ['Show me how', 'Exit'], message: 'To adjust network settings on your computer, you must run this app as an Administrator or root.'};
+ ENABLELOGGING = BUILDMODEJSON.enableLogging,
+ dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator or root.')};
 
 function showCloseDialog() {
 	// display dialog for if the app hasn't been started with root privileges
-	if (ENABLELOGGING == true) console.log("User is not root -- displaying dialog message.")
+	logging.log("User is not root -- displaying dialog message.", ENABLELOGGING)
 	dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
 		if (updateResponse == 1) window.close();
 		if (updateResponse == 0) {
@@ -68,6 +69,13 @@ if (requireRoot == true) {
 			break;
 	}
 }
+
+$('#bigTextProtected').text(i18n.__('YOU ARE PROTECTED'));
+$('#subTextProtected').text(i18n.__('YOU ARE SAFE TO SURF THE INTERNET'));
+$('#bigTextUnprotected').text(i18n.__('DANGER AHEAD'));
+$('#subTextUnprotected').text(i18n.__('YOU ARE NOT PROTECTED IN THE ONLINE SURF'));
+$('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION."));
+$('#toggleButton').text(i18n.__('CHECKING SERVICE STATE'));
 
 if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && os.platform() != 'linux') checkForAppUpdate({
 	current: false,

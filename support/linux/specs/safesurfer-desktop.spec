@@ -7,7 +7,7 @@ License:        GPLv3
 Group:		Applications/Internet
 URL:            https://gitlab.com/safesurfer/%{name}
 Source0:        https://gitlab.com/safesurfer/%{name}/-/archive/%{version}/%{name}-%{version}.zip
-Requires:       polkit
+Requires:       polkit, curl
 
 
 %description
