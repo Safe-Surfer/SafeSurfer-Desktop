@@ -3,7 +3,7 @@
 # SafeSurfer-Desktop - sscli
 
 #
-# Copyright (C) 2018 MY NAME <MY EMAIL>
+# Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ function sudoUserCheck() {
 # check if user is root
 if [ ! "$(whoami)" = "root" ]
 then
-	echo "ERROR: You must be in sudoers or be root to use some this program."
+	echo "ERROR: You must be root to use some this program."
 	exit 1
 fi
 return 0
@@ -69,7 +69,7 @@ done
 
 function checkServiceState() {
 # return if the service is enabled
-if curl -s check.safesurfer.co.nz | grep -q '<meta name="ss_status" content="protected"> <!-- DO NOTE REMOVE - USED FOR STATUS CHECK -->'
+if curl -s check.safesurfer.co.nz | grep -q '<meta name="ss_status" content="protected">'
 then
 	return 0
 else
@@ -81,7 +81,7 @@ fi
 function setDNSservers() {
 # set DNS settings
 mv "$resolvconf"{,.before_safesurfer}
-echo -e "nameserver $primaryDNS\nnameserver $secondaryDNS" > "$resolvconf"
+echo -e "nameserver $primaryDNS\\nnameserver $secondaryDNS" > "$resolvconf"
 
 if checkServiceState
 then
@@ -95,7 +95,8 @@ else
 fi
 
 which systemd-resolve && systemd-resolve --flush-caches
-which nscd && service nscd reload && service nscd restart
+which nmcli && systemctl is-active --quiet NetworkManager && service NetworkManager reload && service NetworkManager restart
+which nscd && systemctl is-active --quiet nscd && service nscd reload && service nscd restart
 
 }
 
@@ -114,11 +115,12 @@ else
 fi
 
 which systemd-resolve && systemd-resolve --flush-caches
-which nscd && service nscd reload && service nscd restart
+which nmcli && systemctl is-active --quiet NetworkManager && service NetworkManager reload && service NetworkManager restart
+which nscd && systemctl is-active --quiet nscd && service nscd reload && service nscd restart
 
 }
 
-echo -e "sscli\n by\nSafe Surfer\n-----"
+echo -e "sscli\\n by\\nSafe Surfer\\n-----"
 case "$arg" in
 	enable)
 		sudoUserCheck

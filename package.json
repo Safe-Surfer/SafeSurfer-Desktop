@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "bonjour": "^3.5.0",
+    "connectivity": "^1.0.1",
     "electron-download-manager": "^2.2.0",
     "electron-store": "^2.0.0",
     "electron-sudo": "^4.0.12",

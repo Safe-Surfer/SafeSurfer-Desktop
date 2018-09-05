@@ -1,7 +1,7 @@
 // SafeSurfer-Desktop - renderer.js
 
 //
-// Copyright (C) 2018 MY NAME <MY EMAIL>
+// Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -28,48 +28,11 @@ const {ipcRenderer} = require('electron'),
  shell = require('electron').shell,
  BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  updatesEnabled = BUILDMODEJSON.enableUpdates,
- requireRoot = BUILDMODEJSON.requireRoot
+ requireRoot = BUILDMODEJSON.requireRoot,
  i18n = new (require('./assets/scripts/i18n.js')),
  logging = require('./assets/scripts/logging.js');
 
-var userNotRoot,
- ENABLELOGGING = BUILDMODEJSON.enableLogging,
- dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator or root.')};
-
-function showCloseDialog() {
-	// display dialog for if the app hasn't been started with root privileges
-	logging.log("User is not root -- displaying dialog message.", ENABLELOGGING)
-	dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
-		if (updateResponse == 1) window.close();
-		if (updateResponse == 0) {
-			shell.openExternal('https://safesurfer.co.nz/faq/how-to-uac.php');
-			setTimeout(function() {
-				window.close();
-			},250);
-		}
-	});
-}
-
-if (requireRoot == true) {
-	switch(os.platform()) {
-		// display dialog per platform
-		/*case 'darwin':
-			if (USERNAME != 'root') {
-				userNotRoot=true;
-				showCloseDialog();
-			}
-			break;*/
-		case 'win32':
-			isAdmin().then(admin => {
-				if (admin == false) {
-					userNotRoot=true;
-					showCloseDialog();
-				}
-			});
-			break;
-	}
-}
-
+// translate HTML elements
 $('#bigTextProtected').text(i18n.__('YOU ARE PROTECTED'));
 $('#subTextProtected').text(i18n.__('YOU ARE SAFE TO SURF THE INTERNET'));
 $('#bigTextUnprotected').text(i18n.__('DANGER AHEAD'));
@@ -77,10 +40,23 @@ $('#subTextUnprotected').text(i18n.__('YOU ARE NOT PROTECTED IN THE ONLINE SURF'
 $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION."));
 $('#toggleButton').text(i18n.__('CHECKING SERVICE STATE'));
 
-if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && os.platform() != 'linux') checkForAppUpdate({
+// if auto-update checking is enabled and updates are enabled, check for them
+if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev')) checkForAppUpdate({
 	current: false,
 	showErrors: false
 });
 
-// continue program if app has admin rights
-if (userNotRoot != true) mainReloadProcess();
+// if user hasn't provided a response to telemetry
+if (store.get('telemetryHasAnswer') != true && teleMsgHasBeenSummoned == false) {
+	teleMsgHasBeenSummoned = true;
+	setTimeout(() => {telemetryPrompt()},5000);
+};
+
+// initalise rest of app
+checkServiceState();
+setTimeout(function() {
+	// run main process which loops
+	finishedLoading();
+	mainReloadProcess();
+}, 1000);
+

@@ -1,16 +1,21 @@
-# SafeSurfer-desktop
+# SafeSurfer-Desktop
 
-## Information
+## Who are Safe Surfer?
+Safe Surfer's mission is to keep children, individuals, and organsations safe online. We achieve this by filtering out harmful material that may be found when browsing the internet and switching on safe search for a number of search engines.
+
+## App information
 Safe Surfer Desktop is an Electron based app, which sets up the service for you (by configuring DNS settings).  
 To get more information about the service use the [Safe Surfer website](http://safesurfer.co.nz).  
 This project's intent is for desktop users--families, persons, etc.  
 For enterprise/business use, it is recommmend to apply the DNS settings on a router which devices are connected to.  
 
-### Latest release information: v1.0.0 - b1
+### Latest release information: version 1.0.0 (build 1)
 ## Install the release build: https://safesurfer.co.nz/download
 
+![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)
+
 ## Features
-- Set DNS settings by clicking one button  
+- Set DNS settings to protect device by the clicking of one button  
 - Protects against harmful content  
 - Easy to use and setup  
 
@@ -23,6 +28,9 @@ Read our [translation guide](TRANSLATING.md) to get started!
 
 ## Bugs
 If you have any issues or have found bugs in this software, please report to https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues  
+
+## Screenshots
+For screenshots of the app, please refer to the `screenshots` folder.  
 
 ## Build dependencies
 Linux: nodejs npm (libgconf2-dev on Debian based systems)  

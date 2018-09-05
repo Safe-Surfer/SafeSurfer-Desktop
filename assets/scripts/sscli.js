@@ -1,7 +1,7 @@
 // SafeSurfer-Desktop - sscli.js
 
 //
-// Copyright (C) 2018 MY NAME <MY EMAIL>
+// Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

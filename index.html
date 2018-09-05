@@ -5,7 +5,6 @@
     <title>Safe Surfer</title>
     <link rel="stylesheet" type="text/css" href="./assets/style/style.css">
     <script type="text/javascript" src="./assets/scripts/logic.js"></script>
-    <!--<link href="https://fonts.googleapis.com/css?family=BenchNine|Josefin+Sans:700|Raleway" rel="stylesheet">-->
     <script>
       window.$ = window.jQuery = require('./assets/scripts/jquery-3.2.1.min.js');
     </script>
@@ -16,8 +15,14 @@
 	<div class="topTextBox_background"></div>
         <div class="topTextBox_active">
           <div class="leftCenter">
-            <h1 class="bigText_white nowrap" id="bigTextProtected">YOU ARE PROTECTED</h1>
-            <h4 class="subText" id="subTextProtected">YOU ARE SAFE TO SURF THE INTERNET</p>
+	    <div class="topTextFlexBox">
+		    <div class="topTextFrame">
+			   <h1 class="bigText_white nowrap" id="bigTextProtected">YOU ARE PROTECTED</h1>
+		    </div>
+		    <div class="subTextFrame">
+			  <h4 class="subText" id="subTextProtected">YOU ARE SAFE TO SURF THE INTERNET</h4>
+		    </div>
+	    </div>
           </div>
         </div>
     </div>
@@ -26,9 +31,14 @@
 	<div class="topTextBox_background"></div>
         <div class="topTextBox_inactive">
           <div class="leftCenter">
-            <h1 class="bigText nowrap" id="bigTextUnprotected">DANGER AHEAD</h1>
-	    <!--<img src="./assets/media/flags-white.png" style="width:10%; height:auto; z-index:-2;" class="mainCenter_halfDown">-->
-            <h4 class="subText" id ="subTextUnprotected">YOU ARE NOT PROTECTED IN THE ONLINE SURF</p>
+	    <div class="topTextFlexBox">
+		    <div class="topTextFrame">
+		    	<h1 class="bigText nowrap" id="bigTextUnprotected">DANGER AHEAD</h1>
+		    </div>
+		    <div class="subTextFrame">
+		    	<h4 class="subText" id ="subTextUnprotected">YOU ARE NOT PROTECTED IN THE ONLINE SURF</h4>
+		    </div>
+	    </div>
           </div>
         </div>
     </div>
@@ -37,7 +47,8 @@
     </div>
     <div class="appLoadingScreen" style="z-index: 45">
 	  <img src="./assets/media/ss-surfer-head.png" style="width:200px; height:200px; z-index:-2;" id="mainScreen_background" class="mainCenter">
-          <h1 class="bigText nowrap mainCenter_halfDown bigText_init" style="color:black;" id="bigTextBrandName">SAFESURFER</h1>
+	  <img src="./assets/media/flags-black.png" style="width:10%; height:auto; z-index:-2;" class="mainCenter_top" id="initFlag">
+          <h1 class="bigText nowrap mainCenter_init bigText_init" style="color:black;" id="bigTextBrandName">SAFESURFER</h1>
     </div>
     <div class="mainCenter_down" style="z-index: 40">
 	<button type="button" onclick="toggleServiceState();" class="serviceToggle" style="z-index:50;" id="toggleButton">CHECKING SERVICE STATE</button>

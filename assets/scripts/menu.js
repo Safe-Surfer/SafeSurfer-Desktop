@@ -1,9 +1,30 @@
+// SafeSurfer-Desktop - menu.js
+
+//
+// Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
+//
+// This program is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+//
+
 // create app menu
 const {app, BrowserWindow, Menu, clipboard, electron} = require('electron'),
  shell = require('electron').shell,
  ipcRenderer = require('electron').ipcRenderer,
  os = require('os'),
  remote = require('electron').remote,
+ path = require('path'),
  Store = require('electron-store'),
  store = new Store(),
  BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
@@ -12,7 +33,7 @@ const {app, BrowserWindow, Menu, clipboard, electron} = require('electron'),
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
  updatesEnabled = BUILDMODEJSON.enableUpdates,
  i18n = new (require('./i18n.js'));
-var accountIsAssigned = false,
+var accountIsAssigned = store.get('accountInformation'),
  appUpdateAutoCheck = store.get('appUpdateAutoCheck');
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
 
@@ -31,6 +52,7 @@ module.exports = (app, mainWindow) => {
 					{label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} }
 				]
 			},
+	  		{label: i18n.__('Help'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' },
 			{type:'separator'},
 			{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 		]
@@ -51,14 +73,17 @@ module.exports = (app, mainWindow) => {
 		[
 	  		{label: i18n.__('About us'), click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
 	  		{label: i18n.__('Contact us'), click() {shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
-	  		{label:String("Version: "+APPVERSION+" - Build: "+APPBUILD), click() {mainWindow.webContents.send('goBuildToClipboard')} },
+	  		{label: i18n.__('Contribute to this project'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
 			{type:'separator'},
-	  		{label: i18n.__('Help'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' }
+	  		{label:String(i18n.__("Version") + ": "+APPVERSION+" - " + i18n.__("Build") + ": "+APPBUILD + " (" + BUILDMODE + ")"), click() {mainWindow.webContents.send('goBuildToClipboard')} },
+			{type:'separator'},
+	  		{label: i18n.__('About this app'), click() {} }
 	  	]
 
 	},
 	];
-	if (updatesEnabled == true && os.platform() != 'linux') menu[1].submenu[3] = {
+	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
+	if (updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev')) menu[1].submenu[3] = {
 		label: i18n.__('Updates'),
 		submenu:
 		[
@@ -66,7 +91,10 @@ module.exports = (app, mainWindow) => {
 			{label: i18n.__('Automatically check for updates'), type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
 		]
 	};
-	if (BUILDMODE == "dev") menu[1].submenu[4] = {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }
+	// hide dev tools if not enabled
+	if (BUILDMODE == "dev") {
+		menu[1].submenu[4] = {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }
+	}
 	if (accountIsAssigned == true) menu[3] = {
 		label: i18n.__('Account'),
 		submenu:

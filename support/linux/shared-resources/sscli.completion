@@ -2,12 +2,12 @@
 
 _sscli()
 {
-    local cur prev opts
+    local cur prev
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    if [[ ${cur} == -* ]] ; then
+    if [[ ${cur} == * ]] ; then
         COMPREPLY=( $(compgen -W "enable disable launch check service help" -- ${cur}) )
         return 0
     fi

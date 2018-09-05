@@ -4,19 +4,21 @@ COMPLETIONDIR ?= /usr/share/bash-completion/completions
 all: help
 
 build-linux:
+	@[[ $(BUILDMODE) = "RELEASE" ]] && sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json
 	@echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json
 	npm run package-linux
 	@cp ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-linux-x64/
 
 build-windows:
+	@[[ $(BUILDMODE) = "RELEASE" ]] && sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json
 	npm run package-win
-	@cp -p ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-win32-x64/
 
 build-windows32:
+	@[[ $(BUILDMODE) = "RELEASE" ]] && sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json
 	npm run package-win32
-	@cp -p ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-win32-ia32/
 
 build-macos:
+	@[[ $(BUILDMODE) = "RELEASE" ]] && sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json
 	npm run package-macos
 
 install:

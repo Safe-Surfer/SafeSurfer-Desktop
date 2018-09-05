@@ -175,6 +175,25 @@ body, html {
 	100%{background-position:0% 50%}
 }
 
+.topTextFlexBox {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-content: space-around;
+}
+
+.topTextFlexBox > div {
+	width: 100%;
+	height: 30%;
+}
+
+.topTextFrame {
+	line-height: 10px;
+}
+
+.subTextFrame {
+}
+
 .appLoadingScreen {
 	background-color: white;
 	height: 100%;
@@ -212,6 +231,22 @@ body, html {
 	transform: translate(-50%, -70%);
 }
 
+.mainCenter_init {
+	margin: 0;
+	position: absolute;
+	top: 90%;
+	left: 50%;
+	transform: translate(-50%, -90%);
+}
+
+.mainCenter_top {
+	margin: 0;
+	position: absolute;
+	top: 0%;
+	left: 50%;
+	transform: translate(-50%, 0%);
+}
+
 .leftCenter {
 	margin: 0;
 	position: absolute;
@@ -220,6 +255,7 @@ body, html {
 }
 
 .serviceToggle {
+	white-space: nowrap;
 	background-color:#fff600;
 	border-radius:0px;
 	border:0.5px solid #fff600;
@@ -227,7 +263,7 @@ body, html {
 	cursor:pointer;
 	color:#d12d00;
 	font-family: 'BenchNine', sans-serif;
-	font-size:66px;
+	font-size:60px;
 	font-weight:bold;
 	padding:2px 5px;
 	text-decoration:none;
@@ -238,13 +274,13 @@ body, html {
 .serviceToggle:hover {
 	background-color:#d12d00;
 	color: #fff600;
-	font-size:63px;
+	font-size:57px;
 	text-shadow: 2px 2px 8px black;
 	-webkit-transform: rotate(2deg); /* Safari */
     	transform: rotate(2deg);
 }
 .serviceToggle:active {
-	font-size:60px;
+	font-size:54px;
 	background-color:#931f00;
 	color:#bcb605;
 }
@@ -283,13 +319,9 @@ body, html {
 	background-color: #184896;
 }
 
-#hiddenCheckiFrame {
-	display: none;
-}
-
 .topTextBox, .topTextBox_active, .topTextBox_inactive {
 	width: 100%;
-	height: 200px;
+	height: 270px;
 	top:0;
 	left:0;
 	right:0;
@@ -306,7 +338,7 @@ body, html {
 }
 
 .topTextBox_inactive {
-	background: rgba(165, 38, 41, 0.55);
+	background: rgba(165, 38, 41, 0.70);
 	/*background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));*/
 }
 
@@ -357,10 +389,10 @@ body, html {
 		white-space: normal;
 	}
 	.bigText, .bigText_white {
-		line-height: 100px;
+		line-height: 80px;
 	}
 	.topTextBox {
-		height: 500px;
+		height: 550px;
 		padding-top: 1000px;
 	}
 	.topTextBox, .topTextBox_inactive {
@@ -368,11 +400,11 @@ body, html {
 	}
 
 	.topTextBox_active {
-		height: 340px;
+		height: 350px;
 	}
 
 	.topTextBox_active_lifeguard {
-		height: 440px;
+		height: 415px;
 	}
 
 	.mainCenter_halfDown {
@@ -380,14 +412,19 @@ body, html {
 		transform: translate(-50%, -87%);
 	}
 
+	.mainCenter_init {
+		top: 87%
+		transform: translate(-50%, -87%);
+	}
+
 	.serviceToggle {
-		font-size:46px;
+		font-size:42px;
 	}
 	.serviceToggle:hover {
-		font-size:43px;
+		font-size:39px;
 	}
 	.serviceToggle:active {
-		font-size:40px;
+		font-size:36px;
 	}
 	.topTextBox_inactive {
 	  background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));

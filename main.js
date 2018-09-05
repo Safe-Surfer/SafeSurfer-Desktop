@@ -1,7 +1,7 @@
 // SafeSurfer-Desktop - main.js
 
 //
-// Copyright (C) 2018 MY NAME <MY EMAIL>
+// Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -40,7 +40,7 @@ let childWindow;
 
 var appUpdateAutoCheck = store.get('appUpdateAutoCheck');
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
-var accountIsAssigned = false;
+var accountIsAssigned = store.get('accountInformation');
 
 function createWindow() {
 	// Create the browser window.
@@ -58,6 +58,7 @@ function createWindow() {
 	mainWindow.on('closed', function () {
 		mainWindow = null;
 	});
+	// set menu from menu.js
 	const appMenu = require('./assets/scripts/menu.js');
 	Menu.setApplicationMenu(Menu.buildFromTemplate(appMenu(app, mainWindow)));
 }
