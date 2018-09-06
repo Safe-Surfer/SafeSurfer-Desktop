@@ -4,21 +4,21 @@ COMPLETIONDIR ?= /usr/share/bash-completion/completions
 all: help
 
 build-linux:
-	@[[ $(BUILDMODE) = "RELEASE" ]] && sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json
+	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	@echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json
 	npm run package-linux
 	@cp ./assets/media/icons/all/ss-logo.png ./release-builds/SafeSurfer-Desktop-linux-x64/
 
 build-windows:
-	@[[ $(BUILDMODE) = "RELEASE" ]] && sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json
+	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	npm run package-win
 
 build-windows32:
-	@[[ $(BUILDMODE) = "RELEASE" ]] && sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json
+	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	npm run package-win32
 
 build-macos:
-	@[[ $(BUILDMODE) = "RELEASE" ]] && sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json
+	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	npm run package-macos
 
 install:
@@ -48,7 +48,7 @@ uninstall:
 	@rm -rf $(DESTDIR)/usr/share/pixmaps/ss-logo.png
 
 prep-deb:
-	make PACKAGEFORMAT=deb build-linux
+	make PACKAGEFORMAT=deb BUILDMODE=RELEASE build-linux
 	@mkdir -p deb-build/safesurfer-desktop
 	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
 	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop
@@ -70,9 +70,6 @@ build-zip:
 arch-pkg:
 	cd ./support/linux/arch && makepkg -si
 
-setup:
-	npm i
-	npm i nexe
 
 clean:
 	@rm -rf dist deb-build release-builds

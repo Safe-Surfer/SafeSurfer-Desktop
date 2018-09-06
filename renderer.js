@@ -47,8 +47,7 @@ if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.pla
 });
 
 // if user hasn't provided a response to telemetry
-if (store.get('telemetryHasAnswer') != true && teleMsgHasBeenSummoned == false) {
-	teleMsgHasBeenSummoned = true;
+if (store.get('telemetryHasAnswer') != true) {
 	setTimeout(() => {telemetryPrompt()},5000);
 };
 

@@ -60,7 +60,7 @@ var appStates = {
 	appHasLoaded: false,
 	enableLogging: BUILDMODEJSON.enableLogging,
 	windowsNotificationCounter: 0,
-	userNotRoot: undefined,
+	userIsAdmin: undefined,
 	hasLifeGuardWindowOpened: undefined
 }
 
@@ -131,7 +131,7 @@ function toggleServiceState() {
 	logging.log("In switch", appStates.enableLogging);
 	appStates.windowsNotificationCounter = 0;
 	// if user's privileges are Admin, or if the host OS is Linux
-	if (appStates.userNotRoot == true || os.platform() == 'linux') {
+	if (appStates.userIsAdmin == true || os.platform() == 'linux') {
 		switch(appStates.serviceEnabled) {
 			case true:
 				logging.log('Toggling enable', appStates.enableLogging);
@@ -394,7 +394,7 @@ function checkForAppUpdate(options) {
 				if (updateResponse == 0) {
 					logging.log("UPDATE: User wants update.", appStates.enableLogging);
 					if (remoteData.versions[iteration].altLink === undefined) {
-						shell.openExternal(remoteData.linkBase + "/" + remoteData.versions[iteration].build + "-" + remoteData.versions[iteration].version);
+						shell.openExternal(remoteData.linkBase);
 					}
 					else {
 						shell.openExternal(remoteData.versions[iteration].altLink);
@@ -423,7 +423,7 @@ function checkForAppUpdate(options) {
 			dialog.showMessageBox(updateDowngradeDialog, updateResponse => {
 				if (updateResponse == 0) {
 					logging.log("UPDATE: User wants to downgrade.", appStates.enableLogging);
-					shell.openExternal(remoteData.linkBase + "/" + remoteData.versions[iteration].build + "-" + remoteData.versions[iteration].version);
+					shell.openExternal(remoteData.linkBase);
 				}
 				else {
 					return;
@@ -536,15 +536,14 @@ function checkUserPrivileges() {
 			// display dialog per platform
 			/*case 'darwin':
 				if (USERNAME != 'root') {
-					userNotRoot=true;
+					userIsAdmin=true;
 					showUnprivillegedMessage();
 				}
 				break;*/
 			case 'win32':
 				isAdmin().then(admin => {
-					if (admin == false) {
-						appStates.userNotRoot = true;
-					}
+					if (admin == false) appStates.userIsAdmin = false;
+					else appStates.userIsAdmin = true;
 				});
 				break;
 		}

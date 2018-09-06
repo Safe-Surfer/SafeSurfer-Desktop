@@ -9,7 +9,7 @@ To get more information about the service use the [Safe Surfer website](http://s
 This project's intent is for desktop users--families, persons, etc.  
 For enterprise/business use, it is recommmend to apply the DNS settings on a router which devices are connected to.  
 
-### Latest release information: version 1.0.0 (build 1)
+### Latest [release information](CHANGELOG): version 1.0.0 (build 1)
 ## Install the release build: https://safesurfer.co.nz/download
 
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)
@@ -27,7 +27,7 @@ We look forward to your help on this project, together helping families and indi
 Read our [translation guide](TRANSLATING.md) to get started!  
 
 ## Bugs
-If you have any issues or have found bugs in this software, please report to https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues  
+If you have any issues or have found bugs in this software, please them report to https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues  
 
 ## Screenshots
 For screenshots of the app, please refer to the `screenshots` folder.  
@@ -53,6 +53,8 @@ Linux: `make build-linux`
 Windows: `make build-windows`  
 Windows 32bit: `make build-windows32`  
 macOS: `make build-macos`  
+
+Please note that building Windows versions on Linux or macOS requires Wine to be installed as a prerequisite  
 
 ## Packaging
 deb: `make deb-pkg`  

@@ -87,11 +87,11 @@ if checkServiceState
 then
 	echo "DNS settings installed successfully."
 	chattr +i /etc/resolv.conf
-	exit 0
+	return 0
 else
 	echo "ERROR: DNS settings failed to install; Reverting changes."
 	mv "$resolvconf"{.before_safesurfer,}
-	exit 1
+	return 1
 fi
 
 which systemd-resolve && systemd-resolve --flush-caches
@@ -108,10 +108,10 @@ mv "$resolvconf"{.before_safesurfer,}
 if ! checkServiceState
 then
 	echo "DNS settings removed successfully."
-	exit 0
+	return 0
 else
 	echo "ERROR: DNS settings failed to remove."
-	exit 1
+	return 1
 fi
 
 which systemd-resolve && systemd-resolve --flush-caches

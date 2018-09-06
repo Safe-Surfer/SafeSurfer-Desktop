@@ -20,7 +20,7 @@ npm install
 
 
 %build
-%{__make} PACKAGEFORMAT=rpm build-linux
+%{__make} PACKAGEFORMAT=rpm BUILDMODE=RELEASE build-linux
 
 
 %install
