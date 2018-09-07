@@ -16,7 +16,7 @@ AppUpdatesURL=http://www.safesurfer.co.nz
 DefaultDirName={pf}\SafeSurfer-Desktop
 DisableDirPage=yes
 DisableProgramGroupPage=yes
-OutputBaseFilename=SafeSurfer-Desktop-Installer
+OutputBaseFilename=SafeSurfer-Desktop-Installer32
 Compression=lzma
 SolidCompression=yes
 
@@ -28,8 +28,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "Z:\root\build\SafeSurfer-Desktop-1.0.0\release-builds\SafeSurfer-Desktop-win32-x64\safesurfer-desktop.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Z:\root\build\SafeSurfer-Desktop-1.0.0\release-builds\SafeSurfer-Desktop-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Z:\root\build\SafeSurfer-Desktop-1.0.0\release-builds\SafeSurfer-Desktop-win32-ia32\safesurfer-desktop.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Z:\root\build\SafeSurfer-Desktop-1.0.0\release-builds\SafeSurfer-Desktop-win32-ia32\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
