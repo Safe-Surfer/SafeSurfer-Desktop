@@ -8,7 +8,7 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 This project's intent is for desktop users--families, persons, etc.  
 For enterprise/business use, it is recommmend to apply the DNS settings on a router which devices are connected to.  
 
-### Latest [release information](CHANGELOG): version 1.0.0 (build 1)
+### Latest [release information](CHANGELOG): version 1.0.0b1 (THIS IS A BETA)
 ## Install the release build: https://safesurfer.co.nz/download
 
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)
@@ -42,7 +42,7 @@ arch: base-devel
 windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)
 
 ## Runtime dependencies
-Linux: polkit curl
+Linux: polkit curl (libgconf2-4 on Debian based systems)
 
 ## Setting up build and development environment
 `npm i`  
@@ -60,6 +60,9 @@ deb: `make deb-pkg`
 arch: `make arch-pkg`  
 rpm: use spec file in `support/linux/specs`  
 exe: use iss file in `support\windows\build-windows-installer.iss`  
+exe (32-bit): use iss file in `support\windows\build-windows-installer32.iss`  
+
+Note: for use in inno scripts, you must adjust path to the compiled folder in the scripts
 
 ## License
 Copyright 2018 Safe Surfer  

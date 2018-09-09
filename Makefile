@@ -48,7 +48,7 @@ uninstall:
 	@rm -rf $(DESTDIR)/usr/share/pixmaps/ss-logo.png
 
 prep-deb:
-	make PACKAGEFORMAT=deb BUILDMODE=RELEASE build-linux
+	make PACKAGEFORMAT=deb BUILDMODE=$(BUILDMODE) build-linux
 	@mkdir -p deb-build/safesurfer-desktop
 	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
 	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop
@@ -56,10 +56,12 @@ prep-deb:
 	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop/usr/share/doc/safesurfer-desktop
 	@mv deb-build/safesurfer-desktop/debian/copyright deb-build/safesurfer-desktop/debian/safesurfer-desktop/usr/share/doc/safesurfer-desktop
 
-deb-pkg: prep-deb
+deb-pkg:
+	make BUILDMODE=$(BUILDMODE) prep-deb
 	@cd deb-build/safesurfer-desktop/debian && debuild -b
 
-deb-src: prep-deb
+deb-src:
+	make BUILDMODE=$(BUILDMODE) prep-deb
 	@cd deb-build/safesurfer-desktop/debian && debuild -S
 
 build-zip:
@@ -70,9 +72,19 @@ build-zip:
 arch-pkg:
 	cd ./support/linux/arch && makepkg -si
 
+build-flatpak:
+	make build-linux
+	make DESTDIR=build install
+	flatpak-builder flatpak-build ./support/linux/flatpak/nz.co.safesurfer.SafeSurfer-Desktop.json
+
+compile-win-setup:
+	npm run compile-win-setup
+
+compile-win-setup32:
+	npm run compile-win-setup32
 
 clean:
-	@rm -rf dist deb-build release-builds
+	@rm -rf dist deb-build release-builds flatpak-build build
 
 slim:
 	@rm -rf node_modules

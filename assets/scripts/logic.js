@@ -454,7 +454,7 @@ function collectTelemetry() {
 	teleData.LOCALE = app.getLocale();
 	teleData.BUILDMODE = BUILDMODEJSON.BUILDMODE;
 	teleData.ISSERVICEENABLED = appStates.serviceEnabled;
-	if (os.platform() != 'win32') teleData.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
+	if (os.platform() == 'linux') teleData.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
 	return JSON.stringify(teleData);
 }
 
@@ -462,7 +462,10 @@ function sendTelemetry() {
 	// send information to server
 	var dataToSend = encode.encode(collectTelemetry(),'base64');
 	Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
-		if (response || body) logging.log('TEL SEND: Sent.', appStates.enableLogging);
+		if (response || body) {
+		  logging.log('TEL SEND: Sent.', appStates.enableLogging);
+      if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
+		}
 		if (err) {
 			logging.log('TEL SEND: Could not send.', appStates.enableLogging);
 			return;

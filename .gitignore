@@ -1,3 +1,6 @@
 node_modules
 .buildconfig
 release-builds
+flatpak-build
+build
+.flatpak-builder

@@ -9,12 +9,12 @@
             "name" : "SafeSurfer-Desktop",
             "buildsystem" : "simple",
             "build-commands" : [
-                "install -D hello.sh /app/bin/hello.sh"
+                "cd ./build && cp * /"
             ],
             "sources" : [
                 {
                     "type" : "file",
-                    "path" : "hello.sh"
+                    "path" : "/opt/SafeSurfer-Desktop/SafeSurfer-Desktop"
                 }
             ]
         }

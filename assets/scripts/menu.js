@@ -43,7 +43,7 @@ module.exports = (app, mainWindow) => {
 		label: i18n.__('General'),
 		submenu:
 		[
-			{label: i18n.__('Sites of concern'), click() {childWindow.show()} },
+			/*{label: i18n.__('Sites of concern'), click() {childWindow.show()} },*/
 			{
 				label: i18n.__('Toggle'),
 				submenu:
@@ -52,7 +52,8 @@ module.exports = (app, mainWindow) => {
 					{label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} }
 				]
 			},
-	  		{label: i18n.__('Help'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' },
+			{label: i18n.__('Give feedback'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')} },
+	  	{label: i18n.__('Help'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' },
 			{type:'separator'},
 			{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 		]
