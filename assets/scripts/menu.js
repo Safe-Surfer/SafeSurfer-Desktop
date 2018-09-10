@@ -53,7 +53,7 @@ module.exports = (app, mainWindow) => {
 				]
 			},
 			{label: i18n.__('Give feedback'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')} },
-	  	{label: i18n.__('Help'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')}, accelerator: 'CmdOrCtrl+H' },
+	  	{label: i18n.__('Help'), click() {shell.openExternal('https://safesurfer.desk.com/')}, accelerator: 'CmdOrCtrl+H' },
 			{type:'separator'},
 			{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 		]
