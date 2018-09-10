@@ -28,8 +28,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "Z:\home\worker\ssbuild\SafeSurfer-Desktop-1.0.0\release-builds\SafeSurfer-Desktop-win32-x64\safesurfer-desktop.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "Z:\home\worker\ssbuild\SafeSurfer-Desktop-1.0.0\release-builds\SafeSurfer-Desktop-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "Z:\home\worker\ssbuild\SafeSurfer-Desktop-1.0.0b1\release-builds\SafeSurfer-Desktop-win32-x64\safesurfer-desktop.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "Z:\home\worker\ssbuild\SafeSurfer-Desktop-1.0.0b1\release-builds\SafeSurfer-Desktop-win32-x64\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
