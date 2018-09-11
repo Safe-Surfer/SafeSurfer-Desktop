@@ -189,37 +189,33 @@ function checkServiceState() {
 
   		var metaResponse = getMeta(body);
   		var searchForResp = body.search('<meta name="ss_status" content="protected">');
-		logging.log(String("checkServiceState - metaResponse.ss_status :: " + metaResponse.ss_status), appStates.enableLogging);
-		logging.log(String("checkServiceState - err                    :: " + error), appStates.enableLogging);
-		//logging.log(String(body), appStates.enableLogging);
-		// if the meta tag returns unprotected
-		//if (metaResponse.ss_status == 'unprotected') {
-		if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
-			appStates.serviceEnabled = false;
-			logging.log('Get Request: Service disabled', appStates.enableLogging);
-			affirmServiceState();
-		}
-		// if the meta tag returns protected
-		//if (metaResponse.ss_status == 'protected') {
-		if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
-			appStates.serviceEnabled = true;
-			logging.log('Get Request: Service enabled', appStates.enableLogging);
-			affirmServiceState();
-		}
-		// if neither are returned
-		else {
-			logging.log("Get Request: Can't see protection state from meta tag", appStates.enableLogging);
-      			//appStates.serviceEnabled = false;
-			// check internet connection
-			if (appStates.internet == true) {
-    				logging.log('Get Request: Unsure of state', appStates.enableLogging);
-			}
-			else if (error !== undefined || appStates.internet != true) {
-				logging.log('NETWORK: Internet connection unavailable', appStates.enableLogging);
-			}
+		  logging.log(String("checkServiceState - metaResponse.ss_status :: " + metaResponse.ss_status), appStates.enableLogging);
+		  logging.log(String("checkServiceState - err                    :: " + error), appStates.enableLogging);
+		  if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
+	  		appStates.serviceEnabled = false;
+  			logging.log('Get Request: Service disabled', appStates.enableLogging);
+  			affirmServiceState();
+  		}
+  		// if the meta tag returns protected
+		  if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
+	  		appStates.serviceEnabled = true;
+	  		logging.log('Get Request: Service enabled', appStates.enableLogging);
+	  		affirmServiceState();
 	  	}
+	  	// if neither are returned
+	  	else {
+	  		logging.log("Get Request: Can't see protection state from meta tag", appStates.enableLogging);
+       	//appStates.serviceEnabled = false;
+	  		// check internet connection
+			  if (appStates.internet == true) {
+    		  logging.log('Get Request: Unsure of state', appStates.enableLogging);
+			  }
+			  else if (error !== undefined || appStates.internet != true) {
+				  logging.log('NETWORK: Internet connection unavailable', appStates.enableLogging);
+			  }
+	    }
 	  	// since the request has succeeded, we can count the app as loaded
-		appStates.appHasLoaded = true;
+		  appStates.appHasLoaded = true;
   	});
 }
 
@@ -232,6 +228,7 @@ function callProgram(command) {
 	for (var i=1; i<command_split.length; i++) {
 		command_arg.push(command_split[i]);
 	}
+	// command will be executed as: comand [ARGS]
 	var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
 		logging.log(stdout, appStates.enableLogging);
 		return stdout;
@@ -338,12 +335,10 @@ function internetConnectionCheck() {
 			appStates.internet = true;
 			appStates.appHasLoaded = true;
 		}
-
 		else {
 			appStates.internet = false;
-			appStates.appHasLoaded = true;
 		}
-	})
+	});
 }
 
 function finishedLoading() {
@@ -373,7 +368,7 @@ function checkForAppUpdate(options) {
 			}
 			return console.dir(error);
 		}
-		//console.dir(JSON.parse(body));
+		// read the data as JSON
 		remoteData=JSON.parse(body);
 		for (item in remoteData.versions) {
 			versionList.push(remoteData.versions[item].build);
@@ -382,7 +377,6 @@ function checkForAppUpdate(options) {
 		for (i in remoteData.versions) {
 			if (remoteData.versions[i].build == remoteData.recommendedBuild) {
 				iteration = i;
-				//logging.log(remoteData.versions[i].build);
 				break;
 			}
 		}
@@ -461,6 +455,7 @@ function collectTelemetry() {
 function sendTelemetry() {
 	// send information to server
 	var dataToSend = encode.encode(collectTelemetry(),'base64');
+	// make a post request to the database
 	Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
 		if (response || body) {
 		  logging.log('TEL SEND: Sent.', appStates.enableLogging);
@@ -474,25 +469,38 @@ function sendTelemetry() {
 }
 
 function telemetryPrompt() {
-	// ask if user wants to participate in telemetry collection
-	var teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team")};
-	dialog.showMessageBox(teleMsg, dialogResponse => {
-		logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
-		if (dialogResponse == 0) {
-			sendTelemetry();
-		}
-		else if (dialogResponse == 1) {
-			var previewTeleData = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
-			dialog.showMessageBox(previewTeleData, dialogResponse => {
-				if (dialogResponse == 0) sendTelemetry();
-			});
-		}
+  // ask if user wants to participate in telemetry collection
+  var nothingSent = {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")};
+  var teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team")};
+  dialog.showMessageBox(teleMsg, dialogResponse => {
+    logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
+    // if user agrees to sending telemetry
+    if (dialogResponse == 0) {
+      sendTelemetry();
+      store.set('telemetryHasAnswer', true);
+    }
+    // if user wants to see what will be sent
+    else if (dialogResponse == 1) {
+      var previewTeleData = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
+      dialog.showMessageBox(previewTeleData, dialogResponse => {
+        // if user agrees to sending telemetry
+        if (dialogResponse == 0) {
+          sendTelemetry();
+          store.set('telemetryHasAnswer', true);
+        }
+				// if user doesn't agree to sending telemetry
+        else if (dialogResponse == 1) {
+          store.set('telemetryHasAnswer', true);
+          dialog.showMessageBox(nothingSent, dialogResponse => {});
+        }
+      });
+    }
+		// if user doesn't want to participate
 		else if (dialogResponse == 2) {
-			var nothingSent = {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")};
-			dialog.showMessageBox(nothingSent, dialogResponse => { });
+	    store.set('telemetryHasAnswer', true);
+			dialog.showMessageBox(nothingSent, dialogResponse => {});
 		}
 	});
-	store.set('telemetryHasAnswer', true);
 }
 
 function versionInformationCopy() {
@@ -567,23 +575,34 @@ function sendAppStateNotifications() {
 	}
 }
 
+function displayRebootMessage() {
+  // tell the user to reboot
+  if (appStates.serviceEnabled == true) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("Great, your computer is setup.\nTo make sure of this, we recommend that you please reboot/restart your computer.")};
+  if (appStates.serviceEnabled == false) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.")};
+	dialog.showMessageBox(dialogRebootMessage, updateResponse => {});
+}
+
 function mainReloadProcess() {
 	// reload function
 	logging.log("__ Refresh Start __", appStates.enableLogging);
 	internetConnectionCheck();
 	checkServiceState();
+	// if there is an internet connection
 	if (appStates.internet == true) {
 		hideNoInternetConnection();
 		if (appStates.serviceEnabled != appStates.serviceEnabled_previous && appStates.serviceEnabled_previous !== undefined) {
 			// if the state changes of the service being enabled changes
 			logging.log('SERVICE STATE: State has changed.', appStates.enableLogging);
 			sendAppStateNotifications();
-  	  		appStates.serviceEnabled_previous = appStates.serviceEnabled;
+      appStates.serviceEnabled_previous = appStates.serviceEnabled;
+      displayRebootMessage();
 		}
 	}
 	else {
+	  // if there is no internet
 		displayNoInternetConnection();
 	}
+	// if the service is enabled, check if a lifeguard is on the network
 	if (appStates.serviceEnabled == true) {
 		checkIfOnLifeGuardNetwork();
 	}
@@ -600,9 +619,11 @@ function mainReloadProcess() {
 		logging.log('LIFEGUARD: State has changed.', appStates.enableLogging);
 		appStates.lifeguardFound_previous = appStates.lifeguardFound;
 	}
+	// if there are undefined states
 	if (appStates.serviceEnabled_previous === undefined) appStates.serviceEnabled_previous = appStates.serviceEnabled;
 	if (appStates.internet_previous === undefined) appStates.internet_previous = appStates.internet;
 	if (appStates.lifeguardFound_previous === undefined) appStates.lifeguardFound_previous = appStates.lifeguardFound;
+	// update the screen to show how the service state (... etc) is
 	affirmServiceState();
 	logging.log("__ Refresh End   __", appStates.enableLogging);
 	setTimeout(mainReloadProcess, 1000);

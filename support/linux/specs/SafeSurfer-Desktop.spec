@@ -1,19 +1,22 @@
 Name:           SafeSurfer-Desktop
 Version:        1.0.0b1
 Release:        1%{?dist}
-Summary:        Keep safe in the digitial surf with Safe Surfer.
+Summary:        Keep safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
-License:        GPLv3
-Group:		Applications/Internet
+License:        GPL-3.0
+Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
 Source0:        https://gitlab.com/safesurfer/%{name}/-/archive/%{version}/%{name}-%{version}.zip
 Requires:       polkit, curl
 BuildRequires:	unzip
 BuildRequires:	nodejs, npm
-
+BuildRequires:  desktop-file-utils
+%if 0%{?suse_version}
+BuildRequires:  update-desktop-files
+%endif
 
 %description
-Keep safe in the digitial surf with Safe Surfer.
+Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS settings for you (on a device, not network).
 
 
 %prep
@@ -31,6 +34,9 @@ npm install
 
 %files
 %doc README.md
+/opt/%{name}
+/opt/%{name}/locales
+/opt/%{name}/resources
 /opt/%{name}/%{name}
 /opt/%{name}/blink_image_resources_200_percent.pak
 /opt/%{name}/LICENSES.chromium.html
@@ -107,11 +113,15 @@ npm install
 /usr/share/applications/%{name}.desktop
 /usr/bin/sscli
 /usr/share/bash-completion/completions/sscli
+/usr/share/polkit-1
+/usr/share/polkit-1/actions
 /usr/share/polkit-1/actions/nz.co.safesurfer.pkexec.safesurfer-desktop.policy
 
 
-%postun
-rm -rf /opt/SafeSurfer-Desktop
+%post
+%if 0%{?suse_version}
+%suse_update_desktop_file %{name}
+%endif
 
 
 %changelog

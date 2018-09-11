@@ -69,5 +69,8 @@
 	"YOU ARE SAFE TO SURF THE INTERNET": "PUOI NAVIGARE L'INTERNET CON SICUREZZA",
 
 	"You are now safe to surf the internet. Safe Surfer has been setup.": "Adesso puoi navigare l'internet con sicurezza.Safe Surfer è attivato.",
-	"Safe Surfer has been disabled. You are now unprotected.": "Safe Surfer è stato disattivato. Non sei più protetto."
+	"Safe Surfer has been disabled. You are now unprotected.": "Safe Surfer è stato disattivato. Non sei più protetto.",
+	"Ok": "Ok",
+	"Great, your computer is setup.\nTo make sure of this, we recommend that you please reboot/restart your computer.": "Great, your computer is setup.\nTo make sure of this, we recommend that you please reboot/restart your computer.",
+	"Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.": "Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer."
 }

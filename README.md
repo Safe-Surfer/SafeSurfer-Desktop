@@ -9,7 +9,7 @@ This project's intent is for desktop users--families, persons, etc.
 For enterprise/business use, it is recommmend to apply the DNS settings on a router which devices are connected to.  
 
 ### Latest [release information](CHANGELOG): version 1.0.0b1 (THIS IS A BETA)
-## Install the release build: https://safesurfer.co.nz/download
+## Install the [latest beta build](http://142.93.48.189)
 
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)
 
@@ -65,8 +65,8 @@ exe (32-bit): use iss file in `support\windows\build-windows-installer32.iss`
 Note: for use in inno scripts, you must adjust path to the compiled folder in the scripts.  
 
 ## Project notes
-- Uses JQuery
-- Uses a slightly modified version of i18n.js for translation
+- Uses [jquery](https://jquery.com/)
+- Uses a slightly modified version of [i18n](https://www.npmjs.com/package/i18n).js for translation
 
 ## License
 Copyright 2018 Safe Surfer  
