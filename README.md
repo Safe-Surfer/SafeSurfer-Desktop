@@ -14,7 +14,7 @@ For enterprise/business use, it is recommmend to apply the DNS settings on a rou
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)
 
 ## Features
-- Set DNS settings to protect device by the clicking of one button  
+- Toggle DNS settings through one button  
 - Protects against harmful content  
 - Easy to use and setup  
 
