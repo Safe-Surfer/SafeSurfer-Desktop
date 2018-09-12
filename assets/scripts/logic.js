@@ -59,9 +59,8 @@ var appStates = {
 	lifeguardFound_previous: undefined,
 	appHasLoaded: false,
 	enableLogging: BUILDMODEJSON.enableLogging,
-	windowsNotificationCounter: 0,
-	userIsAdmin: undefined,
-	hasLifeGuardWindowOpened: undefined
+	notificationCounter: 0,
+	userIsAdmin: undefined
 }
 
 // if a linux package format can't be found, then state unsureness
@@ -129,18 +128,14 @@ function hideNoInternetConnection() {
 function toggleServiceState() {
 	// switch between states
 	logging.log("In switch", appStates.enableLogging);
-	appStates.windowsNotificationCounter = 0;
+	appStates.notificationCounter = 0;
 	// if user's privileges are Admin, or if the host OS is Linux
 	if (appStates.userIsAdmin == true || os.platform() == 'linux') {
 		switch(appStates.serviceEnabled) {
 			case true:
 				logging.log('Toggling enable', appStates.enableLogging);
 				if (appStates.lifeguardFound == true) {
-					if (appStates.hasLifeGuardWindowOpened != true) {
-						window.open('http://mydevice.safesurfer.co.nz');
-						appStates.hasLifeGuardWindowOpened = true;
-					}
-					return;
+					window.open('http://mydevice.safesurfer.co.nz');
 				}
 				else {
 					disableServicePerPlatform();
@@ -235,12 +230,12 @@ function callProgram(command) {
 	});
 }
 
-function enableServicePerPlatform() {
+function enableServicePerPlatform({forced}) {
 	// apply DNS settings
-	if (enableNotifications == true && appStates.windowsNotificationCounter == 0) new Notification('Safe Surfer', {
+	if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		body: i18n.__('Woohoo! Getting your computer setup now.')
 	});
-	appStates.windowsNotificationCounter+=1;
+	appStates.notificationCounter += 1;
 	if (os.platform() != 'linux') {
 		// if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
 		setTimeout(function () {
@@ -260,20 +255,20 @@ function enableServicePerPlatform() {
 		// if running when installed
 		if (process.execPath.includes("/opt/SafeSurfer-Desktop") == true) {
 			//
-			callProgram('pkexec sscli enable');
+			callProgram(String('pkexec sscli enable ' + forced));
 		}
 		else {
-			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli enable'));
+			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli enable ' + forced));
 		}
 	}
 }
 
-function disableServicePerPlatform() {
+function disableServicePerPlatform({forced}) {
 	// restore DNS settings
-	if (enableNotifications == true && appStates.windowsNotificationCounter == 0) new Notification('Safe Surfer', {
+	if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		body: i18n.__('OK! Restoring your settings now.')
 	});
-	appStates.windowsNotificationCounter+=1;
+	appStates.notificationCounter += 1;
 	if (os.platform() != 'linux') {
 		// if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
 		setTimeout(function () {
@@ -291,11 +286,11 @@ function disableServicePerPlatform() {
 		// if the platform is linux, use sscli to toggle DNS settings
 		// if running when installed
 		if (process.execPath.includes("/opt/SafeSurfer-Desktop") == true) {
-			callProgram('pkexec sscli disable');
+			callProgram(String('pkexec sscli disable '));
 		}
 		else {
 			// if running from home folder
-			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli disable'));
+			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli disable ' + forced));
 		}
 	}
 }
@@ -368,6 +363,7 @@ function checkForAppUpdate(options) {
 			}
 			return console.dir(error);
 		}
+		appStates.internet = true;
 		// read the data as JSON
 		remoteData=JSON.parse(body);
 		for (item in remoteData.versions) {
@@ -431,7 +427,7 @@ function checkForAppUpdate(options) {
 				dialog.showMessageBox(updateErrorDialog, updateResponse => {
 					logging.log("UPDATE: Error.", appStates.enableLogging);
 					return;
-				})
+				});
 			}
 		}
 	});
@@ -515,14 +511,22 @@ function versionInformationCopy() {
 function forceToggleWarning({wantedState}) {
 	// display warning message as this could break settings
 	var toggleWarning = {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: i18n.__('The service is already in the state which you request.\nForcing the service to be enabled in this manner may have consequences.\nYour computer\'s network configuration could break by doing this action.')},
-	 continu = false;
+	 continu;
 	if (wantedState == appStates.serviceEnabled) {
 		dialog.showMessageBox(toggleWarning, dialogResponse => {
-			if (dialogResponse == 1) continu = true;
+			if (dialogResponse == 1) {
+        switch(appStates.serviceEnabled) {
+          case true:
+            enableServicePerPlatform({forced: "force"});
+            break;
+
+          case false:
+            disableServicePerPlatform({forced: "force"});
+            break;
+        }
+			}
 		});
 	}
-	else continu = true;
-	return continu;
 }
 
 function showUnprivillegedMessage() {
@@ -577,8 +581,8 @@ function sendAppStateNotifications() {
 
 function displayRebootMessage() {
   // tell the user to reboot
-  if (appStates.serviceEnabled == true) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("Great, your computer is setup.\nTo make sure of this, we recommend that you please reboot/restart your computer.")};
-  if (appStates.serviceEnabled == false) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.")};
+  if (appStates.serviceEnabled == true) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("Great, your computer is setup.\nTo make sure of this, we recommend that you please reboot/restart your computer.")}
+  if (appStates.serviceEnabled == false) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.")}
 	dialog.showMessageBox(dialogRebootMessage, updateResponse => {});
 }
 
@@ -596,6 +600,7 @@ function mainReloadProcess() {
 			sendAppStateNotifications();
       appStates.serviceEnabled_previous = appStates.serviceEnabled;
       displayRebootMessage();
+      appStates.notificationCounter = 0;
 		}
 	}
 	else {
@@ -651,12 +656,12 @@ ipcRenderer.on('checkIfUpdateAvailable', (event, arg) => {
 
 ipcRenderer.on('goForceEnable', () => {
 	// when activate button is pressed from menu bar
-	if (forceToggleWarning({wantedState: true}) == true) enableServicePerPlatform();
+	forceToggleWarning({wantedState: true})
 });
 
 ipcRenderer.on('goForceDisable', () => {
 	// when deactivate button is pressed from menu bar
-	if (forceToggleWarning({wantedState: false}) == true) disableServicePerPlatform();
+	forceToggleWarning({wantedState: false})
 });
 
 ipcRenderer.on('goBuildToClipboard', () => {

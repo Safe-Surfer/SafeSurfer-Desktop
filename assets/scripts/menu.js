@@ -52,8 +52,8 @@ module.exports = (app, mainWindow) => {
 					{label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} }
 				]
 			},
-			{label: i18n.__('Give feedback'), click() {shell.openExternal('https://www.safesurfer.co.nz/faqs/')} },
-	  	{label: i18n.__('Help'), click() {shell.openExternal('https://safesurfer.desk.com/')}, accelerator: 'CmdOrCtrl+H' },
+			{label: i18n.__('Give feedback'), click() {shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
+	  	{label: i18n.__('Help'), click() {shell.openExternal('https://community.safesurfer.co.nz/')}, accelerator: 'CmdOrCtrl+H' },
 			{type:'separator'},
 			{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 		]
@@ -63,7 +63,7 @@ module.exports = (app, mainWindow) => {
 		submenu:
 		[
 			{label: i18n.__('Check status in browser'), click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
-	  		{label: i18n.__('Report a bug'), click() {shell.openExternal('https://safesurfer.desk.com/')} },
+	  		{label: i18n.__('Report a bug'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/BUGS.md')} },
 			{label: i18n.__('Restart'), click() {app.relaunch(); app.quit()} }
 		]
 

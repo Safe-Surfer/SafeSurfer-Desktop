@@ -123,12 +123,24 @@ which nscd && systemctl is-active --quiet nscd && service nscd reload && service
 echo -e "sscli\\n by\\nSafe Surfer\\n-----"
 case "$arg" in
 	enable)
+		shift
 		sudoUserCheck
-		checkServiceState && echo "SERVICE: Already enabled." || setDNSservers
+		if [ ! "$1" = "-f" ] || [ ! "$1" = "force" ]
+		then
+			checkServiceState && echo "SERVICE: Already enabled." || setDNSservers
+		else
+			setDNSservers
+		fi
 		;;
 	disable)
+		shift
 		sudoUserCheck
-		checkServiceState && restoreDNSservers || echo "SERVICE: Already disabled."
+		if [ ! "$1" = "-f" ] || [ ! "$1" = "force" ]
+		then
+			checkServiceState && restoreDNSservers || echo "SERVICE: Already disabled."
+		else
+			restoreDNSservers
+		fi
 		;;
 	service)
 		sudoUserCheck
