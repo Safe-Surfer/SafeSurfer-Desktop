@@ -120,7 +120,13 @@ which nscd && systemctl is-active --quiet nscd && service nscd reload && service
 
 }
 
-echo -e "sscli\\n by\\nSafe Surfer\\n-----"
+cat << EOF
+--------------
+- sscli      -
+- by         -
+- Safe Surfer-
+--------------"
+EOF
 case "$arg" in
 	enable)
 		shift

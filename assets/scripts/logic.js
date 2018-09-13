@@ -138,13 +138,13 @@ function toggleServiceState() {
 					window.open('http://mydevice.safesurfer.co.nz');
 				}
 				else {
-					disableServicePerPlatform();
+					disableServicePerPlatform({});
 				}
 			break;
 
 			case false:
 				logging.log('Toggling disable', appStates.enableLogging);
-				enableServicePerPlatform();
+				enableServicePerPlatform({});
 			break;
 		}
 	}
@@ -232,6 +232,7 @@ function callProgram(command) {
 
 function enableServicePerPlatform({forced}) {
 	// apply DNS settings
+  if (forced === undefined) forced = "";
 	if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		body: i18n.__('Woohoo! Getting your computer setup now.')
 	});
@@ -265,6 +266,7 @@ function enableServicePerPlatform({forced}) {
 
 function disableServicePerPlatform({forced}) {
 	// restore DNS settings
+  if (forced === undefined) forced = "";
 	if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		body: i18n.__('OK! Restoring your settings now.')
 	});
@@ -278,7 +280,7 @@ function disableServicePerPlatform({forced}) {
 			});
 			if (appStates.serviceEnabled == true) {
 				logging.log("DISABLE: Service is still not disabled -- trying again.", appStates.enableLogging)
-				disableServicePerPlatform();
+				disableServicePerPlatform({});
 			}
 		},1200);
 	}
@@ -356,7 +358,7 @@ function checkForAppUpdate(options) {
 		if(error) {
 			// if something goes wrong
 			if (options.showErrors == true) {
-				dialog.showMessageBox(updateErrorDialog, updateResponse => {
+				dialog.showErrorBox(updateErrorDialog, updateResponse => {
 					logging.log("UPDATE: Error with updates.", appStates.enableLogging);
 					return;
 				})
@@ -526,6 +528,17 @@ function forceToggleWarning({wantedState}) {
         }
 			}
 		});
+	}
+	else {
+    switch(appStates.serviceEnabled) {
+      case true:
+        enableServicePerPlatform({forced: "force"});
+        break;
+
+      case false:
+        disableServicePerPlatform({forced: "force"});
+        break;
+    }
 	}
 }
 

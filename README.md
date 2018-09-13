@@ -10,6 +10,8 @@ For enterprise/business use, it is recommmend to apply the DNS settings on a rou
 
 ### Latest [release information](CHANGELOG): version 1.0.0b1 (THIS IS A BETA)
 ## Install the [latest beta build](http://142.93.48.189)
+We need beta testers.  
+If you're wanting to beta test this software, please download the binaries or source and give it a go.  
 
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)
 

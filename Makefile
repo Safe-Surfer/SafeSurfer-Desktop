@@ -84,7 +84,7 @@ compile-win-setup32:
 	npm run compile-win-setup32
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build
+	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder
 
 slim:
 	@rm -rf node_modules

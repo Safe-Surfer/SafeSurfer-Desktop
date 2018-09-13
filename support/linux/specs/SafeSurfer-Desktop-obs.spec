@@ -17,7 +17,6 @@ BuildRequires:  update-desktop-files
 
 %description
 Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS settings for you (on a device, not network).
-This project's intent is for desktop users--families, persons, etc.
 
 
 %prep
