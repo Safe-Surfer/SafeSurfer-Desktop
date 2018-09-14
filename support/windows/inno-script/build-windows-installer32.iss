@@ -7,16 +7,16 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{88718D55-5716-4973-A16B-CBEFDF4A5132}
 AppName=SafeSurfer-Desktop
-AppVersion=1.0
-;AppVerName=SafeSurfer-Desktop 1.0
-AppPublisher=SafeSurfer
+AppVersion=1.0.0b2
+;AppVerName=SafeSurfer-Desktop 1.0.0b1
+AppPublisher=Safe Surfer
 AppPublisherURL=http://www.safesurfer.co.nz
 AppSupportURL=http://www.safesurfer.co.nz
 AppUpdatesURL=http://www.safesurfer.co.nz
 DefaultDirName={pf}\SafeSurfer-Desktop
-DisableDirPage=yes
 DisableProgramGroupPage=yes
-OutputBaseFilename=SafeSurfer-Desktop-Installer32
+OutputBaseFilename=SafeSurfer-Desktop-Installer
+SetupIconFile=Z:\home\worker\ssbuild\SafeSurfer-Desktop-1.0.0b1\release-builds\SafeSurfer-Desktop-win32-ia32\icon.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -38,5 +38,5 @@ Name: "{commondesktop}\SafeSurfer-Desktop"; Filename: "{app}\SafeSurfer-Desktop.
 Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\SafeSurfer-Desktop"; Filename: "{app}\SafeSurfer-Desktop.exe"; Tasks: quicklaunchicon
 
 [Run]
-Filename: "{app}\safesurfer-desktop.exe"; Description: "{cm:LaunchProgram,SafeSurfer-Desktop}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\SafeSurfer-Desktop.exe"; Description: "{cm:LaunchProgram,SafeSurfer-Desktop}"; Flags: nowait postinstall skipifsilent
 

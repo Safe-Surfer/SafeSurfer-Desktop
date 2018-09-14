@@ -34,8 +34,10 @@ const {app, BrowserWindow, Menu, clipboard, electron} = require('electron'),
  updatesEnabled = BUILDMODEJSON.enableUpdates,
  i18n = new (require('./i18n.js'));
 var accountIsAssigned = store.get('accountInformation'),
- appUpdateAutoCheck = store.get('appUpdateAutoCheck');
+ appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
+ betaCheck = store.get('betaCheck');
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
+if (betaCheck === undefined) store.set('betaCheck', false);
 
 module.exports = (app, mainWindow) => {
 	const menu = [
@@ -78,7 +80,7 @@ module.exports = (app, mainWindow) => {
 			{type:'separator'},
 	  		{label:String(i18n.__("Version") + ": "+APPVERSION+" - " + i18n.__("Build") + ": "+APPBUILD + " (" + BUILDMODE + ")"), click() {mainWindow.webContents.send('goBuildToClipboard')} },
 			{type:'separator'},
-	  		{label: i18n.__('About this app'), click() {} }
+	  		{label: i18n.__('About this app'), click() {mainWindow.webContents.send('openAboutMenu')} }
 	  	]
 
 	},
@@ -90,6 +92,7 @@ module.exports = (app, mainWindow) => {
 		[
 			{label: i18n.__('Check for update'), click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
 			{label: i18n.__('Automatically check for updates'), type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
+			{label: i18n.__('Opt in to beta releases'), type: 'checkbox', checked: betaCheck, click() {mainWindow.webContents.send('betaCheck', betaCheck)} },
 		]
 	};
 	// hide dev tools if not enabled

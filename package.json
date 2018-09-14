@@ -1,6 +1,6 @@
 {
   "name": "SafeSurfer-Desktop",
-  "version": "1.0.0b1",
+  "version": "1.0.0b2",
   "description": "The SafeSurfer desktop app",
   "main": "main.js",
   "license": "GPL-3.0",
@@ -8,6 +8,7 @@
     "start": "electron .",
     "sscli": "node ./assets/scripts/sscli.js",
     "electron-builder": "node_modules/.bin/electron-builder",
+    "electron-icon-maker": "node_modules/.bin/electron-icon-maker",
     "nexe": "node_modules/.bin/nexe",
     "package-linux": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/linux/ss-logo.png --prun=true --out=release-builds",
     "package-macos": "node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --prune --out=release-builds",

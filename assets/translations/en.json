@@ -72,5 +72,7 @@
 	"Safe Surfer has been disabled. You are now unprotected.": "Safe Surfer has been disabled. You are now unprotected.",
 	"Ok": "Ok",
 	"Great, your computer is setup.\nTo make sure of this, we recommend that you please reboot/restart your computer.": "Great, your computer is setup.\nTo make sure of this, we recommend that you please reboot/restart your computer.",
-	"Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.": "Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer."
+	"Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.": "Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.",
+	"Opt in to beta releases": "Opt in to beta releases",
+	"You can't toggle the service, since you're on a LifeGuard network.": "You can't toggle the service, since you're on a LifeGuard network."
 }

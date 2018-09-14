@@ -1,5 +1,5 @@
 Name:           SafeSurfer-Desktop
-Version:        1.0.0b1
+Version:        1.0.0b2
 Release:        1%{?dist}
 Summary:        Keep safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
@@ -125,5 +125,8 @@ npm install
 
 
 %changelog
+* Fri Sep 14 2018 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b1
+
 * Fri May 25 2018 caleb
 - Init to RPM

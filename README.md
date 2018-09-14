@@ -8,7 +8,7 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 This project's intent is for desktop users (families, persons, etc). Our aim in this project is to make it as easy as possible to get protected and be safe online.  
 For enterprise/business use, it is recommmend to apply the DNS settings on a router which devices are connected to.  
 
-### Latest [release information](CHANGELOG): version 1.0.0b1 (THIS IS A BETA)
+### Latest [release information](CHANGELOG): version 1.0.0b2 (THIS IS A BETA)
 ## Install the [latest beta build](http://142.93.48.189)
 We need beta testers.  
 If you're wanting to beta test this software, please download the binaries or source and give it a go.  

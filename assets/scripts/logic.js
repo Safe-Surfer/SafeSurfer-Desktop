@@ -28,6 +28,7 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  os = require('os'),
  child_process = require('child_process'),
  dns = require('dns'),
+ path = require('path'),
  bonjour = require('bonjour')(),
  {dialog} = require('electron').remote,
  Request = require("request"),
@@ -175,11 +176,11 @@ function checkServiceState() {
 	// check the state of the service
 	logging.log('Getting state of service', appStates.enableLogging);
   	Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
-  		if (! error) {
-  			appStates.internet = true;
+  		if (error) {
+  			appStates.internet = false;
   		}
   		else {
-  			appStates.internet = false;
+  			appStates.internet = true;
   		}
 
   		var metaResponse = getMeta(body);
@@ -356,6 +357,7 @@ function checkForAppUpdate(options) {
 
 	Request.get(String("http://" + serverAddress + ":" + serverPort + serverDataFile), (error, response, body) => {
 		if(error) {
+		  appStates.internet = false;
 			// if something goes wrong
 			if (options.showErrors == true) {
 				dialog.showErrorBox(updateErrorDialog, updateResponse => {
@@ -371,16 +373,23 @@ function checkForAppUpdate(options) {
 		for (item in remoteData.versions) {
 			versionList.push(remoteData.versions[item].build);
 		}
-		var iteration;
+		var iteration,
+		  versionRecommended;
+		if (store.get('betaCheck') == false) {
+		  buildRecommended = remoteData.recommendedBuild;
+		}
+		else {
+		  buildRecommended = remoteData.recommendedBetaBuild;
+		}
 		for (i in remoteData.versions) {
-			if (remoteData.versions[i].build == remoteData.recommendedBuild) {
+			if (remoteData.versions[i].build == buildRecommended) {
 				iteration = i;
 				break;
 			}
 		}
 		var updateAvailableDialog = {type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('There is an update available' ) + '(v' + remoteData.versions[iteration].version + '). ' + i18n.__('Do you want to install it now?'))},
 		 updateDowngradeDialog = {type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('Please downgrade to version ') + remoteData.versions[iteration].version + '. ' + i18n.__('Do you want to install it now?'))};
-		if (remoteData.recommendedBuild > APPBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1) {
+		if (buildRecommended > APPBUILD && versionList.indexOf(buildRecommended) != -1) {
 			// update available
 			dialog.showMessageBox(updateAvailableDialog, updateResponse => {
 				if (updateResponse == 0) {
@@ -398,7 +407,7 @@ function checkForAppUpdate(options) {
 			});
 
 		}
-		else if (remoteData.recommendedBuild == APPBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1 && options.current == true) {
+		else if (buildRecommended == APPBUILD && versionList.indexOf(buildRecommended) != -1 && options.current == true) {
 			// up to date
 			dialog.showMessageBox(updateCurrentDialog, updateResponse => {
 				if (updateResponse == 0) {
@@ -410,7 +419,7 @@ function checkForAppUpdate(options) {
 				}
 			})
 		}
-		else if (remoteData.recommendedBuild < APPBUILD && versionList.indexOf(remoteData.recommendedBuild) != -1) {
+		else if (buildRecommended < APPBUILD && versionList.indexOf(buildRecommended) != -1) {
 			// user must downgrade
 			dialog.showMessageBox(updateDowngradeDialog, updateResponse => {
 				if (updateResponse == 0) {
@@ -513,32 +522,38 @@ function versionInformationCopy() {
 function forceToggleWarning({wantedState}) {
 	// display warning message as this could break settings
 	var toggleWarning = {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: i18n.__('The service is already in the state which you request.\nForcing the service to be enabled in this manner may have consequences.\nYour computer\'s network configuration could break by doing this action.')},
+	 lifeguardMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.")},
 	 continu;
-	if (wantedState == appStates.serviceEnabled) {
-		dialog.showMessageBox(toggleWarning, dialogResponse => {
-			if (dialogResponse == 1) {
-        switch(appStates.serviceEnabled) {
-          case true:
-            enableServicePerPlatform({forced: "force"});
-            break;
-
-          case false:
-            disableServicePerPlatform({forced: "force"});
-            break;
-        }
-			}
-		});
+	if (appStates.lifeguardFound == true) {
+	  dialog.showMessageBox(lifeguardMessage, dialogResponse => {});
 	}
 	else {
-    switch(appStates.serviceEnabled) {
-      case true:
-        enableServicePerPlatform({forced: "force"});
-        break;
+		if (wantedState == appStates.serviceEnabled) {
+		  dialog.showMessageBox(toggleWarning, dialogResponse => {
+			  if (dialogResponse == 1) {
+          switch(appStates.serviceEnabled) {
+            case true:
+              enableServicePerPlatform({forced: "force"});
+              break;
 
-      case false:
-        disableServicePerPlatform({forced: "force"});
-        break;
-    }
+            case false:
+              disableServicePerPlatform({forced: "force"});
+              break;
+          }
+			  }
+		  });
+	  }
+	  else {
+      switch(appStates.serviceEnabled) {
+        case true:
+          enableServicePerPlatform({forced: "force"});
+          break;
+
+        case false:
+          disableServicePerPlatform({forced: "force"});
+          break;
+      }
+	  }
 	}
 }
 
@@ -649,13 +664,25 @@ function mainReloadProcess() {
 
 ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
 	// if user changes the state of auto check for updates
-	logging.log(String("UPDATES: Auto check stated changed to " + !arg), appStates.enableLogging);
+	logging.log(String("UPDATES: Auto check state changed to " + !arg), appStates.enableLogging);
 	if (arg == true) {
 		store.set('appUpdateAutoCheck', false);
 	}
 
 	else if (arg == false) {
 		store.set('appUpdateAutoCheck', true);
+	}
+});
+
+ipcRenderer.on('betaCheck', (event, arg) => {
+	// if user changes the state of auto check for updates
+	logging.log(String("UPDATES: Beta state changed to " + !arg), appStates.enableLogging);
+	if (arg == true) {
+		store.set('betaCheck', false);
+	}
+
+	else if (arg == false) {
+		store.set('betaCheck', true);
 	}
 });
 
@@ -680,6 +707,10 @@ ipcRenderer.on('goForceDisable', () => {
 ipcRenderer.on('goBuildToClipboard', () => {
 	// when version information is pressed from menu bar
 	versionInformationCopy();
+});
+
+ipcRenderer.on('openAboutMenu', () => {
+  window.open(path.join(__dirname, 'assets', 'html', 'about.html'), 'About us')
 });
 
 // keep note of if the user is running as admin or not

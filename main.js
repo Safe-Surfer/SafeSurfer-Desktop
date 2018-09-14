@@ -50,7 +50,7 @@ function createWindow() {
 		minWidth: 550,
 		minHeight: 600,
 		title: 'Safe Surfer (beta)',
-		icon: path.join(__dirname, 'ss-logo.png')
+		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png')
 	});
 
 	// load in main html document
