@@ -16,7 +16,7 @@ AppUpdatesURL=http://www.safesurfer.co.nz
 DefaultDirName={pf}\SafeSurfer-Desktop
 DisableProgramGroupPage=yes
 OutputBaseFilename=SafeSurfer-Desktop-Installer
-SetupIconFile=Z:\home\worker\ssbuild\SafeSurfer-Desktop-1.0.0b2\release-builds\SafeSurfer-Desktop-win32-ia32\assets\media\icons\win\icon.ico
+SetupIconFile=Z:\home\worker\ssbuild\SafeSurfer-Desktop-1.0.0b2\assets\media\icons\win\icon.ico
 Compression=lzma
 SolidCompression=yes
 
