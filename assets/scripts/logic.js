@@ -66,13 +66,13 @@ var appStates = {
 
 // if a linux package format can't be found, then state unsureness
 if (LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
-logging.log("Platform:", os.platform(), appStates.enableLogging);
+logging.log("INFO.platform:", os.platform(), appStates.enableLogging);
 logging.log(process.cwd());
 
 function displayProtection() {
 	// enable DNS
 	if (appStates.internet == true) {
-		logging.log("Protected", appStates.enableLogging);
+		logging.log("STATE: protected", appStates.enableLogging);
 		$(".serviceActiveScreen").show();
 		$(".serviceInactiveScreen").hide();
 		// if a lifeguard has been found
@@ -99,7 +99,7 @@ function displayProtection() {
 function displayUnprotection() {
 	// disable DNS
 	if (appStates.internet == true) {
-		logging.log("Unprotected", appStates.enableLogging);
+		logging.log("STATE: Unprotected", appStates.enableLogging);
 		$(".serviceInactiveScreen").show();
 		$(".serviceActiveScreen").hide();
 		$("#toggleButton").html(i18n.__("GET PROTECTED"));
@@ -128,13 +128,13 @@ function hideNoInternetConnection() {
 
 function toggleServiceState() {
 	// switch between states
-	logging.log("In switch", appStates.enableLogging);
+	logging.log("USER: In switch", appStates.enableLogging);
 	appStates.notificationCounter = 0;
 	// if user's privileges are Admin, or if the host OS is Linux
 	if (appStates.userIsAdmin == true || os.platform() == 'linux') {
 		switch(appStates.serviceEnabled) {
 			case true:
-				logging.log('Toggling enable', appStates.enableLogging);
+				logging.log('STATE: trying toggle enable', appStates.enableLogging);
 				if (appStates.lifeguardFound == true) {
 					window.open('http://mydevice.safesurfer.co.nz');
 				}
@@ -144,7 +144,7 @@ function toggleServiceState() {
 			break;
 
 			case false:
-				logging.log('Toggling disable', appStates.enableLogging);
+				logging.log('STATE: trying toggle disable', appStates.enableLogging);
 				enableServicePerPlatform({});
 			break;
 		}
@@ -156,16 +156,16 @@ function toggleServiceState() {
 
 function affirmServiceState() {
 	// affirm the state of the service
-	logging.log("Affirming the state", appStates.enableLogging);
+	logging.log("STATE: Affirming the state", appStates.enableLogging);
 	switch(appStates.serviceEnabled) {
 		case false:
-			logging.log('Affirming disable', appStates.enableLogging);
+			logging.log('STATE: trying affirm disable', appStates.enableLogging);
 			displayUnprotection();
 			return 0;
 			break;
 
 		case true:
-			logging.log('Affirming enable', appStates.enableLogging);
+			logging.log('STATE: trying affirm enable', appStates.enableLogging);
 			displayProtection();
 			return 0;
 			break;
@@ -174,7 +174,7 @@ function affirmServiceState() {
 
 function checkServiceState() {
 	// check the state of the service
-	logging.log('Getting state of service', appStates.enableLogging);
+	logging.log('STATE: Getting state of service', appStates.enableLogging);
   	Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
   		if (error) {
   			appStates.internet = false;
@@ -189,22 +189,22 @@ function checkServiceState() {
 		  logging.log(String("checkServiceState - err                    :: " + error), appStates.enableLogging);
 		  if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
 	  		appStates.serviceEnabled = false;
-  			logging.log('Get Request: Service disabled', appStates.enableLogging);
+  			logging.log('STATE: Get Request - Service disabled', appStates.enableLogging);
   			affirmServiceState();
   		}
   		// if the meta tag returns protected
 		  if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
 	  		appStates.serviceEnabled = true;
-	  		logging.log('Get Request: Service enabled', appStates.enableLogging);
+	  		logging.log('STATE: Get Request - Service enabled', appStates.enableLogging);
 	  		affirmServiceState();
 	  	}
 	  	// if neither are returned
 	  	else {
-	  		logging.log("Get Request: Can't see protection state from meta tag", appStates.enableLogging);
+	  		logging.log("STATE: Get Request - Can't see protection state from meta tag", appStates.enableLogging);
        	//appStates.serviceEnabled = false;
 	  		// check internet connection
 			  if (appStates.internet == true) {
-    		  logging.log('Get Request: Unsure of state', appStates.enableLogging);
+    		  logging.log('STATE: Get Request - Unsure of state', appStates.enableLogging);
 			  }
 			  else if (error !== undefined || appStates.internet != true) {
 				  logging.log('NETWORK: Internet connection unavailable', appStates.enableLogging);
@@ -217,7 +217,7 @@ function checkServiceState() {
 
 function callProgram(command) {
 	// call a child process
-	logging.log(String('> Calling command: ' + command), appStates.enableLogging);
+	logging.log(String('COMMAND: calling - ' + command), appStates.enableLogging);
 	var command_split = command.split(" ");
 	var command_arg = [];
 	// concatinate 2+ into a variable
@@ -226,7 +226,7 @@ function callProgram(command) {
 	}
 	// command will be executed as: comand [ARGS]
 	var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
-		logging.log(stdout, appStates.enableLogging);
+		logging.log(String("COMMAND: output - " + stdout), appStates.enableLogging);
 		return stdout;
 	});
 }
@@ -247,7 +247,7 @@ function enableServicePerPlatform({forced}) {
 			    loggingEnable:appStates.enableLogging
 			});
 			if (appStates.serviceEnabled == false) {
-				logging.log("ENABLE: Service is still not enabled -- trying again.", appStates.enableLogging);
+				logging.log("STATE: Service is still not enabled -- trying again.", appStates.enableLogging);
 				enableServicePerPlatform();
 			}
 		},1200);
@@ -280,7 +280,7 @@ function disableServicePerPlatform({forced}) {
 			    loggingEnable:appStates.enableLogging
 			});
 			if (appStates.serviceEnabled == true) {
-				logging.log("DISABLE: Service is still not disabled -- trying again.", appStates.enableLogging)
+				logging.log("STATE: Service is still not disabled -- trying again.", appStates.enableLogging)
 				disableServicePerPlatform({});
 			}
 		},1200);
@@ -300,23 +300,23 @@ function disableServicePerPlatform({forced}) {
 
 function checkIfOnLifeGuardNetwork() {
 	// check if current device is on lifeguard network
-	logging.log('Checking if on lifeguard network', appStates.enableLogging);
+	logging.log('LIFEGUARDSTATE: Checking if on lifeguard network', appStates.enableLogging);
 	var result = false;
 	var count = 0;
 	// start searching for lifeguard with bonjour
 	bonjour.findOne({ type: "sslifeguard" }, function(service) {
 		count++;
-		logging.log(String(count + " :: " + service.fqdn), appStates.enableLogging);
+		logging.log(String("LIFEGUARDSTATE: count - " + count + " :: " + service.fqdn), appStates.enableLogging);
 		// if a lifeguard is found
 		if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
 			result = true;
-			logging.log(String('Found status: ' + appStates.lifeguardFound), appStates.enableLogging);
+			logging.log(String('LIFEGUARDSTATE: Found status - ' + appStates.lifeguardFound), appStates.enableLogging);
 		}
 		else {
 			result = false;
 		}
 		appStates.lifeguardFound = result;
-		logging.log(String('appStates.lifeguardFound is ' + appStates.lifeguardFound), appStates.enableLogging);
+		logging.log(String('LIFEGUARDSTATE: appStates.lifeguardFound is ' + appStates.lifeguardFound), appStates.enableLogging);
 	});
 }
 
@@ -446,32 +446,46 @@ function checkForAppUpdate(options) {
 
 function collectTelemetry() {
 	// if the user agrees to it, collect non identifiable information about their setup
-	var teleData = {};
-	teleData.DATESENT = moment().format('X');
-	teleData.TYPE = os.type();
-	teleData.PLATFORM = os.platform();
-	teleData.RELEASE = os.release();
-	teleData.CPUCORES = os.cpus().length;
-	teleData.LOCALE = app.getLocale();
-	teleData.BUILDMODE = BUILDMODEJSON.BUILDMODE;
-	teleData.ISSERVICEENABLED = appStates.serviceEnabled;
-	if (os.platform() == 'linux') teleData.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
-	return JSON.stringify(teleData);
+	var dataGathered = {};
+	logging.log('TELE: Sending general data');
+	dataGathered.TYPESEND = "general";
+	dataGathered.DATESENT = moment().format('X');
+	dataGathered.APPVERSION = APPVERSION;
+	dataGathered.APPBUILD = APPBUILD;
+	dataGathered.TYPE = os.type();
+	dataGathered.PLATFORM = os.platform();
+	dataGathered.RELEASE = os.release();
+	dataGathered.CPUCORES = os.cpus().length;
+	dataGathered.LOCALE = app.getLocale();
+	dataGathered.BUILDMODE = BUILDMODEJSON.BUILDMODE;
+	dataGathered.ISSERVICEENABLED = appStates.serviceEnabled;
+	if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
+	if (store.get('teleHistory') === undefined) {
+	  store.set('teleHistory', [dataGathered]);
+	}
+	else {
+	  var previous = store.get('teleHistory');
+	  previous.push(dataGathered)
+	  store.set('teleHistory', previous);
+	}
+	return JSON.stringify(dataGathered);
 }
 
-function sendTelemetry() {
+function sendTelemetry(source) {
 	// send information to server
-	var dataToSend = encode.encode(collectTelemetry(),'base64');
+	var dataToSend = encode.encode(source,'base64');
 	// make a post request to the database
 	Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
 		if (response || body) {
-		  logging.log('TEL SEND: Sent.', appStates.enableLogging);
+		  logging.log('TELE: Sent.', appStates.enableLogging);
       if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
 		}
 		if (err) {
-			logging.log('TEL SEND: Could not send.', appStates.enableLogging);
+			logging.log('TELE: Could not send.', appStates.enableLogging);
 			return;
 		}
+		store.set('telemetryAllow', true);
+		store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
 	});
 }
 
@@ -483,17 +497,19 @@ function telemetryPrompt() {
     logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
     // if user agrees to sending telemetry
     if (dialogResponse == 0) {
-      sendTelemetry();
+      sendTelemetry(collectTelemetry());
       store.set('telemetryHasAnswer', true);
+      store.set('telemetryAllow', true);
     }
     // if user wants to see what will be sent
     else if (dialogResponse == 1) {
-      var previewTeleData = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
-      dialog.showMessageBox(previewTeleData, dialogResponse => {
+      var previewdataGathered = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
+      dialog.showMessageBox(previewdataGathered, dialogResponse => {
         // if user agrees to sending telemetry
         if (dialogResponse == 0) {
-          sendTelemetry();
+          sendTelemetry(collectTelemetry());
           store.set('telemetryHasAnswer', true);
+          store.set('telemetryAllow', true);
         }
 				// if user doesn't agree to sending telemetry
         else if (dialogResponse == 1) {
@@ -560,7 +576,7 @@ function forceToggleWarning({wantedState}) {
 function showUnprivillegedMessage() {
 	// display dialog for if the app hasn't been started with root privileges
 	var dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')};
-	logging.log("User is not admin -- displaying dialog message.", appStates.enableLogging)
+	logging.log("PRIV: User is not admin -- displaying dialog message.", appStates.enableLogging)
 	dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
 		if (updateResponse == 1) window.close();
 		if (updateResponse == 0) {
@@ -614,9 +630,33 @@ function displayRebootMessage() {
 	dialog.showMessageBox(dialogRebootMessage, updateResponse => {});
 }
 
+function checkForVersionChange() {
+  // if the version of the app has been updated, let the telemetry server know, if allowed by user
+  var previousVersionData,
+   dataGathered = {};
+  if (store.get('telemetryAllow') == true) {
+    previousVersionData = store.get('lastVersionToSendTelemetry');
+    if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
+      logging.log('TELE: Sending update data');
+      dataGathered.TYPESEND = "update";
+      dataGathered.APPBUILD;
+      dataGathered.APPVERSION;
+	    dataGathered.PLATFORM = os.platform();
+	    dataGathered.ISSERVICEENABLED = appStates.serviceEnabled;
+	    if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
+      sendTelemetry(dataGathered);
+
+	    var previous = store.get('teleHistory');
+	    previous.push(dataGathered)
+	    store.set('teleHistory', previous);
+    }
+    else logging.log('TELE: User has not reached new version.');
+  }
+}
+
 function mainReloadProcess() {
 	// reload function
-	logging.log("__ Refresh Start __", appStates.enableLogging);
+	logging.log("MAIN: begin reload", appStates.enableLogging);
 	internetConnectionCheck();
 	checkServiceState();
 	// if there is an internet connection
@@ -624,7 +664,7 @@ function mainReloadProcess() {
 		hideNoInternetConnection();
 		if (appStates.serviceEnabled != appStates.serviceEnabled_previous && appStates.serviceEnabled_previous !== undefined) {
 			// if the state changes of the service being enabled changes
-			logging.log('SERVICE STATE: State has changed.', appStates.enableLogging);
+			logging.log('STATE: State has changed.', appStates.enableLogging);
 			sendAppStateNotifications();
       appStates.serviceEnabled_previous = appStates.serviceEnabled;
       displayRebootMessage();
@@ -644,12 +684,12 @@ function mainReloadProcess() {
 	}
 	if (appStates.internet != appStates.internet_previous) {
 		// if the state of the internet connection changes
-		logging.log('INTERNET: State has changed.', appStates.enableLogging);
+		logging.log('NETWORK: State has changed.', appStates.enableLogging);
 		appStates.internet_previous = appStates.internet;
 	}
 	if (appStates.lifeguardFound != appStates.lifeguardFound_previous) {
 		// if the state of a lifeguard being on the network changes
-		logging.log('LIFEGUARD: State has changed.', appStates.enableLogging);
+		logging.log('LIFEGUARDSTATE: State has changed.', appStates.enableLogging);
 		appStates.lifeguardFound_previous = appStates.lifeguardFound;
 	}
 	// if there are undefined states
@@ -658,7 +698,7 @@ function mainReloadProcess() {
 	if (appStates.lifeguardFound_previous === undefined) appStates.lifeguardFound_previous = appStates.lifeguardFound;
 	// update the screen to show how the service state (... etc) is
 	affirmServiceState();
-	logging.log("__ Refresh End   __", appStates.enableLogging);
+	logging.log("MAIN: end reload", appStates.enableLogging);
 	setTimeout(mainReloadProcess, 1000);
 }
 
@@ -696,12 +736,12 @@ ipcRenderer.on('checkIfUpdateAvailable', (event, arg) => {
 
 ipcRenderer.on('goForceEnable', () => {
 	// when activate button is pressed from menu bar
-	forceToggleWarning({wantedState: true})
+	forceToggleWarning({wantedState: true});
 });
 
 ipcRenderer.on('goForceDisable', () => {
 	// when deactivate button is pressed from menu bar
-	forceToggleWarning({wantedState: false})
+	forceToggleWarning({wantedState: false});
 });
 
 ipcRenderer.on('goBuildToClipboard', () => {
@@ -710,8 +750,24 @@ ipcRenderer.on('goBuildToClipboard', () => {
 });
 
 ipcRenderer.on('openAboutMenu', () => {
-  window.open(path.join(__dirname, 'assets', 'html', 'about.html'), 'About us')
+  window.open(path.join(__dirname, 'assets', 'html', 'about.html'), 'About us');
+});
+
+ipcRenderer.on('viewTeleHistory', () => {
+  window.open(path.join(__dirname, 'assets', 'html', 'tele.html'), 'View telemetry data');
+});
+
+ipcRenderer.on('toggleTeleState', () => {
+  switch(store.get('telemetryAllow')) {
+    case true:
+      store.set('telemetryAllow', false)
+      break;
+    default:
+      store.set('telemetryAllow', true)
+      break;
+  }
 });
 
 // keep note of if the user is running as admin or not
 checkUserPrivileges();
+checkForVersionChange();

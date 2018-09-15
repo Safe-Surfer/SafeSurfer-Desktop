@@ -1,0 +1,40 @@
+body, html {
+  background-color: #1a1a1a;
+	overflow-y: auto;
+}
+
+#teleState {
+  color: white;
+  background-color: black;
+  padding-top: 10px;
+  line-height: 80px;
+}
+
+#teleInfoMsg {
+  color: white;
+  font-size: 36px;
+	font-family: 'Raleway', sans-serif;
+	text-align: center;
+}
+
+.teleDataHistory {
+  word-wrap: break-word;
+  margin-right: 10px;
+  -webkit-user-select: text;
+	-webkit-user-drag: text;
+	-webkit-app-region: drag;
+	cursor: text;
+	background-color: black;
+	color: white;
+	margin-bottom: 20px;
+	border-style: outset;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+
+.counter {
+	font-family: 'BenchNine', sans-serif;
+	padding-bottom: 0px;
+	margin-bottom: 0px;
+}

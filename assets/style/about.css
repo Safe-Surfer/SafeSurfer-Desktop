@@ -1,8 +1,39 @@
 body {
+	height: 100%;
+  width: 100%;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  position: absolute;
+  z-index: -50;
+  background: linear-gradient(94deg, #ffffff, #adf0ff, #ffffff, #d2ffb4, #e9d6ff);
+  background-size: 1000% 1000%;
 
+  -webkit-animation: AboutApp 150s ease infinite;
+  -moz-animation: AboutApp 150s ease infinite;
+  animation: AboutApp 150s ease infinite;
+}
+
+@-webkit-keyframes AboutApp {
+  0%{background-position:0% 96%}
+  50%{background-position:100% 5%}
+  100%{background-position:0% 96%}
+}
+@-moz-keyframes AboutApp {
+  0%{background-position:0% 96%}
+  50%{background-position:100% 5%}
+  100%{background-position:0% 96%}
+}
+@keyframes AboutApp {
+  0%{background-position:0% 96%}
+  50%{background-position:100% 5%}
+  100%{background-position:0% 96%}
 }
 
 .descriptionText {
 	font-family: 'Raleway', sans-serif;
-	font-size: 2.7em;
+	font-size: 2.2em;
+	text-align: center;
+	white-space: nowrap;
 }

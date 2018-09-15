@@ -1,5 +1,6 @@
 const path = require("path"),
  electron = require('electron'),
+ logging = require('./logging.js'),
  fs = require('fs'),
  BUILDMODEJSON = require('../../buildconfig/buildmode.json');
 let loadedLanguage,
@@ -30,7 +31,11 @@ function i18n() {
 i18n.prototype.__ = function(phrase) {
     let translation = loadedLanguage[phrase];
     if(translation === undefined) {
-         translation = phrase;
+      translation = phrase;
+      logging.log(String("i18n: phrase not defined: '" + phrase + "'"));
+    }
+    if (translation == phrase && app.getLocale() != 'en-US') {
+      logging.log(String("i18n: phrase not translated: '" + phrase + "'"));
     }
     return translation;
 }

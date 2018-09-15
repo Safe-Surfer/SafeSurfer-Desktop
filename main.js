@@ -28,6 +28,7 @@ const {app, BrowserWindow, Menu, clipboard} = require('electron'),
  os = require('os'),
  Store = require('electron-store'),
  store = new Store(),
+ windowStateKeeper = require('electron-window-state'),
  BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
@@ -44,11 +45,18 @@ var accountIsAssigned = store.get('accountInformation');
 
 function createWindow() {
 	// Create the browser window.
+	let mainWindowState = windowStateKeeper({
+    defaultWidth: 550,
+    defaultHeight: 600
+  });
+
 	mainWindow = new BrowserWindow({
-		width: 550,
-		height: 600,
+		width: mainWindowState.width,
+		height: mainWindowState.height,
 		minWidth: 550,
 		minHeight: 600,
+    'x': mainWindowState.x,
+    'y': mainWindowState.y,
 		title: 'Safe Surfer (beta)',
 		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png')
 	});
@@ -61,6 +69,8 @@ function createWindow() {
 	// set menu from menu.js
 	const appMenu = require('./assets/scripts/menu.js');
 	Menu.setApplicationMenu(Menu.buildFromTemplate(appMenu(app, mainWindow)));
+
+	mainWindowState.manage(mainWindow);
 }
 
 	app.on('ready', function() {

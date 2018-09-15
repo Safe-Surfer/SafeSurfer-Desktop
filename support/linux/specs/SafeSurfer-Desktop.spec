@@ -6,7 +6,7 @@ BuildArch:	x86_64
 License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
-Source0:        https://gitlab.com/safesurfer/%{name}/-/archive/%{version}/%{name}-%{version}.zip
+Source:		https://gitlab.com/safesurfer/%{name}/-/archive/%{version}/%{name}-%{version}.zip
 Requires:       polkit, curl
 BuildRequires:	unzip
 BuildRequires:	nodejs, npm
@@ -126,7 +126,7 @@ npm install
 
 %changelog
 * Fri Sep 14 2018 caleb
-- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b1
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b2
 
 * Fri May 25 2018 caleb
 - Init to RPM

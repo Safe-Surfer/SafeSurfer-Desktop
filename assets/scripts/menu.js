@@ -35,9 +35,18 @@ const {app, BrowserWindow, Menu, clipboard, electron} = require('electron'),
  i18n = new (require('./i18n.js'));
 var accountIsAssigned = store.get('accountInformation'),
  appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
- betaCheck = store.get('betaCheck');
+ betaCheck,
+ teleEnabled = store.get('telemetryAllow');
+
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
-if (betaCheck === undefined) store.set('betaCheck', false);
+if (betaCheck === undefined && BUILDMODE != 'dev') {
+  store.set('betaCheck', false);
+}
+else if (BUILDMODE == 'dev') {
+  store.set('betaCheck', true);
+}
+
+var betaCheck = store.get('betaCheck');
 
 module.exports = (app, mainWindow) => {
 	const menu = [
@@ -65,10 +74,10 @@ module.exports = (app, mainWindow) => {
 		submenu:
 		[
 			{label: i18n.__('Check status in browser'), click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
-	  		{label: i18n.__('Report a bug'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/BUGS.md')} },
-			{label: i18n.__('Restart'), click() {app.relaunch(); app.quit()} }
-		]
+	  	{label: i18n.__('Report a bug'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/BUGS.md')} },
+			{label: i18n.__('Restart'), click() {app.relaunch(); app.quit()} },
 
+		]
 	},
 	{
 		label: i18n.__('Info'),
@@ -82,11 +91,20 @@ module.exports = (app, mainWindow) => {
 			{type:'separator'},
 	  		{label: i18n.__('About this app'), click() {mainWindow.webContents.send('openAboutMenu')} }
 	  	]
-
 	},
 	];
+	if (store.get('telemetryHasAnswer') == true) {
+	  menu[1].submenu[3] = {
+		  label: i18n.__('Telemetry'),
+      submenu:
+      [
+        {label: i18n.__('Enable telemetry'), type: 'checkbox', checked: teleEnabled, click() {mainWindow.webContents.send('toggleTeleState')} },
+        {label: i18n.__('View transmitted data'), click() {mainWindow.webContents.send('viewTeleHistory')} }
+      ]
+	  }
+	}
 	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-	if (updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev')) menu[1].submenu[3] = {
+	if (updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev')) menu[1].submenu[4] = {
 		label: i18n.__('Updates'),
 		submenu:
 		[
@@ -97,7 +115,7 @@ module.exports = (app, mainWindow) => {
 	};
 	// hide dev tools if not enabled
 	if (BUILDMODE == "dev") {
-		menu[1].submenu[4] = {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }
+		menu[1].submenu[5] = {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }
 	}
 	if (accountIsAssigned == true) menu[3] = {
 		label: i18n.__('Account'),

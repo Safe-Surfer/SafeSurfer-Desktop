@@ -24,7 +24,7 @@ After:
 ```
 
 ## Linting/testing
-One part, you can check to make sure that you haven't forgotten any phrases here and there but using the testTranslations.js unit test.  
+You can check to make sure that you haven't forgotten any phrases here and there but using the testTranslations.js unit test, or by running the app with logging enabled in your language.  
 Use `npm run lintTranslations` to lint the JSON file of your current locale.  
 Use `npm run listTranslations [locale]` replacing [locale] with a locale that's in ./assets/translations.  
 Use `npm run listTranslationsAll` to lint all locales (requires UNIX like environment as of currently).  

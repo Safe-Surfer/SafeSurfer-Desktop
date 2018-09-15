@@ -8,12 +8,12 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 This project's intent is for desktop users (families, persons, etc). Our aim in this project is to make it as easy as possible to get protected and be safe online.  
 For enterprise/business use, it is recommmend to apply the DNS settings on a router which devices are connected to.  
 
-### Latest [release information](CHANGELOG): version 1.0.0b2 (THIS IS A BETA)
+![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)
+
+### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b2): version 1.0.0b2 (THIS IS A BETA)
 ## Install the [latest beta build](http://142.93.48.189)
 We need beta testers.  
 If you're wanting to beta test this software, please download the binaries or source and give it a go.  
-
-![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)
 
 ## Features
 - Toggle DNS settings through one button  
@@ -33,23 +33,18 @@ To report bugs, check out our [bug reporting guide](BUGS.md).
 ## Screenshots
 For screenshots of the app, please refer to the `screenshots` folder.  
 
-## Build dependencies
+## Building
+### Build dependencies
 Linux: nodejs npm (libgconf2-dev on Debian based systems)  
 Windows and macOS: [NodeJS package](https://nodejs.org/en/download)  
 
-## Packaging dependencies
-deb:  debhelper devscripts  
-rpm:  rpmbuild  
-arch: base-devel  
-windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)  
-
-## Runtime dependencies
+### Runtime dependencies
 Linux: polkit curl (libgconf2-4 on Debian based systems)  
 
-## Setting up build and development environment
+### Setting up build and development environment
 `npm i`  
 
-## Building binaries
+### Building binaries
 Linux: `make build-linux`  
 Windows: `make build-windows`  
 Windows 32bit: `make build-windows32`  
@@ -57,7 +52,13 @@ macOS: `make build-macos`
 
 Please note that building Windows versions on Linux or macOS requires Wine to be installed as a prerequisite  
 
-## Packaging
+### Packaging dependencies
+deb:  debhelper devscripts  
+rpm:  rpmbuild  
+arch: base-devel  
+windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)  
+
+### Packaging
 deb: `make deb-pkg`  
 arch: `make arch-pkg`  
 rpm: use spec file in `support/linux/specs`  
@@ -69,7 +70,9 @@ Note: for use in inno scripts, you must adjust path to the compiled folder in th
 ## Project notes
 - Uses [jquery](https://jquery.com/)
 - Uses a slightly modified version of [i18n](https://www.npmjs.com/package/i18n).js for translation
+- If developing on Windows, run nodejs command prompt as admin (as otherwise you won't be able to toggle the service)
 
 ## License
-Copyright 2018 Safe Surfer  
-Licensed under the GPLv3: http://www.gnu.org/licenses/gpl-3.0.html  
+Copyright 2018 Safe Surfer, et al.  
+This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html)  
+This program comes with absolutely no warrenty.  

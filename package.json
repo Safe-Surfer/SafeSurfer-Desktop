@@ -40,6 +40,7 @@
     "electron-download-manager": "^2.2.0",
     "electron-store": "^2.0.0",
     "electron-sudo": "^4.0.12",
+    "electron-window-state": "^5.0.1",
     "innosetup-compiler": "^5.5.9",
     "is-admin": "^2.1.1",
     "lets-get-meta": "^2.1.1",
