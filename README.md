@@ -45,10 +45,10 @@ Linux: polkit curl (libgconf2-4 on Debian based systems)
 `npm i`  
 
 ### Building binaries
-Linux: `make build-linux`  
-Windows: `make build-windows`  
-Windows 32bit: `make build-windows32`  
-macOS: `make build-macos`  
+Linux: `make build-linux` or `npm run package-linux`  
+Windows: `make build-windows` or `npm run package-win`  
+Windows 32bit: `make build-windows32` or `npm run package-win32`  
+macOS: `make build-macos` or `npm run package-macos`  
 
 Please note that building Windows versions on Linux or macOS requires Wine to be installed as a prerequisite  
 
