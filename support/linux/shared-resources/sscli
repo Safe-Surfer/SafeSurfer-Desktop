@@ -78,6 +78,13 @@ fi
 
 }
 
+function flushAndRestart() {
+# flush and restart DNS related services
+
+which systemd-resolve > /dev/null && systemd-resolve --flush-caches && echo "Flushed systemd-resolv caches."
+which nscd > /dev/null && systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "Restarted nscd"
+}
+
 function setDNSservers() {
 # set DNS settings
 mv "$resolvconf"{,.before_safesurfer}
@@ -87,16 +94,13 @@ if checkServiceState
 then
 	echo "DNS settings installed successfully."
 	chattr +i /etc/resolv.conf
+	flushAndRestart
 	return 0
 else
 	echo "ERROR: DNS settings failed to install; Reverting changes."
 	mv "$resolvconf"{.before_safesurfer,}
 	return 1
 fi
-
-which systemd-resolve && systemd-resolve --flush-caches
-which nmcli && systemctl is-active --quiet NetworkManager && service NetworkManager reload && service NetworkManager restart
-which nscd && systemctl is-active --quiet nscd && service nscd reload && service nscd restart
 
 }
 
@@ -108,15 +112,12 @@ mv "$resolvconf"{.before_safesurfer,}
 if ! checkServiceState
 then
 	echo "DNS settings removed successfully."
+	flushAndRestart
 	return 0
 else
 	echo "ERROR: DNS settings failed to remove."
 	return 1
 fi
-
-which systemd-resolve && systemd-resolve --flush-caches
-which nmcli && systemctl is-active --quiet NetworkManager && service NetworkManager reload && service NetworkManager restart
-which nscd && systemctl is-active --quiet nscd && service nscd reload && service nscd restart
 
 }
 
@@ -125,7 +126,7 @@ cat << EOF
 - sscli       -
 - by          -
 - Safe Surfer -
----------------"
+---------------
 EOF
 case "$arg" in
 	enable|-e|--enable)
