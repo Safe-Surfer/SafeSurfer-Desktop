@@ -47,7 +47,7 @@ help     print this menu
 enable   enable the DNS
 disable  disable the DNS
 service  check and enable as service
-check    check if DNS is set
+status	 get the status of the service
 launch   launch the desktop app
 EOF
 }
@@ -121,14 +121,14 @@ which nscd && systemctl is-active --quiet nscd && service nscd reload && service
 }
 
 cat << EOF
---------------
-- sscli      -
-- by         -
-- Safe Surfer-
---------------"
+---------------
+- sscli       -
+- by          -
+- Safe Surfer -
+---------------"
 EOF
 case "$arg" in
-	enable)
+	enable|-e|--enable)
 		shift
 		sudoUserCheck
 		if [ ! "$1" = "-f" ] || [ ! "$1" = "force" ]
@@ -138,7 +138,7 @@ case "$arg" in
 			setDNSservers
 		fi
 		;;
-	disable)
+	disable|-d|--disable)
 		shift
 		sudoUserCheck
 		if [ ! "$1" = "-f" ] || [ ! "$1" = "force" ]
@@ -148,14 +148,14 @@ case "$arg" in
 			restoreDNSservers
 		fi
 		;;
-	service)
+	service|-s|--service)
 		sudoUserCheck
 		enableBackgroundService
 		;;
-	check)
+	check|status|-c|--check|-s|--status)
 		checkServiceState && echo "SERVICE: Enabled." || echo "SERIVCE: Disabled."
 		;;
-	launch)
+	launch|-l|--launch)
 		[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1
 		/opt/SafeSurfer-Desktop/SafeSurfer-Desktop
 		;;

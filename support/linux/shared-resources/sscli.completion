@@ -8,7 +8,7 @@ _sscli()
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
     if [[ ${cur} == * ]] ; then
-        COMPREPLY=( $(compgen -W "enable disable launch check service help" -- ${cur}) )
+        COMPREPLY=( $(compgen -W "enable -e --enable disable -d --disable launch -l --launch check -c --check status -s --status service -s --service help -h --help" -- ${cur}) )
         return 0
     fi
 }

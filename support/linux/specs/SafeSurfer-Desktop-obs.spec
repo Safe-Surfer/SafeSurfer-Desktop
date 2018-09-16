@@ -126,5 +126,5 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 * Fri Sep 14 2018 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b2
 
-* Fri May 25 2018 caleb
+* Fri Sep 10 2018 caleb
 - Init to RPM

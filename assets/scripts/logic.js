@@ -19,6 +19,8 @@
 //
 
 // include libraries
+
+// note: make app more secure and use global.desktop.buildmodejson() instead of require()
 const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,

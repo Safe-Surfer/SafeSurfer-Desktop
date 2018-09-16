@@ -58,7 +58,11 @@ function createWindow() {
     'x': mainWindowState.x,
     'y': mainWindowState.y,
 		title: 'Safe Surfer (beta)',
-		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png')
+		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png'),
+		/*webPreferences: {
+		  nodeIntegration: false,
+		  preload: path.join(__dirname, 'preload.js')
+		}*/
 	});
 
 	// load in main html document
