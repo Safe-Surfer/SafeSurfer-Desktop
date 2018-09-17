@@ -75,7 +75,7 @@ module.exports = (app, mainWindow) => {
 		[
 			{label: i18n.__('Check status in browser'), click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
 	  	{label: i18n.__('Report a bug'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/BUGS.md')} },
-			{label: i18n.__('Restart'), click() {app.relaunch(); app.quit()} },
+			{label: i18n.__('Restart app'), click() {app.relaunch(); app.quit()} },
 
 		]
 	},
@@ -95,11 +95,11 @@ module.exports = (app, mainWindow) => {
 	];
 	if (store.get('telemetryHasAnswer') == true) {
 	  menu[1].submenu[3] = {
-		  label: i18n.__('Telemetry'),
+		  label: i18n.__('Data sharing'),
       submenu:
       [
-        {label: i18n.__('Enable telemetry'), type: 'checkbox', checked: teleEnabled, click() {mainWindow.webContents.send('toggleTeleState')} },
-        {label: i18n.__('View transmitted data'), click() {mainWindow.webContents.send('viewTeleHistory')} }
+        {label: i18n.__('Enable data sharing'), type: 'checkbox', checked: teleEnabled, click() {mainWindow.webContents.send('toggleTeleState')} },
+        {label: i18n.__('View shared data'), click() {mainWindow.webContents.send('viewTeleHistory')} }
       ]
 	  }
 	}

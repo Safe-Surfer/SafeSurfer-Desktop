@@ -8,6 +8,7 @@ body, html {
   background-color: black;
   padding-top: 10px;
   line-height: 80px;
+  font-size: 3.3em;
 }
 
 #teleInfoMsg {
@@ -37,4 +38,8 @@ body, html {
 	font-family: 'BenchNine', sans-serif;
 	padding-bottom: 0px;
 	margin-bottom: 0px;
+}
+
+h4 {
+  text-align: center;
 }

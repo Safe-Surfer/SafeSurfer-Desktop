@@ -56,8 +56,7 @@ var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
 var appStates = {
 	serviceEnabled: undefined,
 	serviceEnabled_previous: undefined,
-	internet: undefined,
-	internet_previous: undefined,
+	internet: [undefined, undefined, undefined, undefined, undefined],
 	lifeguardFound: undefined,
 	lifeguardFound_previous: undefined,
 	appHasLoaded: false,
@@ -71,9 +70,43 @@ if (LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
 logging.log("INFO.platform:", os.platform(), appStates.enableLogging);
 logging.log(process.cwd());
 
+const appFrame = {
+  callProgram : function(command) {
+	  // call a child process
+	  logging.log(String('COMMAND: calling - ' + command), appStates.enableLogging);
+	  var command_split = command.split(" ");
+	  var command_arg = [];
+	  // concatinate 2+ into a variable
+	  for (var i=1; i<command_split.length; i++) {
+		  command_arg.push(command_split[i]);
+	  }
+	  // command will be executed as: comand [ARGS]
+	  var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
+		  logging.log(String("COMMAND: output - " + stdout), appStates.enableLogging);
+		  if (err) logging.log(String("COMMAND: output error - " + err), appStates.enableLogging);
+		  if (stderr) logging.log(String("COMMAND: output stderr - " + stderr), appStates.enableLogging);
+		  return stdout;
+	  });
+  },
+
+  checkUserPrivileges : function () {
+	  // keep note of which user the app is run as
+	  if (requireRoot == true) {
+		  switch(os.platform()) {
+			  case 'win32':
+				  isAdmin().then(admin => {
+					  if (admin == false) appStates.userIsAdmin = false;
+					  else appStates.userIsAdmin = true;
+				  });
+				  break;
+		  }
+	  }
+  }
+}
+
 function displayProtection() {
 	// enable DNS
-	if (appStates.internet == true) {
+	if (appStates.internet[0] == true) {
 		logging.log("STATE: protected", appStates.enableLogging);
 		$(".serviceActiveScreen").show();
 		$(".serviceInactiveScreen").hide();
@@ -100,7 +133,7 @@ function displayProtection() {
 
 function displayUnprotection() {
 	// disable DNS
-	if (appStates.internet == true) {
+	if (appStates.internet[0] == true) {
 		logging.log("STATE: Unprotected", appStates.enableLogging);
 		$(".serviceInactiveScreen").show();
 		$(".serviceActiveScreen").hide();
@@ -133,7 +166,7 @@ function toggleServiceState() {
 	logging.log("USER: In switch", appStates.enableLogging);
 	appStates.notificationCounter = 0;
 	// if user's privileges are Admin, or if the host OS is Linux
-	if (appStates.userIsAdmin == true || os.platform() == 'linux') {
+	if (appStates.userIsAdmin == true || os.platform() == 'linux' || os.platform == 'darwin') {
 		switch(appStates.serviceEnabled) {
 			case true:
 				logging.log('STATE: trying toggle enable', appStates.enableLogging);
@@ -178,11 +211,11 @@ function checkServiceState() {
 	// check the state of the service
 	logging.log('STATE: Getting state of service', appStates.enableLogging);
   	Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
-  		if (error) {
-  			appStates.internet = false;
+  		if (error >= 400 && error <= 511) {
+  			appStates.internet[0] = false;
   		}
   		else {
-  			appStates.internet = true;
+  			appStates.internet[0] = true;
   		}
 
   		var metaResponse = getMeta(body);
@@ -205,32 +238,16 @@ function checkServiceState() {
 	  		logging.log("STATE: Get Request - Can't see protection state from meta tag", appStates.enableLogging);
        	//appStates.serviceEnabled = false;
 	  		// check internet connection
-			  if (appStates.internet == true) {
+			  if (appStates.internet[0] == true) {
     		  logging.log('STATE: Get Request - Unsure of state', appStates.enableLogging);
 			  }
-			  else if (error !== undefined || appStates.internet != true) {
+			  else if (error !== undefined || appStates.internet[0] != true) {
 				  logging.log('NETWORK: Internet connection unavailable', appStates.enableLogging);
 			  }
 	    }
 	  	// since the request has succeeded, we can count the app as loaded
 		  appStates.appHasLoaded = true;
   	});
-}
-
-function callProgram(command) {
-	// call a child process
-	logging.log(String('COMMAND: calling - ' + command), appStates.enableLogging);
-	var command_split = command.split(" ");
-	var command_arg = [];
-	// concatinate 2+ into a variable
-	for (var i=1; i<command_split.length; i++) {
-		command_arg.push(command_split[i]);
-	}
-	// command will be executed as: comand [ARGS]
-	var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
-		logging.log(String("COMMAND: output - " + stdout), appStates.enableLogging);
-		return stdout;
-	});
 }
 
 function enableServicePerPlatform({forced}) {
@@ -245,8 +262,8 @@ function enableServicePerPlatform({forced}) {
 		setTimeout(function () {
 			dns_changer.setDNSservers({
 			    DNSservers:['104.197.28.121','104.155.237.225'],
-			    DNSbackupName:'before_safesurfer',
-			    loggingEnable:appStates.enableLogging
+			    DNSbackupName: 'before_safesurfer',
+			    loggingEnable: appStates.enableLogging
 			});
 			if (appStates.serviceEnabled == false) {
 				logging.log("STATE: Service is still not enabled -- trying again.", appStates.enableLogging);
@@ -259,10 +276,10 @@ function enableServicePerPlatform({forced}) {
 		// if running when installed
 		if (process.execPath.includes("/opt/SafeSurfer-Desktop") == true) {
 			//
-			callProgram(String('pkexec sscli enable ' + forced));
+			appFrame.callProgram(String('pkexec sscli enable ' + forced));
 		}
 		else {
-			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli enable ' + forced));
+			appFrame.callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli enable ' + forced));
 		}
 	}
 }
@@ -278,8 +295,8 @@ function disableServicePerPlatform({forced}) {
 		// if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
 		setTimeout(function () {
 			dns_changer.restoreDNSservers({
-			    DNSbackupName:'before_safesurfer',
-			    loggingEnable:appStates.enableLogging
+			    DNSbackupName: 'before_safesurfer',
+			    loggingEnable: appStates.enableLogging
 			});
 			if (appStates.serviceEnabled == true) {
 				logging.log("STATE: Service is still not disabled -- trying again.", appStates.enableLogging)
@@ -291,11 +308,11 @@ function disableServicePerPlatform({forced}) {
 		// if the platform is linux, use sscli to toggle DNS settings
 		// if running when installed
 		if (process.execPath.includes("/opt/SafeSurfer-Desktop") == true) {
-			callProgram(String('pkexec sscli disable '));
+			appFrame.callProgram(String('pkexec sscli disable '));
 		}
 		else {
 			// if running from home folder
-			callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli disable ' + forced));
+			appFrame.callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli disable ' + forced));
 		}
 	}
 }
@@ -332,11 +349,11 @@ function internetConnectionCheck() {
 	// check the user's internet connection
 	connectivity(function (online) {
 		if (online) {
-			appStates.internet = true;
+			appStates.internet[0] = true;
 			appStates.appHasLoaded = true;
 		}
 		else {
-			appStates.internet = false;
+			appStates.internet[0] = false;
 		}
 	});
 }
@@ -358,8 +375,8 @@ function checkForAppUpdate(options) {
 	 updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String(i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong."))};
 
 	Request.get(String("http://" + serverAddress + ":" + serverPort + serverDataFile), (error, response, body) => {
-		if(error) {
-		  appStates.internet = false;
+		if(error >= 400 && error <= 511) {
+		  appStates.internet[0] = false;
 			// if something goes wrong
 			if (options.showErrors == true) {
 				dialog.showErrorBox(updateErrorDialog, updateResponse => {
@@ -369,7 +386,7 @@ function checkForAppUpdate(options) {
 			}
 			return console.dir(error);
 		}
-		appStates.internet = true;
+		appStates.internet[0] = true;
 		// read the data as JSON
 		remoteData=JSON.parse(body);
 		for (item in remoteData.versions) {
@@ -407,7 +424,6 @@ function checkForAppUpdate(options) {
 					return;
 				}
 			});
-
 		}
 		else if (buildRecommended == APPBUILD && versionList.indexOf(buildRecommended) != -1 && options.current == true) {
 			// up to date
@@ -419,7 +435,7 @@ function checkForAppUpdate(options) {
 				else {
 					return;
 				}
-			})
+			});
 		}
 		else if (buildRecommended < APPBUILD && versionList.indexOf(buildRecommended) != -1) {
 			// user must downgrade
@@ -432,7 +448,6 @@ function checkForAppUpdate(options) {
 					return;
 				}
 			});
-
 		}
 		else {
 			// if something goes wrong
@@ -482,7 +497,7 @@ function sendTelemetry(source) {
 		  logging.log('TELE: Sent.', appStates.enableLogging);
       if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
 		}
-		if (err) {
+		if (err >= 400 && err <= 511) {
 			logging.log('TELE: Could not send.', appStates.enableLogging);
 			return;
 		}
@@ -590,27 +605,6 @@ function showUnprivillegedMessage() {
 	});
 }
 
-function checkUserPrivileges() {
-	// keep note of which user the app is run as
-	if (requireRoot == true) {
-		switch(os.platform()) {
-			// display dialog per platform
-			/*case 'darwin':
-				if (USERNAME != 'root') {
-					userIsAdmin=true;
-					showUnprivillegedMessage();
-				}
-				break;*/
-			case 'win32':
-				isAdmin().then(admin => {
-					if (admin == false) appStates.userIsAdmin = false;
-					else appStates.userIsAdmin = true;
-				});
-				break;
-		}
-	}
-}
-
 function sendAppStateNotifications() {
 	// send notifications if the app state has changed to the user
 	if (appStates.serviceEnabled == true) {
@@ -662,7 +656,7 @@ function mainReloadProcess() {
 	internetConnectionCheck();
 	checkServiceState();
 	// if there is an internet connection
-	if (appStates.internet == true) {
+	if (appStates.internet[0] == true) {
 		hideNoInternetConnection();
 		if (appStates.serviceEnabled != appStates.serviceEnabled_previous && appStates.serviceEnabled_previous !== undefined) {
 			// if the state changes of the service being enabled changes
@@ -684,10 +678,10 @@ function mainReloadProcess() {
 	else {
 		appStates.lifeguardFound = false;
 	}
-	if (appStates.internet != appStates.internet_previous) {
+	if (appStates.internet[0] != appStates.internet[1]) {
 		// if the state of the internet connection changes
 		logging.log('NETWORK: State has changed.', appStates.enableLogging);
-		appStates.internet_previous = appStates.internet;
+		appStates.internet[1] = appStates.internet[0];
 	}
 	if (appStates.lifeguardFound != appStates.lifeguardFound_previous) {
 		// if the state of a lifeguard being on the network changes
@@ -696,7 +690,7 @@ function mainReloadProcess() {
 	}
 	// if there are undefined states
 	if (appStates.serviceEnabled_previous === undefined) appStates.serviceEnabled_previous = appStates.serviceEnabled;
-	if (appStates.internet_previous === undefined) appStates.internet_previous = appStates.internet;
+	if (appStates.internet[1] === undefined) appStates.internet[1] = appStates.internet[0];
 	if (appStates.lifeguardFound_previous === undefined) appStates.lifeguardFound_previous = appStates.lifeguardFound;
 	// update the screen to show how the service state (... etc) is
 	affirmServiceState();
@@ -771,5 +765,5 @@ ipcRenderer.on('toggleTeleState', () => {
 });
 
 // keep note of if the user is running as admin or not
-checkUserPrivileges();
+appFrame.checkUserPrivileges();
 checkForVersionChange();

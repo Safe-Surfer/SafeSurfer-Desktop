@@ -10,7 +10,7 @@
 	"Exit": "Beenden",
 	"Check status in browser": "Überprüfe den Status im Browser",
 	"Report a bug": "Melde eine Fehlfunktion",
-	"Restart": "Neustart",
+	"Restart app": "Neustart app",
 	"Dev tools": "Entwicklerwerkzeuge",
 	"About us": "Über uns",
 	"Contact us": "Kontaktiere uns",
@@ -75,14 +75,15 @@
 	"Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.": "Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.",
 	"Opt in to beta releases": "Opt in to beta releases",
 	"You can't toggle the service, since you're on a LifeGuard network.": "You can't toggle the service, since you're on a LifeGuard network.",
-	"Telemetry": "Telemetry",
-	"View transmitted data": "View transmitted data",
-	"Enable telemetry": "Enable telemetry",
+	"Data sharing": "Data sharing",
+	"View shared data": "View shared data",
+	"Enable data sharing": "Enable data sharing",
 	"About this app": "About this app",
 	"No": "No",
 	"Please downgrade to version ": "Please downgrade to version ",
 	"No data is available.": "No data is available.",
 	"You're opted in.": "You're opted in.",
 	"You're not opted in.": "You're not opted in.",
-	"Here's your data:": "Here's your data:"
+	"Here's the data we've collected:": "Here's the data we've collected:",
+	"You can opt out at any time in the support menu": "You can opt out at any time in the support menu"
 }

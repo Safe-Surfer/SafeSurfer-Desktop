@@ -3,7 +3,8 @@ const Store = require('electron-store'),
  i18n = new (require('../scripts/i18n.js'));
 var teleHist = store.get('teleHistory'),
  textBody = "";
-$("#teleInfoMsg").text(i18n.__("Here's your data:"));
+$("#teleInfoMsg").text(i18n.__("Here's the data we've collected:"));
+$("#optOutMsg").text(i18n.__("You can opt out at any time in the support menu"));
 switch(store.get('telemetryAllow')) {
   case true:
     $("#teleState").text(i18n.__("You're opted in."));
@@ -21,4 +22,4 @@ if (textBody !== undefined) {
     textBody += String('<p id="teleDataHistory" class="teleDataHistory">' + i18n.__("No data is available.") + '</p>\n\n');
   }
 }
-$("body").append(textBody);
+$("#dataView").append(textBody);
