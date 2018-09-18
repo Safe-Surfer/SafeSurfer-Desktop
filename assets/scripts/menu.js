@@ -83,14 +83,14 @@ module.exports = (app, mainWindow) => {
 		label: i18n.__('Info'),
 		submenu:
 		[
-	  		{label: i18n.__('About us'), click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
-	  		{label: i18n.__('Contact us'), click() {shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
-	  		{label: i18n.__('Contribute to this project'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
-			{type:'separator'},
-	  		{label:String(i18n.__("Version") + ": "+APPVERSION+" - " + i18n.__("Build") + ": "+APPBUILD + " (" + BUILDMODE + ")"), click() {mainWindow.webContents.send('goBuildToClipboard')} },
-			{type:'separator'},
-	  		{label: i18n.__('About this app'), click() {mainWindow.webContents.send('openAboutMenu')} }
-	  	]
+	    {label: i18n.__('About us'), click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
+	    {label: i18n.__('Contact us'), click() {shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
+	    {label: i18n.__('Contribute to this project'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
+		  {type:'separator'},
+	    {label:String(i18n.__("Version") + ": "+APPVERSION+" - " + i18n.__("Build") + ": "+APPBUILD + " (" + BUILDMODE + ")"), click() {mainWindow.webContents.send('goBuildToClipboard')} },
+		  {type:'separator'},
+	    {label: i18n.__('About this app'), click() {mainWindow.webContents.send('openAboutMenu')} }
+	  ]
 	},
 	];
 	if (store.get('telemetryHasAnswer') == true) {
@@ -124,5 +124,12 @@ module.exports = (app, mainWindow) => {
 			{label: i18n.__('My Account'), click() {} },
 		]
 	}
+	if (os.platform() == 'darwin') menu.unshift({
+	  label: 'Safe Surfer',
+	  submenu: [
+			{type:'separator'},
+			{label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+	  ]
+	});
 	return menu;
 }

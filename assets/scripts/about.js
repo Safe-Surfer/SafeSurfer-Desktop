@@ -6,9 +6,12 @@ const BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
  requireRoot = BUILDMODEJSON.requireRoot,
  i18n = new (require('../scripts/i18n.js'));
 
+// function to make \n multiline
 $.fn.multiline = function(text, rt){
     this.html(text);
     this.html(this.html().replace(/\n/g,'<br/>'));
     return this;
 }
+
+// update description text
 $('#description').multiline(String(i18n.__("Version") + " " + APPVERSION + "; " + i18n.__("Build") + " " + APPBUILD + "\n &copy; 2018 Safe Surfer, et al."));

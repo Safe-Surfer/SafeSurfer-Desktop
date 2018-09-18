@@ -41,21 +41,21 @@ $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET 
 $('#toggleButton').text(i18n.__('CHECKING SERVICE STATE'));
 
 // if auto-update checking is enabled and updates are enabled, check for them
-if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev')) checkForAppUpdate({
+if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev')) appFrame.checkForAppUpdate({
 	current: false,
 	showErrors: false
 });
 
 // if user hasn't provided a response to telemetry
 if (store.get('telemetryHasAnswer') != true) {
-	setTimeout(() => {telemetryPrompt()},5000);
+	setTimeout(() => {appFrame.telemetryPrompt()},5000);
 };
 
 // initalise rest of app
-checkServiceState();
+appFrame.checkServiceState();
 setTimeout(function() {
 	// run main process which loops
-	finishedLoading();
-	mainReloadProcess();
+	appFrame.finishedLoading();
+	appFrame.mainReloadProcess();
 }, 1000);
 
