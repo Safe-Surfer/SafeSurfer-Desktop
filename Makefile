@@ -28,9 +28,11 @@ install:
 	@mkdir -p $(DESTDIR)/usr/bin
 	@mkdir -p $(DESTDIR)$(COMPLETIONDIR)
 	@mkdir -p $(DESTDIR)/usr/share/polkit-1/actions
+	@mkdir -p $(DESTDIR)/usr/share/appdata
 	@cp -p -r ./release-builds/SafeSurfer-Desktop-linux-x64/. $(DESTDIR)$(PREFIX)
 	@cp ./support/linux/shared-resources/sscli $(DESTDIR)/usr/bin
 	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop $(DESTDIR)/usr/share/applications
+	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml $(DESTDIR)/usr/share/appdata
 	@cp -p ./support/linux/shared-resources/sscli.completion $(DESTDIR)$(COMPLETIONDIR)/sscli
 	@cp -p ./support/linux/shared-resources/nz.co.safesurfer.pkexec.safesurfer-desktop.policy $(DESTDIR)/usr/share/polkit-1/actions
 	@cp ./assets/media/icons/png/2000x2000.png $(DESTDIR)/usr/share/pixmaps/ss-logo.png
@@ -65,9 +67,9 @@ deb-src:
 	@cd deb-build/safesurfer-desktop/debian && debuild -S
 
 build-zip:
-	@mkdir -p deb-build/safesurfer-desktop
-	@make DESTDIR=deb-build/SafeSurfer-Desktop install
-	@cd deb-build/SafeSurfer-Desktop && zip -r ../SafeSurfer-Desktop.zip .
+	@mkdir -p zip-build
+	@make DESTDIR=zip-build install
+	@cd zip-build && zip -r ../SafeSurfer-Desktop-Linux.zip .
 
 arch-pkg:
 	cd ./support/linux/arch && makepkg -si
@@ -84,7 +86,7 @@ compile-win-setup32:
 	npm run compile-win-setup32
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder
+	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip
 
 slim:
 	@rm -rf node_modules
