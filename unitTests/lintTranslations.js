@@ -26,44 +26,76 @@ var translationJSON, englishJSON, keyList = {},
  localeMod = osLocale.sync().slice(0,2),
  args = process.argv[2];
 
-keyList.countOfKeys = 0;
-keyList.goodKeys = 0;
-keyList.untranslatedKeys = 0;
-englishJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/translations', 'en' + '.json'), 'utf8'))
-
-console.log("User locale:", localeMod)
+englishJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/translations', 'en' + '.json'), 'utf8'));
+console.log("User locale:", localeMod, "\n");
 
 if (args !== undefined) {
 	localeMod = args;
-	console.log("Using locale:", args);
-}
-
-if (args == 'en' || localeMod == 'en') {
-	console.log("Locale 'en' must be left, as it doesn't require translation.")
-	process.exit(0)
-}
-
-if (fs.existsSync(path.join(__dirname, '../assets/translations', localeMod + '.json'))) {
-	translationJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/translations', localeMod + '.json'), 'utf8'))
+	if (args == 'all') {
+	  console.log("Checking all locales.");
+	  fs.readdirSync('./assets/translations').forEach(file => {
+      runLint(file.split('.')[0]);
+    });
+  }
+  else {
+    runLint(localeMod);
+    console.log("Using locale:", args);
+  }
 }
 else {
-	console.log('Cannot find your locale:', localeMod);
+	console.log('Available locales:');
+	fs.readdirSync('./assets/translations').forEach(file => {
+    console.log(" |", file.split('.')[0]);
+  });
+  console.log(" | all  <-- check all locales");
 }
 
-for (var key in translationJSON) {
-	if (translationJSON.hasOwnProperty(key)) {
-		if (key == translationJSON[key]) {
-        		console.log(String("UNTRANSLATED KEY #" + keyList.countOfKeys + " :: " + translationJSON[key]));
-        		keyList.untranslatedKeys++;
-		}
-		else {
-			keyList.goodKeys++;
-		}
-    	}
-    	keyList.countOfKeys++;
-}
+function runLint(lang) {
+  keyList.countOfKeys = 0;
+  keyList.goodKeys = 0;
+  keyList.untranslatedKeys = 0;
+  if (args == 'en' || lang == 'en') {
+	  console.log("Locale 'en' must be left, as it doesn't require translation.");
+	  return;
+  }
 
-console.log(String("\nSUMMARY\n-------\n\n" +"UNTRANSLATED: "+keyList.untranslatedKeys+"\n" + "EDITED: "+keyList.goodKeys+"\n"+"TOTAL: "+keyList.countOfKeys));
-if (keyList.countOfKeys == keyList.goodKeys) {
-	console.log(String("\nGreat! '"+localeMod+"' appears to be done."))
+  if (fs.existsSync(path.join(__dirname, '../assets/translations', lang + '.json'))) {
+	  translationJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/translations', lang + '.json'), 'utf8'));
+  }
+  else {
+	  console.log('Cannot find your locale:', lang);
+  }
+
+  console.log(String("-- Checking: " + lang + " --"));
+
+  for (var key in translationJSON) {
+	  if (translationJSON.hasOwnProperty(key)) {
+		  if (key == translationJSON[key]) {
+    		console.log(String("UNTRANSLATED KEY #" + keyList.countOfKeys + " :: " + translationJSON[key]));
+    		keyList.untranslatedKeys++;
+		  }
+		  else {
+			  keyList.goodKeys++;
+		  }
+    }
+    keyList.countOfKeys++;
+  }
+
+  console.log(String(
+    "\nSUMMARY OF " +
+    lang +
+    "\n-------\n" +
+    "UNTRANSLATED: " +
+    keyList.untranslatedKeys+"\n" +
+    "EDITED: " +
+    keyList.goodKeys +
+    "\n" +
+    "TOTAL: " +
+    keyList.countOfKeys +
+    "\n-------"
+  ));
+  if (keyList.countOfKeys == keyList.goodKeys) {
+	  console.log(String("\nGreat! '" + lang + "' appears to be done."));
+  }
+  console.log();
 }

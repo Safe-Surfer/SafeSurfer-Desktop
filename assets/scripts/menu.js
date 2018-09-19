@@ -64,9 +64,7 @@ module.exports = (app, mainWindow) => {
 				]
 			},
 			{label: i18n.__('Give feedback'), click() {shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
-	  	{label: i18n.__('Help'), click() {shell.openExternal('https://community.safesurfer.co.nz/')}, accelerator: 'CmdOrCtrl+H' },
-			{type:'separator'},
-			{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+	  	{label: i18n.__('Help'), click() {shell.openExternal('https://community.safesurfer.co.nz/')}, accelerator: 'CmdOrCtrl+H' }
 		]
 	},
 	{
@@ -124,12 +122,22 @@ module.exports = (app, mainWindow) => {
 			{label: i18n.__('My Account'), click() {} },
 		]
 	}
-	if (os.platform() == 'darwin') menu.unshift({
-	  label: 'Safe Surfer',
-	  submenu: [
-			{type:'separator'},
-			{label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
-	  ]
-	});
+	// add seperate menu for name and quit, like on standard macOS apps
+	if (os.platform() == 'darwin') {
+	  menu.unshift({
+	    label: 'Safe Surfer',
+	    submenu: [
+			  {type:'separator'},
+			  {label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+	    ]
+	  });
+	}
+	// add exit and a separator to Linux and Windows versions
+	else {
+	  menu[0].submenu.push(
+			  {type:'separator'},
+			  {label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+    );
+	}
 	return menu;
 }

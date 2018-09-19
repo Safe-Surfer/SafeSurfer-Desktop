@@ -25,7 +25,7 @@ function i18n() {
 	}
 	// load config set language
 	else {
-		if(fs.existsSync(path.join(__dirname, '../translations', testLanguage + '.json'))) {
+		if (fs.existsSync(path.join(__dirname, '../translations', testLanguage + '.json'))) {
 			loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '../translations', testLanguage + '.json'), 'utf8'));
 		}
 		// if language in config doesn't exist, load english
@@ -38,7 +38,7 @@ function i18n() {
 
 i18n.prototype.__ = function(phrase) {
     let translation = loadedLanguage[phrase];
-    if(translation === undefined) {
+    if (translation === undefined) {
       translation = phrase;
       logging.log(String("i18n: phrase not defined: '" + phrase + "'"));
     }

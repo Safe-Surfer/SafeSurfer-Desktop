@@ -67,10 +67,10 @@ var appStates = {
 
 // if a linux package format can't be found, then state unsureness
 if (LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
-logging.log("INFO.platform:", os.platform(), appStates.enableLogging);
-logging.log(process.cwd());
+logging.log(String("INFO: platform - " + os.platform()), appStates.enableLogging);
+logging.log(String("INFO: cwd - " + process.cwd()), appStates.enableLogging);
 
-const appFrame = {
+const appFrame = Object.freeze({
   callProgram : function(command) {
 	  // call a child process
 	  logging.log(String('COMMAND: calling - ' + command), appStates.enableLogging);
@@ -170,7 +170,7 @@ const appFrame = {
 			  case true:
 				  logging.log('STATE: trying toggle enable', appStates.enableLogging);
 				  if (appStates.lifeguardFound == true) {
-					  window.open('http://mydevice.safesurfer.co.nz');
+					  window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
 				  }
 				  else {
 					  appFrame.disableServicePerPlatform({});
@@ -210,8 +210,9 @@ const appFrame = {
 	  // check the state of the service
 	  logging.log('STATE: Getting state of service', appStates.enableLogging);
     	Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
-    		if (error >= 400 && error <= 511) {
+    		if (error >= 400 && error <= 599) {
     			appStates.internet[0] = false;
+			    logging.log(String("HTTP error:" + error), appStates.enableLogging);
     		}
     		else {
     			appStates.internet[0] = true;
@@ -219,8 +220,7 @@ const appFrame = {
 
     		var metaResponse = getMeta(body);
     		var searchForResp = body.search('<meta name="ss_status" content="protected">');
-		    logging.log(String("checkServiceState - metaResponse.ss_status :: " + metaResponse.ss_status), appStates.enableLogging);
-		    logging.log(String("checkServiceState - err                    :: " + error), appStates.enableLogging);
+		    logging.log(String("STATE - metaResponse.ss_status :: " + metaResponse.ss_status), appStates.enableLogging);
 		    if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
 	    		appStates.serviceEnabled = false;
     			logging.log('STATE: Get Request - Service disabled', appStates.enableLogging);
@@ -235,7 +235,6 @@ const appFrame = {
 	    	// if neither are returned
 	    	else {
 	    		logging.log("STATE: Get Request - Can't see protection state from meta tag", appStates.enableLogging);
-         	//appStates.serviceEnabled = false;
 	    		// check internet connection
 			    if (appStates.internet[0] == true) {
       		  logging.log('STATE: Get Request - Unsure of state', appStates.enableLogging);
@@ -374,9 +373,10 @@ const appFrame = {
 	   updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String(i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong."))};
 
 	  Request.get(String("http://" + serverAddress + ":" + serverPort + serverDataFile), (error, response, body) => {
-		  if(error >= 400 && error <= 511) {
+		  if(error >= 400 && error <= 599) {
 		    appStates.internet[0] = false;
 			  // if something goes wrong
+			  logging.log(String("HTTP error:" + error), appStates.enableLogging);
 			  if (options.showErrors == true) {
 				  dialog.showErrorBox(updateErrorDialog, updateResponse => {
 					  logging.log("UPDATE: Error with updates.", appStates.enableLogging);
@@ -496,8 +496,9 @@ const appFrame = {
 		    logging.log('TELE: Sent.', appStates.enableLogging);
         if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
 		  }
-		  if (err >= 400 && err <= 511) {
+		  if (err >= 400 && err <= 599) {
 			  logging.log('TELE: Could not send.', appStates.enableLogging);
+			  logging.log(String("HTTP error:" + err), appStates.enableLogging);
 			  return;
 		  }
 		  store.set('telemetryAllow', true);
@@ -508,7 +509,7 @@ const appFrame = {
   telemetryPrompt: function () {
     // ask if user wants to participate in telemetry collection
     var nothingSent = {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")};
-    var teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team")};
+    var teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: String(i18n.__("Data sharing") + "\n\n" + i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team"))};
     dialog.showMessageBox(teleMsg, dialogResponse => {
       logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
       // if user agrees to sending telemetry
@@ -530,6 +531,7 @@ const appFrame = {
 				  // if user doesn't agree to sending telemetry
           else if (dialogResponse == 1) {
             store.set('telemetryHasAnswer', true);
+            store.set('telemetryAllow', false);
             dialog.showMessageBox(nothingSent, dialogResponse => {});
           }
         });
@@ -537,6 +539,7 @@ const appFrame = {
 		  // if user doesn't want to participate
 		  else if (dialogResponse == 2) {
 	      store.set('telemetryHasAnswer', true);
+        store.set('telemetryAllow', false);
 			  dialog.showMessageBox(nothingSent, dialogResponse => {});
 		  }
 	  });
@@ -696,7 +699,7 @@ const appFrame = {
 	  logging.log("MAIN: end reload", appStates.enableLogging);
 	  setTimeout(appFrame.mainReloadProcess, 1000);
   }
-}
+});
 
 ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
 	// if user changes the state of auto check for updates
@@ -724,7 +727,7 @@ ipcRenderer.on('betaCheck', (event, arg) => {
 
 ipcRenderer.on('checkIfUpdateAvailable', (event, arg) => {
 	// when user wants to check for app update using button in menu bar
-	checkForAppUpdate({
+	appFrame.checkForAppUpdate({
 		current: true,
 		showErrors: true
 	});

@@ -16,8 +16,7 @@
     "package-win32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"",
     "compile-win-setup": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer.iss",
     "compile-win-setup32": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer32.iss",
-    "lintTranslations": "node ./unitTests/lintTranslations.js",
-    "lintTranslationsAll": "for i in $(command ls ./assets/translations/.); do npm run lintTranslations $(echo -e \"$i\" | cut -d'.' -f1); done"
+    "lintTranslations": "node ./unitTests/lintTranslations.js"
   },
   "repository": "https://gitlab.com/safesurfer/SafeSurfer-Desktop",
   "keywords": [

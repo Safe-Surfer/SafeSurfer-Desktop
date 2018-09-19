@@ -14,4 +14,4 @@ $.fn.multiline = function(text, rt){
 }
 
 // update description text
-$('#description').multiline(String(i18n.__("Version") + " " + APPVERSION + "; " + i18n.__("Build") + " " + APPBUILD + "\n &copy; 2018 Safe Surfer, et al."));
+$('#description').multiline(String(i18n.__("Version") + " " + APPVERSION + "; " + i18n.__("Build") + " " + APPBUILD + " (" + BUILDMODE + ")" + "\n &copy; 2018 Safe Surfer, et al."));

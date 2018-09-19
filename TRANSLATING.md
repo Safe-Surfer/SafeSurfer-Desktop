@@ -27,7 +27,7 @@ After:
 You can check to make sure that you haven't forgotten any phrases here and there but using the testTranslations.js unit test, or by running the app with logging enabled in your language.  
 Use `npm run lintTranslations` to lint the JSON file of your current locale.  
 Use `npm run listTranslations [locale]` replacing [locale] with a locale that's in ./assets/translations.  
-Use `npm run listTranslationsAll` to lint all locales (requires UNIX like environment as of currently).  
+Use `npm run listTranslations all` to lint all locales.  
 Another part is running the app, to determine if it looks good and doesn't visually break anything (i.e: text falling off areas, too long sets of words).  
 You can also test the app in the language that you are wanting to translate it to without setting the language by changing `null` in `"testLanguage": null` in `buildconfig/buildmode.json` to the locale name of your language (i.e: `"testLanguage": "de"`). Note: When you're finished with your testing of the translation, and want to submit a pull request, please revert back to `"testLanguage": null` in `buildconfig/buildmode.json`  
 
