@@ -35,6 +35,7 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  {dialog} = require('electron').remote,
  Request = require("request"),
  shell = require('electron').shell,
+ $ = require('jquery'),
  {ipcRenderer, clipboard} = require('electron'),
  electron = require('electron'),
  app = electron.app ? electron.app : electron.remote.app,
@@ -47,7 +48,8 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  getMeta = require("lets-get-meta")
  i18n = new (require('./assets/scripts/i18n.js')),
  logging = require('./assets/scripts/logging.js'),
- connectivity = require('connectivity');
+ connectivity = require('connectivity'),
+ isDev = require('electron-is-dev');
 var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
  resp,
  remoteData;
@@ -272,7 +274,7 @@ const appFrame = Object.freeze({
 	  else {
 		  // if the platform is linux, use sscli to toggle DNS settings
 		  // if running when installed
-		  if (process.execPath.includes("/opt/SafeSurfer-Desktop") == true) {
+		  if (isDev == false) {
 			  //
 			  appFrame.callProgram(String('pkexec sscli enable ' + forced));
 		  }
@@ -305,7 +307,7 @@ const appFrame = Object.freeze({
 	  else {
 		  // if the platform is linux, use sscli to toggle DNS settings
 		  // if running when installed
-		  if (process.execPath.includes("/opt/SafeSurfer-Desktop") == true) {
+		  if (isDev == false) {
 			  appFrame.callProgram(String('pkexec sscli disable '));
 		  }
 		  else {

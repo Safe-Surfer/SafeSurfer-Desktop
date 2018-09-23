@@ -1,6 +1,7 @@
 const Store = require('electron-store'),
  store = new Store(),
- i18n = new (require('../scripts/i18n.js'));
+ i18n = new (require('../scripts/i18n.js')),
+ $ = require('jquery');
 var teleHist = store.get('teleHistory'),
  textBody = "";
 

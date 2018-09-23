@@ -32,7 +32,8 @@ const {app, BrowserWindow, Menu, clipboard, electron} = require('electron'),
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
  updatesEnabled = BUILDMODEJSON.enableUpdates,
- i18n = new (require('./i18n.js'));
+ i18n = new (require('./i18n.js')),
+ isDev = require('electron-is-dev');
 var accountIsAssigned = store.get('accountInformation'),
  appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
  betaCheck,
@@ -91,6 +92,7 @@ module.exports = (app, mainWindow) => {
 	  ]
 	},
 	];
+	// add data sharing menu, once user has inputted answer
 	if (store.get('telemetryHasAnswer') == true) {
 	  menu[1].submenu[3] = {
 		  label: i18n.__('Data sharing'),
@@ -115,6 +117,7 @@ module.exports = (app, mainWindow) => {
 	if (BUILDMODE == "dev") {
 		menu[1].submenu[5] = {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }
 	}
+	// account stuff (not yet implemented)
 	if (accountIsAssigned == true) menu[3] = {
 		label: i18n.__('Account'),
 		submenu:

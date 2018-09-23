@@ -4,7 +4,8 @@ const BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
  enableNotifications = BUILDMODEJSON.enableNotifications,
  requireRoot = BUILDMODEJSON.requireRoot,
- i18n = new (require('../scripts/i18n.js'));
+ i18n = new (require('../scripts/i18n.js')),
+ $ = require('jquery');
 
 // function to make \n multiline
 $.fn.multiline = function(text, rt){

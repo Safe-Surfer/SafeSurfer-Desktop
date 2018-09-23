@@ -5,3 +5,5 @@ flatpak-build
 build
 .flatpak-builder
 zip-build
+tools
+SafeSurfer-Desktop.AppDir

@@ -79,6 +79,26 @@ build-flatpak:
 	make DESTDIR=build install
 	flatpak-builder flatpak-build ./support/linux/flatpak/nz.co.safesurfer.SafeSurfer-Desktop.json
 
+prep-appimage:
+	mkdir -p tools
+	cd tools && wget https://github.com/AppImage/AppImageKit/releases/download/10/appimagetool-x86_64.AppImage && chmod +x appimagetool-x86_64.AppImage
+	cd tools && wget https://github.com/AppImage/AppImageKit/releases/download/10/AppRun-x86_64 && chmod +x AppRun-x86_64 && mv AppRun-x86_64 AppRun
+
+build-appimage:
+	make PACKAGEFORMAT=deb BUILDMODE=$(BUILDMODE) build-linux
+	make DESTDIR=SafeSurfer-Desktop.AppDir install
+	mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/256x256/apps
+	cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop SafeSurfer-Desktop.AppDir
+	cp ./assets/media/icons/png/256x256.png SafeSurfer-Desktop.AppDir/ss-logo.png
+	cp ./tools/AppRun SafeSurfer-Desktop.AppDir
+	cp ./support/linux/shared-resources/ssRun SafeSurfer-Desktop.AppDir
+	chmod +x SafeSurfer-Desktop.AppDir/ssRun
+	sed -i -e "s#/opt/SafeSurfer-Desktop/SafeSurfer-Desktop#ssRun#g" SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop
+	./tools/appimagetool-x86_64.AppImage SafeSurfer-Desktop.AppDir
+
+prepare-rpm-bin:
+	make PACKAGEFORMAT=rpm BUILDMODE=$(BUILDMODE) build-linux
+
 compile-win-setup:
 	npm run compile-win-setup
 
@@ -86,10 +106,10 @@ compile-win-setup32:
 	npm run compile-win-setup32
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip
+	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage
 
 slim:
-	@rm -rf node_modules
+	@rm -rf node_modules tools
 
 help:
 	@echo "Read 'README.md' for info on building."
