@@ -8,6 +8,7 @@ var teleHist = store.get('teleHistory'),
 // write and translate text on the main page
 $("#teleInfoMsg").text(i18n.__("Here's the data we've collected:"));
 $("#optOutMsg").text(i18n.__("You can opt out at any time in the support menu"));
+$("#title").text(i18n.__("View shared data"));
 
 // choose message to display
 switch(store.get('telemetryAllow')) {

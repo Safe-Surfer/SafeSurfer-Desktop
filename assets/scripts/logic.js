@@ -49,10 +49,12 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  i18n = new (require('./assets/scripts/i18n.js')),
  logging = require('./assets/scripts/logging.js'),
  connectivity = require('connectivity'),
- isDev = require('electron-is-dev');
+ isDev = require('electron-is-dev'),
+ shjs = require('shelljs');
 var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
  resp,
- remoteData;
+ remoteData,
+ appimagePATH;
 
 // an object to keep track of multiple things
 var appStates = {
@@ -68,9 +70,19 @@ var appStates = {
 }
 
 // if a linux package format can't be found, then state unsureness
-if (LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
+if (LINUXPACKAGEFORMAT.linuxpackageformat === undefined) LINUXPACKAGEFORMAT="???";
 logging.log(String("INFO: platform - " + os.platform()), appStates.enableLogging);
 logging.log(String("INFO: cwd - " + process.cwd()), appStates.enableLogging);
+
+if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
+  var aPath = process.env.PATH.split(path.delimiter);
+  for (i in aPath) {
+    if (aPath[i].includes('/tmp/.mount_')) {
+      break;
+    }
+  }
+  appimagePATH = aPath[i];
+}
 
 const appFrame = Object.freeze({
   callProgram : function(command) {
@@ -273,13 +285,20 @@ const appFrame = Object.freeze({
 	  }
 	  else {
 		  // if the platform is linux, use sscli to toggle DNS settings
-		  // if running when installed
-		  if (isDev == false) {
-			  //
-			  appFrame.callProgram(String('pkexec sscli enable ' + forced));
+		  if (isDev == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') {
+		    // if running from home folder
+			  appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli enable ' + forced));
 		  }
 		  else {
-			  appFrame.callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli enable ' + forced));
+			  // if running when installed
+		    if (LINUXPACKAGEFORMAT.linuxpackageformat != 'appimage') {
+		      appFrame.callProgram(String('pkexec sscli enable ' + forced));
+		    }
+		    else {
+		      if (shjs.cp(path.join(appimagePATH, 'sscli'), '/tmp/sscli-appimage').code === 0) {
+		        appFrame.callProgram(String('pkexec /tmp/sscli-appimage enable ' + forced));
+		      }
+		    }
 		  }
 	  }
   },
@@ -306,13 +325,20 @@ const appFrame = Object.freeze({
 	  }
 	  else {
 		  // if the platform is linux, use sscli to toggle DNS settings
-		  // if running when installed
-		  if (isDev == false) {
-			  appFrame.callProgram(String('pkexec sscli disable '));
+		  if (isDev == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') {
+		    // if running from home folder
+			  appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli disable ' + forced));
 		  }
 		  else {
-			  // if running from home folder
-			  appFrame.callProgram(String('pkexec '+process.cwd()+'/support/linux/shared-resources/sscli disable ' + forced));
+		    // if running when installed
+		    if (LINUXPACKAGEFORMAT.linuxpackageformat != 'appimage') {
+		      appFrame.callProgram(String('pkexec sscli disable ' + forced));
+		    }
+		    else {
+		      if (shjs.cp(path.join(appimagePATH, 'sscli'), '/tmp/sscli-appimage').code === 0) {
+		        appFrame.callProgram(String('pkexec /tmp/sscli-appimage disable ' + forced));
+		      }
+		    }
 		  }
 	  }
   },
@@ -475,6 +501,7 @@ const appFrame = Object.freeze({
 	  dataGathered.RELEASE = os.release();
 	  dataGathered.CPUCORES = os.cpus().length;
 	  dataGathered.LOCALE = app.getLocale();
+	  dataGathered.LIFEGUARDSTATE = appStates.lifeguardFound;
 	  dataGathered.BUILDMODE = BUILDMODEJSON.BUILDMODE;
 	  dataGathered.ISSERVICEENABLED = appStates.serviceEnabled;
 	  if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
@@ -516,17 +543,17 @@ const appFrame = Object.freeze({
       logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
       // if user agrees to sending telemetry
       if (dialogResponse == 0) {
-        sendTelemetry(collectTelemetry());
+        appFrame.sendTelemetry(appFrame.collectTelemetry());
         store.set('telemetryHasAnswer', true);
         store.set('telemetryAllow', true);
       }
       // if user wants to see what will be sent
       else if (dialogResponse == 1) {
-        var previewdataGathered = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
+        var previewdataGathered = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(appFrame.collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
         dialog.showMessageBox(previewdataGathered, dialogResponse => {
           // if user agrees to sending telemetry
           if (dialogResponse == 0) {
-            sendTelemetry(collectTelemetry());
+            appFrame.sendTelemetry(appFrame.collectTelemetry());
             store.set('telemetryHasAnswer', true);
             store.set('telemetryAllow', true);
           }
@@ -669,6 +696,7 @@ const appFrame = Object.freeze({
         appStates.serviceEnabled_previous = appStates.serviceEnabled;
         appFrame.displayRebootMessage();
         appStates.notificationCounter = 0;
+        if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage' && shjs.test('/tmp/sscli-appimage')) shjs.rm('/tmp/sscli-appimage');
 		  }
 	  }
 	  else {
@@ -751,11 +779,11 @@ ipcRenderer.on('goBuildToClipboard', () => {
 });
 
 ipcRenderer.on('openAboutMenu', () => {
-  window.open(path.join(__dirname, 'assets', 'html', 'about.html'), 'About us');
+  window.open(path.join(__dirname, 'assets', 'html', 'about.html'), i18n.__("About this app"));
 });
 
 ipcRenderer.on('viewTeleHistory', () => {
-  window.open(path.join(__dirname, 'assets', 'html', 'tele.html'), 'View telemetry data');
+  window.open(path.join(__dirname, 'assets', 'html', 'tele.html'), i18n.__("View shared data"));
 });
 
 ipcRenderer.on('toggleTeleState', () => {

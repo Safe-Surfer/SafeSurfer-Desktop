@@ -62,6 +62,7 @@ windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)
 deb: `make deb-pkg`  
 arch: `make arch-pkg`  
 rpm: use spec file in `support/linux/specs`  
+appimage: `make prep-appimage && make build-appimage`  
 exe: use iss file in `support\windows\build-windows-installer.iss`  
 exe (32-bit): use iss file in `support\windows\build-windows-installer32.iss`  
 

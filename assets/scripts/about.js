@@ -14,5 +14,7 @@ $.fn.multiline = function(text, rt){
     return this;
 }
 
+$("#title").text(i18n.__("About this app"));
+
 // update description text
 $('#description').multiline(String(i18n.__("Version") + " " + APPVERSION + "; " + i18n.__("Build") + " " + APPBUILD + " (" + BUILDMODE + ")" + "\n &copy; 2018 Safe Surfer, et al."));

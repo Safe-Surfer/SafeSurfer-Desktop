@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2018 Safe Surfer <info@safesurfer.co.nz> -->
 <component type="desktop">
-  <id>SafeSurfer-Desktop.desktop</id>
+  <id>nz.co.safesurfer.SafeSurferDesktop.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-3.0</project_license>
   <name>Safe Surfer Desktop</name>
@@ -45,5 +45,5 @@
   <url type="bugtracker">https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues</url>
   <url type="help">https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues</url>
   <url type="homepage">http://safesurfer.co.nz/</url>
-  <update_contact>info@safesurfer.co.nz</update_contact>
+  <update_contact>info_AT_safesurfer.co.nz</update_contact>
 </component>
