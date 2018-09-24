@@ -86,8 +86,25 @@ prep-appimage:
 build-appimage:
 	make PACKAGEFORMAT=appimage BUILDMODE=$(BUILDMODE) build-linux
 	make DESTDIR=SafeSurferDesktop.AppDir install
+	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/16x16/apps
+	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/24x24/apps
+	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/32x32/apps
+	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/48x48/apps
+	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/64x64/apps
+	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/128x128/apps
 	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/256x256/apps
+	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/512x512/apps
+	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/1024x1024/apps
 	@cp ./support/linux/shared-resources/nz.co.safesurfer.SafeSurferDesktop.desktop SafeSurferDesktop.AppDir
+	@cp ./assets/media/icons/png/16x16.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/16x16/apps/ss-logo.png
+	@cp ./assets/media/icons/png/24x24.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/24x24/apps/ss-logo.png
+	@cp ./assets/media/icons/png/32x32.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/32x32/apps/ss-logo.png
+	@cp ./assets/media/icons/png/48x48.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/48x48/apps/ss-logo.png
+	@cp ./assets/media/icons/png/64x64.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/64x64/apps/ss-logo.png
+	@cp ./assets/media/icons/png/128x128.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/128x128/apps/ss-logo.png
+	@cp ./assets/media/icons/png/256x256.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/256x256/apps/ss-logo.png
+	@cp ./assets/media/icons/png/512x512.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/512x512/apps/ss-logo.png
+	@cp ./assets/media/icons/png/1024x1024.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/1024x1024/apps/ss-logo.png
 	@cp ./assets/media/icons/png/256x256.png SafeSurferDesktop.AppDir/ss-logo.png
 	@cp ./support/linux/shared-resources/AppRun SafeSurferDesktop.AppDir
 	@chmod +x SafeSurferDesktop.AppDir/AppRun

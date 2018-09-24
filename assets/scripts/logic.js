@@ -505,15 +505,19 @@ const appFrame = Object.freeze({
 	  dataGathered.BUILDMODE = BUILDMODEJSON.BUILDMODE;
 	  dataGathered.ISSERVICEENABLED = appStates.serviceEnabled;
 	  if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
-	  if (store.get('teleHistory') === undefined) {
-	    store.set('teleHistory', [dataGathered]);
+	  return JSON.stringify(dataGathered);
+  },
+
+  storeInitalData : function (input) {
+  // write inital data from sharing to cache
+    if (store.get('teleHistory') === undefined) {
+	    store.set('teleHistory', [input]);
 	  }
 	  else {
 	    var previous = store.get('teleHistory');
-	    previous.push(dataGathered)
+	    previous.push(input);
 	    store.set('teleHistory', previous);
 	  }
-	  return JSON.stringify(dataGathered);
   },
 
   sendTelemetry : function (source) {
@@ -535,27 +539,30 @@ const appFrame = Object.freeze({
 	  });
   },
 
-  telemetryPrompt: function () {
+  telemetryPrompt : function () {
     // ask if user wants to participate in telemetry collection
-    var nothingSent = {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")};
-    var teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: String(i18n.__("Data sharing") + "\n\n" + i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team"))};
+    var nothingSent = {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")},
+        teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: String(i18n.__("Data sharing") + "\n\n" + i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team"))}
+        sharingData = appFrame.collectTelemetry();
     dialog.showMessageBox(teleMsg, dialogResponse => {
       logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
       // if user agrees to sending telemetry
       if (dialogResponse == 0) {
-        appFrame.sendTelemetry(appFrame.collectTelemetry());
+        appFrame.sendTelemetry(sharingData);
         store.set('telemetryHasAnswer', true);
         store.set('telemetryAllow', true);
+        appFrame.storeInitalData(sharingData);
       }
       // if user wants to see what will be sent
       else if (dialogResponse == 1) {
-        var previewdataGathered = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(appFrame.collectTelemetry())+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
+        var previewdataGathered = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(sharingData)+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
         dialog.showMessageBox(previewdataGathered, dialogResponse => {
           // if user agrees to sending telemetry
           if (dialogResponse == 0) {
-            appFrame.sendTelemetry(appFrame.collectTelemetry());
+            appFrame.sendTelemetry(sharingData);
             store.set('telemetryHasAnswer', true);
             store.set('telemetryAllow', true);
+            appFrame.storeInitalData(sharingData);
           }
 				  // if user doesn't agree to sending telemetry
           else if (dialogResponse == 1) {
