@@ -1,7 +1,7 @@
 {
 	"BUILDMODE": "dev",
-	"APPVERSION": "1.0.0b2",
-	"APPBUILD": "2",
+	"APPVERSION": "1.0.0b3",
+	"APPBUILD": "3",
 	"enableUpdates": true,
 	"requireRoot": true,
 	"enableNotifications": true,

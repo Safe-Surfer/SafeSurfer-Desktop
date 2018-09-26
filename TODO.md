@@ -1,3 +1,5 @@
 ## Things to do
-- [ ] Add app icon for all app versions  
 - [ ] Get macOS version to work  
+- [ ] Make a flatpak package
+- [ ] Make a snap package
+- [ ] Make an appx package

@@ -1,6 +1,6 @@
 {
   "name": "SafeSurfer-Desktop",
-  "version": "1.0.0b2",
+  "version": "1.0.0b3",
   "description": "The SafeSurfer desktop app",
   "main": "main.js",
   "license": "GPL-3.0",

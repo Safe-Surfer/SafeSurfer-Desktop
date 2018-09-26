@@ -37,7 +37,8 @@ const {app, BrowserWindow, Menu, clipboard, electron} = require('electron'),
 var accountIsAssigned = store.get('accountInformation'),
  appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
  betaCheck,
- teleEnabled = store.get('telemetryAllow');
+ teleEnabled = store.get('telemetryAllow'),
+ LINUXPACKAGEFORMAT = require('../../buildconfig/packageformat.json');
 
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
 if (betaCheck === undefined && BUILDMODE != 'dev') {
@@ -104,7 +105,7 @@ module.exports = (app, mainWindow) => {
 	  }
 	}
 	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-	if (updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev')) menu[1].submenu[4] = {
+	if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) menu[1].submenu[4] = {
 		label: i18n.__('Updates'),
 		submenu:
 		[

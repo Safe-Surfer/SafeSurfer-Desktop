@@ -48,8 +48,8 @@ enable   enable the DNS
 disable  disable the DNS
 service  check and enable as service
 status	 get the status of the service
-launch   launch the desktop app
 EOF
+[ -z "$ISAPPIMAGE" ] && echo "launch   launch the desktop app"
 }
 
 function enableBackgroundService() {
@@ -157,8 +157,13 @@ case "$arg" in
 		checkServiceState && echo "SERVICE: Enabled." || echo "SERIVCE: Disabled."
 		;;
 	launch|-l|--launch)
-		[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1
-		/opt/SafeSurfer-Desktop/SafeSurfer-Desktop
+		if [ -z "$ISAPPIMAGE" ]
+		then
+			[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1
+			/opt/SafeSurfer-Desktop/SafeSurfer-Desktop
+		else
+			echo "ERROR: you can't launch the app this way from an AppImage."
+		fi
 		;;
 	*)
 		printHelpMenu

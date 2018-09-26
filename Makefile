@@ -3,21 +3,24 @@ COMPLETIONDIR ?= /usr/share/bash-completion/completions
 
 all: help
 
-build-linux:
+check-deps:
+	@if [ ! -d node_modules ]; then echo "Whoops, you're missing node dependencies. Run 'npm i'."; exit 1; fi;
+
+build-linux: check-deps
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
-	@echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json
+	@if [[ ! -z "$(PACKAGEFORMAT)" ]]; then echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json; fi;
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/linux/ss-logo.png --prun=true --out=release-builds
 	@cp ./assets/media/icons/png/2000x2000.png ./release-builds/SafeSurfer-Desktop-linux-x64/ss-logo.png
 
-build-windows:
+build-windows: check-deps
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"
 
-build-windows32:
+build-windows32: check-deps
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"
 
-build-macos:
+build-macos: check-deps
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds
 
@@ -84,6 +87,7 @@ prep-appimage:
 	cd tools && wget https://github.com/AppImage/AppImageKit/releases/download/10/appimagetool-x86_64.AppImage && chmod +x appimagetool-x86_64.AppImage
 
 build-appimage:
+	@if [ ! -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "Please run 'make prep-appimage'."; exit 1; fi;
 	make PACKAGEFORMAT=appimage BUILDMODE=$(BUILDMODE) build-linux
 	make DESTDIR=SafeSurferDesktop.AppDir install
 	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/16x16/apps

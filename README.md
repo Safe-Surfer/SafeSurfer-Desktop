@@ -33,6 +33,10 @@ Read our [translation guide](TRANSLATING.md) to get started!
 Wanna help us find and squash bugs?  
 Check out our [bug reporting guide](BUGS.md).  
 
+## Feedback
+Have you used SafeSurfer-Desktop and want to give feedback?
+Visit our [feedback](http://safesurfer.co.nz/feedback) site to leave us some feedback.
+
 ## Building
 ### Build dependencies
 Linux: nodejs npm (libgconf2-dev on Debian based systems)  
@@ -74,6 +78,6 @@ Note: for use in inno scripts, you must adjust path to the compiled folder in th
 - If developing your on Windows, run nodejs command prompt as admin (as otherwise you won't be able to toggle the service)
 
 ## License
-Copyright 2018 Safe Surfer, et al.  
-This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html)  
-This program comes with absolutely no warrenty.  
+Copyright 2018 Safe Surfer.  
+This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html) and if [free software](https://www.gnu.org/philosophy/free-sw.en.html).  
+This program comes with absolutely no warranty.  

@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
-if [ ! -z "$DEBUG" ] ; then
-  env
-  set -x
+if [ ! -z "$DEBUG" ]
+then
+	env
+	set -x
 fi
 
 args="$1"
@@ -12,10 +13,12 @@ VENDORPREFIX=appimagekit
 THIS="$0"
 
 function dirResolve () {
-  path="$(dirname "$(readlink -f "${THIS}")")"
-  while [[ "$path" != "" && ! -e "$path/$1" ]]; do
-    path=${path%/*}
-  done
+# resolve a directory
+path="$(dirname "$(readlink -f "${THIS}")")"
+while [[ "$path" != "" && ! -e "$path/$1" ]]
+do
+	path=${path%/*}
+done
 }
 
 if [ -z "$APPDIR" ]
@@ -59,8 +62,8 @@ exit 1
 
 function yesno() {
 # display a yes or no prompt
-TITLE=$1
-TEXT=$2
+TITLE="$1"
+TEXT="$2"
 if [ -x /usr/bin/zenity ]
 then
 	LD_LIBRARY_PATH="" zenity --question --title="$TITLE" --text="$TEXT" --height=250 --width=400 --window-icon="${APPDIR}/ss-logo.png" 2>/dev/null || exit 0
@@ -106,8 +109,19 @@ case "$args" in
 		echo "Integration was successfully removed."
 		exit
 		;;
+	sscli)
+		shift
+		cp "${APPDIR}"/usr/bin/sscli /tmp/sscli-appimage
+		ISAPPIMAGE=0 /tmp/sscli-appimage "$1"
+		rm -f /tmp/sscli-appimage
+		exit
+		;;
 	help|--help)
-		echo "Use '--remove-integration' to remove desktop integration."
+		echo "SafeSurfer-Desktop (AppImage) help menu"
+		echo "---------------------------------------"
+		echo
+		echo "--remove-integration	to remove desktop integration."
+		echo "sscli			to use the sscli utility."
 		exit
 		;;
 esac
@@ -124,7 +138,8 @@ check_prevent "/etc/$VENDORPREFIX/no_desktopintegration"
 pidof appimaged 2>/dev/null && exit 0
 
 # Exit immediately if $DESKTOPINTEGRATION is not empty
-if [ ! -z "$DESKTOPINTEGRATION" ] ; then
+if [ ! -z "$DESKTOPINTEGRATION" ]
+then
 	exit 0
 fi
 
@@ -158,7 +173,8 @@ then
 fi
 
 # Determine where the desktop file should be installed
-if [[ $EUID -ne 0 ]]; then
+if [[ $EUID -ne 0 ]]
+then
 	DESTINATION_DIR_DESKTOP="$HOME/.local/share/applications"
 	SYSTEM_WIDE=""
 else

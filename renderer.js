@@ -30,7 +30,8 @@ const {ipcRenderer} = require('electron'),
  updatesEnabled = BUILDMODEJSON.enableUpdates,
  requireRoot = BUILDMODEJSON.requireRoot,
  i18n = new (require('./assets/scripts/i18n.js')),
- logging = require('./assets/scripts/logging.js');
+ logging = require('./assets/scripts/logging.js'),
+ LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json');
 
 // translate HTML elements
 $('#bigTextProtected').text(i18n.__('YOU ARE PROTECTED'));
@@ -41,7 +42,7 @@ $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET 
 $('#toggleButton').text(i18n.__('CHECKING SERVICE STATE'));
 
 // if auto-update checking is enabled and updates are enabled, check for them
-if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev')) appFrame.checkForAppUpdate({
+if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) appFrame.checkForAppUpdate({
 	current: false,
 	showErrors: false
 });
