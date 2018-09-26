@@ -678,7 +678,7 @@ const appFrame = Object.freeze({
 	      dataGathered.PLATFORM = os.platform();
 	      dataGathered.ISSERVICEENABLED = appStates.serviceEnabled;
 	      if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
-        sendTelemetry(dataGathered);
+        appFrame.sendTelemetry(dataGathered);
 
 	      var previous = store.get('teleHistory');
 	      previous.push(dataGathered)
