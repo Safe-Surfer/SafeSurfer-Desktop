@@ -11,7 +11,7 @@ For enterprise/business use, it is recommmend to apply the DNS settings on a rou
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
 For more screenshots of the app, please refer to the `screenshots` folder.  
 
-### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b2): version 1.0.0b2 (THIS IS A BETA)
+### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b3): version 1.0.0b3 (THIS IS A BETA)
 ## Install the [latest beta build](http://142.93.48.189)
 We need beta testers.  
 If you're wanting to beta test this software, please download the binaries or source and give it a go.  

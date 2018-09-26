@@ -108,22 +108,24 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 /opt/%{name}/libnode.so
 /opt/%{name}/LICENSE
 /usr/share/pixmaps/ss-logo.png
-/usr/share/applications/%{name}.desktop
+/usr/share/applications/nz.co.safesurfer.SafeSurferDesktop.desktop
 /usr/bin/sscli
 /usr/share/bash-completion/completions/sscli
 /usr/share/polkit-1
 /usr/share/polkit-1/actions
 /usr/share/polkit-1/actions/nz.co.safesurfer.pkexec.safesurfer-desktop.policy
+/usr/share/metainfo
+/usr/share/metainfo/nz.co.safesurfer.SafeSurferDesktop.appdata.xml
 
 
 %post
 %if 0%{?suse_version}
-%suse_update_desktop_file %{name}
+%suse_update_desktop_file nz.co.safesurfer.SafeSurferDesktop
 %endif
 
 
 %changelog
-* Fri Sep 26 2018 caleb
+* Wed Sep 26 2018 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b3
 
 * Fri Sep 14 2018 caleb
