@@ -1,3 +1,4 @@
+SHELL := /bin/bash
 PREFIX ?= /opt/SafeSurfer-Desktop
 COMPLETIONDIR ?= /usr/share/bash-completion/completions
 

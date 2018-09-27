@@ -525,6 +525,8 @@ const appFrame = Object.freeze({
 	  var dataToSend = encode.encode(source,'base64');
 	  // make a post request to the database
 	  Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
+		  store.set('telemetryAllow', true);
+		  store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
 		  if (response || body) {
 		    logging.log('TELE: Sent.', appStates.enableLogging);
         if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
@@ -534,8 +536,6 @@ const appFrame = Object.freeze({
 			  logging.log(String("HTTP error:" + err), appStates.enableLogging);
 			  return;
 		  }
-		  store.set('telemetryAllow', true);
-		  store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
 	  });
   },
 
@@ -673,16 +673,17 @@ const appFrame = Object.freeze({
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
         logging.log('TELE: Sending update data');
         dataGathered.TYPESEND = "update";
-        dataGathered.APPBUILD;
-        dataGathered.APPVERSION;
+        dataGathered.APPBUILD = BUILDMODEJSON.APPBUILD;
+        dataGathered.APPVERSION = BUILDMODEJSON.APPVERSION;
 	      dataGathered.PLATFORM = os.platform();
 	      dataGathered.ISSERVICEENABLED = appStates.serviceEnabled;
 	      if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
-        appFrame.sendTelemetry(dataGathered);
+        appFrame.sendTelemetry(JSON.stringify(dataGathered));
 
 	      var previous = store.get('teleHistory');
-	      previous.push(dataGathered)
+	      previous.push(JSON.stringify(dataGathered));
 	      store.set('teleHistory', previous);
+		    store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
       }
       else logging.log('TELE: User has not reached new version.');
     }

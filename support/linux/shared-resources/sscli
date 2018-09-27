@@ -22,8 +22,8 @@
 
 arg="$1"
 resolvconf="/etc/resolv.conf"
-primaryDNS=104.197.28.121
-secondaryDNS=104.155.237.225
+primaryDNS="104.197.28.121"
+secondaryDNS="104.155.237.225"
 
 function sudoUserCheck() {
 # check if user is root
@@ -75,14 +75,12 @@ then
 else
 	return 1
 fi
-
 }
 
 function flushAndRestart() {
 # flush and restart DNS related services
-
-which systemd-resolve > /dev/null && systemd-resolve --flush-caches && echo "Flushed systemd-resolv caches."
-which nscd > /dev/null && systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "Restarted nscd"
+[ -x "$(which systemd-resolve)" ] && systemd-resolve --flush-caches && echo "* Flushed systemd-resolv caches."
+[ -x "$(which nscd)" ] && systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "* Restarted nscd"
 }
 
 function setDNSservers() {
@@ -101,7 +99,6 @@ else
 	mv "$resolvconf"{.before_safesurfer,}
 	return 1
 fi
-
 }
 
 function restoreDNSservers() {
@@ -118,7 +115,6 @@ else
 	echo "ERROR: DNS settings failed to remove."
 	return 1
 fi
-
 }
 
 cat << EOF
