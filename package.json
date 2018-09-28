@@ -55,6 +55,7 @@
     "nodejs-base64-encode": "0.0.2",
     "npm": "^6.4.0",
     "os-locale": "^3.0.0",
+    "reboot": "^0.1.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "shelljs": "^0.8.2",

@@ -133,5 +133,5 @@ npm install
 * Fri Sep 14 2018 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b2
 
-* Fri Sep 10 2018 caleb
+* Mon Sep 10 2018 caleb
 - Init to RPM

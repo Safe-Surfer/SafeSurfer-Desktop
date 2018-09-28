@@ -582,7 +582,7 @@ const appFrame = Object.freeze({
   telemetryPrompt : function () {
     // ask if user wants to participate in telemetry collection
     var nothingSent = {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")},
-        teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: String(i18n.__("Data sharing") + "\n\n" + i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.\nAs a user you\'re able to help us out.--You can respond to help us out if you like.\n - Safe Surfer team"))}
+        teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: String(i18n.__("Data sharing") + "\n\n" + String(i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.") + "\n" + i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.") + "\n- " + i18n.__("Safe Surfer team")))}
         sharingData = appFrame.collectTelemetry();
     dialog.showMessageBox(teleMsg, dialogResponse => {
       logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
@@ -595,7 +595,7 @@ const appFrame = Object.freeze({
       }
       // if user wants to see what will be sent
       else if (dialogResponse == 1) {
-        var previewdataGathered = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(sharingData)+"\n\n"+i18n.__("In case you don't understand this data, it includes (such things as):\n - Which operating system you use\n - How many CPU cores you have\n - The language you have set \n - If the service is setup on your computer"))};
+        var previewdataGathered = {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(sharingData)+"\n\n" + i18n.__("In case you don't understand this data, it includes (such things as):") + "\n- " + i18n.__("Which operating system you use") + "\n- " + i18n.__("How many CPU cores you have") + "\n -" + i18n.__("The language you have set") + "\n - " + i18n.__("If the service is setup on your computer"))};
         dialog.showMessageBox(previewdataGathered, dialogResponse => {
           // if user agrees to sending telemetry
           if (dialogResponse == 0) {
@@ -632,7 +632,7 @@ const appFrame = Object.freeze({
 
   forceToggleWarning : function ({wantedState}) {
 	  // display warning message as this could break settings
-	  var toggleWarning = {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: i18n.__('The service is already in the state which you request.\nForcing the service to be enabled in this manner may have consequences.\nYour computer\'s network configuration could break by doing this action.')},
+	  var toggleWarning = {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: String(i18n.__('The service is already in the state which you request.' + "\n" + i18n.__('Forcing the service to be enabled in this manner may have consequences.' + '\n' + 'Your computer\'s network configuration could break by doing this action.')))},
 	   lifeguardMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.")},
 	   continu;
 	  if (appStates.lifeguardFound == true) {
@@ -699,9 +699,19 @@ const appFrame = Object.freeze({
 
   displayRebootMessage : function () {
     // tell the user to reboot
-    if (appStates.serviceEnabled == true) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("Great, your computer is setup.\nTo make sure of this, we recommend that you please reboot/restart your computer.")}
-    if (appStates.serviceEnabled == false) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("Ok, Safe Surfer has been removed.\nTo make sure of this, we recommend that you please reboot/restart your computer.")}
-	  dialog.showMessageBox(dialogRebootMessage, updateResponse => {});
+    if (appStates.serviceEnabled == true) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Great, your computer is setup.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
+    if (appStates.serviceEnabled == false) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Ok, Safe Surfer has been removed.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
+	  dialog.showMessageBox(dialogRebootMessage, updateResponse => {
+	    if (updateResponse == 1) {
+	      console.log("Wants reboot")
+        if (os.platform() == 'win32') {
+          require('reboot').rebootImmediately();
+        }
+        else {
+          dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")}, response => {});
+        }
+	    }
+	  });
   },
 
   checkForVersionChange : function () {

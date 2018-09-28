@@ -6,5 +6,5 @@
 	"requireRoot": true,
 	"enableNotifications": true,
 	"enableLogging": false,
-	"testLanguage": null
+	"testLanguage": "de"
 }
