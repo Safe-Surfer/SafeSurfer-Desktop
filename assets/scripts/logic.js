@@ -45,14 +45,15 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  moment = require('moment'),
  dns_changer = require('node_dns_changer'),
  isAdmin = require('is-admin'),
- getMeta = require("lets-get-meta")
+ getMeta = require("lets-get-meta"),
+ isOnline = require('is-online'),
  i18n = new (require('./assets/scripts/i18n.js')),
  logging = require('./assets/scripts/logging.js'),
  connectivity = require('connectivity'),
  isDev = require('electron-is-dev'),
  shjs = require('shelljs');
-var LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json'),
- resp,
+ LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json');
+ var resp,
  remoteData,
  appimagePATH;
 
@@ -66,7 +67,8 @@ var appStates = {
 	appHasLoaded: false,
 	enableLogging: BUILDMODEJSON.enableLogging,
 	notificationCounter: 0,
-	userIsAdmin: undefined
+	userIsAdmin: undefined,
+	progressBarCounter: 0
 }
 
 // if a linux package format can't be found, then state unsureness
@@ -264,6 +266,7 @@ const appFrame = Object.freeze({
 
   enableServicePerPlatform : function ({forced}) {
 	  // apply DNS settings
+		$('#progressBar').css("height", "12px");
     if (forced === undefined) forced = "";
 	  if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		  body: i18n.__('Woohoo! Getting your computer setup now.')
@@ -305,6 +308,7 @@ const appFrame = Object.freeze({
 
   disableServicePerPlatform : function ({forced}) {
 	  // restore DNS settings
+		$('#progressBar').css("height", "12px");
     if (forced === undefined) forced = "";
 	  if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		  body: i18n.__('OK! Restoring your settings now.')
@@ -373,7 +377,43 @@ const appFrame = Object.freeze({
 
   internetConnectionCheck : function () {
 	  // check the user's internet connection
-	  connectivity(function (online) {
+	  isOnline().then(online => {
+	    logging.log(String("INTERNETSTATE: " + online), appStates.enableLogging);
+		  if (online == true) {
+		    appStates.internet[0] = true;
+		    appStates.appHasLoaded = true;
+		  }
+		  else {
+		    appStates.internet[0] = false;
+		  }
+    });
+
+	  /*var testSites = ['www.google.com', 'safesurfer.co.nz'],
+	    failCounter = 0,
+	    test;
+	  for (addr in testSites) {
+	    console.log("NUM:", failCounter)
+	    console.log(testSites[addr])
+	    test = connectionTester.test(testSites[addr], 80, 500);
+	    console.log(test);
+      if (test.success == true) {
+        appStates.internet[0] = true;
+			  appStates.appHasLoaded = true;
+			  console.log("Success");
+			  break;
+      }
+      else {
+        failCounter += 1;
+        console.log("Failure")
+        if (failCounter == testSites.length) {
+          appStates.internet[0] = false;
+          console.log("Complete failure")
+          break;
+        }
+      }
+	  }*/
+
+	  /*connectivity(function (online) {
 		  if (online) {
 			  appStates.internet[0] = true;
 			  appStates.appHasLoaded = true;
@@ -381,7 +421,7 @@ const appFrame = Object.freeze({
 		  else {
 			  appStates.internet[0] = false;
 		  }
-	  });
+	  });*/
   },
 
   finishedLoading : function () {
@@ -701,6 +741,8 @@ const appFrame = Object.freeze({
 			  // if the state changes of the service being enabled changes
 			  logging.log('STATE: State has changed.', appStates.enableLogging);
 			  appFrame.sendAppStateNotifications();
+		    $('#progressBar').css("height", "0px");
+	      appStates.progressBarCounter = 0;
         appStates.serviceEnabled_previous = appStates.serviceEnabled;
         appFrame.displayRebootMessage();
         appStates.notificationCounter = 0;
@@ -732,6 +774,11 @@ const appFrame = Object.freeze({
 	  if (appStates.serviceEnabled_previous === undefined) appStates.serviceEnabled_previous = appStates.serviceEnabled;
 	  if (appStates.internet[1] === undefined) appStates.internet[1] = appStates.internet[0];
 	  if (appStates.lifeguardFound_previous === undefined) appStates.lifeguardFound_previous = appStates.lifeguardFound;
+	  if (appStates.progressBarCounter == 20) {
+	    appStates.progressBarCounter = 0;
+		  $('#progressBar').css("height", "0px");
+	  }
+	  else if ($("#progressBar").css("height") == "12px") appStates.progressBarCounter += 1;
 	  // update the screen to show how the service state (... etc) is
 	  appFrame.affirmServiceState();
 	  logging.log("MAIN: end reload", appStates.enableLogging);

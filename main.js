@@ -39,10 +39,6 @@ const {app, BrowserWindow, Menu, clipboard} = require('electron'),
 let mainWindow;
 let childWindow;
 
-var appUpdateAutoCheck = store.get('appUpdateAutoCheck');
-if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
-var accountIsAssigned = store.get('accountInformation');
-
 function createWindow() {
 	// Create the browser window.
 	let mainWindowState = windowStateKeeper({
@@ -73,10 +69,10 @@ function createWindow() {
 	// set menu from menu.js
 	const appMenu = require('./assets/scripts/menu.js');
 	Menu.setApplicationMenu(Menu.buildFromTemplate(appMenu(app, mainWindow)));
-
 	mainWindowState.manage(mainWindow);
 }
 
+  // create window when app is ready
 	app.on('ready', function() {
 		createWindow();
 	});

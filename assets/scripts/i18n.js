@@ -7,7 +7,7 @@ let loadedLanguage,
  app = electron.app ? electron.app : electron.remote.app;
 var testLanguage = BUILDMODEJSON.testLanguage;
 
-// export undefined unfunction
+// export undefined function
 module.exports = i18n;
 
 // define translation loading function

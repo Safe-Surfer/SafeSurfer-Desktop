@@ -2,6 +2,7 @@
 
 ## Who is [Safe Surfer](http://safesurfer.co.nz)?
 Safe Surfer's mission is to keep children, individuals, and organsations safe online. We achieve this by filtering out harmful material that may be found when browsing the internet and switching on safe search for a number of search engines.  
+Read more [here](http://www.safesurfer.co.nz/the-cause).  
 
 ## App information
 Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS settings for you (on a device, not network).  

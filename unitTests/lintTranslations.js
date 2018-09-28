@@ -34,7 +34,7 @@ if (args !== undefined) {
 	if (args == 'all') {
 	  console.log("Checking all locales.");
 	  fs.readdirSync('./assets/translations').forEach(file => {
-      runLint(file.split('.')[0]);
+      if (file.split('.')[0] != 'en') runLint(file.split('.')[0]);
     });
   }
   else {
@@ -45,7 +45,7 @@ if (args !== undefined) {
 else {
 	console.log('Available locales:');
 	fs.readdirSync('./assets/translations').forEach(file => {
-    console.log(" |", file.split('.')[0]);
+    if (file.split('.')[0] != 'en') console.log(" |", file.split('.')[0]);
   });
   console.log(" | all  <-- check all locales");
 }
@@ -66,7 +66,7 @@ function runLint(lang) {
 	  console.log('Cannot find your locale:', lang);
   }
 
-  console.log(String("-- Checking: " + lang + " --"));
+  console.log(String("-- Checking: [" + lang + "] --"));
 
   for (var key in translationJSON) {
 	  if (translationJSON.hasOwnProperty(key)) {
@@ -82,9 +82,9 @@ function runLint(lang) {
   }
 
   console.log(String(
-    "\nSUMMARY OF " +
+    "\nSUMMARY OF [" +
     lang +
-    "\n-------\n" +
+    "]\n-------\n" +
     "UNTRANSLATED: " +
     keyList.untranslatedKeys+"\n" +
     "EDITED: " +

@@ -22,8 +22,10 @@ switch(store.get('telemetryAllow')) {
 }
 
 // add all items that have been shared
+var itemCounter
 for (i in teleHist) {
-  textBody += `<h1 class="counter">${i}:</h1><p id="teleDataHistory${i}" class="teleDataHistory">${teleHist[i]}</p>\n\n`;
+  itemCounter = parseInt(i) + 1;
+  textBody += `<h1 class="counter">${itemCounter}:</h1><p id="teleDataHistory${i}" class="teleDataHistory">${teleHist[i]}</p>\n\n`;
 }
 
 // if there is no data shared

@@ -277,7 +277,7 @@ body, html {
 	text-decoration:none;
 	z-index: 50;
 	-webkit-transition: font-size 0.4s, color 0.2s, background-color 0.2s, transform 0.3s, text-shadow 0.3s;
-    	transition: font-size 0.4s, color 0.2s, background-color 0.2s, transform 0.3s, text-shadow 0.3s;
+  transition: font-size 0.4s, color 0.2s, background-color 0.2s, transform 0.3s, text-shadow 0.3s;
 }
 .serviceToggle:hover {
 	background-color:#d12d00;
@@ -387,6 +387,45 @@ body, html {
 	-webkit-user-drag: none;
 	-webkit-app-region: no-drag;
 	cursor: default;
+}
+
+#progressBar {
+  height: 0px;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 49;
+	position: absolute;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+	-webkit-transition: height 0.8s;
+  transition: height 0.8s;
+
+  background: linear-gradient(89deg, #3fb23e, #d2d2d2, #60d4a1, #cecece);
+  background-size: 800% 800%;
+	-webkit-transition: height 0.8s;
+  transition: height 0.8s;
+
+  -webkit-animation: activeProgressBar 5s ease infinite;
+  -moz-animation: activeProgressBar 5s ease infinite;
+  animation: activeProgressBar 5s ease infinite;
+}
+
+@-webkit-keyframes activeProgressBar {
+  0%{background-position:0% 49%}
+  50%{background-position:100% 52%}
+  100%{background-position:0% 49%}
+}
+@-moz-keyframes activeProgressBar {
+  0%{background-position:0% 49%}
+  50%{background-position:100% 52%}
+  100%{background-position:0% 49%}
+}
+@keyframes activeProgressBar {
+  0%{background-position:0% 49%}
+  50%{background-position:100% 52%}
+  100%{background-position:0% 49%}
 }
 
 @media only screen and (max-width: 1099px) {

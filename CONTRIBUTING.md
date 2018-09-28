@@ -17,7 +17,7 @@ Please be considerate with code which is altered.
 Always make sure to test changes to ensure that everything is working how you want it to.  
 
 #### Stay awesome
-We appreciate all the help which will come from this project, so we greatly thank our contributors.   
+We appreciate all the help which will come from this project, so we greatly thank our contributors.  
 
 ## Your first commit
 Looking for places to start? A good place is the [issues](https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues) page.  
