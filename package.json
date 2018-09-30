@@ -43,6 +43,7 @@
     "electron-window-state": "^5.0.1",
     "electron-windows-store": "^2.0.0",
     "innosetup-compiler": "^5.5.9",
+    "ipc": "0.0.1",
     "is-admin": "^2.1.1",
     "is-online": "^7.0.0",
     "jquery": "^3.3.1",

@@ -25,6 +25,7 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
+ updatesEnabled = BUILDMODEJSON.enableUpdates,
  enableNotifications = BUILDMODEJSON.enableNotifications,
  requireRoot = BUILDMODEJSON.requireRoot,
  os = require('os'),
@@ -53,7 +54,7 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  isDev = require('electron-is-dev'),
  shjs = require('shelljs');
  LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json');
- var resp,
+var resp,
  remoteData,
  appimagePATH;
 
@@ -127,15 +128,15 @@ const appFrame = Object.freeze({
 		  $(".serviceInactiveScreen").hide();
 		  // if a lifeguard has been found
 		  if (appStates.lifeguardFound == true) {
-			  $("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD"));
-			  $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD"));
+			  $("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD").toUpperCase());
+			  $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD").toUpperCase());
 			  $('.serviceToggle').addClass('serviceToggle_lifeguard')
 			  $('.topTextBox_active').addClass('topTextBox_active_lifeguard');
 		  }
 		  else {
 			  // if lifeguard is not found
-			  $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED"));
-			  $("#toggleButton").html(i18n.__("STOP PROTECTION"));
+			  $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
+			  $("#toggleButton").html(i18n.__("STOP PROTECTION").toUpperCase());
 			  $('.serviceToggle').removeClass('serviceToggle_lifeguard');
 			  $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
 		  }
@@ -152,7 +153,7 @@ const appFrame = Object.freeze({
 		  logging.log("STATE: Unprotected", appStates.enableLogging);
 		  $(".serviceInactiveScreen").show();
 		  $(".serviceActiveScreen").hide();
-		  $("#toggleButton").html(i18n.__("GET PROTECTED"));
+		  $("#toggleButton").html(i18n.__("GET PROTECTED").toUpperCase());
 		  $('.serviceToggle').show();
 		  $('.appNoInternetConnectionScreen').hide();
 		  $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
@@ -189,7 +190,7 @@ const appFrame = Object.freeze({
 					  window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
 				  }
 				  else {
-					  appFrame.disableServicePerPlatform({});
+					  appFrame.displayDisableWarning();
 				  }
 			  break;
 
@@ -202,6 +203,13 @@ const appFrame = Object.freeze({
 	  else {
 		  appFrame.showUnprivillegedMessage();
 	  }
+  },
+
+  displayDisableWarning : function () {
+    // make sure the user really wants to disable the service
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('No'), i18n.__('Yes')], message: i18n.__("Are you sure that you want to disable Safe Surfer on this computer?")}, response => {
+      if (response == 1) appFrame.disableServicePerPlatform({});
+    });
   },
 
   affirmServiceState : function () {
@@ -266,7 +274,7 @@ const appFrame = Object.freeze({
 
   enableServicePerPlatform : function ({forced}) {
 	  // apply DNS settings
-		$('#progressBar').css("height", "12px");
+		$('#progressBar').css("height", "20px");
     if (forced === undefined) forced = "";
 	  if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		  body: i18n.__('Woohoo! Getting your computer setup now.')
@@ -308,7 +316,7 @@ const appFrame = Object.freeze({
 
   disableServicePerPlatform : function ({forced}) {
 	  // restore DNS settings
-		$('#progressBar').css("height", "12px");
+		$('#progressBar').css("height", "20px");
     if (forced === undefined) forced = "";
 	  if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		  body: i18n.__('OK! Restoring your settings now.')
@@ -657,11 +665,11 @@ const appFrame = Object.freeze({
 	    else {
         switch(appStates.serviceEnabled) {
           case true:
-            appFrame.enableServicePerPlatform({forced: "force"});
+            appFrame.disableServicePerPlatform({forced: "force"});
             break;
 
           case false:
-            appFrame.disableServicePerPlatform({forced: "force"});
+            appFrame.enableServicePerPlatform({forced: "force"});
             break;
         }
 	    }
@@ -703,12 +711,16 @@ const appFrame = Object.freeze({
     if (appStates.serviceEnabled == false) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Ok, Safe Surfer has been removed.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
 	  dialog.showMessageBox(dialogRebootMessage, updateResponse => {
 	    if (updateResponse == 1) {
-	      console.log("Wants reboot")
-        if (os.platform() == 'win32') {
-          require('reboot').rebootImmediately();
-        }
-        else {
-          dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")}, response => {});
+        switch (os.platform()) {
+          case 'win32':
+            appFrame.callProgram(String('shutdown /r /t 0'));
+            break;
+          case 'linux':
+            appFrame.callProgram(String('pkexec /sbin/reboot'));
+            break;
+          default:
+            dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")}, response => {});
+            break;
         }
 	    }
 	  });
@@ -719,6 +731,7 @@ const appFrame = Object.freeze({
     var previousVersionData,
      dataGathered = {};
     if (store.get('telemetryAllow') == true) {
+      logging.log("TELE: Checking if user has reached a newer version");
       previousVersionData = store.get('lastVersionToSendTelemetry');
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
         logging.log('TELE: Sending update data');
@@ -788,7 +801,7 @@ const appFrame = Object.freeze({
 	    appStates.progressBarCounter = 0;
 		  $('#progressBar').css("height", "0px");
 	  }
-	  else if ($("#progressBar").css("height") == "12px") appStates.progressBarCounter += 1;
+	  else if ($("#progressBar").css("height") == "20px") appStates.progressBarCounter += 1;
 	  // update the screen to show how the service state (... etc) is
 	  appFrame.affirmServiceState();
 	  logging.log("MAIN: end reload", appStates.enableLogging);
@@ -818,6 +831,10 @@ ipcRenderer.on('betaCheck', (event, arg) => {
 	else if (arg == false) {
 		store.set('betaCheck', true);
 	}
+});
+
+ipcRenderer.on('toggleButtonPress', () => {
+  appFrame.toggleServiceState();
 });
 
 ipcRenderer.on('checkIfUpdateAvailable', (event, arg) => {
@@ -865,3 +882,32 @@ ipcRenderer.on('toggleTeleState', () => {
 // keep note of if the user is running as admin or not
 appFrame.checkUserPrivileges();
 appFrame.checkForVersionChange();
+
+// translate HTML elements
+$('#bigTextProtected').text(i18n.__('YOU ARE PROTECTED').toUpperCase());
+$('#subTextProtected').text(i18n.__('YOU ARE SAFE TO SURF THE INTERNET').toUpperCase());
+$('#bigTextUnprotected').text(i18n.__('DANGER AHEAD').toUpperCase());
+$('#subTextUnprotected').text(i18n.__('YOU ARE NOT PROTECTED IN THE ONLINE SURF').toUpperCase());
+$('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION.").toUpperCase());
+$('#toggleButton').text(i18n.__('CHECKING SERVICE STATE').toUpperCase());
+
+// if auto-update checking is enabled and updates are enabled, check for them
+if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) appFrame.checkForAppUpdate({
+	current: false,
+	showErrors: false
+});
+
+// initalise rest of app
+appFrame.checkServiceState();
+setTimeout(() => {
+	// run main process which loops
+	appFrame.finishedLoading();
+	appFrame.mainReloadProcess();
+	// if user hasn't provided a response to telemetry
+  if (store.get('telemetryHasAnswer') != true) {
+	  setTimeout(() => {
+	    appFrame.telemetryPrompt();
+	  }, 5000);
+  }
+}, 1000);
+

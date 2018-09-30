@@ -13,9 +13,10 @@ For enterprise/business use, it is recommmend to apply the DNS settings on a rou
 For more screenshots of the app, please refer to the `screenshots` folder.  
 
 ### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b3): version 1.0.0b3 (THIS IS A BETA)
-## Install the [latest beta build](http://142.93.48.189)
+## Install the latest beta build
 We need beta testers.  
 If you're wanting to beta test this software, please download the binaries or source and give it a go.  
+Our temporary site is found [here](http://142.93.48.189).  
 
 ## Features
 - Toggle DNS settings through one button  
@@ -27,6 +28,10 @@ Read our [contribution guide](CONTRIBUTING.md) to get started!
 We look forward to your help on this project, together helping families and individuals stay safe on the internet!  
 
 ### Translating Safe Surfer desktop
+[![Translation status](https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg)](https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget)  
+
+[![Translation status list](https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-green.svg)](https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget)  
+
 Help us speak your language!  
 Read our [translation guide](TRANSLATING.md) to get started!  
 
@@ -55,7 +60,7 @@ Windows: `make build-windows` or `npm run package-win`
 Windows 32bit: `make build-windows32` or `npm run package-win32`  
 macOS: `make build-macos` or `npm run package-macos`  
 
-Please note that building Windows versions on Linux or macOS requires Wine to be installed as a prerequisite.  
+Please note that building Windows versions on Linux or macOS requires [Wine](https://www.winehq.org) to be installed as a prerequisite.  
 
 ### Packaging dependencies
 deb:  debhelper devscripts  
@@ -71,14 +76,14 @@ appimage: `make prep-appimage && make build-appimage`
 exe: use iss file in `support\windows\build-windows-installer.iss`  
 exe (32-bit): use iss file in `support\windows\build-windows-installer32.iss`  
 
-Note: for use in inno scripts, you must adjust path to the compiled folder in the scripts (under files --> source).  
+Notes:
+- for use in inno scripts, you must adjust path to the compiled folder in the scripts (under files --> source).  
+- if you are packaging for a new Linux format, make sure when building to use 'PACKAGEFORMAT=' followed by the format type (i.e: make PACKAGEFORMAT=rpm build-linux).  
 
 ## Project notes
-- Uses [jquery](https://jquery.com/)
-- Uses a slightly modified version of [i18n](https://www.npmjs.com/package/i18n).js for translation
 - If developing your on Windows, run nodejs command prompt as admin (as otherwise you won't be able to toggle the service)
 
 ## License
 Copyright 2018 Safe Surfer.  
-This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html) and if [free software](https://www.gnu.org/philosophy/free-sw.en.html).  
+This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html) and is [free software](https://www.gnu.org/philosophy/free-sw.en.html).  
 This program comes with absolutely no warranty.  

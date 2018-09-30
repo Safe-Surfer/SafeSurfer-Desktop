@@ -1,59 +1,59 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>Safe Surfer (beta)</title>
-    <link rel="stylesheet" type="text/css" href="./assets/style/style.css">
-    <script type="text/javascript" src="./assets/scripts/logic.js"></script>
+  <meta charset="UTF-8">
+  <title>Safe Surfer (beta)</title>
+  <link rel="stylesheet" type="text/css" href="./assets/style/style.css">
+  <script type="text/javascript" src="./assets/scripts/logic.js"></script>
   </head>
   <body>
     <div class="serviceActiveScreen" style="z-index: 3">
       <img src="./assets/media/ss-water-water-lifeguard.png" style="width:150%; height:auto; z-index:-2;" id="mainScreen_background" class="mainCenter_down">
-	<div class="topTextBox_background"></div>
+      <div class="topTextBox_background"></div>
         <div class="topTextBox_active">
           <div class="leftCenter">
-	    <div class="topTextFlexBox">
-		    <div class="topTextFrame">
-			   <h1 class="bigText_white nowrap" id="bigTextProtected">YOU ARE PROTECTED</h1>
-		    </div>
-		    <div class="subTextFrame">
-			  <h4 class="subText" id="subTextProtected">YOU ARE SAFE TO SURF THE INTERNET</h4>
-		    </div>
-	    </div>
+	          <div class="topTextFlexBox">
+		          <div class="topTextFrame">
+			          <h1 class="bigText_white nowrap" id="bigTextProtected">YOU ARE PROTECTED</h1>
+		          </div>
+		          <div class="subTextFrame">
+			          <h4 class="subText" id="subTextProtected">YOU ARE SAFE TO SURF THE INTERNET</h4>
+		          </div>
+	          </div>
           </div>
         </div>
+      </div>
     </div>
     <div class="serviceInactiveScreen" style="z-index: 4">
       <img src="./assets/media/ss-surfer-water.png" style="width:150%; height:auto; z-index:-2;" id="mainScreen_background" class="mainCenter_down">
-	<div class="topTextBox_background"></div>
+      <div class="topTextBox_background"></div>
         <div class="topTextBox_inactive">
           <div class="leftCenter">
-	    <div class="topTextFlexBox">
-		    <div class="topTextFrame">
-		    	<h1 class="bigText nowrap" id="bigTextUnprotected">DANGER AHEAD</h1>
-		    </div>
-		    <div class="subTextFrame">
-		    	<h4 class="subText" id ="subTextUnprotected">YOU ARE NOT PROTECTED IN THE ONLINE SURF</h4>
-		    </div>
-	    </div>
+	          <div class="topTextFlexBox">
+		          <div class="topTextFrame">
+		      	    <h1 class="bigText nowrap" id="bigTextUnprotected">DANGER AHEAD</h1>
+		          </div>
+		          <div class="subTextFrame">
+		      	    <h4 class="subText" id ="subTextUnprotected">YOU ARE NOT PROTECTED IN THE ONLINE SURF</h4>
+		          </div>
+	          </div>
           </div>
         </div>
+      </div>
     </div>
     <div class="appNoInternetConnectionScreen" style="z-index: 2">
-          <h1 class="bigText bigText_nointernet" style="color:black;" id="bigTextNoInternet">IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION.</h1>
+      <h1 class="bigText bigText_nointernet" style="color:black;" id="bigTextNoInternet">IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION.</h1>
     </div>
     <div class="appLoadingScreen" style="z-index: 45">
-	  <img src="./assets/media/ss-surfer-head.png" style="width:200px; height:200px; z-index:-2;" id="mainScreen_background" class="mainCenter">
-	  <img src="./assets/media/flags-black.png" style="width:10%; height:auto; z-index:-2;" class="mainCenter_top" id="initFlag">
-          <h1 class="bigText nowrap mainCenter_init bigText_init" style="color:black;" id="bigTextBrandName">SAFESURFER</h1>
+      <img src="./assets/media/ss-surfer-head.png" style="width:200px; height:200px; z-index:-2;" id="mainScreen_background" class="mainCenter">
+      <img src="./assets/media/flags-black.png" style="width:10%; height:auto; z-index:-2;" class="mainCenter_top" id="initFlag">
+      <h1 class="bigText nowrap mainCenter_init bigText_init" style="color:black;" id="bigTextBrandName">SAFESURFER</h1>
     </div>
     <div class="mainCenter_down" style="z-index: 40">
-    <button type="button" onclick="appFrame.toggleServiceState();" class="serviceToggle" style="z-index:50;" id="toggleButton">CHECKING SERVICE STATE</button>
+      <button type="button" onclick="appFrame.toggleServiceState();" class="serviceToggle" style="z-index:50;" id="toggleButton">CHECKING SERVICE STATE</button>
     </div>
-	  <div id="progressBar"></div>
-	  </div>
+    <div id="progressBar"></div>
     <script>
-      require('./renderer.js');
       /*GLOBAL.desktop.loadRenderer();*/
     </script>
   </body>

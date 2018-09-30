@@ -1,5 +1,5 @@
 # Reporting bugs
-As a prerequisite, you'll need a GitLab account.  
+As a prerequisite, you'll need a GitLab account (if you don't have one already).  
 
 Head over to the [GitLab issues](https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new) page, use the `bugs.md` template.  
 

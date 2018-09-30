@@ -100,5 +100,6 @@
 	"Quit": "Kilépés",
 	"Ignore": "Ignore",
 	"Reboot now": "Reboot now",
-	"I'm unable to reboot for you, please reboot manually.": "I'm unable to reboot for you, please reboot manually."
+	"I'm unable to reboot for you, please reboot manually.": "I'm unable to reboot for you, please reboot manually.",
+	"Are you sure that you want to disable Safe Surfer on this computer?": "Are you sure that you want to disable Safe Surfer on this computer?"
 }
