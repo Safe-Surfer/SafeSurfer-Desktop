@@ -19,11 +19,10 @@
 //
 
 // create app menu
-const {app, BrowserWindow, Menu, clipboard, electron} = require('electron'),
- shell = require('electron').shell,
+const {app, BrowserWindow, Menu, clipboard} = require('electron'),
+ electron = require('electron'),
  ipcRenderer = require('electron').ipcRenderer,
  os = require('os'),
- remote = require('electron').remote,
  path = require('path'),
  Store = require('electron-store'),
  store = new Store(),
@@ -31,6 +30,7 @@ const {app, BrowserWindow, Menu, clipboard, electron} = require('electron'),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
+ isBeta = BUILDMODEJSON.isBeta,
  updatesEnabled = BUILDMODEJSON.enableUpdates,
  i18n = new (require('./i18n.js')),
  isDev = require('electron-is-dev');
@@ -44,11 +44,11 @@ if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
 if (betaCheck === undefined && BUILDMODE != 'dev') {
   store.set('betaCheck', false);
 }
-else if (BUILDMODE == 'dev') {
+else if (isBeta == true) {
   store.set('betaCheck', true);
 }
 
-var betaCheck = store.get('betaCheck');
+betaCheck = store.get('betaCheck');
 
 module.exports = (app, mainWindow) => {
 	const menu = [
@@ -65,16 +65,16 @@ module.exports = (app, mainWindow) => {
 					{label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} }
 				]
 			},
-			{label: i18n.__('Give feedback'), click() {shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
-	  	{label: i18n.__('Help'), click() {shell.openExternal('https://community.safesurfer.co.nz/')}, accelerator: 'CmdOrCtrl+H' }
+			{label: i18n.__('Give feedback'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
+	  	{label: i18n.__('Help'), click() {electron.shell.openExternal('https://community.safesurfer.co.nz/')}, accelerator: 'CmdOrCtrl+H' }
 		]
 	},
 	{
 		label: i18n.__('Support'),
 		submenu:
 		[
-			{label: i18n.__('Check status in browser'), click() {shell.openExternal('http://check.safesurfer.co.nz/')} },
-	  	{label: i18n.__('Report a bug'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/BUGS.md')} },
+			{label: i18n.__('Check status in browser'), click() {electron.shell.openExternal('http://check.safesurfer.co.nz/')} },
+	  	{label: i18n.__('Report a bug'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/BUGS.md')} },
 			{label: i18n.__('Restart app'), click() {app.relaunch(); app.quit()} },
 
 		]
@@ -83,9 +83,9 @@ module.exports = (app, mainWindow) => {
 		label: i18n.__('Info'),
 		submenu:
 		[
-	    {label: i18n.__('About us'), click() {shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
-	    {label: i18n.__('Contact us'), click() {shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
-	    {label: i18n.__('Contribute to this project'), click() {shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
+	    {label: i18n.__('About us'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
+	    {label: i18n.__('Contact us'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
+	    {label: i18n.__('Contribute to this project'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
 		  {type:'separator'},
 	    {label:String(i18n.__("Version") + ": "+APPVERSION+" - " + i18n.__("Build") + ": "+APPBUILD + " (" + BUILDMODE + ")"), click() {mainWindow.webContents.send('goBuildToClipboard')} },
 		  {type:'separator'},

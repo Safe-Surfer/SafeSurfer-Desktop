@@ -1,3 +1,4 @@
+#!/usr/bin/node
 // SafeSurfer-Desktop - lintTranslations.js
 
 //
@@ -70,7 +71,7 @@ function runLint(lang) {
 
   for (var key in translationJSON) {
 	  if (translationJSON.hasOwnProperty(key)) {
-		  if (key == translationJSON[key]) {
+		  if (key == translationJSON[key] || translationJSON[key] == '') {
     		console.log(String("UNTRANSLATED KEY #" + keyList.countOfKeys + " :: " + translationJSON[key]));
     		keyList.untranslatedKeys++;
 		  }

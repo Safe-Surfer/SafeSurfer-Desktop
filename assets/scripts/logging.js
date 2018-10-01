@@ -18,6 +18,12 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //
 
-exports.log = function(text, state) {
-	if (state == true) console.log(text)
+// export function
+exports.log = function(text) {
+  // if appStates can't be found, then disable logging
+  if (typeof appStates === "undefined") loggingEnable = false;
+  // if appStates is found
+  else loggingEnable = appStates.enableLogging;
+  // logging is enabled via config file or variable
+	if (require('../../buildconfig/buildmode.json').enableLogging == true || loggingEnable == true) console.log(text)
 }

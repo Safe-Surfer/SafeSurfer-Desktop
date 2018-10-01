@@ -2,6 +2,7 @@
 	"BUILDMODE": "dev",
 	"APPVERSION": "1.0.0b3",
 	"APPBUILD": "3",
+	"isBeta": true,
 	"enableUpdates": true,
 	"requireRoot": true,
 	"enableNotifications": true,

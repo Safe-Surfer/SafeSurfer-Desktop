@@ -35,10 +35,12 @@ function i18n() {
 	}
 }
 
-
+// export function
 i18n.prototype.__ = function(phrase) {
     let translation = loadedLanguage[phrase];
-    if (translation === undefined) {
+    // if the translation doesn't exist
+    if (translation === undefined || translation === '') {
+      // use the phrase which doesn't have a translation from en.json
       translation = phrase;
       logging.log(String("i18n: phrase not defined: '" + phrase + "'"));
     }

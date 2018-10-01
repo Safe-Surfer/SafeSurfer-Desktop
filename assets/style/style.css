@@ -338,7 +338,7 @@ body, html {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	-webkit-transition: height 0.3s;
-    	transition: height 0.3s;
+  transition: height 0.3s;
 }
 
 .topTextBox_active {
@@ -347,7 +347,6 @@ body, html {
 
 .topTextBox_inactive {
 	background: rgba(165, 38, 41, 0.70);
-	/*background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));*/
 }
 
 .appNoInternetConnectionScreen {

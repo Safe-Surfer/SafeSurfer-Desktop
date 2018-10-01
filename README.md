@@ -28,12 +28,13 @@ Read our [contribution guide](CONTRIBUTING.md) to get started!
 We look forward to your help on this project, together helping families and individuals stay safe on the internet!  
 
 ### Translating Safe Surfer desktop
-[![Translation status](https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg)](https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget)  
+[![Translation status](https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
 
-[![Translation status list](https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-green.svg)](https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget)  
+[![Translation status list](https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-green.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
 
 Help us speak your language!  
 Read our [translation guide](TRANSLATING.md) to get started!  
+Note: Although it might say that the translation is 100%, it may need more review.  
 
 ### Bugs
 Wanna help us find and squash bugs?  

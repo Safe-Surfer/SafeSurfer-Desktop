@@ -21,7 +21,12 @@
 // include libraries
 
 // note: make app more secure and use global.desktop.buildmodejson() instead of require()
-const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
+
+const {ipcRenderer, clipboard} = require('electron'),
+ electron = require('electron'),
+ {dialog} = require('electron').remote,
+ app = electron.app ? electron.app: electron.remote.app,
+ BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
@@ -29,33 +34,18 @@ const BUILDMODEJSON = require('./buildconfig/buildmode.json'),
  enableNotifications = BUILDMODEJSON.enableNotifications,
  requireRoot = BUILDMODEJSON.requireRoot,
  os = require('os'),
- child_process = require('child_process'),
  dns = require('dns'),
  path = require('path'),
  bonjour = require('bonjour')(),
- {dialog} = require('electron').remote,
  Request = require("request"),
- shell = require('electron').shell,
  $ = require('jquery'),
- {ipcRenderer, clipboard} = require('electron'),
- electron = require('electron'),
- app = electron.app ? electron.app : electron.remote.app,
  Store = require('electron-store'),
  store = new Store(),
- encode = require('nodejs-base64-encode'),
- moment = require('moment'),
  dns_changer = require('node_dns_changer'),
- isAdmin = require('is-admin'),
- getMeta = require("lets-get-meta"),
- isOnline = require('is-online'),
  i18n = new (require('./assets/scripts/i18n.js')),
- logging = require('./assets/scripts/logging.js'),
- connectivity = require('connectivity'),
- isDev = require('electron-is-dev'),
- shjs = require('shelljs');
+ logging = require('./assets/scripts/logging.js');
  LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json');
-var resp,
- remoteData,
+var remoteData,
  appimagePATH;
 
 // an object to keep track of multiple things
@@ -74,8 +64,8 @@ var appStates = {
 
 // if a linux package format can't be found, then state unsureness
 if (LINUXPACKAGEFORMAT.linuxpackageformat === undefined) LINUXPACKAGEFORMAT="???";
-logging.log(String("INFO: platform - " + os.platform()), appStates.enableLogging);
-logging.log(String("INFO: cwd - " + process.cwd()), appStates.enableLogging);
+logging.log(String("INFO: platform - " + os.platform()));
+logging.log(String("INFO: cwd - " + process.cwd()));
 
 if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
   var aPath = process.env.PATH.split(path.delimiter);
@@ -88,9 +78,9 @@ if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
 }
 
 const appFrame = Object.freeze({
-  callProgram : function(command) {
+  callProgram: function(command) {
 	  // call a child process
-	  logging.log(String('COMMAND: calling - ' + command), appStates.enableLogging);
+	  logging.log(String('COMMAND: calling - ' + command));
 	  var command_split = command.split(" ");
 	  var command_arg = [];
 	  // concatinate 2+ into a variable
@@ -99,19 +89,19 @@ const appFrame = Object.freeze({
 	  }
 	  // command will be executed as: comand [ARGS]
 	  var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
-		  logging.log(String("COMMAND: output - " + stdout), appStates.enableLogging);
-		  if (err) logging.log(String("COMMAND: output error - " + err), appStates.enableLogging);
-		  if (stderr) logging.log(String("COMMAND: output stderr - " + stderr), appStates.enableLogging);
+		  logging.log(String("COMMAND: output - " + stdout));
+		  if (err) logging.log(String("COMMAND: output error - " + err));
+		  if (stderr) logging.log(String("COMMAND: output stderr - " + stderr));
 		  return stdout;
 	  });
   },
 
-  checkUserPrivileges : function () {
+  checkUserPrivileges: function() {
 	  // keep note of which user the app is run as
 	  if (requireRoot == true) {
 		  switch(os.platform()) {
 			  case 'win32':
-				  isAdmin().then(admin => {
+				  require('is-admin')().then(admin => {
 					  if (admin == false) appStates.userIsAdmin = false;
 					  else appStates.userIsAdmin = true;
 				  });
@@ -120,10 +110,10 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  displayProtection : function () {
+  displayProtection: function() {
 	  // enable DNS
 	  if (appStates.internet[0] == true) {
-		  logging.log("STATE: protected", appStates.enableLogging);
+		  logging.log("STATE: protected");
 		  $(".serviceActiveScreen").show();
 		  $(".serviceInactiveScreen").hide();
 		  // if a lifeguard has been found
@@ -147,10 +137,10 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  displayUnprotection : function () {
+  displayUnprotection: function() {
 	  // disable DNS
 	  if (appStates.internet[0] == true) {
-		  logging.log("STATE: Unprotected", appStates.enableLogging);
+		  logging.log("STATE: Unprotected");
 		  $(".serviceInactiveScreen").show();
 		  $(".serviceActiveScreen").hide();
 		  $("#toggleButton").html(i18n.__("GET PROTECTED").toUpperCase());
@@ -160,7 +150,7 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  displayNoInternetConnection : function () {
+  displayNoInternetConnection: function() {
 	  // show the user that they don't have an internet connection
 	  $('.appNoInternetConnectionScreen').show();
 	  $('.appNoInternetConnectionScreen').parent().css('z-index', 58);
@@ -170,22 +160,22 @@ const appFrame = Object.freeze({
 	  $('.serviceToggle').hide();
   },
 
-  hideNoInternetConnection : function () {
+  hideNoInternetConnection: function() {
 	  // hide the internet connection loss screen
 	  $('.serviceToggle').show();
 	  $('.appNoInternetConnectionScreen').hide();
 	  $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
   },
 
-  toggleServiceState : function () {
+  toggleServiceState: function() {
 	  // switch between states
-	  logging.log("USER: In switch", appStates.enableLogging);
+	  logging.log("USER: In switch");
 	  appStates.notificationCounter = 0;
 	  // if user's privileges are Admin, or if the host OS is Linux
 	  if (appStates.userIsAdmin == true || os.platform() == 'linux' || os.platform == 'darwin') {
 		  switch(appStates.serviceEnabled) {
 			  case true:
-				  logging.log('STATE: trying toggle enable', appStates.enableLogging);
+				  logging.log('STATE: trying toggle enable');
 				  if (appStates.lifeguardFound == true) {
 					  window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
 				  }
@@ -195,7 +185,7 @@ const appFrame = Object.freeze({
 			  break;
 
 			  case false:
-				  logging.log('STATE: trying toggle disable', appStates.enableLogging);
+				  logging.log('STATE: trying toggle disable');
 				  appFrame.enableServicePerPlatform({});
 			  break;
 		  }
@@ -205,66 +195,66 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  displayDisableWarning : function () {
+  displayDisableWarning: function() {
     // make sure the user really wants to disable the service
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('No'), i18n.__('Yes')], message: i18n.__("Are you sure that you want to disable Safe Surfer on this computer?")}, response => {
       if (response == 1) appFrame.disableServicePerPlatform({});
     });
   },
 
-  affirmServiceState : function () {
+  affirmServiceState: function() {
 	  // affirm the state of the service
-	  logging.log("STATE: Affirming the state", appStates.enableLogging);
+	  logging.log("STATE: Affirming the state");
 	  switch(appStates.serviceEnabled) {
 		  case false:
-			  logging.log('STATE: trying affirm disable', appStates.enableLogging);
+			  logging.log('STATE: trying affirm disable');
 			  appFrame.displayUnprotection();
 			  return 0;
 			  break;
 
 		  case true:
-			  logging.log('STATE: trying affirm enable', appStates.enableLogging);
+			  logging.log('STATE: trying affirm enable');
 			  appFrame.displayProtection();
 			  return 0;
 			  break;
 	  }
   },
 
-  checkServiceState : function () {
+  checkServiceState: function() {
 	  // check the state of the service
-	  logging.log('STATE: Getting state of service', appStates.enableLogging);
+	  logging.log('STATE: Getting state of service');
     	Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
     		if (error >= 400 && error <= 599) {
     			appStates.internet[0] = false;
-			    logging.log(String("HTTP error:" + error), appStates.enableLogging);
+			    logging.log(String("HTTP error:" + error));
     		}
     		else {
     			appStates.internet[0] = true;
     		}
 
-    		var metaResponse = getMeta(body);
+    		var metaResponse = require("lets-get-meta")(body);
     		var searchForResp = body.search('<meta name="ss_status" content="protected">');
-		    logging.log(String("STATE - metaResponse.ss_status :: " + metaResponse.ss_status), appStates.enableLogging);
+		    logging.log(String("STATE - metaResponse.ss_status :: " + metaResponse.ss_status));
 		    if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
 	    		appStates.serviceEnabled = false;
-    			logging.log('STATE: Get Request - Service disabled', appStates.enableLogging);
+    			logging.log('STATE: Get Request - Service disabled');
     			appFrame.affirmServiceState();
     		}
     		// if the meta tag returns protected
 		    if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
 	    		appStates.serviceEnabled = true;
-	    		logging.log('STATE: Get Request - Service enabled', appStates.enableLogging);
+	    		logging.log('STATE: Get Request - Service enabled');
 	    		appFrame.affirmServiceState();
 	    	}
 	    	// if neither are returned
 	    	else {
-	    		logging.log("STATE: Get Request - Can't see protection state from meta tag", appStates.enableLogging);
+	    		logging.log("STATE: Get Request - Can't see protection state from meta tag");
 	    		// check internet connection
 			    if (appStates.internet[0] == true) {
-      		  logging.log('STATE: Get Request - Unsure of state', appStates.enableLogging);
+      		  logging.log('STATE: Get Request - Unsure of state');
 			    }
 			    else if (error !== undefined || appStates.internet[0] != true) {
-				    logging.log('NETWORK: Internet connection unavailable', appStates.enableLogging);
+				    logging.log('NETWORK: Internet connection unavailable');
 			    }
 	      }
 	    	// since the request has succeeded, we can count the app as loaded
@@ -272,7 +262,7 @@ const appFrame = Object.freeze({
     	});
   },
 
-  enableServicePerPlatform : function ({forced}) {
+  enableServicePerPlatform: function({forced}) {
 	  // apply DNS settings
 		$('#progressBar').css("height", "20px");
     if (forced === undefined) forced = "";
@@ -289,14 +279,14 @@ const appFrame = Object.freeze({
 			      loggingEnable: appStates.enableLogging
 			  });
 			  if (appStates.serviceEnabled == false) {
-				  logging.log("STATE: Service is still not enabled -- trying again.", appStates.enableLogging);
+				  logging.log("STATE: Service is still not enabled -- trying again.");
 				  appFrame.enableServicePerPlatform();
 			  }
 		  },1200);
 	  }
 	  else {
 		  // if the platform is linux, use sscli to toggle DNS settings
-		  if (isDev == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') {
+		  if (require('electron-is-dev') == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') {
 		    // if running from home folder
 			  appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli enable ' + forced));
 		  }
@@ -306,7 +296,7 @@ const appFrame = Object.freeze({
 		      appFrame.callProgram(String('pkexec sscli enable ' + forced));
 		    }
 		    else {
-		      if (shjs.cp(path.join(appimagePATH, 'sscli'), '/tmp/sscli-appimage').code === 0) {
+		      if (require('shelljs').cp(path.join(appimagePATH, 'sscli'), '/tmp/sscli-appimage').code === 0) {
 		        appFrame.callProgram(String('pkexec /tmp/sscli-appimage enable ' + forced));
 		      }
 		    }
@@ -314,7 +304,7 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  disableServicePerPlatform : function ({forced}) {
+  disableServicePerPlatform: function({forced}) {
 	  // restore DNS settings
 		$('#progressBar').css("height", "20px");
     if (forced === undefined) forced = "";
@@ -330,14 +320,14 @@ const appFrame = Object.freeze({
 			      loggingEnable: appStates.enableLogging
 			  });
 			  if (appStates.serviceEnabled == true) {
-				  logging.log("STATE: Service is still not disabled -- trying again.", appStates.enableLogging)
+				  logging.log("STATE: Service is still not disabled -- trying again.")
 				  appFrame.disableServicePerPlatform({});
 			  }
 		  },1200);
 	  }
 	  else {
 		  // if the platform is linux, use sscli to toggle DNS settings
-		  if (isDev == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') {
+		  if (require('electron-is-dev') == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') {
 		    // if running from home folder
 			  appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli disable ' + forced));
 		  }
@@ -347,7 +337,7 @@ const appFrame = Object.freeze({
 		      appFrame.callProgram(String('pkexec sscli disable ' + forced));
 		    }
 		    else {
-		      if (shjs.cp(path.join(appimagePATH, 'sscli'), '/tmp/sscli-appimage').code === 0) {
+		      if (require('shelljs').cp(path.join(appimagePATH, 'sscli'), '/tmp/sscli-appimage').code === 0) {
 		        appFrame.callProgram(String('pkexec /tmp/sscli-appimage disable ' + forced));
 		      }
 		    }
@@ -355,38 +345,38 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  checkIfOnLifeGuardNetwork : function () {
+  checkIfOnLifeGuardNetwork: function() {
 	  // check if current device is on lifeguard network
-	  logging.log('LIFEGUARDSTATE: Checking if on lifeguard network', appStates.enableLogging);
+	  logging.log('LIFEGUARDSTATE: Checking if on lifeguard network');
 	  var result = false;
 	  var count = 0;
 	  // start searching for lifeguard with bonjour
 	  bonjour.findOne({ type: "sslifeguard" }, function(service) {
 		  count++;
-		  logging.log(String("LIFEGUARDSTATE: count - " + count + " :: " + service.fqdn), appStates.enableLogging);
+		  logging.log(String("LIFEGUARDSTATE: count - " + count + " :: " + service.fqdn));
 		  // if a lifeguard is found
 		  if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
 			  result = true;
-			  logging.log(String('LIFEGUARDSTATE: Found status - ' + appStates.lifeguardFound), appStates.enableLogging);
+			  logging.log(String('LIFEGUARDSTATE: Found status - ' + appStates.lifeguardFound));
 		  }
 		  else {
 			  result = false;
 		  }
 		  appStates.lifeguardFound = result;
-		  logging.log(String('LIFEGUARDSTATE: appStates.lifeguardFound is ' + appStates.lifeguardFound), appStates.enableLogging);
+		  logging.log(String('LIFEGUARDSTATE: appStates.lifeguardFound is ' + appStates.lifeguardFound));
 	  });
   },
 
-  publishDesktopAppOnNetwork : function (state) {
+  publishDesktopAppOnNetwork: function(state) {
 	  // bonjour public to network for device discovery
 	  if (state == "enable") bonjour.publish({ name: 'Safe Surfer Desktop', type: 'ssdesktop', port: 3158 });
 	  if (state == "disable") bonjour.unpublishAll();
   },
 
-  internetConnectionCheck : function () {
+  internetConnectionCheck: function() {
 	  // check the user's internet connection
-	  isOnline().then(online => {
-	    logging.log(String("INTERNETSTATE: " + online), appStates.enableLogging);
+	  require('is-online')().then(online => {
+	    logging.log(String("INTERNETSTATE: " + online));
 		  if (online == true) {
 		    appStates.internet[0] = true;
 		    appStates.appHasLoaded = true;
@@ -396,32 +386,7 @@ const appFrame = Object.freeze({
 		  }
     });
 
-	  /*var testSites = ['www.google.com', 'safesurfer.co.nz'],
-	    failCounter = 0,
-	    test;
-	  for (addr in testSites) {
-	    console.log("NUM:", failCounter)
-	    console.log(testSites[addr])
-	    test = connectionTester.test(testSites[addr], 80, 500);
-	    console.log(test);
-      if (test.success == true) {
-        appStates.internet[0] = true;
-			  appStates.appHasLoaded = true;
-			  console.log("Success");
-			  break;
-      }
-      else {
-        failCounter += 1;
-        console.log("Failure")
-        if (failCounter == testSites.length) {
-          appStates.internet[0] = false;
-          console.log("Complete failure")
-          break;
-        }
-      }
-	  }*/
-
-	  /*connectivity(function (online) {
+	  /*require('connectivity')(function (online) {
 		  if (online) {
 			  appStates.internet[0] = true;
 			  appStates.appHasLoaded = true;
@@ -432,13 +397,13 @@ const appFrame = Object.freeze({
 	  });*/
   },
 
-  finishedLoading : function () {
+  finishedLoading: function() {
 	  // close loading screen
 	  $('.appLoadingScreen').hide();
 	  appStates.appHasLoaded = true;
   },
 
-  checkForAppUpdate : function (options) {
+  checkForAppUpdate: function(options) {
 	  // for for app update
 	  var baseLink,
 	   versionList = [],
@@ -452,10 +417,10 @@ const appFrame = Object.freeze({
 		  if(error >= 400 && error <= 599) {
 		    appStates.internet[0] = false;
 			  // if something goes wrong
-			  logging.log(String("HTTP error:" + error), appStates.enableLogging);
+			  logging.log(String("HTTP error:" + error));
 			  if (options.showErrors == true) {
 				  dialog.showErrorBox(updateErrorDialog, updateResponse => {
-					  logging.log("UPDATE: Error with updates.", appStates.enableLogging);
+					  logging.log("UPDATE: Error with updates.");
 					  return;
 				  })
 			  }
@@ -487,12 +452,12 @@ const appFrame = Object.freeze({
 			  // update available
 			  dialog.showMessageBox(updateAvailableDialog, updateResponse => {
 				  if (updateResponse == 0) {
-					  logging.log("UPDATE: User wants update.", appStates.enableLogging);
+					  logging.log("UPDATE: User wants update.");
 					  if (remoteData.versions[iteration].altLink === undefined) {
-						  shell.openExternal(remoteData.linkBase);
+						  electron.shell.openExternal(remoteData.linkBase);
 					  }
 					  else {
-						  shell.openExternal(remoteData.versions[iteration].altLink);
+						  electron.shell.openExternal(remoteData.versions[iteration].altLink);
 					  }
 				  }
 				  else {
@@ -504,7 +469,7 @@ const appFrame = Object.freeze({
 			  // up to date
 			  dialog.showMessageBox(updateCurrentDialog, updateResponse => {
 				  if (updateResponse == 0) {
-					  logging.log("UPDATE: User has the latest version installed.", appStates.enableLogging);
+					  logging.log("UPDATE: User has the latest version installed.");
 					  return;
 				  }
 				  else {
@@ -516,8 +481,8 @@ const appFrame = Object.freeze({
 			  // user must downgrade
 			  dialog.showMessageBox(updateDowngradeDialog, updateResponse => {
 				  if (updateResponse == 0) {
-					  logging.log("UPDATE: User wants to downgrade.", appStates.enableLogging);
-					  shell.openExternal(remoteData.linkBase);
+					  logging.log("UPDATE: User wants to downgrade.");
+					  electron.shell.openExternal(remoteData.linkBase);
 				  }
 				  else {
 					  return;
@@ -528,7 +493,7 @@ const appFrame = Object.freeze({
 			  // if something goes wrong
 			  if (options.showErrors == true) {
 				  dialog.showMessageBox(updateErrorDialog, updateResponse => {
-					  logging.log("UPDATE: Error.", appStates.enableLogging);
+					  logging.log("UPDATE: Error.");
 					  return;
 				  });
 			  }
@@ -536,12 +501,12 @@ const appFrame = Object.freeze({
 	  });
   },
 
-  collectTelemetry : function () {
+  collectTelemetry: function() {
 	  // if the user agrees to it, collect non identifiable information about their setup
 	  var dataGathered = {};
 	  logging.log('TELE: Sending general data');
 	  dataGathered.TYPESEND = "general";
-	  dataGathered.DATESENT = moment().format('X');
+	  dataGathered.DATESENT = require('moment')().format('X');
 	  dataGathered.APPVERSION = APPVERSION;
 	  dataGathered.APPBUILD = APPBUILD;
 	  dataGathered.TYPE = os.type();
@@ -556,7 +521,7 @@ const appFrame = Object.freeze({
 	  return JSON.stringify(dataGathered);
   },
 
-  storeInitalData : function (input) {
+  storeInitalData: function(input) {
   // write inital data from sharing to cache
     if (store.get('teleHistory') === undefined) {
 	    store.set('teleHistory', [input]);
@@ -568,32 +533,32 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  sendTelemetry : function (source) {
+  sendTelemetry: function(source) {
 	  // send information to server
-	  var dataToSend = encode.encode(source,'base64');
+	  var dataToSend = require('nodejs-base64-encode').encode(source,'base64');
 	  // make a post request to the database
 	  Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
 		  store.set('telemetryAllow', true);
 		  store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
 		  if (response || body) {
-		    logging.log('TELE: Sent.', appStates.enableLogging);
+		    logging.log('TELE: Sent.');
         if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
 		  }
 		  if (err >= 400 && err <= 599) {
-			  logging.log('TELE: Could not send.', appStates.enableLogging);
-			  logging.log(String("HTTP error:" + err), appStates.enableLogging);
+			  logging.log('TELE: Could not send.');
+			  logging.log(String("HTTP error:" + err));
 			  return;
 		  }
 	  });
   },
 
-  telemetryPrompt : function () {
+  telemetryPrompt: function() {
     // ask if user wants to participate in telemetry collection
     var nothingSent = {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")},
         teleMsg = {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: String(i18n.__("Data sharing") + "\n\n" + String(i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.") + "\n" + i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.") + "\n- " + i18n.__("Safe Surfer team")))}
         sharingData = appFrame.collectTelemetry();
     dialog.showMessageBox(teleMsg, dialogResponse => {
-      logging.log("TELE: User has agreed to the prompt.", appStates.enableLogging);
+      logging.log("TELE: User has agreed to the prompt.");
       // if user agrees to sending telemetry
       if (dialogResponse == 0) {
         appFrame.sendTelemetry(sharingData);
@@ -629,16 +594,16 @@ const appFrame = Object.freeze({
 	  });
   },
 
-  versionInformationCopy : function () {
+  versionInformationCopy: function() {
 	  // copy app build information to clipboard
 	  var dialogBuildInformationCopy = {type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')};
 	  dialog.showMessageBox(dialogBuildInformationCopy, dialogResponse => {
 		  clipboard.writeText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE))
-		  if (dialogResponse == 2) shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
+		  if (dialogResponse == 2) electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
 	  });
   },
 
-  forceToggleWarning : function ({wantedState}) {
+  forceToggleWarning: function({wantedState}) {
 	  // display warning message as this could break settings
 	  var toggleWarning = {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: String(i18n.__('The service is already in the state which you request.' + "\n" + i18n.__('Forcing the service to be enabled in this manner may have consequences.' + '\n' + 'Your computer\'s network configuration could break by doing this action.')))},
 	   lifeguardMessage = {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.")},
@@ -676,14 +641,14 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  showUnprivillegedMessage : function () {
+  showUnprivillegedMessage: function() {
 	  // display dialog for if the app hasn't been started with root privileges
 	  var dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')};
-	  logging.log("PRIV: User is not admin -- displaying dialog message.", appStates.enableLogging)
+	  logging.log("PRIV: User is not admin -- displaying dialog message.")
 	  dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
 		  if (updateResponse == 1) window.close();
 		  if (updateResponse == 0) {
-			  shell.openExternal('https://community.safesurfer.co.nz/how-to-uac.php');
+			  electron.shell.openExternal('https://community.safesurfer.co.nz/how-to-uac.php');
 			  setTimeout(function() {
 				  window.close();
 			  },250);
@@ -691,7 +656,7 @@ const appFrame = Object.freeze({
 	  });
   },
 
-  sendAppStateNotifications : function () {
+  sendAppStateNotifications: function() {
 	  // send notifications if the app state has changed to the user
 	  if (appStates.serviceEnabled == true) {
 		  if (enableNotifications == true) new Notification('Safe Surfer', {
@@ -705,7 +670,7 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  displayRebootMessage : function () {
+  displayRebootMessage: function() {
     // tell the user to reboot
     if (appStates.serviceEnabled == true) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Great, your computer is setup.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
     if (appStates.serviceEnabled == false) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Ok, Safe Surfer has been removed.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
@@ -726,7 +691,7 @@ const appFrame = Object.freeze({
 	  });
   },
 
-  checkForVersionChange : function () {
+  checkForVersionChange: function() {
     // if the version of the app has been updated, let the telemetry server know, if allowed by user
     var previousVersionData,
      dataGathered = {};
@@ -752,9 +717,9 @@ const appFrame = Object.freeze({
     }
   },
 
-  mainReloadProcess : function () {
+  mainReloadProcess: function() {
 	  // reload function
-	  logging.log("MAIN: begin reload", appStates.enableLogging);
+	  logging.log("MAIN: begin reload");
 	  appFrame.internetConnectionCheck();
 	  appFrame.checkServiceState();
 	  // if there is an internet connection
@@ -762,14 +727,14 @@ const appFrame = Object.freeze({
 		  appFrame.hideNoInternetConnection();
 		  if (appStates.serviceEnabled != appStates.serviceEnabled_previous && appStates.serviceEnabled_previous !== undefined) {
 			  // if the state changes of the service being enabled changes
-			  logging.log('STATE: State has changed.', appStates.enableLogging);
+			  logging.log('STATE: State has changed.');
 			  appFrame.sendAppStateNotifications();
 		    $('#progressBar').css("height", "0px");
 	      appStates.progressBarCounter = 0;
         appStates.serviceEnabled_previous = appStates.serviceEnabled;
         appFrame.displayRebootMessage();
         appStates.notificationCounter = 0;
-        if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage' && shjs.test('/tmp/sscli-appimage')) shjs.rm('/tmp/sscli-appimage');
+        if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage' && require('shelljs').test('/tmp/sscli-appimage')) require('shelljs').rm('/tmp/sscli-appimage');
 		  }
 	  }
 	  else {
@@ -785,12 +750,12 @@ const appFrame = Object.freeze({
 	  }
 	  if (appStates.internet[0] != appStates.internet[1]) {
 		  // if the state of the internet connection changes
-		  logging.log('NETWORK: State has changed.', appStates.enableLogging);
+		  logging.log('NETWORK: State has changed.');
 		  appStates.internet[1] = appStates.internet[0];
 	  }
 	  if (appStates.lifeguardFound != appStates.lifeguardFound_previous) {
 		  // if the state of a lifeguard being on the network changes
-		  logging.log('LIFEGUARDSTATE: State has changed.', appStates.enableLogging);
+		  logging.log('LIFEGUARDSTATE: State has changed.');
 		  appStates.lifeguardFound_previous = appStates.lifeguardFound;
 	  }
 	  // if there are undefined states
@@ -804,14 +769,14 @@ const appFrame = Object.freeze({
 	  else if ($("#progressBar").css("height") == "20px") appStates.progressBarCounter += 1;
 	  // update the screen to show how the service state (... etc) is
 	  appFrame.affirmServiceState();
-	  logging.log("MAIN: end reload", appStates.enableLogging);
+	  logging.log("MAIN: end reload");
 	  setTimeout(appFrame.mainReloadProcess, 1000);
   }
 });
 
 ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
 	// if user changes the state of auto check for updates
-	logging.log(String("UPDATES: Auto check state changed to " + !arg), appStates.enableLogging);
+	logging.log(String("UPDATES: Auto check state changed to " + !arg));
 	if (arg == true) {
 		store.set('appUpdateAutoCheck', false);
 	}
@@ -823,7 +788,7 @@ ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
 
 ipcRenderer.on('betaCheck', (event, arg) => {
 	// if user changes the state of auto check for updates
-	logging.log(String("UPDATES: Beta state changed to " + !arg), appStates.enableLogging);
+	logging.log(String("UPDATES: Beta state changed to " + !arg));
 	if (arg == true) {
 		store.set('betaCheck', false);
 	}
@@ -831,10 +796,6 @@ ipcRenderer.on('betaCheck', (event, arg) => {
 	else if (arg == false) {
 		store.set('betaCheck', true);
 	}
-});
-
-ipcRenderer.on('toggleButtonPress', () => {
-  appFrame.toggleServiceState();
 });
 
 ipcRenderer.on('checkIfUpdateAvailable', (event, arg) => {
@@ -893,21 +854,20 @@ $('#toggleButton').text(i18n.__('CHECKING SERVICE STATE').toUpperCase());
 
 // if auto-update checking is enabled and updates are enabled, check for them
 if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) appFrame.checkForAppUpdate({
-	current: false,
-	showErrors: false
+  current: false,
+  showErrors: false
 });
 
 // initalise rest of app
 appFrame.checkServiceState();
 setTimeout(() => {
-	// run main process which loops
-	appFrame.finishedLoading();
-	appFrame.mainReloadProcess();
-	// if user hasn't provided a response to telemetry
+  // run main process which loops
+  appFrame.finishedLoading();
+  appFrame.mainReloadProcess();
+  // if user hasn't provided a response to telemetry
   if (store.get('telemetryHasAnswer') != true) {
-	  setTimeout(() => {
-	    appFrame.telemetryPrompt();
-	  }, 5000);
+    setTimeout(() => {
+      appFrame.telemetryPrompt();
+    }, 5000);
   }
 }, 1000);
-
