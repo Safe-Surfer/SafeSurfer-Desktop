@@ -94,7 +94,6 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 /opt/%{name}/locales/ro.pak
 /opt/%{name}/locales/sv.pak
 /opt/%{name}/locales/tr.pak
-/opt/%{name}/ss-logo.png
 /opt/%{name}/content_shell.pak
 /opt/%{name}/natives_blob.bin
 /opt/%{name}/ui_resources_200_percent.pak
@@ -108,19 +107,19 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 /opt/%{name}/libnode.so
 /opt/%{name}/LICENSE
 /usr/share/pixmaps/ss-logo.png
-/usr/share/applications/nz.co.safesurfer.SafeSurferDesktop.desktop
+/usr/share/applications/SafeSurferDesktop.desktop
 /usr/bin/sscli
 /usr/share/bash-completion/completions/sscli
 /usr/share/polkit-1
 /usr/share/polkit-1/actions
 /usr/share/polkit-1/actions/nz.co.safesurfer.pkexec.safesurfer-desktop.policy
 /usr/share/metainfo
-/usr/share/metainfo/nz.co.safesurfer.SafeSurferDesktop.appdata.xml
+/usr/share/metainfo/SafeSurferDesktop.appdata.xml
 
 
 %post
 %if 0%{?suse_version}
-%suse_update_desktop_file nz.co.safesurfer.SafeSurferDesktop
+%suse_update_desktop_file SafeSurferDesktop
 %endif
 
 

@@ -96,7 +96,6 @@ npm install
 /opt/%{name}/locales/ro.pak
 /opt/%{name}/locales/sv.pak
 /opt/%{name}/locales/tr.pak
-/opt/%{name}/ss-logo.png
 /opt/%{name}/content_shell.pak
 /opt/%{name}/natives_blob.bin
 /opt/%{name}/ui_resources_200_percent.pak
@@ -110,19 +109,19 @@ npm install
 /opt/%{name}/libnode.so
 /opt/%{name}/LICENSE
 /usr/share/pixmaps/ss-logo.png
-/usr/share/applications/nz.co.safesurfer.SafeSurferDesktop.desktop
+/usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli
 /usr/share/bash-completion/completions/sscli
 /usr/share/polkit-1
 /usr/share/polkit-1/actions
 /usr/share/polkit-1/actions/nz.co.safesurfer.pkexec.safesurfer-desktop.policy
 /usr/share/metainfo
-/usr/share/metainfo/nz.co.safesurfer.SafeSurferDesktop.appdata.xml
+/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml
 
 
 %post
 %if 0%{?suse_version}
-%suse_update_desktop_file nz.co.safesurfer.SafeSurferDesktop
+%suse_update_desktop_file SafeSurfer-Desktop
 %endif
 
 

@@ -33,6 +33,7 @@ const {app, BrowserWindow, Menu, clipboard} = require('electron'),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
+ isBeta = BUILDMODEJSON.isBeta,
  updatesEnabled = BUILDMODEJSON.enableUpdates,
  i18n = new (require('./assets/scripts/i18n.js'));
 
@@ -46,20 +47,22 @@ function createWindow() {
     defaultHeight: 600
   });
 
-	mainWindow = new BrowserWindow({
+  var windowObj = {
 		width: mainWindowState.width,
 		height: mainWindowState.height,
 		minWidth: 550,
 		minHeight: 600,
     'x': mainWindowState.x,
     'y': mainWindowState.y,
-		title: 'Safe Surfer (beta)',
-		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png'),
+		title: 'Safe Surfer',
+		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png')
 		/*webPreferences: {
 		  nodeIntegration: false,
 		  preload: path.join(__dirname, 'preload.js')
 		}*/
-	});
+	}
+	if (isBeta == true) windowObj.title += " (beta)";
+	mainWindow = new BrowserWindow(windowObj);
 
 	// load in main html document
  	mainWindow.loadFile('index.html');
@@ -67,8 +70,8 @@ function createWindow() {
 		mainWindow = null;
 	});
 	// set menu from menu.js
-	const appMenu = require('./assets/scripts/menu.js');
-	Menu.setApplicationMenu(Menu.buildFromTemplate(appMenu(app, mainWindow)));
+	Menu.setApplicationMenu(
+	Menu.buildFromTemplate(require('./assets/scripts/menu.js')(app, mainWindow)));
 	mainWindowState.manage(mainWindow);
 }
 

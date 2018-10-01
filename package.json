@@ -10,7 +10,7 @@
     "sscli": "bash ./support/linux/shared-resources/sscli",
     "electron-builder": "node_modules/.bin/electron-builder",
     "electron-icon-maker": "node_modules/.bin/electron-icon-maker",
-    "package-linux": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/linux/ss-logo.png --prun=true --out=release-builds",
+    "package-linux": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds",
     "package-macos": "node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --prune --out=release-builds",
     "package-win": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"",
     "package-win32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"",
