@@ -96,5 +96,7 @@
     "Ignore": "Ignore",
     "Reboot now": "Újraindítás most",
     "I'm unable to reboot for you, please reboot manually.": "Nem tudjuk úraállítani, kérjük állítsa újra kézileg.",
-    "Are you sure that you want to disable Safe Surfer on this computer?": "Biztos benne, hogy mi akarja kapcsolni a Safe Surfer-t a számítógépén?"
+    "Are you sure that you want to disable Safe Surfer on this computer?": "Biztos benne, hogy mi akarja kapcsolni a Safe Surfer-t a számítógépén?",
+    "This program comes with absolutely no warranty.": "",
+    "See the GNU General Public License, version 3 or later for details.": ""
 }
