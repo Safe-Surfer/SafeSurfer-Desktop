@@ -8,11 +8,13 @@ Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
 Source:		https://gitlab.com/safesurfer/%{name}/-/archive/%{version}/%{name}-%{version}.zip
 Requires:       polkit, curl
-BuildRequires:	unzip
-BuildRequires:	nodejs, npm
-BuildRequires:  desktop-file-utils
+BuildRequires:	unzip, nodejs, npm, desktop-file-utils
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
+Requires:	gconf2
+%endif
+%if 0%{?fedora}
+Requires:	GConf2
 %endif
 
 %description

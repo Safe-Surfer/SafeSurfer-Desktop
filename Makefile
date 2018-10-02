@@ -34,8 +34,8 @@ install:
 	@mkdir -p $(DESTDIR)/usr/share/metainfo
 	@cp -p -r ./release-builds/SafeSurfer-Desktop-linux-x64/. $(DESTDIR)$(PREFIX)
 	@cp ./support/linux/shared-resources/sscli $(DESTDIR)/usr/bin
-	@cp ./support/linux/shared-resources/nz.co.safesurfer.SafeSurferDesktop.desktop $(DESTDIR)/usr/share/applications/SafeSurfer-Desktop.desktop
-	@cp ./support/linux/shared-resources/nz.co.safesurfer.SafeSurferDesktop.appdata.xml $(DESTDIR)/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml
+	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop $(DESTDIR)/usr/share/applications/
+	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml $(DESTDIR)/usr/share/metainfo/
 	@cp -p ./support/linux/shared-resources/sscli.completion $(DESTDIR)$(COMPLETIONDIR)/sscli
 	@cp -p ./support/linux/shared-resources/nz.co.safesurfer.pkexec.safesurfer-desktop.policy $(DESTDIR)/usr/share/polkit-1/actions
 	@cp ./assets/media/icons/png/2000x2000.png $(DESTDIR)/usr/share/pixmaps/ss-logo.png
@@ -48,7 +48,8 @@ uninstall:
 	@rm -rf $(DESTDIR)$(COMPLETIONDIR)/sscli
 	@rm -rf $(DESTDIR)/usr/bin/sscli
 	@rm -rf $(DESTDIR)/usr/share/polkit-1/actions/nz.co.safesurfer.pkexec.safesurfer-desktop.policy
-	@rm -rf $(DESTDIR)/usr/share/applications/nz.co.safesurfer.SafeSurferDesktop.desktop
+	@rm -rf $(DESTDIR)/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml
+	@rm -rf $(DESTDIR)/usr/share/applications/SafeSurfer-Desktop.desktop
 	@rm -rf $(DESTDIR)$(COMPLETIONDIR)/sscli
 	@rm -rf $(DESTDIR)/usr/share/pixmaps/ss-logo.png
 
@@ -99,7 +100,7 @@ build-appimage:
 	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/256x256/apps
 	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/512x512/apps
 	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/1024x1024/apps
-	@cp ./support/linux/shared-resources/nz.co.safesurfer.SafeSurferDesktop.desktop SafeSurferDesktop.AppDir
+	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop SafeSurferDesktop.AppDir/nz.co.safesurfer.SafeSurferDesktop.desktop
 	@cp ./assets/media/icons/png/16x16.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/16x16/apps/ss-logo.png
 	@cp ./assets/media/icons/png/24x24.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/24x24/apps/ss-logo.png
 	@cp ./assets/media/icons/png/32x32.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/32x32/apps/ss-logo.png
@@ -116,7 +117,7 @@ build-appimage:
 	@chmod +x SafeSurferDesktop.AppDir/AppRun
 	@sed -i -e "s#/opt/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./SafeSurferDesktop.AppDir/nz.co.safesurfer.SafeSurferDesktop.desktop
 	@sed -i -e "s#<id>SafeSurferDesktop.desktop</id>#<id>nz.co.safesurfer.SafeSurferDesktop.desktop</id>#g" ./SafeSurferDesktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurferDesktop.appdata.xml
-	./tools/appimagetool-x86_64.AppImage SafeSurferDesktop.AppDir
+	./tools/appimagetool-x86_64.AppImage $(OPTS) SafeSurferDesktop.AppDir
 
 prepare-rpm-bin:
 	make PACKAGEFORMAT=rpm BUILDMODE=$(BUILDMODE) build-linux
@@ -128,7 +129,7 @@ compile-win-setup32:
 	npm run compile-win-setup32
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurferDesktop.AppDir
+	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurferDesktop.AppDir $(DESTDIR)
 	@echo '{"linuxpackageformat":""}' > buildconfig/packageformat.json
 
 slim:

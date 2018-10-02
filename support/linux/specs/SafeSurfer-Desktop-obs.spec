@@ -7,10 +7,8 @@ License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
 Source:         http://142.93.48.189/files/desktop/%{release}-%{version}/linux-precompiled/%{version}/%{name}-%{version}.zip
-Requires:       polkit, curl
-BuildRequires:	unzip
-BuildRequires:	nodejs, npm
-BuildRequires:  desktop-file-utils
+Requires:       polkit, curl, gconf2
+BuildRequires:	unzip, nodejs, npm, desktop-file-utils
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
 %endif

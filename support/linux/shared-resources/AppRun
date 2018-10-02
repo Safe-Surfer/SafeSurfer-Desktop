@@ -95,12 +95,37 @@ do
 done
 }
 
+function check_dep() {
+# check if a given dependency is present
+DEP="$1"
+if [ -z "$(which $DEP)" ]
+then
+  	echo "$DEP is missing. Skipping ${THIS}."
+  	[ "$REQ" = true ] && exit 1
+fi
+}
+
+function check_file() {
+# check if a file (or library) is present
+FILE="$1"
+PACKAGE="$2"
+if [ ! -f "$FILE" ]
+then
+	echo "'$FILE' is not present. I need this to work. This file (or library) probably comes from the package '$PACKAGE'."
+	exit 1
+fi
+}
+
+REQ=true check_dep curl
+REQ=true check_dep pkexec
+check_file /usr/lib64/libgconf-2.so.4 gconf2
+
 case "$args" in
 	--remove-integration)
 		# remove desktop integration
 		set -e
 		uninstall_icons
-		rm -f "$HOME"/.local/share/applications/appimagekit-nz.co.safesurfer.SafeSurferDesktop.desktop
+		rm -f "$HOME"/.local/share/applications/"$VENDORPREFIX-nz.co.safesurfer.SafeSurferDesktop.desktop"
 
 		xdg-desktop-menu forceupdate
 		# for MIME
@@ -142,16 +167,6 @@ if [ ! -z "$DESKTOPINTEGRATION" ]
 then
 	exit 0
 fi
-
-function check_dep() {
-# check if a given dependency is present
-DEP=$1
-if [ -z "$(which $DEP)" ]
-then
-  	echo "$DEP is missing. Skipping ${THIS}."
-  	exit 0
-fi
-}
 
 # Check whether dependencies are present in base system (we do not bundle these)
 # http://cgit.freedesktop.org/xdg/desktop-file-utils/
