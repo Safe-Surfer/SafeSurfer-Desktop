@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-PREFIX ?= /opt/SafeSurfer-Desktop
+PREFIX ?= /usr/lib64/SafeSurfer-Desktop
 COMPLETIONDIR ?= /usr/share/bash-completion/completions
 
 all: help
@@ -115,7 +115,7 @@ build-appimage:
 	@mv ./SafeSurferDesktop.AppDir/usr/share/applications/SafeSurfer-Desktop.desktop ./SafeSurferDesktop.AppDir/usr/share/applications/nz.co.safesurfer.SafeSurferDesktop.desktop
 	@mv ./SafeSurferDesktop.AppDir/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml ./SafeSurferDesktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurferDesktop.appdata.xml
 	@chmod +x SafeSurferDesktop.AppDir/AppRun
-	@sed -i -e "s#/opt/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./SafeSurferDesktop.AppDir/nz.co.safesurfer.SafeSurferDesktop.desktop
+	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./SafeSurferDesktop.AppDir/nz.co.safesurfer.SafeSurferDesktop.desktop
 	@sed -i -e "s#<id>SafeSurferDesktop.desktop</id>#<id>nz.co.safesurfer.SafeSurferDesktop.desktop</id>#g" ./SafeSurferDesktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurferDesktop.appdata.xml
 	./tools/appimagetool-x86_64.AppImage $(OPTS) SafeSurferDesktop.AppDir
 

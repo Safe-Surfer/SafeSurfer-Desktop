@@ -14,7 +14,7 @@
             "sources" : [
                 {
                     "type" : "file",
-                    "path" : "/opt/SafeSurfer-Desktop/SafeSurfer-Desktop"
+                    "path" : "/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop"
                 }
             ]
         }

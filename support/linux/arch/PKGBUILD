@@ -27,5 +27,5 @@ package() {
 }
 
 post_remove() {
-	rm -rf /opt/SafeSurfer-Desktop
+	rm -rf /usr/lib64/SafeSurfer-Desktop
 }

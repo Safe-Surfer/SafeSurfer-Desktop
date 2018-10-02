@@ -28,7 +28,7 @@ fi
 
 export PATH="${APPDIR}/usr/bin:${PATH}"
 DESKTOP_FILE="$APPDIR/nz.co.safesurfer.SafeSurferDesktop.desktop"
-BIN="$APPDIR/opt/SafeSurfer-Desktop/SafeSurfer-Desktop"
+BIN="$APPDIR/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop"
 
 function atexit() {
 # execute on trap

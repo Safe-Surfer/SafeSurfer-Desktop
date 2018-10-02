@@ -156,7 +156,7 @@ case "$arg" in
 		if [ -z "$ISAPPIMAGE" ]
 		then
 			[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1
-			/opt/SafeSurfer-Desktop/SafeSurfer-Desktop
+			/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
 		else
 			echo "ERROR: you can't launch the app this way from an AppImage."
 		fi
