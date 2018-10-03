@@ -1,13 +1,14 @@
 Name:           SafeSurfer-Desktop
-Version:        1.0.0b3
+Version:        1.0.0b4
 Release:        1%{?dist}
 Summary:        Keep safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
 License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
-Source:         http://142.93.48.189/files/desktop/%{release}-%{version}/linux-precompiled/%{version}/%{name}-%{version}.zip
-Requires:       polkit, curl, gconf2
+Source0:        %{name}-%{version}.zip
+Source1:	node_modules.zip
+Requires:       polkit, curl
 BuildRequires:	unzip, nodejs, npm, desktop-file-utils
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
@@ -19,10 +20,10 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 
 %prep
 %autosetup
-
+unzip -q ../../SOURCES/node_modules.zip
 
 %build
-
+make build-linux
 
 %install
 %{__make} DESTDIR=$RPM_BUILD_ROOT install
@@ -105,14 +106,14 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 /usr/lib64/%{name}/libnode.so
 /usr/lib64/%{name}/LICENSE
 /usr/share/pixmaps/ss-logo.png
-/usr/share/applications/SafeSurferDesktop.desktop
+/usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli
 /usr/share/bash-completion/completions/sscli
 /usr/share/polkit-1
 /usr/share/polkit-1/actions
 /usr/share/polkit-1/actions/nz.co.safesurfer.pkexec.safesurfer-desktop.policy
 /usr/share/metainfo
-/usr/share/metainfo/SafeSurferDesktop.appdata.xml
+/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml
 
 
 %post

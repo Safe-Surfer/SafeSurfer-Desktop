@@ -12,6 +12,11 @@ build-linux: check-deps
 	@if [[ ! -z "$(PACKAGEFORMAT)" ]]; then echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json; fi;
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds
 
+build-linux32: check-deps
+	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
+	@if [[ ! -z "$(PACKAGEFORMAT)" ]]; then echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json; fi;
+	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=ia32 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds
+
 build-windows: check-deps
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"
@@ -100,7 +105,7 @@ build-appimage:
 	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/256x256/apps
 	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/512x512/apps
 	@mkdir -p ./SafeSurferDesktop.AppDir/usr/share/icons/hicolor/1024x1024/apps
-	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop SafeSurferDesktop.AppDir/nz.co.safesurfer.SafeSurferDesktop.desktop
+	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop SafeSurferDesktop.AppDir/SafeSurfer-Desktop.desktop
 	@cp ./assets/media/icons/png/16x16.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/16x16/apps/ss-logo.png
 	@cp ./assets/media/icons/png/24x24.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/24x24/apps/ss-logo.png
 	@cp ./assets/media/icons/png/32x32.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/32x32/apps/ss-logo.png
@@ -112,12 +117,9 @@ build-appimage:
 	@cp ./assets/media/icons/png/1024x1024.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/1024x1024/apps/ss-logo.png
 	@cp ./assets/media/icons/png/256x256.png SafeSurferDesktop.AppDir/ss-logo.png
 	@cp ./support/linux/shared-resources/AppRun SafeSurferDesktop.AppDir
-	@mv ./SafeSurferDesktop.AppDir/usr/share/applications/SafeSurfer-Desktop.desktop ./SafeSurferDesktop.AppDir/usr/share/applications/nz.co.safesurfer.SafeSurferDesktop.desktop
-	@mv ./SafeSurferDesktop.AppDir/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml ./SafeSurferDesktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurferDesktop.appdata.xml
 	@chmod +x SafeSurferDesktop.AppDir/AppRun
-	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./SafeSurferDesktop.AppDir/nz.co.safesurfer.SafeSurferDesktop.desktop
-	@sed -i -e "s#<id>SafeSurferDesktop.desktop</id>#<id>nz.co.safesurfer.SafeSurferDesktop.desktop</id>#g" ./SafeSurferDesktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurferDesktop.appdata.xml
-	./tools/appimagetool-x86_64.AppImage $(OPTS) SafeSurferDesktop.AppDir
+	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./SafeSurferDesktop.AppDir/SafeSurfer-Desktop.desktop
+	./tools/appimagetool-x86_64.AppImage -n $(OPTS) SafeSurferDesktop.AppDir
 
 prepare-rpm-bin:
 	make PACKAGEFORMAT=rpm BUILDMODE=$(BUILDMODE) build-linux

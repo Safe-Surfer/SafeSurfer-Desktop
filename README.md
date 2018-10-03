@@ -32,9 +32,9 @@ We look forward to your help on this project, together helping families and indi
 
 [![Translation status list](https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-green.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
 
+Note: Although it might say that the translation is 100%, it may need review.  
 Help us speak your language!  
 Read our [translation guide](TRANSLATING.md) to get started!  
-Note: Although it might say that the translation is 100%, it may need more review.  
 
 ### Bugs
 Wanna help us find and squash bugs?  

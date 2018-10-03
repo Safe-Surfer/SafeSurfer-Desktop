@@ -11,6 +11,7 @@
     "electron-builder": "node_modules/.bin/electron-builder",
     "electron-icon-maker": "node_modules/.bin/electron-icon-maker",
     "package-linux": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds",
+    "package-linux32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=ia32 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds",
     "package-macos": "node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --prune --out=release-builds",
     "package-win": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"",
     "package-win32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"",
@@ -46,7 +47,7 @@
     "lets-get-meta": "^2.1.1",
     "moment": "^2.22.2",
     "node-dns-sd": "^0.2.0",
-    "node_dns_changer": "^1.0.5",
+    "node_dns_changer": "^1.0.6",
     "nodejs-base64-encode": "0.0.2",
     "npm": "^6.4.0",
     "os-locale": "^3.0.0",
@@ -55,5 +56,8 @@
     "request-promise": "^4.2.2",
     "shelljs": "^0.8.2",
     "store": "^2.0.12"
+  },
+  "directories": {
+    "buildResources": "assets/media/icons"
   }
 }

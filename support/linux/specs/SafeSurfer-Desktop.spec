@@ -11,10 +11,6 @@ Requires:       polkit, curl
 BuildRequires:	unzip, nodejs, npm, desktop-file-utils
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
-Requires:	gconf2
-%endif
-%if 0%{?fedora}
-Requires:	GConf2
 %endif
 
 %description

@@ -37,7 +37,7 @@
   width: 100%;
   text-align: center;
   line-height: 1.2em;
-  transition: font-size 0.9s;
+  transition: font-size 0.7s;
 }
 
 .descriptionBox {
@@ -47,7 +47,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding-top: 160px;
+  padding-top: 180px;
   padding-bottom: 10px;
 	border-top-left-radius: 30px;
 	border-top-right-radius: 30px;
@@ -57,13 +57,37 @@
 	transition: padding-top 0.5s;
 }
 
+#ss-logo {
+  width: 240px;
+  height: 240px;
+	transition: width 0.5s, height 0.5s;
+}
+
+.mainCenter_logo {
+	margin: 0;
+	position: absolute;
+	top: 36%;
+	left: 50%;
+	transform: translate(-50%, -36%);
+}
+
 @media only screen and (max-width: 1099px) {
   .descriptionBox {
-    padding-top: 100px;
+    padding-top: 120px;
   }
 
   .descriptionText {
 	  font-size: 1.1em;
 	  line-height: 1.2em;
   }
+
+  #ss-logo {
+    width: 200px;
+    height: 200px;
+  }
+
+	.mainCenter_logo {
+	  top: 55%;
+	  transform: translate(-50%, -55%);
+	}
 }
