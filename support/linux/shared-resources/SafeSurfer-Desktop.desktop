@@ -7,5 +7,5 @@ Exec=/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
 Icon=ss-logo
 Terminal=false
 Categories=Network;Monitor;
-Name[en_US]=Safe Surfer;
-StartupWMClass=SafeSurfer-Desktop;
+Name[en_US]=Safe Surfer
+StartupWMClass=SafeSurfer-Desktop
