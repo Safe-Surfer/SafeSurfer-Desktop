@@ -72,7 +72,7 @@ function runLint(lang) {
   for (var key in translationJSON) {
 	  if (translationJSON.hasOwnProperty(key)) {
 		  if (key == translationJSON[key] || translationJSON[key] == '') {
-    		console.log(String("UNTRANSLATED KEY #" + keyList.countOfKeys + " :: " + translationJSON[key]));
+    		console.log(String("UNTRANSLATED KEY #" + keyList.countOfKeys + " :: " + key));
     		keyList.untranslatedKeys++;
 		  }
 		  else {

@@ -3,7 +3,7 @@ Localisation is super useful, it will help us to reach more people and keep them
 
 [![Translation status](https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
 
-[![Translation status list](https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-green.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
+[![Translation status list](https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-auto.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
 
 ### Do you speak another language? If so, we would love for you to help us!
 ## How am I able to help?

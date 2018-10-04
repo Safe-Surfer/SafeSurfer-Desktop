@@ -56,8 +56,5 @@
     "request-promise": "^4.2.2",
     "shelljs": "^0.8.2",
     "store": "^2.0.12"
-  },
-  "directories": {
-    "buildResources": "assets/media/icons"
   }
 }
