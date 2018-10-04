@@ -203,7 +203,7 @@ fi
 
 # Check if the desktop file is already there
 # and if so, whether it points to the same AppImage
-if [ -e "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" ]
+if [ -e "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" ] && [ -z "$APPIMAGE_NO_UPGRADE" ]
 then
 	#INSTALLED_APP_VERSION=$(grep "^X-AppImage-BuildId=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | head -n 1 | cut -d " " -f 1)
 	#APP_VERSION=$(grep "^X-AppImage-BuildId=" "$DESKTOP_FILE" | head -n 1 | cut -d " " -f 1)

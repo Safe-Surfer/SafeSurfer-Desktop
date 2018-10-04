@@ -116,7 +116,7 @@ build-appimage:
 	@cp ./assets/media/icons/png/512x512.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/512x512/apps/ss-logo.png
 	@cp ./assets/media/icons/png/1024x1024.png SafeSurferDesktop.AppDir/usr/share/icons/hicolor/1024x1024/apps/ss-logo.png
 	@cp ./assets/media/icons/png/256x256.png SafeSurferDesktop.AppDir/ss-logo.png
-	@cp ./support/linux/shared-resources/AppRun SafeSurferDesktop.AppDir
+	@cp ./support/linux/AppImage/AppRun SafeSurferDesktop.AppDir
 	@chmod +x SafeSurferDesktop.AppDir/AppRun
 	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./SafeSurferDesktop.AppDir/SafeSurfer-Desktop.desktop
 	./tools/appimagetool-x86_64.AppImage -n $(OPTS) SafeSurferDesktop.AppDir
