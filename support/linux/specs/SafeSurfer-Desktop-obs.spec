@@ -23,7 +23,7 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 unzip -q ../../SOURCES/node_modules.zip
 
 %build
-make build-linux
+%{__make} PACKAGEFORMAT=rpm build-linux
 
 %install
 %{__make} DESTDIR=$RPM_BUILD_ROOT install

@@ -268,7 +268,8 @@ const appFrame = Object.freeze({
 		$('#progressBar').css("height", "20px");
     if (forced === undefined) forced = "";
 	  if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
-		  body: i18n.__('Woohoo! Getting your computer setup now.')
+		  body: i18n.__('Woohoo! Getting your computer setup now.'),
+			  icon: path.join(__dirname, "..", "media", "icons", "png", "256x256.png")
 	  });
 	  appStates.notificationCounter += 1;
 	  if (os.platform() != 'linux') {
@@ -310,7 +311,8 @@ const appFrame = Object.freeze({
 		$('#progressBar').css("height", "20px");
     if (forced === undefined) forced = "";
 	  if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
-		  body: i18n.__('OK! Restoring your settings now.')
+		  body: i18n.__('OK! Restoring your settings now.'),
+			  icon: path.join(__dirname, "..", "media", "icons", "png", "256x256.png")
 	  });
 	  appStates.notificationCounter += 1;
 	  if (os.platform() != 'linux') {
@@ -651,12 +653,14 @@ const appFrame = Object.freeze({
 	  // send notifications if the app state has changed to the user
 	  if (appStates.serviceEnabled == true) {
 		  if (enableNotifications == true) new Notification('Safe Surfer', {
-			  body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.')
+			  body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.'),
+			  icon: path.join(__dirname, "..", "media", "icons", "png", "256x256.png")
 		  });
 	  }
 	  else if (appStates.serviceEnabled == false) {
 		  if (enableNotifications == true) new Notification('Safe Surfer', {
-			  body: i18n.__('Safe Surfer has been disabled. You are now unprotected.')
+			  body: i18n.__('Safe Surfer has been disabled. You are now unprotected.'),
+			  icon: path.join(__dirname, "..", "media", "icons", "png", "256x256.png")
 		  });
 	  }
   },
