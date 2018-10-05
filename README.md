@@ -10,9 +10,9 @@ This project's intent is for desktop users (families, persons, etc). Our aim in 
 For enterprise/business use, it is recommmend to apply the DNS settings on a router which devices are connected to.  
 
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
-For more screenshots of the app, please refer to the `screenshots` folder.  
+For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
 
-### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b3): version 1.0.0b3 (THIS IS A BETA)
+### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b4): version 1.0.0b4 (THIS IS A STABLE BETA)
 ## Install the latest beta build
 We need beta testers.  
 If you're wanting to beta test this software, please download the binaries or source and give it a go.  

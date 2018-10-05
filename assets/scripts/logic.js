@@ -386,16 +386,6 @@ const appFrame = Object.freeze({
 		    appStates.internet[0] = false;
 		  }
     });
-
-	  /*require('connectivity')(function (online) {
-		  if (online) {
-			  appStates.internet[0] = true;
-			  appStates.appHasLoaded = true;
-		  }
-		  else {
-			  appStates.internet[0] = false;
-		  }
-	  });*/
   },
 
   finishedLoading: function() {
@@ -684,6 +674,9 @@ const appFrame = Object.freeze({
           case 'linux':
             appFrame.callProgram(String('pkexec /sbin/reboot'));
             break;
+          case 'darwin':
+            appFrame.callProgram(String("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'"));
+            break;
           default:
             dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")}, response => {});
             break;
@@ -823,14 +816,17 @@ ipcRenderer.on('goBuildToClipboard', () => {
 });
 
 ipcRenderer.on('openAboutMenu', () => {
+  // go to about app page
   window.open(path.join(__dirname, 'assets', 'html', 'about.html'), i18n.__("About this app"));
 });
 
 ipcRenderer.on('viewTeleHistory', () => {
+  // go to data sharing page
   window.open(path.join(__dirname, 'assets', 'html', 'tele.html'), i18n.__("View shared data"));
 });
 
 ipcRenderer.on('toggleTeleState', () => {
+  // changing the data sharing state
   switch(store.get('telemetryAllow')) {
     case true:
       store.set('telemetryAllow', false)

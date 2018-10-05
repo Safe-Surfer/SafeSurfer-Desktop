@@ -1,6 +1,6 @@
 Name:           SafeSurfer-Desktop
-Version:        1.0.0b3
-Release:        1%{?dist}
+Version:        1.0.0b4
+Release:        0
 Summary:        Keep safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
 License:        GPL-3.0
@@ -124,6 +124,9 @@ npm install
 
 
 %changelog
+* Fri Oct  5 2018 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b4
+
 * Wed Sep 26 2018 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b3
 
