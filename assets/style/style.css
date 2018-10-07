@@ -74,9 +74,13 @@ body, html {
 	font-size: 5em;
 	color: #fff600;
 	white-space: nowrap;
-	line-height: 20px;
+	line-height: 80px;
 	-webkit-transition: line-height 0.4s, font-size 0.2s, color 0.3s;
-    	transition: line-height 0.4s, font-size 0.2s, color 0.3s;
+  transition: line-height 0.4s, font-size 0.2s, color 0.3s;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  padding-top: 20px;
+  margin-top: 20px;
 }
 
 .bigText_white {
@@ -436,17 +440,18 @@ body, html {
 	}
 	.bigText, .bigText_white {
 		line-height: 80px;
+		font-size: 4.5em;
 	}
 	.topTextBox {
 		height: 550px;
 		padding-top: 1000px;
 	}
 	.topTextBox, .topTextBox_inactive {
-		height: 370px;
+		height: 300px;
 	}
 
 	.topTextBox_active {
-		height: 350px;
+		height: 300px;
 	}
 
 	.topTextBox_active_lifeguard {
