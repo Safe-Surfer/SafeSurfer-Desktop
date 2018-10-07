@@ -6,8 +6,7 @@ BuildArch:	x86_64
 License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
-Source0:        %{name}-%{version}.zip
-Source1:	node_modules.zip
+Source:		https://gitlab.com/safesurfer/%{name}/-/archive/%{version}/%{name}-%{version}.zip
 Requires:       polkit, curl
 BuildRequires:	unzip, nodejs, npm, desktop-file-utils
 %if 0%{?suse_version}
@@ -20,10 +19,12 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 
 %prep
 %autosetup
-unzip -q ../../SOURCES/node_modules.zip
+npm install
+
 
 %build
-%{__make} PACKAGEFORMAT=rpm build-linux
+%{__make} PACKAGEFORMAT=rpm BUILDMODE=RELEASE build-linux
+
 
 %install
 %{__make} DESTDIR=$RPM_BUILD_ROOT install
