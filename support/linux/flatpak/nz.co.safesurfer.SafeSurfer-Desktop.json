@@ -5,13 +5,45 @@
 	"sdk" : "org.freedesktop.Sdk",
 	"command" : "SafeSurfer-Desktop",
 	"modules" : [{
+        	"name": "node",
+		"buildsystem": "simple",
+		"build-commands": [
+			"mkdir -p /app/{bin,share,lib}",
+			"cp bin/* /app/bin",
+			"cp -r share/* /app/share",
+			"cp -r lib/* /app/lib"
+		],
+        	"sources": [{
+			"type": "archive",
+			"url": "https://nodejs.org/dist/v8.12.0/node-v8.12.0-linux-x64.tar.xz",
+			"sha256": "29a20479cd1e3a03396a4e74a1784ccdd1cf2f96928b56f6ffa4c8dae40c88f2"
+		}]
+        },
+        {
 		"name": "SafeSurfer-Desktop",
+		"build-options" : {
+			"env": {
+				"electron_config_cache": "/run/build/SafeSurfer-Desktop/npm-cache"
+			}
+		},
+		"buildsystem": "simple",
+		"build-commands": [
+			"npm install --prefix=main --offline --cache=/run/build/SafeSurfer-Desktop/npm-cache",
+			"make PACKAGEFORMAT=flatpak BUILDMODE= build-linux",
+			"make DESTDIR=/ install"
+		],
 		"sources": [{
-		    "type": "archive",
-		    "url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0b4/SafeSurfer-Desktop-1.0.0b4.zip",
-		    "sha256": "775808d503faf65db6f268ae4af1b932457f99affa76f36515dd51784080416e"
+			"type": "archive",
+			"url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0b4/SafeSurfer-Desktop-1.0.0b4.zip",
+			"sha256": "775808d503faf65db6f268ae4af1b932457f99affa76f36515dd51784080416e"
         	}]
         }],
+        "finish-args": [
+		"--share=ipc",
+		"--socket=x11",
+		"--socket=pulseaudio",
+		"--share=network"
+	],
 	"rename-appdata-file": "SafeSurfer-Desktop.appdata.xml",
 	"rename-icon": "ss-logo",
 	"rename-desktop-file": "SafeSurfer-Desktop.desktop"

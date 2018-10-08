@@ -84,8 +84,6 @@ arch-pkg:
 	cd ./support/linux/arch && makepkg -si
 
 build-flatpak:
-	make PACKAGEFORMAT=flatpak BUILDMODE=$(BUILDMODE) build-linux
-	make DESTDIR=build install
 	flatpak-builder flatpak-build ./support/linux/flatpak/nz.co.safesurfer.SafeSurfer-Desktop.json
 
 prep-appimage:
