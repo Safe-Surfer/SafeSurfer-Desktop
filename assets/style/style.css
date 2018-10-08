@@ -288,7 +288,7 @@ body, html {
 	color: #fff600;
 	font-size:57px;
 	text-shadow: 2px 2px 8px black;
-	-webkit-transform: rotate(2deg); /* Safari */
+	-webkit-transform: rotate(2deg);
     	transform: rotate(2deg);
 }
 .serviceToggle:active {
@@ -455,7 +455,7 @@ body, html {
 	}
 
 	.topTextBox_active_lifeguard {
-		height: 430px;
+		height: 380px;
 	}
 
 	.mainCenter_halfDown {

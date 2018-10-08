@@ -26,7 +26,7 @@ const {ipcRenderer, clipboard} = require('electron'),
  electron = require('electron'),
  {dialog} = require('electron').remote,
  app = electron.app ? electron.app: electron.remote.app,
- BUILDMODEJSON = require('./buildconfig/buildmode.json'),
+ BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
@@ -43,9 +43,9 @@ const {ipcRenderer, clipboard} = require('electron'),
  Store = require('electron-store'),
  store = new Store(),
  dns_changer = require('node_dns_changer'),
- i18n = new (require('./assets/scripts/i18n.js')),
- logging = require('./assets/scripts/logging.js');
- LINUXPACKAGEFORMAT = require('./buildconfig/packageformat.json');
+ i18n = new (require('./i18n.js')),
+ logging = require('./logging.js');
+ LINUXPACKAGEFORMAT = require('../../buildconfig/packageformat.json');
 var remoteData,
  appimagePATH;
 
@@ -269,7 +269,7 @@ const appFrame = Object.freeze({
     if (forced === undefined) forced = "";
 	  if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		  body: i18n.__('Woohoo! Getting your computer setup now.'),
-			  icon: path.join(__dirname, "..", "media", "icons", "png", "256x256.png")
+			  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
 	  });
 	  appStates.notificationCounter += 1;
 	  if (os.platform() != 'linux') {
@@ -312,7 +312,7 @@ const appFrame = Object.freeze({
     if (forced === undefined) forced = "";
 	  if (enableNotifications == true && appStates.notificationCounter == 0) new Notification('Safe Surfer', {
 		  body: i18n.__('OK! Restoring your settings now.'),
-			  icon: path.join(__dirname, "..", "media", "icons", "png", "256x256.png")
+			  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
 	  });
 	  appStates.notificationCounter += 1;
 	  if (os.platform() != 'linux') {
@@ -610,7 +610,10 @@ const appFrame = Object.freeze({
 			    if (dialogResponse == 1) {
             switch(appStates.serviceEnabled) {
               case true:
-                appFrame.enableServicePerPlatform({forced: "force"});
+                if (appStates.userIsAdmin != true && os.platform() == 'win32') {
+                  appFrame.showUnprivillegedMessage();
+                }
+                else appFrame.enableServicePerPlatform({forced: "force"});
                 break;
 
               case false:
@@ -627,7 +630,10 @@ const appFrame = Object.freeze({
             break;
 
           case false:
-            appFrame.enableServicePerPlatform({forced: "force"});
+            if (appStates.userIsAdmin != true && os.platform() == 'win32') {
+              appFrame.showUnprivillegedMessage();
+            }
+            else appFrame.enableServicePerPlatform({forced: "force"});
             break;
         }
 	    }
@@ -641,7 +647,7 @@ const appFrame = Object.freeze({
 	  dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
 		  if (updateResponse == 1) window.close();
 		  if (updateResponse == 0) {
-			  electron.shell.openExternal('https://community.safesurfer.co.nz/how-to-uac.php');
+			  electron.shell.openExternal('https://safesurfer.desk.com/how-to-uac.php');
 			  setTimeout(function() {
 				  window.close();
 			  },250);
@@ -654,13 +660,13 @@ const appFrame = Object.freeze({
 	  if (appStates.serviceEnabled == true) {
 		  if (enableNotifications == true) new Notification('Safe Surfer', {
 			  body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.'),
-			  icon: path.join(__dirname, "..", "media", "icons", "png", "256x256.png")
+			  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
 		  });
 	  }
 	  else if (appStates.serviceEnabled == false) {
 		  if (enableNotifications == true) new Notification('Safe Surfer', {
 			  body: i18n.__('Safe Surfer has been disabled. You are now unprotected.'),
-			  icon: path.join(__dirname, "..", "media", "icons", "png", "256x256.png")
+			  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
 		  });
 	  }
   },
@@ -858,6 +864,13 @@ if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.pla
   current: false,
   showErrors: false
 });
+
+console.log(`> Are you a developer? Do you want to help us with this project?
+Join us by going to:
+  - https://gitlab.com/safesurfer/SafeSurfer-Desktop
+  - http://www.safesurfer.co.nz/become-safe-safe-volunteer`)
+
+document.querySelector('#toggleButton').addEventListener('click', appFrame.toggleServiceState)
 
 // initalise rest of app
 appFrame.checkServiceState();

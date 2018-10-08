@@ -66,7 +66,7 @@ module.exports = (app, mainWindow) => {
 				]
 			},
 			{label: i18n.__('Give feedback'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
-	  	{label: i18n.__('Help'), click() {electron.shell.openExternal('https://community.safesurfer.co.nz/')}, accelerator: 'CmdOrCtrl+H' }
+	  	{label: i18n.__('Help'), click() {electron.shell.openExternal('https://safesurfer.desk.com/')}, accelerator: 'CmdOrCtrl+H' }
 		]
 	},
 	{
@@ -75,8 +75,11 @@ module.exports = (app, mainWindow) => {
 		[
 			{label: i18n.__('Check status in browser'), click() {electron.shell.openExternal('http://check.safesurfer.co.nz/')} },
 	  	{label: i18n.__('Report a bug'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/BUGS.md')} },
+      {},
+      {},
+		  {type:'separator'},
 			{label: i18n.__('Restart app'), click() {app.relaunch(); app.quit()} },
-
+      {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }
 		]
 	},
 	{
@@ -86,6 +89,7 @@ module.exports = (app, mainWindow) => {
 	    {label: i18n.__('About us'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
 	    {label: i18n.__('Contact us'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
 	    {label: i18n.__('Contribute to this project'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
+	    {label: i18n.__('Donate'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/donate-now/')}},
 		  {type:'separator'},
 	    {label:String(i18n.__("Version") + ": "+APPVERSION+" - " + i18n.__("Build") + ": "+APPBUILD + " (" + BUILDMODE + ")"), click() {mainWindow.webContents.send('goBuildToClipboard')} },
 		  {type:'separator'},
@@ -95,7 +99,7 @@ module.exports = (app, mainWindow) => {
 	];
 	// add data sharing menu, once user has inputted answer
 	if (store.get('telemetryHasAnswer') == true) {
-	  menu[1].submenu[3] = {
+	  menu[1].submenu[2] = {
 		  label: i18n.__('Data sharing'),
       submenu:
       [
@@ -105,7 +109,7 @@ module.exports = (app, mainWindow) => {
 	  }
 	}
 	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-	if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) menu[1].submenu[4] = {
+	if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) menu[1].submenu[3] = {
 		label: i18n.__('Updates'),
 		submenu:
 		[
@@ -114,10 +118,6 @@ module.exports = (app, mainWindow) => {
 			{label: i18n.__('Opt in to beta releases'), type: 'checkbox', checked: betaCheck, click() {mainWindow.webContents.send('betaCheck', betaCheck)} },
 		]
 	};
-	// hide dev tools if not enabled
-	if (BUILDMODE == "dev") {
-		menu[1].submenu[5] = {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }
-	}
 	// account stuff (not yet implemented)
 	if (accountIsAssigned == true) menu[3] = {
 		label: i18n.__('Account'),

@@ -44,13 +44,14 @@
     </div>
     <div class="appLoadingScreen" style="z-index: 45">
       <img src="./assets/media/ss-surfer-head.png" style="width:200px; height:200px; z-index:-2;" id="mainScreen_background" class="mainCenter">
-      <img src="./assets/media/flags-black.png" style="width:10%; height:auto; z-index:-2;" class="mainCenter_top" id="initFlag">
       <h1 class="bigText nowrap mainCenter_init bigText_init" style="color:black; white-space: nowrap;" id="bigTextBrandName">SAFE SURFER</h1>
     </div>
     <div class="mainCenter_down" style="z-index: 40">
-      <button type="button" onclick="appFrame.toggleServiceState();" class="serviceToggle" style="z-index:50;" id="toggleButton">CHECKING SERVICE STATE</button>
+      <button type="button" class="serviceToggle" style="z-index:50;" id="toggleButton">CHECKING SERVICE STATE</button>
     </div>
     <div id="progressBar"></div>
-    <script type="text/javascript" src="./assets/scripts/logic.js"></script>
+    <script>
+      require('./assets/scripts/logic.js');
+    </script>
   </body>
 </html>

@@ -67,6 +67,9 @@ Please note that building Windows versions on Linux or macOS requires [Wine](htt
 deb:  debhelper devscripts  
 rpm:  rpmbuild  
 arch: base-devel  
+flatpak:
+- flatpak-builder
+- org.freedesktop.Sdk//1.6
 windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)  
 
 ### Packaging

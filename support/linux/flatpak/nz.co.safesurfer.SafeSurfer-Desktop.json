@@ -1,26 +1,18 @@
 {
-    "app-id" : "nz.co.safesurfer.SafeSurfer-Desktop",
-    "runtime" : "org.freedesktop.Platform",
-    "runtime-version" : "1.6",
-    "sdk" : "org.freedesktop.Sdk",
-    "command" : "SafeSurfer-Desktop",
-    "modules" : [
-        {
-            "name" : "SafeSurfer-Desktop",
-            "buildsystem" : "simple",
-            "build-commands" : [
-                "cd ./build && cp * /"
-            ],
-            "sources" : [
-                {
-                    "type" : "file",
-                    "path" : "/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop"
-                }
-            ]
-        }
-    ],
-    "build-options" : {
-        "env" : {
-        }
-    }
+	"app-id" : "nz.co.safesurfer.SafeSurfer-Desktop",
+	"runtime" : "org.freedesktop.Platform",
+	"runtime-version" : "1.6",
+	"sdk" : "org.freedesktop.Sdk",
+	"command" : "SafeSurfer-Desktop",
+	"modules" : [{
+		"name": "SafeSurfer-Desktop",
+		"sources": [{
+		    "type": "archive",
+		    "url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0b4/SafeSurfer-Desktop-1.0.0b4.zip",
+		    "sha256": "775808d503faf65db6f268ae4af1b932457f99affa76f36515dd51784080416e"
+        	}]
+        }],
+	"rename-appdata-file": "SafeSurfer-Desktop.appdata.xml",
+	"rename-icon": "ss-logo",
+	"rename-desktop-file": "SafeSurfer-Desktop.desktop"
 }

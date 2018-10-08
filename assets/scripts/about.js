@@ -39,3 +39,12 @@ $("#title").text(i18n.__("About this app"));
 
 // update description text
 $('#description').multiline(String(i18n.__("Version") + " " + APPVERSION + "; " + i18n.__("Build") + " " + APPBUILD + " (" + BUILDMODE + ")" + "\n &copy; 2018 Safe Surfer, et al. \n\n" + i18n.__('This program comes with absolutely no warranty.') + "\n" + i18n.__('See the GNU General Public License, version 3 or later for details.')));
+
+function shrinkLogo() {
+  $("#ss-logo").css("height", "180px");
+  $("#ss-logo").css("width", "180px");
+}
+function growLogo() {
+  $("#ss-logo").css("height", "200px");
+  $("#ss-logo").css("width", "200px");
+}
