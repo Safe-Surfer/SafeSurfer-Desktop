@@ -827,12 +827,12 @@ ipcRenderer.on('goBuildToClipboard', () => {
 
 ipcRenderer.on('openAboutMenu', () => {
   // go to about app page
-  window.open(path.join(__dirname, 'assets', 'html', 'about.html'), i18n.__("About this app"));
+  window.open(path.join(__dirname, '..', 'html', 'about.html'), i18n.__("About this app"));
 });
 
 ipcRenderer.on('viewTeleHistory', () => {
   // go to data sharing page
-  window.open(path.join(__dirname, 'assets', 'html', 'tele.html'), i18n.__("View shared data"));
+  window.open(path.join(__dirname, '..', 'html', 'tele.html'), i18n.__("View shared data"));
 });
 
 ipcRenderer.on('toggleTeleState', () => {

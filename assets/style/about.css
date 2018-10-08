@@ -60,7 +60,7 @@
 #ss-logo {
   width: 240px;
   height: 240px;
-	transition: width 0.5s, height 0.5s;
+	transition: width 0.3s, height 0.3s;
 }
 
 .mainCenter_logo {
