@@ -55,11 +55,11 @@ function createWindow() {
     'x': mainWindowState.x,
     'y': mainWindowState.y,
 		title: 'Safe Surfer',
-		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png')
-		/*webPreferences: {
+		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png'),
+		webPreferences: {
 		  nodeIntegration: false,
 		  preload: path.join(__dirname, 'preload.js')
-		}*/
+		}
 	}
 	if (isBeta == true) windowObj.title += " (beta)";
 	mainWindow = new BrowserWindow(windowObj);

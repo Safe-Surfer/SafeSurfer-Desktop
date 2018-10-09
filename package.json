@@ -54,6 +54,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "shelljs": "^0.8.2",
-    "store": "^2.0.12"
+    "store": "^2.0.12",
+    "vanilla-tilt": "^1.4.1"
   }
 }

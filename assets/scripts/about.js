@@ -18,14 +18,14 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //
 
-const BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
+const BUILDMODEJSON = window.desktop.global.buildmodejson(),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
  enableNotifications = BUILDMODEJSON.enableNotifications,
  requireRoot = BUILDMODEJSON.requireRoot,
- i18n = new (require('../scripts/i18n.js')),
- $ = require('jquery');
+ i18n = window.desktop.global.i18n(),
+ $ = window.desktop.global.jquery();
 
 // function to make \n multiline
 $.fn.multiline = function(text, rt){
