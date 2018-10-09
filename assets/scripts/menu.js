@@ -109,7 +109,7 @@ module.exports = (app, mainWindow) => {
 	  }
 	}
 	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-	if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) menu[1].submenu[3] = {
+	if (updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) menu[1].submenu[3] = {
 		label: i18n.__('Updates'),
 		submenu:
 		[

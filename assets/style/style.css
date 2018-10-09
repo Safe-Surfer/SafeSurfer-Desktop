@@ -75,7 +75,6 @@ body, html {
 	color: #fff600;
 	white-space: nowrap;
 	line-height: 80px;
-	-webkit-transition: line-height 0.4s, font-size 0.2s, color 0.3s;
   transition: line-height 0.4s, font-size 0.2s, color 0.3s;
   padding-bottom: 0;
   margin-bottom: 0;
@@ -88,7 +87,7 @@ body, html {
 }
 
 .bigText_init {
-	font-size: 4em;
+	font-size: 6em;
 }
 
 .bigText_init:hover {
@@ -107,6 +106,7 @@ body, html {
 	font-size: 2.7em;
 	white-space: nowrap;
 	text-shadow: 1px 1px 50px #000000;
+  transition: line-height 0.4s, font-size 0.2s, color 0.3s;
 }
 
 .serviceActiveScreen {
@@ -202,10 +202,10 @@ body, html {
 	background-color: white;
 	height: 100%;
 	width: 100%;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
 	position: absolute;
 	z-index: -50;
 }
@@ -268,33 +268,33 @@ body, html {
 
 .serviceToggle {
 	white-space: nowrap;
-	background-color:#fff600;
-	border-radius:0px;
-	border:0.5px solid #fff600;
-	display:inline-block;
-	cursor:pointer;
-	color:#d12d00;
+	background-color: #fff600;
+	border-radius: 0px;
+	border: 0.5px solid #fff600;
+	display: inline-block;
+	cursor: pointer;
+	color: #d12d00;
 	font-family: 'BenchNine', sans-serif;
-	font-size:60px;
-	font-weight:bold;
-	padding:2px 5px;
-	text-decoration:none;
+	font-size: 68px;
+	font-weight: bold;
+	padding: 2px 5px;
+	text-decoration: none;
 	z-index: 50;
-	-webkit-transition: font-size 0.4s, color 0.2s, background-color 0.2s, transform 0.3s, text-shadow 0.3s;
+  box-shadow: 14px 10px 90px -4px rgba(0,0,0,0.75);
   transition: font-size 0.4s, color 0.2s, background-color 0.2s, transform 0.3s, text-shadow 0.3s;
+  transform-style: preserve-3d;
 }
 .serviceToggle:hover {
 	background-color:#d12d00;
 	color: #fff600;
-	font-size:57px;
+	/*font-size: 62.5px;*/
 	text-shadow: 2px 2px 8px black;
-	-webkit-transform: rotate(2deg);
-    	transform: rotate(2deg);
+  /*transform: rotate(2deg);*/
 }
 .serviceToggle:active {
-	font-size:54px;
-	background-color:#931f00;
-	color:#bcb605;
+	font-size: 58.8px;
+	background-color: #931f00;
+	color: #bcb605;
 }
 
 .serviceToggle_lifeguard {
@@ -311,16 +311,16 @@ body, html {
 }
 
 .serviceAppStatus {
-	top:0;
-	left:0;
-	right:0;
-	margin:0;
-	padding:0;
-	width:100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	width: 100%;
 	padding: -20px;
-	height:20px;
-	position:absolute;
-	clear:both;
+	height: 20px;
+	position: absolute;
+	clear: both;
 	display: none;
 }
 
@@ -442,6 +442,9 @@ body, html {
 		line-height: 80px;
 		font-size: 4.5em;
 	}
+	.bigText_init {
+	  font-size: 4em;
+	}
 	.topTextBox {
 		height: 550px;
 		padding-top: 1000px;
@@ -474,13 +477,13 @@ body, html {
 	}
 
 	.serviceToggle {
-		font-size:42px;
+		font-size: 45px;
 	}
 	.serviceToggle:hover {
-		font-size:39px;
+		font-size: 41.5px;
 	}
 	.serviceToggle:active {
-		font-size:36px;
+		font-size: 38.8px;
 	}
 	.topTextBox_inactive {
 	  background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));

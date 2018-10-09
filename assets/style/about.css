@@ -1,18 +1,19 @@
 .gradientBackground {
   height: 100%;
   width: 100%;
-  top:0;
-  bottom:0;
-  left:0;
-  right:0;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   position: absolute;
   z-index: -50;
-  background: linear-gradient(94deg, #ffffff, #adf0ff, #ffffff, #d2ffb4, #e9d6ff);
+  background-color: white;
+  background: linear-gradient(94deg, #ffffff, #ffffff, #e6faff, #ffffff);
   background-size: 1000% 1000%;
 
-  -webkit-animation: AboutApp 150s ease infinite;
-  -moz-animation: AboutApp 150s ease infinite;
-  animation: AboutApp 150s ease infinite;
+  -webkit-animation: AboutApp 180s ease infinite;
+  -moz-animation: AboutApp 180s ease infinite;
+  animation: AboutApp 180s ease infinite;
 }
 
 @-webkit-keyframes AboutApp {
@@ -58,8 +59,8 @@
 }
 
 #ss-logo {
-  width: 240px;
-  height: 240px;
+  width: 200px;
+  height: 200px;
 	transition: width 0.3s, height 0.3s;
 }
 
@@ -79,11 +80,6 @@
   .descriptionText {
 	  font-size: 1.1em;
 	  line-height: 1.2em;
-  }
-
-  #ss-logo {
-    width: 200px;
-    height: 200px;
   }
 
 	.mainCenter_logo {

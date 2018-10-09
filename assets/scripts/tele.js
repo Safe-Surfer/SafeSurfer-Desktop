@@ -18,10 +18,9 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //
 
-const Store = require('electron-store'),
- store = new Store(),
- i18n = new (require('../scripts/i18n.js')),
- $ = require('jquery');
+const store = window.desktop.global.store(),
+ i18n = window.desktop.global.i18n(),
+ $ = window.desktop.global.jquery();
 var teleHist = store.get('teleHistory'),
  textBody = "";
 
