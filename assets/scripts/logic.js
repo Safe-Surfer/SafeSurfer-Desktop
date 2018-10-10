@@ -29,7 +29,6 @@ const {dialog} = global.desktop.logic.dialogBox(),
  isBeta = BUILDMODEJSON.isBeta,
  updatesEnabled = BUILDMODEJSON.enableUpdates,
  enableNotifications = BUILDMODEJSON.enableNotifications,
- requireRoot = BUILDMODEJSON.requireRoot,
  os = global.desktop.logic.os(),
  path = window.desktop.logic.path(),
  bonjour = global.desktop.logic.bonjour(),
@@ -91,17 +90,41 @@ const appFrame = Object.freeze({
 	  });
   },
 
+	elevateWindows: function() {
+	  // call a child process
+	  var command = String("powershell Start-Process '" + process.argv0 + "' -ArgumentList '.' -Verb runAs");
+	  logging.log(String('COMMAND: calling - ' + command));
+	  var command_split = command.split(" ");
+	  var command_arg = [];
+	  // concatinate 2+ into a variable
+	  for (var i=1; i<command_split.length; i++) {
+		  command_arg.push(command_split[i]);
+	  }
+	  // command will be executed as: comand [ARGS]
+	  if (os.platform() == 'win32' && window.appStates.userIsAdmin != true) var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
+		  logging.log(String("COMMAND: output - " + stdout));
+		  if (err) logging.log(String("COMMAND: output error - " + err));
+		  else window.close();
+		  if (stderr) logging.log(String("COMMAND: output stderr - " + stderr));
+		  return stdout;
+	  });
+  },
+
   checkUserPrivileges: function() {
 	  // keep note of which user the app is run as
-	  if (requireRoot == true) {
-		  switch(os.platform()) {
-			  case 'win32':
-				  global.desktop.logic.isAdmin().then(admin => {
-					  if (admin == false) window.appStates.userIsAdmin = false;
-					  else window.appStates.userIsAdmin = true;
-				  });
-				  break;
-		  }
+	  switch(os.platform()) {
+		  case 'win32':
+			  global.desktop.logic.isAdmin().then(admin => {
+				  if (admin == false) {
+					  window.appStates.userIsAdmin = false;
+					  appFrame.elevateWindows();
+				  }
+				  else window.appStates.userIsAdmin = true;
+			  });
+			  break;
+			default:
+			  window.appStates.userIsAdmin = true
+			  break;
 	  }
   },
 
@@ -266,37 +289,36 @@ const appFrame = Object.freeze({
 			  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
 	  });
 	  window.appStates.notificationCounter += 1;
-	  if (os.platform() != 'linux') {
-		  // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
-		  setTimeout(function () {
-			  dns_changer.setDNSservers({
-			      DNSservers: ['104.197.28.121','104.155.237.225'],
-			      DNSbackupName: 'before_safesurfer',
-			      loggingEnable: window.appStates.enableLogging
-			  });
-			  if (window.appStates.serviceEnabled == false) {
-				  logging.log("STATE: Service is still not enabled -- trying again.");
-				  appFrame.enableServicePerPlatform({});
-			  }
-		  },1200);
-	  }
-	  else {
-		  // if the platform is linux, use sscli to toggle DNS settings
-		  if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') {
-		    // if running from home folder
-			  appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli enable ' + forced));
-		  }
-		  else {
-			  // if running when installed
-		    if (LINUXPACKAGEFORMAT.linuxpackageformat != 'appimage') {
-		      appFrame.callProgram(String('pkexec sscli enable ' + forced));
-		    }
-		    else {
-		      if (global.desktop.logic.copy_sscli_toTmp(appimagePATH).code === 0) {
-		        appFrame.callProgram(String('pkexec /tmp/sscli-appimage enable ' + forced));
-		      }
-		    }
-		  }
+	  switch(os.platform()) {
+	    case 'linux':
+        switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
+          case 'appimage':
+            if (global.desktop.logic.copy_sscli_toTmp(appimagePATH).code === 0) {
+		          appFrame.callProgram(String('pkexec /tmp/sscli-appimage enable ' + forced));
+		        }
+            break;
+
+          default:
+            if (window.desktop.logic.testForFile(String(process.cwd() + '/support/linux/shared-resources/sscli')) == true) appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli enable ' + forced));
+            appFrame.callProgram(String('pkexec sscli enable ' + forced));
+            break;
+        }
+	      break;
+
+	    default:
+	      // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
+		    setTimeout(function () {
+			    dns_changer.setDNSservers({
+			        DNSservers: ['104.197.28.121','104.155.237.225'],
+			        DNSbackupName: 'before_safesurfer',
+			        loggingEnable: window.appStates.enableLogging
+			    });
+			    if (window.appStates.serviceEnabled == false) {
+				    logging.log("STATE: Service is still not enabled -- trying again.");
+				    appFrame.enableServicePerPlatform({});
+			    }
+		    },1200);
+	      break;
 	  }
   },
 
@@ -309,36 +331,35 @@ const appFrame = Object.freeze({
 			  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
 	  });
 	  window.appStates.notificationCounter += 1;
-	  if (os.platform() != 'linux') {
-		  // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
-		  setTimeout(function () {
-			  dns_changer.restoreDNSservers({
-			      DNSbackupName: 'before_safesurfer',
-			      loggingEnable: window.appStates.enableLogging
-			  });
-			  if (window.appStates.serviceEnabled == true) {
-				  logging.log("STATE: Service is still not disabled -- trying again.")
-				  appFrame.disableServicePerPlatform({});
-			  }
-		  },1200);
-	  }
-	  else {
-		  // if the platform is linux, use sscli to toggle DNS settings
-		  if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') {
-		    // if running from home folder
-			  appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli disable ' + forced));
-		  }
-		  else {
-		    // if running when installed
-		    if (LINUXPACKAGEFORMAT.linuxpackageformat != 'appimage') {
-		      appFrame.callProgram(String('pkexec sscli disable ' + forced));
-		    }
-		    else {
-		      if (global.desktop.logic.copy_sscli_toTmp(appimagePATH).code === 0) {
-		        appFrame.callProgram(String('pkexec /tmp/sscli-appimage disable ' + forced));
-		      }
-		    }
-		  }
+	  switch(os.platform()) {
+	    case 'linux':
+	      switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
+          case 'appimage':
+            if (global.desktop.logic.copy_sscli_toTmp(appimagePATH).code === 0) {
+		          appFrame.callProgram(String('pkexec /tmp/sscli-appimage disable ' + forced));
+		        }
+            break;
+          default:
+            // if running from home folder
+            if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli disable ' + forced));
+            else appFrame.callProgram(String('pkexec sscli disable ' + forced));
+            break;
+        }
+	      break;
+
+	    default:
+	      // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
+		    setTimeout(function () {
+			    dns_changer.restoreDNSservers({
+			        DNSbackupName: 'before_safesurfer',
+			        loggingEnable: window.appStates.enableLogging
+			    });
+			    if (window.appStates.serviceEnabled == true) {
+				    logging.log("STATE: Service is still not disabled -- trying again.")
+				    appFrame.disableServicePerPlatform({});
+			    }
+		    },1200);
+	      break;
 	  }
   },
 
@@ -604,17 +625,13 @@ const appFrame = Object.freeze({
 			    if (dialogResponse == 1) {
             switch(window.appStates.serviceEnabled) {
               case true:
-                if (window.appStates.userIsAdmin != true && os.platform() == 'win32') {
-                  appFrame.showUnprivillegedMessage();
-                }
+                if (window.appStates.userIsAdmin != true && os.platform() == 'win32') appFrame.showUnprivillegedMessage();
                 else appFrame.enableServicePerPlatform({forced: "force"});
                 break;
 
               case false:
-                if (window.appStates.userIsAdmin != true && os.platform() == 'win32') {
-                  appFrame.showUnprivillegedMessage();
-                }
-                appFrame.disableServicePerPlatform({forced: "force"});
+                if (window.appStates.userIsAdmin != true && os.platform() == 'win32') appFrame.showUnprivillegedMessage();
+                else appFrame.disableServicePerPlatform({forced: "force"});
                 break;
             }
 			    }
@@ -623,16 +640,12 @@ const appFrame = Object.freeze({
 	    else {
         switch(window.appStates.serviceEnabled) {
           case true:
-            if (window.appStates.userIsAdmin != true && os.platform() == 'win32') {
-              appFrame.showUnprivillegedMessage();
-            }
-            appFrame.disableServicePerPlatform({forced: "force"});
+            if (window.appStates.userIsAdmin != true && os.platform() == 'win32') appFrame.showUnprivillegedMessage();
+            else appFrame.disableServicePerPlatform({forced: "force"});
             break;
 
           case false:
-            if (window.appStates.userIsAdmin != true && os.platform() == 'win32') {
-              appFrame.showUnprivillegedMessage();
-            }
+            if (window.appStates.userIsAdmin != true && os.platform() == 'win32') appFrame.showUnprivillegedMessage();
             else appFrame.enableServicePerPlatform({forced: "force"});
             break;
         }
@@ -657,18 +670,14 @@ const appFrame = Object.freeze({
 
   sendAppStateNotifications: function() {
 	  // send notifications if the app state has changed to the user
-	  if (window.appStates.serviceEnabled == true) {
-		  if (enableNotifications == true) new Notification('Safe Surfer', {
-			  body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.'),
-			  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
-		  });
-	  }
-	  else if (window.appStates.serviceEnabled == false) {
-		  if (enableNotifications == true) new Notification('Safe Surfer', {
-			  body: i18n.__('Safe Surfer has been disabled. You are now unprotected.'),
-			  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
-		  });
-	  }
+	  if (window.appStates.serviceEnabled == true && enableNotifications == true) new Notification('Safe Surfer', {
+		  body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.'),
+		  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
+	  });
+	  else if (window.appStates.serviceEnabled == false && enableNotifications == true) new Notification('Safe Surfer', {
+		  body: i18n.__('Safe Surfer has been disabled. You are now unprotected.'),
+		  icon: path.join(__dirname, "..", "media", "icons", "png", "16x16.png")
+	  });
   },
 
   displayRebootMessage: function() {
@@ -775,6 +784,30 @@ const appFrame = Object.freeze({
 	  appFrame.affirmServiceState();
 	  logging.log("MAIN: end reload");
 	  setTimeout(appFrame.mainReloadProcess, 1000);
+  },
+
+  initApp: function() {
+    // initalise rest of app
+    appFrame.checkServiceState();
+    setTimeout(() => {
+      // run main process which loops
+      appFrame.finishedLoading();
+      appFrame.mainReloadProcess();
+      // if user hasn't provided a response to telemetry
+      if (store.get('telemetryHasAnswer') != true) {
+        setTimeout(() => {
+          appFrame.telemetryPrompt();
+        }, 5000);
+      }
+    }, 1000);
+  },
+
+  permissionLoop: function() {
+    // loop until user is admin
+    setTimeout(() => {
+      if (appStates.userIsAdmin != true) appFrame.permissionLoop();
+      else appFrame.initApp();
+    }, 500);
   }
 });
 
@@ -865,6 +898,7 @@ if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.pla
   showErrors: false
 });
 
+// log a message in the console for devs; yeah that's you if you're reading this :)
 console.log(`> Are you a developer? Do you want to help us with this project?
 Join us by going to:
   - https://gitlab.com/safesurfer/SafeSurfer-Desktop
@@ -873,7 +907,9 @@ Join us by going to:
 Yours,
 Safe Surfer team.`)
 
+// connect button in html to a function
 document.querySelector('#toggleButton').addEventListener('click', appFrame.toggleServiceState)
+// add a fancy motion to the toggle button
 window.desktop.logic.vanillatilt().init(document.querySelector("#toggleButton"), {
 	glare: true,
 	max: 65,
@@ -884,16 +920,11 @@ window.desktop.logic.vanillatilt().init(document.querySelector("#toggleButton"),
 	"glare-prerender": true
 })
 
-// initalise rest of app
-appFrame.checkServiceState();
-setTimeout(() => {
-  // run main process which loops
-  appFrame.finishedLoading();
-  appFrame.mainReloadProcess();
-  // if user hasn't provided a response to telemetry
-  if (store.get('telemetryHasAnswer') != true) {
-    setTimeout(() => {
-      appFrame.telemetryPrompt();
-    }, 5000);
-  }
-}, 1000);
+if (appStates.userIsAdmin == true) {
+  // initalise the rest of the app
+  appFrame.initApp();
+}
+else {
+  // since the user isn't admin, we'll keep checking just in case
+  appFrame.permissionLoop();
+}

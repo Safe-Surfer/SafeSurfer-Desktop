@@ -23,7 +23,7 @@ exports.log = function(text) {
   // if appStates can't be found, then disable logging
   if (typeof appStates === "undefined") loggingEnable = false;
   // if appStates is found
-  else loggingEnable = appStates.enableLogging;
+  else loggingEnable = window.appStates.enableLogging;
   // logging is enabled via config file or variable
 	if (require('../../buildconfig/buildmode.json').enableLogging == true || loggingEnable == true) console.log(text)
 }

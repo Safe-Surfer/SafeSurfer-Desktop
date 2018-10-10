@@ -30,6 +30,7 @@ global.desktop = Object.freeze({
     copy_sscli_toTmp: (appimagePATH) => require('shelljs').cp(require('path').join(appimagePATH, 'sscli'), '/tmp/sscli-appimage'),
     remove_sscli: () => require('shelljs').rm('/tmp/sscli-appimage'),
     checkFor_sscli: () => require('shelljs').test('/tmp/sscli-appimage'),
+    testForFile: (file) => require('shelljs').test('-f', file),
     isAdmin: () => require('is-admin')(),
     letsGetMeta: () => require("lets-get-meta"),
     isOnline: () => require('is-online')(),

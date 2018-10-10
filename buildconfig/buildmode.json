@@ -4,8 +4,7 @@
 	"APPBUILD": "4",
 	"isBeta": true,
 	"enableUpdates": true,
-	"requireRoot": true,
 	"enableNotifications": true,
 	"enableLogging": false,
-	"testLanguage": "de"
+	"testLanguage": null
 }
