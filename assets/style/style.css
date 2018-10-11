@@ -430,6 +430,29 @@ body, html {
   100%{background-position:0% 49%}
 }
 
+#privBar {
+  height: 0px;
+  margin-left: 20%;
+  margin-right: 20%;
+  width: 60%;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 39;
+	position: absolute;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  transition: height 0.8s;
+  background-color: #d9d9d9;
+	overflow: hidden;
+}
+
+#privBarText {
+  color: black;
+  text-align: center;
+	font-family: 'Raleway', sans-serif;
+}
+
 @media only screen and (max-width: 1099px) {
 	.subText {
 		font-size: 1.5em;
@@ -488,7 +511,7 @@ body, html {
 	  background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));
 	}
 
-	#progressBar {
+	#progressBar, #privBar {
 	  margin-left: 0%;
 	  margin-right: 0%;
 	  width: 100%;

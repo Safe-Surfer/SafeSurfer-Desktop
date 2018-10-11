@@ -462,7 +462,30 @@ const appFrame = Object.freeze({
 				  if (updateResponse == 0) {
 					  logging.log("UPDATE: User wants update.");
 					  if (remoteData.versions[iteration].altLink === undefined) {
-						  global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
+						  //global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
+						  var ext,
+						    genLink;
+						  switch(os.platform()) {
+						    case 'linux':
+						      if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
+						        ext = ".AppImage";
+						        genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+						      }
+						      else genLink = remoteData.linkBase;
+						      break;
+
+						    case 'win32':
+						      ext = ".exe";
+						      genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+						      break;
+
+						    case 'darwin':
+						      ext = ".app.zip";
+						      genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+						      break;
+						  }
+						  global.desktop.logic.electronOpenExternal()(genLink);
+
 					  }
 					  else {
 						  global.desktop.logic.electronOpenExternal()(remoteData.versions[iteration].altLink);
@@ -490,7 +513,29 @@ const appFrame = Object.freeze({
 			  dialog.showMessageBox(updateDowngradeDialog, updateResponse => {
 				  if (updateResponse == 0) {
 					  logging.log("UPDATE: User wants to downgrade.");
-					  global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
+					  //global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
+						  var ext,
+						    genLink;
+						  switch(os.platform()) {
+						    case 'linux':
+						      if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
+						        ext = ".AppImage";
+						        genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+						      }
+						      else genLink = remoteData.linkBase;
+						      break;
+
+						    case 'win32':
+						      ext = ".exe";
+						      genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+						      break;
+
+						    case 'darwin':
+						      ext = ".app.zip";
+						      genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+						      break;
+						  }
+						  global.desktop.logic.electronOpenExternal()(genLink);
 				  }
 				  else {
 					  return;
@@ -804,9 +849,16 @@ const appFrame = Object.freeze({
 
   permissionLoop: function() {
     // loop until user is admin
+    $('#privBarText').text(i18n.__('Please wait while the app asks for Administrative privileges'));
     setTimeout(() => {
-      if (appStates.userIsAdmin != true) appFrame.permissionLoop();
-      else appFrame.initApp();
+      if (appStates.userIsAdmin != true) {
+		    $('#privBar').css("height", "40px");
+        appFrame.permissionLoop();
+      }
+      else {
+		    $('#privBar').css("height", "0px");
+        appFrame.initApp();
+      }
     }, 500);
   }
 });

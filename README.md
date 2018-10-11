@@ -61,7 +61,7 @@ Windows: `make build-windows` or `npm run package-win`
 Windows 32bit: `make build-windows32` or `npm run package-win32`  
 macOS: `make build-macos` or `npm run package-macos`  
 
-Please note that building Windows versions on Linux or macOS requires [Wine](https://www.winehq.org) to be installed as a prerequisite.  
+Please note that building Windows versions on Linux or macOS requires [Wine](https://www.winehq.org) to be installed as a prerequisite, this can be installed via your distro's repos on Linux, or through brew on macOS.  
 
 ### Packaging dependencies
 deb:  debhelper devscripts  
@@ -84,7 +84,7 @@ exe (32-bit): use iss file in `support\windows\build-windows-installer32.iss`
 Notes:
 - for use in inno scripts, you must adjust path to the compiled folder in the scripts (under files --> source).  
 - if you are packaging for a new Linux format, make sure when building to use 'PACKAGEFORMAT=' followed by the format type (i.e: make PACKAGEFORMAT=rpm build-linux).  
-- Current versions of this program have been tested on openSUSE Leap 15, Windows 10, Fedora 28, Ubuntu 18.04, Arch Linux, Windows 7, and macOS.
+- Current versions of this program have been tested on openSUSE Leap 15, Windows 10 (1803, 1809), Windows 7 (SP1), Fedora 28, Ubuntu 18.04, Arch Linux, Windows 7, and macOS.
 
 ## Project notes
 - If developing your on Windows, run nodejs command prompt as admin (as otherwise you won't be able to toggle the service)
