@@ -136,7 +136,7 @@ PACKAGE="$2"
 if [ ! -f "$FILE" ]
 then
 	echo "'$FILE' is not present. I need this to work. This file (or library) probably comes from the package '$PACKAGE'."
-	exit 1
+	[ "$REQ" = true ] && exit 1
 fi
 }
 

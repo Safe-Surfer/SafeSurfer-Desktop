@@ -1,3 +1,5 @@
+![license](https://img.shields.io/badge/License-GPL%20v3-blue.svg)
+
 # SafeSurfer-Desktop
 
 ## Who is [Safe Surfer](http://safesurfer.co.nz)?
