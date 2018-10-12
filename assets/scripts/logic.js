@@ -311,7 +311,7 @@ const appFrame = Object.freeze({
 			    });
 			    if (window.appStates.serviceEnabled == false) {
 				    logging.log("STATE: Service is still not enabled -- trying again.");
-				    appFrame.enableServicePerPlatform({});
+				    if (os.platform() != 'darwin') appFrame.enableServicePerPlatform({});
 			    }
 		    },1200);
 	      break;
