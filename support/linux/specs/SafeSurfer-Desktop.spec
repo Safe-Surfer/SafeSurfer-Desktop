@@ -124,6 +124,9 @@ npm install
 
 
 %changelog
+* Fri Oct  12 2018 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b5
+
 * Fri Oct  5 2018 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b4
 
