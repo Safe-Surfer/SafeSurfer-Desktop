@@ -53,7 +53,8 @@ window.appStates = {
 	enableLogging: BUILDMODEJSON.enableLogging,
 	notificationCounter: 0,
 	userIsAdmin: undefined,
-	progressBarCounter: 0
+	progressBarCounter: 0,
+	elevationFailureCount: 0
 }
 
 // if a linux package format can't be found, then state unsureness
@@ -138,7 +139,7 @@ const appFrame = Object.freeze({
 		  if (window.appStates.lifeguardFound == true) {
 			  $("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD").toUpperCase());
 			  $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD").toUpperCase());
-			  $('.serviceToggle').addClass('serviceToggle_lifeguard')
+			  $('.serviceToggle').addClass('serviceToggle_lifeguard');
 			  $('.topTextBox_active').addClass('topTextBox_active_lifeguard');
 		  }
 		  else {
@@ -190,26 +191,21 @@ const appFrame = Object.freeze({
 	  logging.log("USER: In switch");
 	  window.appStates.notificationCounter = 0;
 	  // if user's privileges are Admin, or if the host OS is Linux
-	  if (window.appStates.userIsAdmin == true || os.platform() == 'linux' || os.platform == 'darwin') {
-		  switch(window.appStates.serviceEnabled) {
-			  case true:
-				  logging.log('STATE: trying toggle enable');
-				  if (window.appStates.lifeguardFound == true) {
-					  window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-				  }
-				  else {
-					  appFrame.displayDisableWarning();
-				  }
-			  break;
+	  switch(window.appStates.serviceEnabled) {
+		  case true:
+			  logging.log('STATE: trying toggle enable');
+			  if (window.appStates.lifeguardFound == true) {
+				  window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
+			  }
+			  else {
+				  appFrame.displayDisableWarning();
+			  }
+		  break;
 
-			  case false:
-				  logging.log('STATE: trying toggle disable');
-				  appFrame.enableServicePerPlatform({});
-			  break;
-		  }
-	  }
-	  else {
-		  appFrame.showUnprivillegedMessage();
+		  case false:
+			  logging.log('STATE: trying toggle disable');
+			  appFrame.enableServicePerPlatform({});
+		  break;
 	  }
   },
 
@@ -355,7 +351,7 @@ const appFrame = Object.freeze({
 			        loggingEnable: window.appStates.enableLogging
 			    });
 			    if (window.appStates.serviceEnabled == true) {
-				    logging.log("STATE: Service is still not disabled -- trying again.")
+				    logging.log("STATE: Service is still not disabled -- trying again.");
 				    appFrame.disableServicePerPlatform({});
 			    }
 		    },1200);
@@ -430,7 +426,7 @@ const appFrame = Object.freeze({
 				  dialog.showErrorBox(updateErrorDialog, updateResponse => {
 					  logging.log("UPDATE: Error with updates.");
 					  return;
-				  })
+				  });
 			  }
 			  return console.dir(error);
 		  }
@@ -651,7 +647,7 @@ const appFrame = Object.freeze({
 	  // copy app build information to clipboard
 	  var dialogBuildInformationCopy = {type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')};
 	  dialog.showMessageBox(dialogBuildInformationCopy, dialogResponse => {
-		  global.desktop.logic.electronClipboardWriteText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE))
+		  global.desktop.logic.electronClipboardWriteText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE));
 		  if (dialogResponse == 2) global.desktop.logic.electronOpenExternal()('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
 	  });
   },
@@ -670,13 +666,11 @@ const appFrame = Object.freeze({
 			    if (dialogResponse == 1) {
             switch(window.appStates.serviceEnabled) {
               case true:
-                if (window.appStates.userIsAdmin != true && os.platform() == 'win32') appFrame.showUnprivillegedMessage();
-                else appFrame.enableServicePerPlatform({forced: "force"});
+                appFrame.enableServicePerPlatform({forced: "force"});
                 break;
 
               case false:
-                if (window.appStates.userIsAdmin != true && os.platform() == 'win32') appFrame.showUnprivillegedMessage();
-                else appFrame.disableServicePerPlatform({forced: "force"});
+                appFrame.disableServicePerPlatform({forced: "force"});
                 break;
             }
 			    }
@@ -685,13 +679,11 @@ const appFrame = Object.freeze({
 	    else {
         switch(window.appStates.serviceEnabled) {
           case true:
-            if (window.appStates.userIsAdmin != true && os.platform() == 'win32') appFrame.showUnprivillegedMessage();
-            else appFrame.disableServicePerPlatform({forced: "force"});
+            appFrame.disableServicePerPlatform({forced: "force"});
             break;
 
           case false:
-            if (window.appStates.userIsAdmin != true && os.platform() == 'win32') appFrame.showUnprivillegedMessage();
-            else appFrame.enableServicePerPlatform({forced: "force"});
+            appFrame.enableServicePerPlatform({forced: "force"});
             break;
         }
 	    }
@@ -701,7 +693,7 @@ const appFrame = Object.freeze({
   showUnprivillegedMessage: function() {
 	  // display dialog for if the app hasn't been started with root privileges
 	  var dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')};
-	  logging.log("PRIV: User is not admin -- displaying dialog message.")
+	  logging.log("PRIV: User is not admin -- displaying dialog message.");
 	  dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
 		  if (updateResponse == 1) window.close();
 		  if (updateResponse == 0) {
@@ -847,12 +839,25 @@ const appFrame = Object.freeze({
     }, 1000);
   },
 
+  openWindowsUACHelpPage: function() {
+    global.desktop.logic.electronOpenExternal()('https://safesurfer.desk.com/how-to-uac.php');
+  },
+
   permissionLoop: function() {
     // loop until user is admin
-    $('#privBarText').text(i18n.__('Please wait while the app asks for Administrative privileges'));
     setTimeout(() => {
       if (appStates.userIsAdmin != true) {
-		    $('#privBar').css("height", "40px");
+		    if (appStates.elevationFailureCount < 33) {
+		      $('#privBar').css("height", "40px");
+          $('#privBarText').text(i18n.__('Please wait while the app asks for Administrative privileges'));
+		    }
+		    else {
+          document.querySelector('#privBarText_error').addEventListener('click', appFrame.openWindowsUACHelpPage);
+          $('#privBarText_error').text(i18n.__('Help me to run this app as an Administrator'));
+		      $('#privBarText').text(i18n.__("I can't seem run this app as an Administrator for you."));
+		      $('#privBar').css("height", "115px");
+		    }
+		    appStates.elevationFailureCount += 1;
         appFrame.permissionLoop();
       }
       else {
@@ -924,10 +929,10 @@ global.desktop.logic.electronIPCon('toggleTeleState', () => {
   // changing the data sharing state
   switch(store.get('telemetryAllow')) {
     case true:
-      store.set('telemetryAllow', false)
+      store.set('telemetryAllow', false);
       break;
     default:
-      store.set('telemetryAllow', true)
+      store.set('telemetryAllow', true);
       break;
   }
 });
@@ -950,17 +955,17 @@ if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.pla
   showErrors: false
 });
 
-// log a message in the console for devs; yeah that's you if you're reading this :)
+// log a message in the console for devs; yeah that's you if you're reading this :);
 console.log(`> Are you a developer? Do you want to help us with this project?
 Join us by going to:
   - https://gitlab.com/safesurfer/SafeSurfer-Desktop
   - http://www.safesurfer.co.nz/become-safe-safe-volunteer
 
 Yours,
-Safe Surfer team.`)
+Safe Surfer team.`);
 
 // connect button in html to a function
-document.querySelector('#toggleButton').addEventListener('click', appFrame.toggleServiceState)
+document.querySelector('#toggleButton').addEventListener('click', appFrame.toggleServiceState);
 // add a fancy motion to the toggle button
 window.desktop.logic.vanillatilt().init(document.querySelector("#toggleButton"), {
 	glare: true,
@@ -970,7 +975,7 @@ window.desktop.logic.vanillatilt().init(document.querySelector("#toggleButton"),
 	perspective: 2000,
 	reverse: true,
 	"glare-prerender": true
-})
+});
 
 if (appStates.userIsAdmin == true) {
   // initalise the rest of the app

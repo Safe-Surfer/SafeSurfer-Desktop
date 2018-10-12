@@ -230,7 +230,7 @@ then
 	#APP_VERSION=$(grep "^X-AppImage-BuildId=" "$DESKTOP_FILE" | head -n 1 | cut -d " " -f 1)
 	InstalledAppBuild=$(grep "X-AppImage-Build=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
 	InstalledAppVersion=$(grep "X-AppImage-Version=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
-	echo "installed-version: $InstalledAppVersion install-build: $InstalledAppBuild"
+	echo "installed-version: $InstalledAppVersion installed-build: $InstalledAppBuild"
 	if [ ! "$InstalledAppBuild" -lt "$AppBuild" ]
 	then
 		exit 0

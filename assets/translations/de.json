@@ -105,5 +105,7 @@
 	"Are you sure that you want to disable Safe Surfer on this computer?": "Are you sure that you want to disable Safe Surfer on this computer?",
 	"This program comes with absolutely no warranty.": "",
 	"See the GNU General Public License, version 3 or later for details.": "",
-	"Please wait while the app asks for Administrative privileges": ""
+	"Please wait while the app asks for Administrative privileges": "",
+	"Help me to run this app as an Administrator": "",
+	"I can't seem run this app as an Administrator for you.": ""
 }

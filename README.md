@@ -88,9 +88,6 @@ Notes:
 - if you are packaging for a new Linux format, make sure when building to use 'PACKAGEFORMAT=' followed by the format type (i.e: make PACKAGEFORMAT=rpm build-linux).  
 - Current versions of this program have been tested on openSUSE Leap 15, Windows 10 (1803, 1809), Windows 7 (SP1), Fedora 28, Ubuntu 18.04, Arch Linux, Windows 7, and macOS.
 
-## Project notes
-- If developing your on Windows, run nodejs command prompt as admin (as otherwise you won't be able to toggle the service)
-
 ## License
 Copyright 2018 Safe Surfer.  
 This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html) and is [free software](https://www.gnu.org/philosophy/free-sw.en.html).  

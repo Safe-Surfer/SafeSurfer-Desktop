@@ -45,12 +45,13 @@
     <div class="appLoadingScreen" style="z-index: 45">
       <div id="privBar">
         <p id="privBarText">Please wait while the app asks for Administrative privileges</p>
+        <button id="privBarText_error" class="mainCenter_left">Help me to run this app as an Administrator</button>
       </div>
       <img src="./assets/media/ss-surfer-head.png" style="width:200px; height:200px; z-index:-2;" id="mainScreen_background" class="mainCenter">
       <h1 class="bigText nowrap mainCenter_init bigText_init" style="color:black; white-space: nowrap;" id="bigTextBrandName">SAFE SURFER</h1>
     </div>
-    <div class="mainCenter_down" style="z-index: 40">
-      <button type="button" class="serviceToggle" style="z-index:50;" id="toggleButton" data-tilt data-tilt-glare data-tilt-max-glare="0.8" data-tilt-reverse="true" data-tilt data-tilt-scale="0.99">CHECKING SERVICE STATE</button>
+    <div class="mainCenter_down" style="z-index: 40;">
+      <button type="button" class="serviceToggle" style="z-index:50;" id="toggleButton" data-tilt="" data-tilt-glare="true" data-tilt-max-glare="0.5" data-tilt-perspective="500" data-tilt-reverse="true" data-tilt-scale="0.99">CHECKING SERVICE STATE</button>
     </div>
     <div id="progressBar"></div>
     <script>

@@ -256,6 +256,13 @@ body, html {
 	transform: translate(-50%, 0%);
 }
 
+.mainCenter_left {
+	margin: 0;
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%);
+}
+
 .leftCenter {
 	margin: 0;
 	position: absolute;
@@ -447,10 +454,36 @@ body, html {
 	overflow: hidden;
 }
 
-#privBarText {
+#privBarText, #privBarText_error {
   color: black;
   text-align: center;
 	font-family: 'Raleway', sans-serif;
+}
+
+#privBarText_error {
+  font-weight: bold;
+	background-color: #e5e6e5;
+	border-radius: 5px;
+	border: 1px solid black;
+	display: inline-block;
+	cursor: pointer;
+	color: black;
+	font-size: 15px;
+	padding: 9px 23px;
+	text-decoration: none;
+	position: relative;
+	margin-top: 5px;
+}
+
+#privBarText_error:hover {
+	color: black;
+	background-color: #c8c9cb;
+}
+
+#privBarText_error:active {
+	color: #727375;
+	background-color: #4d4e4d;
+	top:1px;
 }
 
 @media only screen and (max-width: 1099px) {
