@@ -85,7 +85,7 @@
     "View shared data": "Megosztott adat megtekintése",
     "Enable data sharing": "Adat megosztásának engedélyezése",
     "About this app": "Az alkalmazásról",
-    "No": "No",
+    "No": "Nem",
     "Please downgrade to version ": "Kérjük minősítse le az előző verzióra ",
     "No data is available.": "Adat nem elérhető.",
     "You're opted in.": "Be van választva.",
@@ -102,5 +102,6 @@
     "See the GNU General Public License, version 3 or later for details.": "",
     "Please wait while the app asks for Administrative privileges": "",
     "Help me to run this app as an Administrator": "",
-    "I can't seem run this app as an Administrator for you.": ""
+    "I can't seem run this app as an Administrator for you.": "",
+    "Donate": ""
 }
