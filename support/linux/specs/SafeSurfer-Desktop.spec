@@ -1,5 +1,5 @@
 Name:           SafeSurfer-Desktop
-Version:        1.0.0b4
+Version:        1.0.0b5
 Release:        0
 Summary:        Keep safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
