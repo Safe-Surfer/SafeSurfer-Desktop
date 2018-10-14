@@ -359,26 +359,20 @@ const appFrame = Object.freeze({
 	  }
   },
 
-  checkIfOnLifeGuardNetwork: function() {
+  checkIfOnLifeGuardNetwork: async function() {
 	  // check if current device is on lifeguard network
-	  logging.log('LIFEGUARDSTATE: Checking if on lifeguard network');
-	  var result = false;
-	  var count = 0;
-	  // start searching for lifeguard with bonjour
-	  bonjour.findOne({ type: "sslifeguard" }, function(service) {
-		  count++;
-		  logging.log(String("LIFEGUARDSTATE: count - " + count + " :: " + service.fqdn));
-		  // if a lifeguard is found
-		  if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
-			  result = true;
-			  logging.log(String('LIFEGUARDSTATE: Found status - ' + window.appStates.lifeguardFound));
-		  }
-		  else {
-			  result = false;
-		  }
-		  window.appStates.lifeguardFound = result;
-		  logging.log(String('LIFEGUARDSTATE: window.appStates.lifeguardFound is ' + window.appStates.lifeguardFound));
-	  });
+    let promise = new Promise((resolve, reject) => {
+        logging.log('LIFEGUARDSTATE: Checking if on lifeguard network');
+        // start searching for lifeguard with bonjour
+        bonjour.findOne({ type: "sslifeguard" }, (service) => {
+          // if a lifeguard is found
+          if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
+            logging.log(String("LIFEGUARDSTATE: found " + service.fqdn));
+            resolve(true);
+          }
+        });
+      });
+    return promise;
   },
 
   publishDesktopAppOnNetwork: function(state) {
@@ -387,7 +381,7 @@ const appFrame = Object.freeze({
 	  if (state == "disable") bonjour.unpublishAll();
   },
 
-  internetConnectionCheck: function() {
+  internetConnectionCheck: async function() {
 	  // check the user's internet connection
 	  global.desktop.logic.isOnline().then(online => {
 	    logging.log(String("INTERNETSTATE: " + online));
@@ -750,6 +744,7 @@ const appFrame = Object.freeze({
       previousVersionData = store.get('lastVersionToSendTelemetry');
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
         logging.log('TELE: Sending update data');
+	      dataGathered.DATESENT = global.desktop.logic.moment().format('X');
         dataGathered.TYPESEND = "update";
         dataGathered.APPBUILD = BUILDMODEJSON.APPBUILD;
         dataGathered.APPVERSION = BUILDMODEJSON.APPVERSION;
@@ -793,10 +788,9 @@ const appFrame = Object.freeze({
 	  }
 	  // if the service is enabled, check if a lifeguard is on the network
 	  if (window.appStates.serviceEnabled == true) {
-		  appFrame.checkIfOnLifeGuardNetwork();
-	  }
-	  else {
-		  window.appStates.lifeguardFound = false;
+		  appFrame.checkIfOnLifeGuardNetwork().then((state) => {
+        window.appStates.lifeguardFound = state;
+      });
 	  }
 	  if (window.appStates.internet[0] != window.appStates.internet[1]) {
 		  // if the state of the internet connection changes
@@ -819,6 +813,7 @@ const appFrame = Object.freeze({
 	  else if ($("#progressBar").css("height") == "20px") window.appStates.progressBarCounter += 1;
 	  // update the screen to show how the service state (... etc) is
 	  appFrame.affirmServiceState();
+	  window.appStates.lifeguardFound = false;
 	  logging.log("MAIN: end reload");
 	  setTimeout(appFrame.mainReloadProcess, 1000);
   },
@@ -970,9 +965,9 @@ document.querySelector('#toggleButton').addEventListener('click', appFrame.toggl
 window.desktop.logic.vanillatilt().init(document.querySelector("#toggleButton"), {
 	glare: true,
 	max: 65,
-	speed: 850,
+	speed: 400,
 	transition: true,
-	perspective: 2000,
+	perspective: 50,
 	reverse: true,
 	"glare-prerender": true
 });

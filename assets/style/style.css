@@ -120,12 +120,14 @@ body, html {
 	position: absolute;
 	z-index: -50;
 
-	background: linear-gradient(270deg, #00a7d6, #0b2c72, #6dd0ed, #052860);
+	background-image: linear-gradient(to right, #052860, #00a7d6, #0b2c72, #6dd0ed);
 	background-size: 600% 600%;
+
+	/*background: linear-gradient(270deg, #00a7d6, #0b2c72, #6dd0ed, #052860);
 
 	-webkit-animation: activeScroll 40s ease infinite;
 	-moz-animation: activeScroll 40s ease infinite;
-	animation: activeScroll 40s ease infinite;
+	animation: activeScroll 40s ease infinite;*/
 }
 
 @-webkit-keyframes activeScroll {
@@ -155,12 +157,14 @@ body, html {
 	position: absolute;
 	z-index: -50;
 
-	background: linear-gradient(270deg, #b51014, #a51317, #a02200, #000000);
+	background-image: linear-gradient(to right, #000000, #b51014, #a51317, #a02200);
 	background-size: 600% 600%;
+
+	/*background: linear-gradient(270deg, #b51014, #a51317, #a02200, #000000);
 
 	-webkit-animation: inactiveScroll 30s ease infinite;
 	-moz-animation: inactiveScroll 30s ease infinite;
-	animation: inactiveScroll 30s ease infinite;
+	animation: inactiveScroll 30s ease infinite;*/
 }
 
 @-webkit-keyframes inactiveScroll {

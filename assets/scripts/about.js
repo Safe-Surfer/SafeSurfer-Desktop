@@ -25,6 +25,7 @@ const BUILDMODEJSON = window.desktop.global.buildmodejson(),
  enableNotifications = BUILDMODEJSON.enableNotifications,
  requireRoot = BUILDMODEJSON.requireRoot,
  i18n = window.desktop.global.i18n(),
+ logging = window.desktop.logic.logging(),
  $ = window.desktop.global.jquery();
 
 // function to make \n multiline
@@ -48,3 +49,5 @@ function growLogo() {
   $("#ss-logo").css("height", "200px");
   $("#ss-logo").css("width", "200px");
 }
+
+logging.log("ABOUT PAGE: loaded");

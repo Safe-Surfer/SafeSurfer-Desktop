@@ -20,6 +20,7 @@
 
 const store = window.desktop.global.store(),
  i18n = window.desktop.global.i18n(),
+ logging = window.desktop.logic.logging(),
  $ = window.desktop.global.jquery();
 var teleHist = store.get('teleHistory'),
  textBody = "";
@@ -57,3 +58,5 @@ if (textBody !== undefined) {
 
 // add all information
 $("#dataView").append(textBody);
+
+logging.log("DATASHARING PAGE: loaded");
