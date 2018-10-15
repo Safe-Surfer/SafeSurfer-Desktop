@@ -1,5 +1,5 @@
 #!/usr/bin/node
-// SafeSurfer-Desktop - findLifeGuard.js
+// SafeSurfer-Desktop - internetTest.js
 
 //
 // Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
@@ -18,39 +18,23 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-const bonjour = require('bonjour')()
-
-var count = 0,
- lgState = false;
-
-async function findLifeGuard() {
+async function performCheck() {
   let promise = new Promise((resolve, reject) => {
-    console.log('LIFEGUARDSTATE: Checking if on lifeguard network');
-    // start searching for lifeguard with bonjour
-    bonjour.findOne({ type: "sslifeguard" }, (service) => {
-      // if a lifeguard is found
-      if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
-        resolve(true);
-      }
+    require('connectivity')((online) => {
+	    resolve(online);
     });
   });
-
   let result = await promise;
   return promise;
 }
 
 function loop() {
   setTimeout(() => {
-    findLifeGuard().then((state) => {
-      console.log("TRUE STATE:",state);
-      lgState = state;
+    performCheck().then((state) => {
+      console.log("STATE:", state)
+      loop();
     });
-    console.log("State:", lgState);
-    console.log("Count:", count);
-    lgState = false;
-    count ++;
-    loop();
-  }, 3000);
+  }, 2000);
 }
 
 loop();

@@ -33,11 +33,12 @@ global.desktop = Object.freeze({
     testForFile: (file) => require('shelljs').test('-f', file),
     isAdmin: () => require('is-admin')(),
     letsGetMeta: () => require("lets-get-meta"),
-    isOnline: () => require('is-online')(),
     moment: () => require('moment')(),
     base64Encode: () => require('nodejs-base64-encode'),
     loadLogic: () => require('./assets/scripts/logic.js'),
-    vanillatilt: () => require('vanilla-tilt')
+    vanillatilt: () => require('vanilla-tilt'),
+    connectivity: () => require('connectivity')
   }
 });
+
 
