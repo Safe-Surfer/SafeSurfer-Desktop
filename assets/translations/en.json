@@ -108,5 +108,6 @@
 	"Please wait while the app asks for Administrative privileges": "Please wait while the app asks for Administrative privileges",
 	"Help me to run this app as an Administrator": "Help me to run this app as an Administrator",
 	"I can't seem run this app as an Administrator for you.": "I can't seem run this app as an Administrator for you.",
-	"Donate": "Donate"
+	"Donate": "Donate",
+	"There version of Windows that you seem to be running appears to be not compatible with this app.": "There version of Windows that you seem to be running appears to be not compatible with this app."
 }

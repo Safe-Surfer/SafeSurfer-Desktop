@@ -20,7 +20,7 @@
 //
 
 // export function
-exports.log = function(text) {
+module.exports = function(text) {
   // if appStates can't be found, then disable logging
   if (typeof appStates === "undefined") loggingEnable = false;
   // if appStates is found

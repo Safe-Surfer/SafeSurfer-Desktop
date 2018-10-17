@@ -20,21 +20,18 @@
 //
 
 // create app menu
-const {app, BrowserWindow, Menu, clipboard} = require('electron'),
+const {app} = require('electron'),
  electron = require('electron'),
- ipcRenderer = require('electron').ipcRenderer,
  os = require('os'),
- path = require('path'),
  Store = require('electron-store'),
  store = new Store(),
  BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
- APPBUILD = BUILDMODEJSON.APPBUILD,
- APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
+ APPVERSION = BUILDMODEJSON.APPVERSION,
+ APPBUILD = BUILDMODEJSON.APPBUILD,
  isBeta = BUILDMODEJSON.isBeta,
  updatesEnabled = BUILDMODEJSON.enableUpdates,
- i18n = new (require('./i18n.js')),
- isDev = require('electron-is-dev');
+ i18n = new (require('./i18n.js'));
 var accountIsAssigned = store.get('accountInformation'),
  appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
  betaCheck,

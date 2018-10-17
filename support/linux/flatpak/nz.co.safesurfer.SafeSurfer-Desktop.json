@@ -3,7 +3,23 @@
 	"runtime" : "org.freedesktop.Platform",
 	"runtime-version" : "1.6",
 	"sdk" : "org.freedesktop.Sdk",
+	"base": "io.atom.electron.BaseApp",
+	"base-version": "stable",
+	"command": "run.sh",
 	"command" : "SafeSurfer-Desktop",
+	"build-options" : {
+		"cflags": "-O2 -g",
+		"cxxflags": "-O2 -g",
+		"env": {
+			"NPM_CONFIG_LOGLEVEL": "info"
+		}
+	},
+        "finish-args": [
+		"--share=ipc",
+		"--socket=x11",
+		"--socket=pulseaudio",
+		"--share=network"
+	],
 	"modules" : [{
         	"name": "node",
 		"buildsystem": "simple",
@@ -27,23 +43,19 @@
 			}
 		},
 		"buildsystem": "simple",
-		"build-commands": [
-			"npm install --prefix=main --offline --cache=/run/build/SafeSurfer-Desktop/npm-cache",
-			"make PACKAGEFORMAT=flatpak BUILDMODE= build-linux",
-			"make DESTDIR=/ install"
-		],
 		"sources": [{
 			"type": "archive",
 			"url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0b5/SafeSurfer-Desktop-1.0.0b5.zip",
-			"sha256": "775808d503faf65db6f268ae4af1b932457f99affa76f36515dd51784080416e"
-        	}]
+			"sha256": "e1ff1e08cc7ebbaf165a6f80f4965ca3202eb2f2a50952ce87328f8bf0dc7748"
+			},
+			"generated-sources.json"
+		],
+		"build-commands": [
+			"npm install --prefix=/app/ --offline --cache=/run/build/SafeSurfer-Desktop/npm-cache",
+			"make PACKAGEFORMAT=flatpak BUILDMODE= build-linux",
+			"make DESTDIR=/app/ install"
+		]
         }],
-        "finish-args": [
-		"--share=ipc",
-		"--socket=x11",
-		"--socket=pulseaudio",
-		"--share=network"
-	],
 	"rename-appdata-file": "SafeSurfer-Desktop.appdata.xml",
 	"rename-icon": "ss-logo",
 	"rename-desktop-file": "SafeSurfer-Desktop.desktop"

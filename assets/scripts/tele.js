@@ -60,4 +60,4 @@ if (textBody !== undefined) {
 // add all information
 $("#dataView").append(textBody);
 
-logging.log("DATASHARING PAGE: loaded");
+logging("DATASHARING PAGE: loaded");

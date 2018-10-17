@@ -26,7 +26,7 @@ Our temporary site is found [here](http://142.93.48.189).
 - Easy to use and setup  
 
 ## Contributing
-Read our [contribution guide](CONTRIBUTING.md) to get started!  
+Read our [contribution guide](docs/CONTRIBUTING.md) to get started!  
 We look forward to your help on this project, together helping families and individuals stay safe on the internet!  
 
 ### Translating Safe Surfer desktop
@@ -36,11 +36,11 @@ We look forward to your help on this project, together helping families and indi
 
 Note: Although it might say that the translation is 100%, it may need review.  
 Help us speak your language!  
-Read our [translation guide](TRANSLATING.md) to get started!  
+Read our [translation guide](docs/TRANSLATING.md) to get started!  
 
 ### Bugs
 Wanna help us find and squash bugs?  
-Check out our [bug reporting guide](BUGS.md).  
+Check out our [bug reporting guide](docs/BUGS.md).  
 
 ## Feedback
 Have you used SafeSurfer-Desktop and want to give feedback?
@@ -72,16 +72,16 @@ arch: base-devel
 flatpak:
 - flatpak-builder
 - org.freedesktop.Sdk//1.6
+- io.atom.electron.BaseApp//stable
 windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)  
 
 ### Packaging
 deb: `make deb-pkg`  
-arch: `make arch-pkg`  
-rpm: use spec file in `support/linux/specs`  
+arch: `make arch-pkg` PKGBUILD in [support/linux/arch](support/linux/arch)  
+rpm: use spec file in [support/linux/specs](support/linux/specs)  
 appimage: `make prep-appimage && make build-appimage`  
-flatpak: `make build-flatpak`  
-exe: use iss file in `support\windows\build-windows-installer.iss`  
-exe (32-bit): use iss file in `support\windows\build-windows-installer32.iss`  
+flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)  
+exe: use iss file in [support\\windows\\inno-script](support/windows/inno-script)  
 
 Notes:
 - for use in inno scripts, you must adjust path to the compiled folder in the scripts (under files --> source).  

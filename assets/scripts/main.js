@@ -21,22 +21,10 @@
 
 // import libraries
 const {app, BrowserWindow, Menu, clipboard} = require('electron'),
- ipcMain = require('electron').ipcMain,
- shell = require('electron').shell,
- electron = require('electron'),
  path = require('path'),
- url = require('url'),
- os = require('os'),
- Store = require('electron-store'),
- store = new Store(),
  windowStateKeeper = require('electron-window-state'),
- BUILDMODEJSON = require('./buildconfig/buildmode.json'),
- APPBUILD = BUILDMODEJSON.APPBUILD,
- APPVERSION = BUILDMODEJSON.APPVERSION,
- BUILDMODE = BUILDMODEJSON.BUILDMODE,
- isBeta = BUILDMODEJSON.isBeta,
- updatesEnabled = BUILDMODEJSON.enableUpdates,
- i18n = new (require('./assets/scripts/i18n.js'));
+ BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
+ isBeta = BUILDMODEJSON.isBeta;
 
 let mainWindow,
  childWindow;
@@ -66,13 +54,13 @@ function createWindow() {
 	mainWindow = new BrowserWindow(windowObj);
 
 	// load in main html document
- 	mainWindow.loadFile('index.html');
+ 	mainWindow.loadFile(path.join(__dirname, '..', 'html', 'index.html'));
 	mainWindow.on('closed', function () {
 		mainWindow = null;
 	});
 	// set menu from menu.js
 	Menu.setApplicationMenu(
-	Menu.buildFromTemplate(require('./assets/scripts/menu.js')(app, mainWindow)));
+	Menu.buildFromTemplate(require('./menu.js')(app, mainWindow)));
 	mainWindowState.manage(mainWindow);
 }
 

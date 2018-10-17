@@ -39,11 +39,12 @@ Steps to report bugs:
 5. Fill in the rest of the fields in the template
 
 ## Which js documents do what?
-`assets/scripts/logic.js` is where most of the code lives.  
-`main.js` is where initalising takes place.  
-`assets/style/style.css` is where the styling is.  
+`assets/scripts` is where most of the code lives.  
+`assets/style` is where the styling is.  
 `assets/media` is where all artwork it stored.  
-`renderer.js` is where a few things happen before the main app code runs.  
+`assets/translations` is where all the translation string are stored.  
+`assets/scripts/logic.js` is where most of the code is.  
+`assets/scripts/main.js` is where initalising takes place.  
 `assets/scripts/menu.js` is where the code for the app's menu lives.  
 `assets/scripts/i18n.js` is where the framework of translating the app is stored.  
 `buildconfig/buildmode.json` is where some runtime/version variables are stored.  

@@ -83,6 +83,10 @@ build-zip:
 arch-pkg:
 	cd ./support/linux/arch && makepkg -si
 
+prep-flatpak:
+	cd ./support/linux/flatpak && wget https://raw.githubusercontent.com/flatpak/flatpak-builder-tools/master/npm/flatpak-npm-generator.py
+	cd ./support/linux/flatpak && python3 flatpak-npm-generator.py ../../../package-lock.json
+
 build-flatpak:
 	flatpak-builder flatpak-build ./support/linux/flatpak/nz.co.safesurfer.SafeSurfer-Desktop.json
 
@@ -130,7 +134,7 @@ compile-win-setup32:
 	npm run compile-win-setup32
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurfer-Desktop.AppDir $(DESTDIR)
+	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py inline\ data
 	@echo '{"linuxpackageformat":""}' > buildconfig/packageformat.json
 
 slim:

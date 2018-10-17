@@ -3,28 +3,26 @@
 //
 // Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
 //
-//This file is part of SafeSurfer-Desktop.
+// This file is part of SafeSurfer-Desktop.
 //
-//SafeSurfer-Desktop is free software: you can redistribute it and/or modify
-//it under the terms of the GNU General Public License as published by
-//the Free Software Foundation, either version 3 of the License, or
-//(at your option) any later version.
+// SafeSurfer-Desktop is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
-//SafeSurfer-Desktop is distributed in the hope that it will be useful,
-//but WITHOUT ANY WARRANTY; without even the implied warranty of
-//MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//GNU General Public License for more details.
+// SafeSurfer-Desktop is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
 //
-//You should have received a copy of the GNU General Public License
-//along with SafeSurfer-Desktop.  If not, see <https://www.gnu.org/licenses/>.
+// You should have received a copy of the GNU General Public License
+// along with SafeSurfer-Desktop.  If not, see <https://www.gnu.org/licenses/>.
 //
 
 const BUILDMODEJSON = window.desktop.global.buildmodejson(),
  APPBUILD = BUILDMODEJSON.APPBUILD,
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
- enableNotifications = BUILDMODEJSON.enableNotifications,
- requireRoot = BUILDMODEJSON.requireRoot,
  i18n = window.desktop.global.i18n(),
  logging = window.desktop.logic.logging(),
  $ = window.desktop.global.jquery();
@@ -51,4 +49,4 @@ function growLogo() {
   $("#ss-logo").css("width", "200px");
 }
 
-logging.log("ABOUT PAGE: loaded");
+logging("ABOUT PAGE: loaded");

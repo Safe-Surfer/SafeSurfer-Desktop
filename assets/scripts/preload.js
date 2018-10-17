@@ -6,9 +6,9 @@ Store = require('electron-store'),
 global.desktop = Object.freeze({
   global: {
     jquery: () => require('jquery'),
-    linuxpackageformat: () => require('./buildconfig/packageformat.json'),
-    buildmodejson: () => require('./buildconfig/buildmode.json'),
-    i18n: () => new (require('./assets/scripts/i18n.js')),
+    linuxpackageformat: () => require('../../buildconfig/packageformat.json'),
+    buildmodejson: () => require('../../buildconfig/buildmode.json'),
+    i18n: () => new (require('./i18n.js')),
     Store: () => require('electron-store'),
     store: () => new Store(),
   },
@@ -18,7 +18,7 @@ global.desktop = Object.freeze({
     path: () => require('path'),
     bonjour: () => require('bonjour')(),
     request: () => require("request"),
-    logging: () => require('./assets/scripts/logging.js'),
+    logging: () => require('./logging.js'),
     electron: () => require('electron'),
     electronremote: () => require('electron').remote,
     electronremoteapp: () => require('electron').remote.app,
@@ -35,8 +35,7 @@ global.desktop = Object.freeze({
     letsGetMeta: () => require("lets-get-meta"),
     moment: () => require('moment')(),
     base64Encode: () => require('nodejs-base64-encode'),
-    loadLogic: () => require('./assets/scripts/logic.js'),
-    vanillatilt: () => require('vanilla-tilt'),
+    loadLogic: () => require('./logic.js'),
     connectivity: () => require('connectivity')
   }
 });
