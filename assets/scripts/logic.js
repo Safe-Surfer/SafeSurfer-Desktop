@@ -67,6 +67,7 @@ if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
 const appFrame = Object.freeze({
   callProgram: async function(command) {
     // call a child process
+    let promise = new Promise((resolve, reject) => {
       logging(String('COMMAND: calling - ' + command));
       var command_split = command.split(" "),
         command_arg = [];
@@ -79,13 +80,16 @@ const appFrame = Object.freeze({
         logging(String("COMMAND: output - " + stdout));
         if (err) logging(String("COMMAND: output error - " + err));
         if (stderr) logging(String("COMMAND: output stderr - " + stderr));
-        Promise.resolve(stdout);
+        resolve(true);
       });
+    });
+    let result = await promise;
+    return result;
   },
 
   elevateWindows: function() {
     // call a child process
-    appFrame.callProgram(String("powershell Start-Process '" + process.argv0 + "' -ArgumentList '.' -Verb runAs")).then(() => {
+    appFrame.callProgram(String("powershell Start-Process '" + process.argv0 + "' -ArgumentList '.' -Verb runAs")).then((response) => {
       window.close();
     });
   },
