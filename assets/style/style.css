@@ -71,7 +71,7 @@ body, html {
 
 .bigText, .bigText_white, .bigText_init {
 	font-family: 'Josefin Sans', sans-serif;
-	font-size: 5em;
+	font-size: 4.9em;
 	color: #fff600;
 	white-space: nowrap;
 	line-height: 80px;
@@ -481,7 +481,7 @@ body, html {
 	}
 	.bigText, .bigText_white {
 		line-height: 80px;
-		font-size: 4.5em;
+		font-size: 4em;
 	}
 	.bigText_init {
 	  font-size: 4em;
