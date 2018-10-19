@@ -60,6 +60,13 @@ body, html {
 	text-align: center;
 }
 
+#teleInfoMsg_copy {
+  color: white;
+  font-size: 26px;
+  font-family: 'Yanone Kaffeesatz', sans-serif;
+	text-align: center;
+}
+
 .teleDataHistory {
   word-wrap: break-word;
   margin-right: 10px;

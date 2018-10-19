@@ -78,7 +78,7 @@ body, html {
   transition: line-height 0.4s, font-size 0.2s, color 0.3s;
   padding-bottom: 0;
   margin-bottom: 0;
-  padding-top: 20px;
+  padding-top: 30px;
   margin-top: 20px;
 }
 
@@ -110,7 +110,6 @@ body, html {
 }
 
 .serviceActiveScreen {
-	/*background-color: #00a7d6;*/
 	height: 100%;
 	width: 100%;
 	top:0;
@@ -122,12 +121,6 @@ body, html {
 
 	background-image: linear-gradient(to right, #052860, #00a7d6, #0b2c72, #6dd0ed);
 	background-size: 600% 600%;
-
-	/*background: linear-gradient(270deg, #00a7d6, #0b2c72, #6dd0ed, #052860);
-
-	-webkit-animation: activeScroll 40s ease infinite;
-	-moz-animation: activeScroll 40s ease infinite;
-	animation: activeScroll 40s ease infinite;*/
 }
 
 @-webkit-keyframes activeScroll {
@@ -147,7 +140,6 @@ body, html {
 }
 
 .serviceInactiveScreen {
-	/*background-color: #e44145;*/
 	height: 100%;
 	width: 100%;
 	top:0;
@@ -159,12 +151,6 @@ body, html {
 
 	background-image: linear-gradient(to right, #000000, #b51014, #a51317, #a02200);
 	background-size: 600% 600%;
-
-	/*background: linear-gradient(270deg, #b51014, #a51317, #a02200, #000000);
-
-	-webkit-animation: inactiveScroll 30s ease infinite;
-	-moz-animation: inactiveScroll 30s ease infinite;
-	animation: inactiveScroll 30s ease infinite;*/
 }
 
 @-webkit-keyframes inactiveScroll {
@@ -181,18 +167,6 @@ body, html {
 	0%{background-position:0% 50%}
 	50%{background-position:100% 50%}
 	100%{background-position:0% 50%}
-}
-
-.topTextFlexBox {
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-content: space-around;
-}
-
-.topTextFlexBox > div {
-	width: 100%;
-	height: 30%;
 }
 
 .topTextFrame {
@@ -295,9 +269,7 @@ body, html {
 .serviceToggle:hover {
 	background-color:#d12d00;
 	color: #fff600;
-	/*font-size: 62.5px;*/
 	text-shadow: 2px 2px 8px black;
-  /*transform: rotate(2deg);*/
 }
 .serviceToggle:active {
 	font-size: 58.8px;
@@ -339,9 +311,14 @@ body, html {
 	background-color: #184896;
 }
 
+.topTextBox_inactive, .topTextBox_active {
+  display: grid;
+  grid-template-rows: 60% 40%;
+}
+
 .topTextBox, .topTextBox_active, .topTextBox_inactive {
 	width: 100%;
-	height: 270px;
+	height: auto;
 	top:0;
 	left:0;
 	right:0;
@@ -351,6 +328,7 @@ body, html {
 	padding-bottom: 10px;
 	-webkit-transition: height 0.3s;
   transition: height 0.3s;
+  min-height: 260px;
 }
 
 .topTextBox_active {
@@ -441,7 +419,7 @@ body, html {
   100%{background-position:0% 49%}
 }
 
-#privBar {
+#privBar, .progressInfoBar {
   height: 0px;
   margin-left: 20%;
   margin-right: 20%;
@@ -458,10 +436,14 @@ body, html {
 	overflow: hidden;
 }
 
-#privBarText, #privBarText_error {
+#privBarText, #privBarText_error, .progressInfoBar_text {
   color: black;
   text-align: center;
 	font-family: 'Raleway', sans-serif;
+}
+
+.progressInfoBar_text {
+  margin-top: 6px;
 }
 
 #privBarText_error {
@@ -508,16 +490,17 @@ body, html {
 		height: 550px;
 		padding-top: 1000px;
 	}
+
 	.topTextBox, .topTextBox_inactive {
-		height: 320px;
+		min-height: 320px;
 	}
 
 	.topTextBox_active {
-		height: 300px;
+		min-height: 300px;
 	}
 
 	.topTextBox_active_lifeguard {
-		height: 380px;
+		min-height: 390px;
 	}
 
 	.mainCenter_halfDown {
@@ -548,7 +531,7 @@ body, html {
 	  background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));
 	}
 
-	#progressBar, #privBar {
+	#progressBar, #privBar, .progressInfoBar {
 	  margin-left: 0%;
 	  margin-right: 0%;
 	  width: 100%;

@@ -38,18 +38,14 @@ const {dialog} = global.desktop.logic.dialogBox(),
  store = global.desktop.global.store(),
  dns_changer = global.desktop.logic.node_dns_changer(),
  i18n = global.desktop.global.i18n(),
- logging = global.desktop.logic.logging(),
+ logging = global.desktop.global.logging(),
  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat();
-var remoteData,
- appimagePATH;
 
 // an object to keep track of multiple things
 window.appStates = {
-  serviceEnabled: undefined,
-  serviceEnabled_previous: undefined,
-  internet: [undefined, undefined, undefined, undefined, undefined],
-  lifeguardFound: undefined,
-  lifeguardFound_previous: undefined,
+  serviceEnabled: [undefined, undefined,],
+  internet: [undefined, undefined,],
+  lifeguardFound: [undefined, undefined,],
   appHasLoaded: false,
   enableLogging: BUILDMODEJSON.enableLogging,
   notificationCounter: 0,
@@ -65,39 +61,31 @@ logging(String("INFO: cwd - " + process.cwd()));
 
 if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
   var aPath = process.env.PATH.split(path.delimiter);
-  for (i in aPath) {
-    if (aPath[i].includes('/tmp/.mount_')) break;
-  }
-  appimagePATH = aPath[i];
+  aPath.map(i => {if (i.includes('/tmp/.mount_')) appStates.appimagePATH = i;});
 }
 
 const appFrame = Object.freeze({
   callProgram: async function(command) {
     // call a child process
-    let promise = new Promise((resolve, reject) => {
       logging(String('COMMAND: calling - ' + command));
       var command_split = command.split(" "),
         command_arg = [];
       // concatinate 2+ into a variable
       for (var i=1; i<command_split.length; i++) {
-        command_arg.push(command_split[i]);
+        command_arg = [...command_arg, command_split[i]];
       }
       // command will be executed as: comand [ARGS]
-      var child = require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
+      require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
         logging(String("COMMAND: output - " + stdout));
         if (err) logging(String("COMMAND: output error - " + err));
         if (stderr) logging(String("COMMAND: output stderr - " + stderr));
-        resolve(stdout);
+        Promise.resolve(stdout);
       });
-    });
-    let result = await promise;
-    return result;
   },
 
   elevateWindows: function() {
     // call a child process
-    var command = String("powershell Start-Process '" + process.argv0 + "' -ArgumentList '.' -Verb runAs");
-    appFrame.callProgram(command).then(() => {
+    appFrame.callProgram(String("powershell Start-Process '" + process.argv0 + "' -ArgumentList '.' -Verb runAs")).then(() => {
       window.close();
     });
   },
@@ -127,7 +115,7 @@ const appFrame = Object.freeze({
       $(".serviceActiveScreen").show();
       $(".serviceInactiveScreen").hide();
       // if a lifeguard has been found
-      if (window.appStates.lifeguardFound == true) {
+      if (window.appStates.lifeguardFound[0] == true) {
         $("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD").toUpperCase());
         $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD").toUpperCase());
         $('.serviceToggle').addClass('serviceToggle_lifeguard');
@@ -181,16 +169,19 @@ const appFrame = Object.freeze({
     // switch between states
     logging("USER: In switch");
     window.appStates.notificationCounter = 0;
-    // if user's privileges are Admin, or if the host OS is Linux
-    switch (window.appStates.serviceEnabled) {
+    switch (window.appStates.serviceEnabled[0]) {
+      // if service is enabled
       case true:
-        logging('STATE: trying toggle enable');
-        if (window.appStates.lifeguardFound == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
+        logging('STATE: trying toggle disable');
+        if (window.appStates.lifeguardFound[0] == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
         else appFrame.displayDisableWarning();
         break;
 
+      // if service is disabled
       case false:
-        logging('STATE: trying toggle disable');
+        logging('STATE: trying toggle enable');
+        $(".progressInfoBar_text").html(i18n.__("Please wait while the service is being enabled"));
+        $('.progressInfoBar').css("height", "30px");
         appFrame.enableServicePerPlatform({});
         break;
     }
@@ -206,7 +197,7 @@ const appFrame = Object.freeze({
   affirmServiceState: function() {
     // affirm the state of the service
     logging("STATE: Affirming the state");
-    switch (window.appStates.serviceEnabled) {
+    switch (window.appStates.serviceEnabled[0]) {
       case false:
         logging('STATE: trying affirm disable');
         appFrame.displayUnprotection();
@@ -235,13 +226,13 @@ const appFrame = Object.freeze({
         var searchForResp = body.search('<meta name="ss_status" content="protected">');
         logging(String("STATE - metaResponse.ss_status :: " + metaResponse.ss_status));
         if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
-          window.appStates.serviceEnabled = false;
+          window.appStates.serviceEnabled[0] = false;
           logging('STATE: Get Request - Service disabled');
           //appFrame.affirmServiceState();
         }
         // if the meta tag returns protected
         if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
-          window.appStates.serviceEnabled = true;
+          window.appStates.serviceEnabled[0] = true;
           logging('STATE: Get Request - Service enabled');
           //appFrame.affirmServiceState();
         }
@@ -271,7 +262,7 @@ const appFrame = Object.freeze({
       case 'linux':
         switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
           case 'appimage':
-            if (global.desktop.logic.copy_sscli_toTmp(appimagePATH).code === 0) appFrame.callProgram(String('pkexec /tmp/sscli-appimage enable ' + forced));
+            if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.callProgram(String('pkexec /tmp/sscli-appimage enable ' + forced));
             break;
 
           default:
@@ -289,7 +280,7 @@ const appFrame = Object.freeze({
               DNSbackupName: 'before_safesurfer',
               loggingEnable: window.appStates.enableLogging
           });
-          if (window.appStates.serviceEnabled == false) {
+          if (window.appStates.serviceEnabled[0] == false) {
             logging("STATE: Service is still not enabled -- trying again.");
             if (os.platform() != 'darwin') appFrame.enableServicePerPlatform({forced});
           }
@@ -300,6 +291,8 @@ const appFrame = Object.freeze({
 
   disableServicePerPlatform: function({forced = ""}) {
     // restore DNS settings
+    $(".progressInfoBar_text").html(i18n.__("Please wait while the service is being disabled"));
+    $('.progressInfoBar').css("height", "30px");
     $('#progressBar').css("height", "20px");
     if (enableNotifications == true && window.appStates.notificationCounter == 0) new Notification('Safe Surfer', {
       body: i18n.__('OK! Restoring your settings now.'),
@@ -310,7 +303,7 @@ const appFrame = Object.freeze({
       case 'linux':
         switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
           case 'appimage':
-            if (global.desktop.logic.copy_sscli_toTmp(appimagePATH).code === 0) {
+            if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) {
               appFrame.callProgram(String('pkexec /tmp/sscli-appimage disable ' + forced));
             }
             break;
@@ -329,7 +322,7 @@ const appFrame = Object.freeze({
               DNSbackupName: 'before_safesurfer',
               loggingEnable: window.appStates.enableLogging
           });
-          if (window.appStates.serviceEnabled == true) {
+          if (window.appStates.serviceEnabled[0] == true) {
             logging("STATE: Service is still not disabled -- trying again.");
             if (os.platform() != 'darwin') appFrame.disableServicePerPlatform({forced});
           }
@@ -357,21 +350,17 @@ const appFrame = Object.freeze({
 
   publishDesktopAppOnNetwork: function(state) {
     // bonjour public to network for device discovery
-    if (state == "enable") bonjour.publish({ name: 'Safe Surfer Desktop', type: 'ssdesktop', port: 3158 });
+    if (state == "enable") bonjour.publish({name: 'Safe Surfer Desktop', type: 'ssdesktop', port: 3158});
     if (state == "disable") bonjour.unpublishAll();
   },
 
   internetConnectionCheck: async function() {
     // check the user's internet connection
-    let promise = new Promise((resolve, reject) => {
-      global.desktop.logic.connectivity()((online) => {
-        logging(String("INTERNETSTATE: " + online));
-        window.appStates.appHasLoaded = true;
-        resolve(online);
-      });
+    global.desktop.logic.connectivity()((online) => {
+      logging(String("INTERNETSTATE: " + online));
+      window.appStates.appHasLoaded = true;
+      Promise.resolve(online);
     });
-    let result = await promise;
-    return result;
   },
 
   finishedLoading: function() {
@@ -382,12 +371,11 @@ const appFrame = Object.freeze({
 
   checkForAppUpdate: function(options) {
     // for for app update
-    var baseLink,
+    var remoteData,
      versionList = [],
      serverAddress = "142.93.48.189",
      serverPort = 80,
      serverDataFile = "/files/desktop/version-information.json",
-     updateCurrentDialog = {type: 'info', buttons: ['Ok'], message: String(i18n.__("You're up to date."))},
      updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String(i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong."))};
 
     Request.get(String("http://" + serverAddress + ":" + serverPort + serverDataFile), (error, response, body) => {
@@ -406,18 +394,13 @@ const appFrame = Object.freeze({
       window.appStates.internet[0] = true;
       // read the data as JSON
       remoteData=JSON.parse(body);
-      for (item in remoteData.versions) {
-        versionList.push(remoteData.versions[item].build);
+      for (var item = 0; item < remoteData.versions.length; item++) {
+        versionList = [...versionList, remoteData.versions[item].build];
       }
       var iteration,
         versionRecommended;
-      if (store.get('betaCheck') == false) {
-        buildRecommended = remoteData.recommendedBuild;
-      }
-      else {
-        buildRecommended = remoteData.recommendedBetaBuild;
-      }
-      for (i in remoteData.versions) {
+      buildRecommended = !store.get('betaCheck') ? remoteData.recommendedBuild : remoteData.recommendedBetaBuild;
+      for (var i = 0; i < remoteData.versions.length; i++) {
         if (remoteData.versions[i].build == buildRecommended) {
           iteration = i;
           break;
@@ -467,7 +450,7 @@ const appFrame = Object.freeze({
       }
       else if (buildRecommended == APPBUILD && versionList.indexOf(buildRecommended) != -1 && options.current == true) {
         // up to date
-        dialog.showMessageBox(updateCurrentDialog, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: String(i18n.__("You're up to date."))}, updateResponse => {
           if (updateResponse == 0) {
             logging("UPDATE: User has the latest version installed.");
             return;
@@ -525,20 +508,20 @@ const appFrame = Object.freeze({
 
   collectTelemetry: function() {
     // if the user agrees to it, collect non identifiable information about their setup
-    var dataGathered = {};
-    logging('TELE: Sending general data');
-    dataGathered.TYPESEND = "general";
-    dataGathered.DATESENT = global.desktop.logic.moment().format('X');
-    dataGathered.APPVERSION = APPVERSION;
-    dataGathered.APPBUILD = APPBUILD;
-    dataGathered.TYPE = os.type();
-    dataGathered.PLATFORM = os.platform();
-    dataGathered.RELEASE = os.release();
-    dataGathered.CPUCORES = os.cpus().length;
-    dataGathered.LOCALE = app().getLocale();
-    dataGathered.LIFEGUARDSTATE = window.appStates.lifeguardFound;
-    dataGathered.BUILDMODE = BUILDMODEJSON.BUILDMODE;
-    dataGathered.ISSERVICEENABLED = window.appStates.serviceEnabled;
+    var dataGathered = {
+      TYPESEND: "general",
+      DATESENT: global.desktop.logic.moment().format('X'),
+      APPVERSION: APPVERSION,
+      APPBUILD: APPBUILD,
+      TYPE: os.type(),
+      PLATFORM: os.platform(),
+      RELEASE: os.release(),
+      CPUCORES: os.cpus().length,
+      LOCALE: app().getLocale(),
+      LIFEGUARDSTATE: window.appStates.lifeguardFound[0],
+      BUILDMODE: BUILDMODEJSON.BUILDMODE,
+      ISSERVICEENABLED: window.appStates.serviceEnabled[0],
+    };
     if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
     return JSON.stringify(dataGathered);
   },
@@ -550,7 +533,7 @@ const appFrame = Object.freeze({
     }
     else {
       var previous = store.get('teleHistory');
-      previous.push(input);
+      previous = [...previous, input];
       store.set('teleHistory', previous);
     }
   },
@@ -562,8 +545,8 @@ const appFrame = Object.freeze({
     Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
       store.set('telemetryAllow', true);
       store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
-      if (response || body) {
-        logging('TELE: Sent.');
+      logging({"TELE": 'Sent.', "TELEDATA": source})
+      if (response || body) {;
         if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
       }
       if (err >= 400 && err <= 599) {
@@ -632,18 +615,18 @@ const appFrame = Object.freeze({
 
   forceToggleWarning: function({wantedState}) {
     // display warning message as this could break settings
-    var messageText = {
-      toggleWarning: {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: String(i18n.__('The service is already in the state which you request.' + "\n" + i18n.__('Forcing the service to be enabled in this manner may have consequences.' + '\n' + 'Your computer\'s network configuration could break by doing this action.')))},
+    const messageText = {
+      toggleWarning: {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: String(i18n.__('The service is already in the state which you request.' + "\n" + i18n.__('Forcing the service to be enabled in this manner may have consequences.') + '\n' + i18n.__('Your computer\'s network configuration could break by doing this action.')))},
      lifeguardMessage: {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.")}
     }
-    if (window.appStates.lifeguardFound == true) {
+    if (window.appStates.lifeguardFound[0] == true) {
       dialog.showMessageBox(messageText.lifeguardMessage, dialogResponse => {});
     }
     else {
-      if (wantedState == window.appStates.serviceEnabled) {
+      if (wantedState == window.appStates.serviceEnabled[0]) {
         dialog.showMessageBox(messageText.toggleWarning, dialogResponse => {
           if (dialogResponse == 1) {
-            switch (window.appStates.serviceEnabled) {
+            switch (window.appStates.serviceEnabled[0]) {
               case true:
                 appFrame.enableServicePerPlatform({forced: "force"});
                 break;
@@ -656,7 +639,7 @@ const appFrame = Object.freeze({
         });
       }
       else {
-        switch (window.appStates.serviceEnabled) {
+        switch (window.appStates.serviceEnabled[0]) {
           case true:
             appFrame.disableServicePerPlatform({forced: "force"});
             break;
@@ -671,7 +654,7 @@ const appFrame = Object.freeze({
 
   showUnprivillegedMessage: function() {
     // display dialog for if the app hasn't been started with root privileges
-    var dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')};
+    const dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')};
     logging("PRIV: User is not admin -- displaying dialog message.");
     dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
       if (updateResponse == 1) window.close();
@@ -686,11 +669,11 @@ const appFrame = Object.freeze({
 
   sendAppStateNotifications: function() {
     // send notifications if the app state has changed to the user
-    if (window.appStates.serviceEnabled == true && enableNotifications == true) new Notification('Safe Surfer', {
+    if (window.appStates.serviceEnabled[0] == true && enableNotifications == true) new Notification('Safe Surfer', {
       body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.'),
       icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
     });
-    else if (window.appStates.serviceEnabled == false && enableNotifications == true) new Notification('Safe Surfer', {
+    else if (window.appStates.serviceEnabled[0] == false && enableNotifications == true) new Notification('Safe Surfer', {
       body: i18n.__('Safe Surfer has been disabled. You are now unprotected.'),
       icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
     });
@@ -698,8 +681,7 @@ const appFrame = Object.freeze({
 
   displayRebootMessage: function() {
     // tell the user to reboot
-    if (window.appStates.serviceEnabled == true) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Great, your computer is setup.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
-    if (window.appStates.serviceEnabled == false) var dialogRebootMessage = {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Ok, Safe Surfer has been removed.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
+    var dialogRebootMessage = window.appStates.serviceEnabled[0] ? {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Great, your computer is setup.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))} : {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Ok, Safe Surfer has been removed.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
     dialog.showMessageBox(dialogRebootMessage, updateResponse => {
       if (updateResponse == 1) {
         switch (os.platform()) {
@@ -734,12 +716,12 @@ const appFrame = Object.freeze({
         dataGathered.APPBUILD = BUILDMODEJSON.APPBUILD;
         dataGathered.APPVERSION = BUILDMODEJSON.APPVERSION;
         dataGathered.PLATFORM = os.platform();
-        dataGathered.ISSERVICEENABLED = window.appStates.serviceEnabled;
+        dataGathered.ISSERVICEENABLED = window.appStates.serviceEnabled[0];
         if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
         appFrame.sendTelemetry(JSON.stringify(dataGathered));
 
         var previous = store.get('teleHistory');
-        previous.push(JSON.stringify(dataGathered));
+        previous = [...previous, JSON.stringify(dataGathered)];
         store.set('teleHistory', previous);
         store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
       }
@@ -752,55 +734,62 @@ const appFrame = Object.freeze({
     logging("MAIN: begin reload");
     appFrame.checkServiceState();
     appFrame.internetConnectionCheck().then((state) => {
-      window.appStates.internet[0] = state
+      window.appStates.internet[0] = state;
       // if there is an internet connection
       if (state == true) {
         appFrame.hideNoInternetConnection();
-        if (window.appStates.serviceEnabled != window.appStates.serviceEnabled_previous && window.appStates.serviceEnabled_previous !== undefined) {
+      }
+      else if (state == false && window.appStates.lifeguardFound[0] == false) {
+        // if there is no internet
+        appFrame.displayNoInternetConnection();
+      }
+    });
+
+    if (window.appStates.internet[0] == true) {
+      if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined) {
           // if the state changes of the service being enabled changes
           logging('STATE: State has changed.');
           appFrame.sendAppStateNotifications();
           $('#progressBar').css("height", "0px");
           window.appStates.progressBarCounter = 0;
-          window.appStates.serviceEnabled_previous = window.appStates.serviceEnabled;
-          appFrame.displayRebootMessage();
+          window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0];
           window.appStates.notificationCounter = 0;
+          $('.progressInfoBar').css("height", "0px");
+          appFrame.displayRebootMessage();
           if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage' && global.desktop.logic.checkFor_sscli()) global.desktop.logic.remove_sscli();
         }
-      }
-      else if (state == false && window.appStates.lifeguardFound == false) {
-        // if there is no internet
-        appFrame.displayNoInternetConnection();
-      }
-    });
-    // if the service is enabled, check if a lifeguard is on the network
-    if (window.appStates.serviceEnabled == true) {
+    }
+    if (window.appStates.serviceEnabled[0] == true) {
+      // if the service is enabled, check if a lifeguard is on the network
       appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
-        window.appStates.lifeguardFound = lgstate;
+        window.appStates.lifeguardFound[0] = lgstate;
       });
     }
+
     if (window.appStates.internet[0] != window.appStates.internet[1]) {
       // if the state of the internet connection changes
       logging('NETWORK: State has changed.');
       window.appStates.internet[1] = window.appStates.internet[0];
     }
-    if (window.appStates.lifeguardFound != window.appStates.lifeguardFound_previous) {
+
+    if (window.appStates.lifeguardFound[0] != window.appStates.lifeguardFound[1]) {
       // if the state of a lifeguard being on the network changes
       logging('LIFEGUARDSTATE: State has changed.');
-      window.appStates.lifeguardFound_previous = window.appStates.lifeguardFound;
+      window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
     }
     // if there are undefined states
-    if (window.appStates.serviceEnabled_previous === undefined) window.appStates.serviceEnabled_previous = window.appStates.serviceEnabled;
+    if (window.appStates.serviceEnabled[1] === undefined) window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0];
     if (window.appStates.internet[1] === undefined) window.appStates.internet[1] = window.appStates.internet[0];
-    if (window.appStates.lifeguardFound_previous === undefined) window.appStates.lifeguardFound_previous = window.appStates.lifeguardFound;
+    if (window.appStates.lifeguardFound[1] === undefined) window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
     if (window.appStates.progressBarCounter == 20) {
       window.appStates.progressBarCounter = 0;
       $('#progressBar').css("height", "0px");
+      $('.progressInfoBar').css("height", "0px");
     }
     else if ($("#progressBar").css("height") == "20px") window.appStates.progressBarCounter += 1;
     // update the screen to show how the service state (... etc) is
     appFrame.affirmServiceState();
-    window.appStates.lifeguardFound = false;
+    window.appStates.lifeguardFound[0] = false;
     logging("MAIN: end reload");
     setTimeout(appFrame.mainReloadProcess, 1000);
   },
@@ -849,7 +838,7 @@ const appFrame = Object.freeze({
     }, 500);
   },
 
-  windowsVersionCheck: async function() {
+  windowsVersionCheck: function() {
     // if user is running Windows, make sure that the user is running a compatible version of Windows
     if (os.platform() != 'win32') {
       return;

@@ -72,7 +72,6 @@
     "node-dns-sd": "^0.2.0",
     "node_dns_changer": "^1.0.9",
     "nodejs-base64-encode": "0.0.2",
-    "npm": "^6.4.0",
     "os-locale": "^3.0.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2",

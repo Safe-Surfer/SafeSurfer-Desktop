@@ -21,13 +21,14 @@
 
 const store = window.desktop.global.store(),
  i18n = window.desktop.global.i18n(),
- logging = window.desktop.logic.logging(),
+ logging = window.desktop.global.logging(),
  $ = window.desktop.global.jquery();
 var teleHist = store.get('teleHistory'),
  textBody = "";
 
 // write and translate text on the main page
 $("#teleInfoMsg").text(i18n.__("Here's the data we've collected:"));
+$("#teleInfoMsg_copy").text(i18n.__("If you wish to copy any of the data, you can select and copy it from there."));
 $("#optOutMsg").text(i18n.__("You can opt out at any time in the support menu."));
 $("#title").text(i18n.__("View shared data"));
 

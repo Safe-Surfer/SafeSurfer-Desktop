@@ -49,7 +49,7 @@ else if (isBeta == true) {
 betaCheck = store.get('betaCheck');
 
 module.exports = (app, mainWindow) => {
-	const menu = [
+	var menu = [
 	  {
 		  label: i18n.__('General'),
 		  submenu:
@@ -127,20 +127,17 @@ module.exports = (app, mainWindow) => {
 	}
 	// add seperate menu for name and quit, like on standard macOS apps
 	if (os.platform() == 'darwin') {
-	  menu.unshift({
+	  menu = [{
 	    label: 'Safe Surfer',
 	    submenu: [
 			  {type:'separator'},
 			  {label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 	    ]
-	  });
+	  }, ...menu];
 	}
 	// add exit and a separator to Linux and Windows versions
 	else {
-	  menu[0].submenu.push(
-			  {type:'separator'},
-			  {label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
-    );
+    menu[0].submenu = [...menu[0].submenu, {type:'separator'},{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }];
 	}
 	return menu;
 }

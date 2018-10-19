@@ -88,7 +88,7 @@ prep-flatpak:
 	cd ./support/linux/flatpak && python3 flatpak-npm-generator.py ../../../package-lock.json
 
 build-flatpak:
-	flatpak-builder flatpak-build ./support/linux/flatpak/nz.co.safesurfer.SafeSurfer-Desktop.json
+	cd ./support/linux/flatpak && flatpak-builder flatpak-build nz.co.safesurfer.SafeSurfer-Desktop.json --force-clean
 
 prep-appimage:
 	@if [ -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "appimagetool is already downloaded."; exit 1; fi;
@@ -134,8 +134,9 @@ compile-win-setup32:
 	npm run compile-win-setup32
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py inline\ data
+	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder
 	@echo '{"linuxpackageformat":""}' > buildconfig/packageformat.json
+	@sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./buildconfig/buildmode.json
 
 slim:
 	@rm -rf node_modules tools

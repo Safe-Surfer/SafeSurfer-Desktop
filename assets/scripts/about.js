@@ -24,7 +24,7 @@ const BUILDMODEJSON = window.desktop.global.buildmodejson(),
  APPVERSION = BUILDMODEJSON.APPVERSION,
  BUILDMODE = BUILDMODEJSON.BUILDMODE,
  i18n = window.desktop.global.i18n(),
- logging = window.desktop.logic.logging(),
+ logging = window.desktop.global.logging(),
  $ = window.desktop.global.jquery();
 
 // function to make \n multiline
@@ -44,6 +44,7 @@ function shrinkLogo() {
   $("#ss-logo").css("height", "180px");
   $("#ss-logo").css("width", "180px");
 }
+
 function growLogo() {
   $("#ss-logo").css("height", "200px");
   $("#ss-logo").css("width", "200px");
