@@ -1,6 +1,7 @@
 {
   "name": "SafeSurfer-Desktop",
   "version": "1.0.0b5",
+  "APPBUILD": "5",
   "description": "The SafeSurfer desktop app",
   "main": "./assets/scripts/main.js",
   "license": "GPL-3.0",
@@ -28,6 +29,14 @@
     "safe",
     "surfer"
   ],
+  "appOptions": {
+    "BUILDMODE": "dev",
+    "isBeta": true,
+    "enableUpdates": true,
+    "enableNotifications": true,
+    "enableLogging": false,
+    "testLanguage": null
+  },
   "author": "Safe Surfer",
   "build": {
     "appId": "nz.co.SafeSurfer.SafeSurfer-Desktop",
@@ -70,7 +79,7 @@
     "lets-get-meta": "^2.1.1",
     "moment": "^2.22.2",
     "node-dns-sd": "^0.2.0",
-    "node_dns_changer": "^1.0.9",
+    "node_dns_changer": "^1.1.1",
     "nodejs-base64-encode": "0.0.2",
     "os-locale": "^3.0.0",
     "request": "^2.88.0",

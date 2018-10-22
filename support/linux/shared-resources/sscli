@@ -49,8 +49,8 @@ enable   enable the DNS
 disable  disable the DNS
 service  check and enable as service
 status	 get the status of the service
+launch   launch the desktop app
 EOF
-[ -z "$ISAPPIMAGE" ] && echo "launch   launch the desktop app"
 }
 
 function enableBackgroundService() {
@@ -70,7 +70,7 @@ done
 
 function checkServiceState() {
 # return if the service is enabled
-if curl -s check.safesurfer.co.nz | grep -q '<meta name="ss_status" content="protected">' || grep -E "$primaryDNS|$secondaryDNS" /etc/resolv.conf
+if eval "$fetchCmd" | grep -q '<meta name="ss_status" content="protected">' || grep -E -q "$primaryDNS|$secondaryDNS" /etc/resolv.conf
 then
 	return 0
 else
@@ -80,8 +80,8 @@ fi
 
 function flushAndRestart() {
 # flush and restart DNS related services
-[ -x "$(which systemd-resolve)" ] && systemd-resolve --flush-caches && echo "* Flushed systemd-resolv caches."
-[ -x "$(which nscd)" ] && systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "* Restarted nscd"
+[ ! -z "$(which systemd-resolve)" ] && systemd-resolve --flush-caches && echo "* Flushed systemd-resolv caches."
+[ ! -z "$(which nscd)" ] && systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "* Restarted nscd"
 }
 
 function setDNSservers() {
@@ -124,7 +124,22 @@ cat << EOF
 - by          -
 - Safe Surfer -
 ---------------
+
 EOF
+
+if [ ! -z "$(which curl)" ]
+then
+	fetchCmd="curl -s check.safesurfer.co.nz"
+
+elif [ ! -z "$(which wget)" ]
+then
+	fetchCmd="wget -qO- check.safesurfer.co.nz"
+
+else
+	echo "ERROR: Cannot find 'curl' or 'wget'."
+	exit 1
+fi
+
 case "$arg" in
 	enable|-e|--enable)
 		shift
@@ -154,12 +169,12 @@ case "$arg" in
 		checkServiceState && echo "SERVICE: Enabled." || echo "SERIVCE: Disabled."
 		;;
 	launch|-l|--launch)
+		[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1
 		if [ -z "$ISAPPIMAGE" ]
 		then
-			[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1
 			/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
 		else
-			echo "ERROR: you can't launch the app this way from an AppImage."
+			exec "${APPRUN}"
 		fi
 		;;
 	-v|--version)

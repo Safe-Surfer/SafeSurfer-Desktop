@@ -37,7 +37,7 @@ VENDORPREFIX=appimagekit
 
 THIS="$0"
 
-function dirResolve () {
+function dirResolve() {
 # resolve a directory
 path="$(dirname "$(readlink -f "${THIS}")")"
 while [[ "$path" != "" && ! -e "$path/$1" ]]
@@ -52,6 +52,10 @@ then
 fi
 
 export PATH="${APPDIR}/usr/bin:${PATH}"
+export LD_LIBRARY_PATH="${APPDIR}/usr/lib":$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH="${APPDIR}/usr/lib64":$LD_LIBRARY_PATH
+export APPIMAGE_LIBRARY_PATH="${APPIMAGE_LIBRARY_PATH}:/usr/lib"
+export APPIMAGE_LIBRARY_PATH="${APPIMAGE_LIBRARY_PATH}:/usr/lib64"
 DESKTOP_FILE="$APPDIR/SafeSurfer-Desktop.desktop"
 BIN="$APPDIR/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop"
 
@@ -68,7 +72,7 @@ then
 fi
 }
 
-function error() {
+function errorMsg() {
 # display an error
 if [ -x /usr/bin/zenity ]
 then
@@ -85,7 +89,7 @@ fi
 exit 1
 }
 
-function yesno() {
+function yesnoPrompt() {
 # display a yes or no prompt
 TITLE="$1"
 TEXT="$2"
@@ -98,6 +102,25 @@ then
 elif [ -x /usr/bin/Xdialog ]
 then
 	LD_LIBRARY_PATH="" Xdialog --title "$TITLE" --clear --yesno "$TEXT" 10 80 || exit 0
+else
+	echo "zenity, kdialog, Xdialog missing. Skipping ${THIS}."
+	exit 0
+fi
+}
+
+function infoMsg() {
+# display a yes or no prompt
+TITLE="$1"
+TEXT="$2"
+if [ -x /usr/bin/zenity ]
+then
+	LD_LIBRARY_PATH="" zenity --info --title="$TITLE" --text="$TEXT" --height=250 --width=400 --window-icon="${APPDIR}/ss-logo.png" 2>/dev/null || exit 0
+elif [ -x /usr/bin/kdialog ]
+then
+	LD_LIBRARY_PATH="" kdialog --title "$TITLE" --info "$TEXT" || exit 0
+elif [ -x /usr/bin/Xdialog ]
+then
+	LD_LIBRARY_PATH="" Xdialog --title "$TITLE" --clear --info "$TEXT" 10 80 || exit 0
 else
 	echo "zenity, kdialog, Xdialog missing. Skipping ${THIS}."
 	exit 0
@@ -123,35 +146,39 @@ done
 function check_dep() {
 # check if a given dependency is present
 DEP="$1"
+MSG="$2"
 if [ -z "$(which $DEP)" ]
 then
-  	echo "$DEP is missing. Skipping ${THIS}."
-  	[ "$REQ" = true ] && exit 1
+	if ! tty -s && [ ! -z "$DISPLAY_A_MSG" ]
+	then
+		infoMsg "Safe Surfer desktop: Dependencies" "It appears that '$DEP' is missing. $MSG"
+	fi
+  	echo "[!] $DEP is missing. $MSG"
+  	return 1
+else
+	echo "[*] $DEP is present."
+	return 0
 fi
 }
 
-function check_file() {
-# check if a file (or library) is present
-FILE="$1"
-PACKAGE="$2"
-if [ ! -f "$FILE" ]
-then
-	echo "'$FILE' is not present. I need this to work. This file (or library) probably comes from the package '$PACKAGE'."
-	[ "$REQ" = true ] && exit 1
-fi
+function rm_sscli() {
+# rm sscli which is in /tmp
+rm -f /tmp/sscli-appimage
 }
 
-REQ=true check_dep curl
-REQ=true check_dep pkexec
-check_file /usr/lib64/libgconf-2.so.4 gconf2
+check_dep curl || ( DISPLAY_A_MSG=0 check_dep wget "Since your system doesn't have cURL or wget, some important functionality is comprimised and the app cannot be used. Please install cURL or wget via your software repositories.." || exit 1 )
 
 case "$args" in
 	--remove-integration|-r)
 		# remove desktop integration
 		set -e
 		uninstall_icons
-		rm -f "$HOME/.local/share/applications/$VENDORPREFIX-SafeSurfer-Desktop.desktop"
-
+		if [[ $EUID -ne 0 ]]
+		then
+			rm -f "$HOME/.local/share/applications/$VENDORPREFIX-SafeSurfer-Desktop.desktop"
+		else
+			rm -f "/usr/local/share/applications/$VENDORPREFIX-SafeSurfer-Desktop.desktop"
+		fi
 		xdg-desktop-menu forceupdate
 		# for MIME
 		gtk-update-icon-cache
@@ -161,9 +188,9 @@ case "$args" in
 		;;
 	sscli)
 		shift
+		trap rm_sscli EXIT
 		cp "${APPDIR}"/usr/bin/sscli /tmp/sscli-appimage
-		ISAPPIMAGE=0 /tmp/sscli-appimage "$1"
-		rm -f /tmp/sscli-appimage
+		ISAPPIMAGE=0 APPRUN=${0} /tmp/sscli-appimage "$1"
 		exit
 		;;
 	help|--help)
@@ -184,6 +211,12 @@ check_prevent "$HOME/.local/share/$VENDORPREFIX/no_desktopintegration"
 check_prevent "/usr/share/$VENDORPREFIX/no_desktopintegration"
 check_prevent "/etc/$VENDORPREFIX/no_desktopintegration"
 
+if [ -f "/usr/local/share/applications/$VENDORPREFIX-SafeSurfer-Desktop" ]
+then
+	echo "<-> App appears to have it's desktop file installed in a system directory."
+	exit 0
+fi
+
 # Exit immediately if appimaged is running
 pidof appimaged 2>/dev/null && exit 0
 
@@ -193,12 +226,13 @@ then
 	exit 0
 fi
 
+DISPLAY_A_MSG=0 check_dep pkexec "Without pkexec/polkit, SafeSurfer-desktop is unable to enable DNS settings. Please install polkit-1 from via software repositories."
 # Check whether dependencies are present in base system (we do not bundle these)
 # http://cgit.freedesktop.org/xdg/desktop-file-utils/
-check_dep desktop-file-install
-check_dep xdg-icon-resource
-check_dep xdg-mime
-check_dep xdg-desktop-menu
+DISPLAY_A_MSG=0 check_dep desktop-file-install
+DISPLAY_A_MSG=0 check_dep xdg-icon-resource
+DISPLAY_A_MSG=0 check_dep xdg-mime
+DISPLAY_A_MSG=0 check_dep xdg-desktop-menu
 
 if [ ! -f "$DESKTOP_FILE" ]
 then
@@ -231,14 +265,16 @@ then
 	#APP_VERSION=$(grep "^X-AppImage-BuildId=" "$DESKTOP_FILE" | head -n 1 | cut -d " " -f 1)
 	InstalledAppBuild=$(grep "X-AppImage-Build=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
 	InstalledAppVersion=$(grep "X-AppImage-Version=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
-	echo "installed-version: $InstalledAppVersion installed-build: $InstalledAppBuild"
+	echo
+	echo "[Version# installed] : $InstalledAppVersion"
+	echo "[Build# installed]   : $InstalledAppBuild"
 	if [ ! "$InstalledAppBuild" -lt "$AppBuild" ]
 	then
 		exit 0
 	else
 		if [ -z "$APPIMAGE_SILENT_INSTALL" ]
 		then
-			yesno "Upgrade" "You've launched a version ($AppVersion) which is newer than what is installed ($InstalledAppVersion) of SafeSurfer-Desktop.\\nWould you like to update the integration?"
+			yesnoPrompt "Upgrade" "You've launched a version ($AppVersion) which is newer than what is installed ($InstalledAppVersion) of SafeSurfer-Desktop.\\nWould you like to update the integration?"
 			APPIMAGE_UPGRADE=true
 		fi
 		uninstall_icons
@@ -249,7 +285,7 @@ fi
 # we ask the user only if we have found no reason to skip until here
 if [ -z "$APPIMAGE_SILENT_INSTALL" ] && [ ! "$APPIMAGE_UPGRADE" = true ]
 then
-	yesno "Install" "Would you like to integrate $APPIMAGE with your system?\\n\\nThis will add it to your applications menu and install icons.\\nIf you don't do this you can still launch the application by double-clicking on the AppImage.\\n\\nPlease note you can remove integration by running '$APPIMAGE --remove-integration'"
+	yesnoPrompt "Install" "Would you like to integrate $APPIMAGE with your system?\\n\\nThis will add it to your applications menu and install icons.\\nIf you don't do this you can still launch the application by double-clicking on the AppImage.\\n\\nPlease note you can remove integration by running '$APPIMAGE --remove-integration'"
 fi
 
 desktop-file-install --rebuild-mime-info-cache \

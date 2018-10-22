@@ -19,13 +19,13 @@
 // along with SafeSurfer-Desktop.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-const BUILDMODEJSON = window.desktop.global.buildmodejson(),
- APPBUILD = BUILDMODEJSON.APPBUILD,
- APPVERSION = BUILDMODEJSON.APPVERSION,
- BUILDMODE = BUILDMODEJSON.BUILDMODE,
- i18n = window.desktop.global.i18n(),
- logging = window.desktop.global.logging(),
- $ = window.desktop.global.jquery();
+const packageJSON = window.desktop.global.packageJSON(),
+  APPBUILD = packageJSON.APPBUILD,
+  version = packageJSON.version,
+  BUILDMODE = packageJSON.appOptions.BUILDMODE,
+  i18n = window.desktop.global.i18n(),
+  logging = window.desktop.global.logging(),
+  $ = window.desktop.global.jquery();
 
 // function to make \n multiline
 $.fn.multiline = function(text, rt){
@@ -38,7 +38,7 @@ $.fn.multiline = function(text, rt){
 $("#title").text(i18n.__("About this app"));
 
 // update description text
-$('#description').multiline(String(i18n.__("Version") + " " + APPVERSION + "; " + i18n.__("Build") + " " + APPBUILD + " (" + BUILDMODE + ")" + "\n &copy; 2018 Safe Surfer, et al. \n\n" + i18n.__('This program comes with absolutely no warranty.') + "\n" + i18n.__('See the GNU General Public License, version 3 or later for details.')));
+$('#description').multiline(String(i18n.__("Version") + " " + version + "; " + i18n.__("Build") + " " + APPBUILD + " (" + BUILDMODE + ")" + "\n &copy; 2018 Safe Surfer, et al. \n\n" + i18n.__('This program comes with absolutely no warranty.') + "\n" + i18n.__('See the GNU General Public License, version 3 or later for details.')));
 
 function shrinkLogo() {
   $("#ss-logo").css("height", "180px");

@@ -21,22 +21,22 @@
 
 // create app menu
 const {app} = require('electron'),
- electron = require('electron'),
- os = require('os'),
- Store = require('electron-store'),
- store = new Store(),
- BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
- BUILDMODE = BUILDMODEJSON.BUILDMODE,
- APPVERSION = BUILDMODEJSON.APPVERSION,
- APPBUILD = BUILDMODEJSON.APPBUILD,
- isBeta = BUILDMODEJSON.isBeta,
- updatesEnabled = BUILDMODEJSON.enableUpdates,
- i18n = new (require('./i18n.js'));
+  electron = require('electron'),
+  os = require('os'),
+  Store = require('electron-store'),
+  store = new Store(),
+  packageJSON = require('../../package.json'),
+  BUILDMODE = packageJSON.appOptions.BUILDMODE,
+  APPVERSION = packageJSON.version,
+  APPBUILD = packageJSON.APPBUILD,
+  isBeta = packageJSON.appOptions.isBeta,
+  updatesEnabled = packageJSON.appOptions.enableUpdates,
+  i18n = new (require('./i18n.js'));
 var accountIsAssigned = store.get('accountInformation'),
- appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
- betaCheck,
- teleEnabled = store.get('telemetryAllow'),
- LINUXPACKAGEFORMAT = require('../../buildconfig/packageformat.json');
+  appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
+  betaCheck,
+  teleEnabled = store.get('telemetryAllow'),
+  LINUXPACKAGEFORMAT = require('../../buildconfig/packageformat.json');
 
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
 if (betaCheck === undefined && BUILDMODE != 'dev') {
@@ -95,7 +95,7 @@ module.exports = (app, mainWindow) => {
 	];
 
 	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-	if (updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) menu[1].submenu.splice(2, 0, {
+	if (updatesEnabled == true && (os.platform() != 'linux' || BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) menu[1].submenu.splice(2, 0, {
 		label: i18n.__('Updates'),
 		submenu:
 		[

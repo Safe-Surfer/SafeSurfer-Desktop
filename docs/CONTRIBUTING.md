@@ -47,7 +47,6 @@ Steps to report bugs:
 `assets/scripts/main.js` is where initalising takes place.  
 `assets/scripts/menu.js` is where the code for the app's menu lives.  
 `assets/scripts/i18n.js` is where the framework of translating the app is stored.  
-`buildconfig/buildmode.json` is where some runtime/version variables are stored.  
 `support/` is where the platform specific files are stored.  
 
 ## Request features

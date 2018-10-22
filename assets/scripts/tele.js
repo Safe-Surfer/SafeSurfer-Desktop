@@ -20,11 +20,11 @@
 //
 
 const store = window.desktop.global.store(),
- i18n = window.desktop.global.i18n(),
- logging = window.desktop.global.logging(),
- $ = window.desktop.global.jquery();
+  i18n = window.desktop.global.i18n(),
+  logging = window.desktop.global.logging(),
+  $ = window.desktop.global.jquery();
 var teleHist = store.get('teleHistory'),
- textBody = "";
+  textBody = "";
 
 // write and translate text on the main page
 $("#teleInfoMsg").text(i18n.__("Here's the data we've collected:"));
@@ -55,6 +55,7 @@ if (textBody !== undefined) {
   $("#teleDataHistory").remove();
   if (store.get('teleHistory') === undefined) {
     textBody += String('<p id="teleDataHistory" class="teleDataHistory">' + i18n.__("No data is available.") + '</p>\n\n');
+    $("#teleInfoMsg_copy").text('');
   }
 }
 

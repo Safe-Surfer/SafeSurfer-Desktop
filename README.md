@@ -57,6 +57,10 @@ Linux: polkit curl (libgconf2-4 on Debian based systems)
 ### Install node modules
 `npm i`  
 
+### Configure the build (if needed)
+`make PACKAGEFORMAT=... BUILDMODE= configure`
+Note: If you are packaging for a new Linux format, make sure when configuring to use 'PACKAGEFORMAT=' followed by the format type.
+
 ### Building binaries
 Linux: `make build-linux` or `npm run package-linux`  
 Windows: `make build-windows` or `npm run package-win`  
@@ -69,6 +73,7 @@ Please note that building Windows versions on Linux or macOS requires [Wine](htt
 deb:  debhelper devscripts  
 rpm:  rpmbuild  
 arch: base-devel  
+AppImage: rpm2cpio wget tar ar  
 flatpak:
 - flatpak-builder
 - org.freedesktop.Sdk//1.6
@@ -85,8 +90,7 @@ exe: use iss file in [support\\windows\\inno-script](support/windows/inno-script
 
 Notes:
 - for use in inno scripts, you must adjust path to the compiled folder in the scripts (under files --> source).  
-- if you are packaging for a new Linux format, make sure when building to use 'PACKAGEFORMAT=' followed by the format type (i.e: make PACKAGEFORMAT=rpm build-linux).  
-- Current versions of this program have been tested on openSUSE Leap 15, Windows 10 (1803, 1809), Windows 7 (SP1), Fedora 28, Ubuntu 18.04, Arch Linux, Windows 7, and macOS.
+- Current versions of this program have been tested on openSUSE Leap 15, Windows 10 (1803, 1809), Windows 7 (SP1), Fedora 28, Ubuntu 18.04, Arch Linux, Windows 7, and macOS.  
 
 ## License
 Copyright 2018 Safe Surfer.  

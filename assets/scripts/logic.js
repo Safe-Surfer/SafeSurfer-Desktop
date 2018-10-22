@@ -20,26 +20,24 @@
 //
 
 // include libraries
-
 const {dialog} = global.desktop.logic.dialogBox(),
- app = global.desktop.logic.electron.app ? global.desktop.logic.electron.app: global.desktop.logic.electronremoteapp,
- BUILDMODEJSON = global.desktop.global.buildmodejson(),
- APPBUILD = BUILDMODEJSON.APPBUILD,
- APPVERSION = BUILDMODEJSON.APPVERSION,
- BUILDMODE = BUILDMODEJSON.BUILDMODE,
- isBeta = BUILDMODEJSON.isBeta,
- updatesEnabled = BUILDMODEJSON.enableUpdates,
- enableNotifications = BUILDMODEJSON.enableNotifications,
- os = global.desktop.logic.os(),
- path = window.desktop.logic.path(),
- bonjour = global.desktop.logic.bonjour(),
- Request = global.desktop.logic.request(),
- $ = global.desktop.global.jquery(),
- store = global.desktop.global.store(),
- dns_changer = global.desktop.logic.node_dns_changer(),
- i18n = global.desktop.global.i18n(),
- logging = global.desktop.global.logging(),
- LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat();
+  app = global.desktop.logic.electron.app ? global.desktop.logic.electron.app: global.desktop.logic.electronremoteapp,
+  packageJSON = window.desktop.global.packageJSON(),
+  APPBUILD = packageJSON.appOptions.APPBUILD,
+  APPVERSION = packageJSON.version,
+  BUILDMODE = packageJSON.appOptions.BUILDMODE,
+  isBeta = packageJSON.appOptions.isBeta,
+  updatesEnabled = packageJSON.appOptions.enableUpdates,
+  enableNotifications = packageJSON.appOptions.enableNotifications,
+  os = global.desktop.logic.os(),
+  path = window.desktop.logic.path(),
+  bonjour = global.desktop.logic.bonjour(),
+  Request = global.desktop.logic.request(),
+  $ = global.desktop.global.jquery(),
+  store = global.desktop.global.store(),
+  i18n = global.desktop.global.i18n(),
+  logging = global.desktop.global.logging(),
+  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat();
 
 // an object to keep track of multiple things
 window.appStates = {
@@ -47,11 +45,12 @@ window.appStates = {
   internet: [undefined, undefined,],
   lifeguardFound: [undefined, undefined,],
   appHasLoaded: false,
-  enableLogging: BUILDMODEJSON.enableLogging,
+  enableLogging: packageJSON.appOptions.enableLogging,
   notificationCounter: 0,
   userIsAdmin: undefined,
   progressBarCounter: 0,
-  elevationFailureCount: 0
+  elevationFailureCount: 0,
+  toggleLock: false
 }
 
 // if a linux package format can't be found, then state unsureness
@@ -59,11 +58,13 @@ if (typeof LINUXPACKAGEFORMAT.linuxpackageformat === undefined) LINUXPACKAGEFORM
 logging(String("INFO: platform - " + os.platform()));
 logging(String("INFO: cwd - " + process.cwd()));
 
+// find path where AppImage is mounted to, if packaged for AppImage
 if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
   var aPath = process.env.PATH.split(path.delimiter);
   aPath.map(i => {if (i.includes('/tmp/.mount_')) appStates.appimagePATH = i;});
 }
 
+// functions
 const appFrame = Object.freeze({
   callProgram: async function(command) {
     // call a child process
@@ -72,7 +73,7 @@ const appFrame = Object.freeze({
       var command_split = command.split(" "),
         command_arg = [];
       // concatinate 2+ into a variable
-      for (var i=1; i<command_split.length; i++) {
+      for (var i = 1; i < command_split.length; i++) {
         command_arg = [...command_arg, command_split[i]];
       }
       // command will be executed as: comand [ARGS]
@@ -80,7 +81,7 @@ const appFrame = Object.freeze({
         logging(String("COMMAND: output - " + stdout));
         if (err) logging(String("COMMAND: output error - " + err));
         if (stderr) logging(String("COMMAND: output stderr - " + stderr));
-        resolve(true);
+        if (!err && !stderr) resolve(true);
       });
     });
     let result = await promise;
@@ -90,7 +91,7 @@ const appFrame = Object.freeze({
   elevateWindows: function() {
     // call a child process
     appFrame.callProgram(String("powershell Start-Process '" + process.argv0 + "' -ArgumentList '.' -Verb runAs")).then((response) => {
-      window.close();
+      if (response == true) window.close();
     });
   },
 
@@ -113,7 +114,7 @@ const appFrame = Object.freeze({
   },
 
   displayProtection: function() {
-    // enable DNS
+    // show the user that the service has been enabled
     if (window.appStates.internet[0] == true) {
       logging("STATE: protected");
       $(".serviceActiveScreen").show();
@@ -140,7 +141,7 @@ const appFrame = Object.freeze({
   },
 
   displayUnprotection: function() {
-    // disable DNS
+    // show the user that the service has been enabled
     if (window.appStates.internet[0] == true) {
       logging("STATE: Unprotected");
       $(".serviceInactiveScreen").show();
@@ -173,6 +174,7 @@ const appFrame = Object.freeze({
     // switch between states
     logging("USER: In switch");
     window.appStates.notificationCounter = 0;
+    if (window.appStates.toggleLock === true) return;
     switch (window.appStates.serviceEnabled[0]) {
       // if service is enabled
       case true:
@@ -184,9 +186,11 @@ const appFrame = Object.freeze({
       // if service is disabled
       case false:
         logging('STATE: trying toggle enable');
-        $(".progressInfoBar_text").html(i18n.__("Please wait while the service is being enabled"));
-        $('.progressInfoBar').css("height", "30px");
         appFrame.enableServicePerPlatform({});
+        break;
+
+      default:
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("The state of the service is being determined. Please wait.")}, response => {});
         break;
     }
   },
@@ -226,8 +230,8 @@ const appFrame = Object.freeze({
         }
         else window.appStates.internet[0] = true;
 
-        var metaResponse = global.desktop.logic.letsGetMeta()(body);
-        var searchForResp = body.search('<meta name="ss_status" content="protected">');
+        var metaResponse = global.desktop.logic.letsGetMeta()(body),
+          searchForResp = body.search('<meta name="ss_status" content="protected">');
         logging(String("STATE - metaResponse.ss_status :: " + metaResponse.ss_status));
         if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
           window.appStates.serviceEnabled[0] = false;
@@ -257,6 +261,8 @@ const appFrame = Object.freeze({
   enableServicePerPlatform: function({forced = ""}) {
     // apply DNS settings
     $('#progressBar').css("height", "20px");
+    $(".progressInfoBar_text").html(i18n.__("Please wait while the service is being enabled"));
+    $('.progressInfoBar').css("height", "30px");
     if (enableNotifications == true && window.appStates.notificationCounter == 0) new Notification('Safe Surfer', {
       body: i18n.__('Woohoo! Getting your computer setup now.'),
       icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
@@ -264,31 +270,39 @@ const appFrame = Object.freeze({
     window.appStates.notificationCounter += 1;
     switch (os.platform()) {
       case 'linux':
+        window.appStates.toggleLock = true;
         switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
           case 'appimage':
+            // if sscli is able to be copyied to /tmp, run it
             if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.callProgram(String('pkexec /tmp/sscli-appimage enable ' + forced));
             break;
 
           default:
+            // run from project folder ./
             if (window.desktop.logic.testForFile(String(process.cwd() + '/support/linux/shared-resources/sscli')) == true) appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli enable ' + forced));
-            appFrame.callProgram(String('pkexec sscli enable ' + forced));
+            // run from system if installed
+            else appFrame.callProgram(String('pkexec sscli enable ' + forced));
             break;
         }
         break;
 
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
+        window.appStates.toggleLock = true;
         setTimeout(function () {
-          dns_changer.setDNSservers({
-              DNSservers: ['104.197.28.121','104.155.237.225'],
-              DNSbackupName: 'before_safesurfer',
-              loggingEnable: window.appStates.enableLogging
+          global.desktop.logic.node_dns_changer().setDNSservers({
+            DNSservers: ['104.197.28.121','104.155.237.225'],
+            DNSbackupName: 'before_safesurfer',
+            loggingEnable: window.appStates.enableLogging,
+            mkBackup: true
           });
+          // if service has still not been enabled, try again
           if (window.appStates.serviceEnabled[0] == false) {
             logging("STATE: Service is still not enabled -- trying again.");
+            // don't repeat if macOS
             if (os.platform() != 'darwin') appFrame.enableServicePerPlatform({forced});
           }
-        },1200);
+        },3000);
         break;
     }
   },
@@ -305,14 +319,17 @@ const appFrame = Object.freeze({
     window.appStates.notificationCounter += 1;
     switch (os.platform()) {
       case 'linux':
+        // if sscli is able to be copyied to /tmp, run it
+        window.appStates.toggleLock = true;
         switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
           case 'appimage':
+            // if sscli is able to be copyied to /tmp, run it
             if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) {
               appFrame.callProgram(String('pkexec /tmp/sscli-appimage disable ' + forced));
             }
             break;
           default:
-            // if running from home folder
+            // run from project folder ./
             if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli disable ' + forced));
             else appFrame.callProgram(String('pkexec sscli disable ' + forced));
             break;
@@ -321,16 +338,20 @@ const appFrame = Object.freeze({
 
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
+        window.appStates.toggleLock = true;
         setTimeout(function () {
-          dns_changer.restoreDNSservers({
-              DNSbackupName: 'before_safesurfer',
-              loggingEnable: window.appStates.enableLogging
+          global.desktop.logic.node_dns_changer().restoreDNSservers({
+            DNSbackupName: 'before_safesurfer',
+            loggingEnable: window.appStates.enableLogging,
+            rmBackup: os.platform() === 'darwin' ? false : true
           });
+          // if service has still not been enabled, try again
           if (window.appStates.serviceEnabled[0] == true) {
             logging("STATE: Service is still not disabled -- trying again.");
+            // don't repeat if macOS
             if (os.platform() != 'darwin') appFrame.disableServicePerPlatform({forced});
           }
-        },1200);
+        },3000);
         break;
     }
   },
@@ -410,11 +431,9 @@ const appFrame = Object.freeze({
           break;
         }
       }
-      var updateAvailableDialog = {type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('There is an update available' ) + '(v' + remoteData.versions[iteration].version + '). ' + i18n.__('Do you want to install it now?'))},
-       updateDowngradeDialog = {type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('Please downgrade to version ') + remoteData.versions[iteration].version + '. ' + i18n.__('Do you want to install it now?'))};
       if (buildRecommended > APPBUILD && versionList.indexOf(buildRecommended) != -1) {
         // update available
-        dialog.showMessageBox(updateAvailableDialog, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('There is an update available' ) + '(v' + remoteData.versions[iteration].version + '). ' + i18n.__('Do you want to install it now?'))}, updateResponse => {
           if (updateResponse == 0) {
             logging("UPDATE: User wants update.");
             if (remoteData.versions[iteration].altLink === undefined) {
@@ -466,7 +485,7 @@ const appFrame = Object.freeze({
       }
       else if (buildRecommended < APPBUILD && versionList.indexOf(buildRecommended) != -1) {
         // user must downgrade
-        dialog.showMessageBox(updateDowngradeDialog, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('Please downgrade to version ') + remoteData.versions[iteration].version + '. ' + i18n.__('Do you want to install it now?'))}, updateResponse => {
           if (updateResponse == 0) {
             logging("UPDATE: User wants to downgrade.");
             //global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
@@ -523,7 +542,7 @@ const appFrame = Object.freeze({
       CPUCORES: os.cpus().length,
       LOCALE: app().getLocale(),
       LIFEGUARDSTATE: window.appStates.lifeguardFound[0],
-      BUILDMODE: BUILDMODEJSON.BUILDMODE,
+      BUILDMODE: BUILDMODE,
       ISSERVICEENABLED: window.appStates.serviceEnabled[0],
     };
     if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
@@ -612,7 +631,7 @@ const appFrame = Object.freeze({
   versionInformationCopy: function() {
     // copy app build information to clipboard
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')}, dialogResponse => {
-      global.desktop.logic.electronClipboardWriteText(String('Platform: '+process.platform+'\nVersion: '+APPVERSION+'\nBuild: '+APPBUILD+'\nBuildMode: '+ BUILDMODE));
+      global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer().version()}`);
       if (dialogResponse == 2) global.desktop.logic.electronOpenExternal()('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
     });
   },
@@ -717,8 +736,8 @@ const appFrame = Object.freeze({
         logging('TELE: Sending update data');
         dataGathered.DATESENT = global.desktop.logic.moment().format('X');
         dataGathered.TYPESEND = "update";
-        dataGathered.APPBUILD = BUILDMODEJSON.APPBUILD;
-        dataGathered.APPVERSION = BUILDMODEJSON.APPVERSION;
+        dataGathered.APPBUILD = APPBUILD;
+        dataGathered.APPVERSION = APPVERSION;
         dataGathered.PLATFORM = os.platform();
         dataGathered.ISSERVICEENABLED = window.appStates.serviceEnabled[0];
         if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
@@ -759,8 +778,9 @@ const appFrame = Object.freeze({
           window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0];
           window.appStates.notificationCounter = 0;
           $('.progressInfoBar').css("height", "0px");
+          window.appStates.toggleLock = false;
           appFrame.displayRebootMessage();
-          if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage' && global.desktop.logic.checkFor_sscli()) global.desktop.logic.remove_sscli();
+          if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage' && global.desktop.logic.testForFile('/tmp/sscli-appimage')) global.desktop.logic.remove_sscli();
         }
     }
     if (window.appStates.serviceEnabled[0] == true) {
@@ -787,6 +807,7 @@ const appFrame = Object.freeze({
     if (window.appStates.lifeguardFound[1] === undefined) window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
     if (window.appStates.progressBarCounter == 20) {
       window.appStates.progressBarCounter = 0;
+      window.appStates.toggleLock = false;
       $('#progressBar').css("height", "0px");
       $('.progressInfoBar').css("height", "0px");
     }
@@ -815,6 +836,7 @@ const appFrame = Object.freeze({
   },
 
   openWindowsUACHelpPage: function() {
+    // launch a page about how to launch the app as an Administrator (for Windows users)
     global.desktop.logic.electronOpenExternal()('https://safesurfer.desk.com/how-to-uac.php');
   },
 
@@ -942,12 +964,12 @@ $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET 
 $('#toggleButton').text(i18n.__('CHECKING SERVICE STATE').toUpperCase());
 
 // if auto-update checking is enabled and updates are enabled, check for them
-if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || BUILDMODEJSON.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) appFrame.checkForAppUpdate({
+if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || packageJSON.appOptions.buildType == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) appFrame.checkForAppUpdate({
   current: false,
   showErrors: false
 });
 
-// log a message in the console for devs; yeah that's you if you're reading this :);
+// log a message in the console for devs; yeah that's probably you if you're reading this :);
 console.log(`> Are you a developer? Do you want to help us with this project?
 Join us by going to:
   - https://gitlab.com/safesurfer/SafeSurfer-Desktop

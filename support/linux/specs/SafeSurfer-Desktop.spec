@@ -20,10 +20,11 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 %prep
 %autosetup
 npm install
+make PACKAGEFORMAT=flatpak BUILDMODE=RELEASE configure
 
 
 %build
-%{__make} PACKAGEFORMAT=rpm BUILDMODE=RELEASE build-linux
+%{__make} build-linux
 
 
 %install

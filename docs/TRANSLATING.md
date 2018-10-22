@@ -38,7 +38,7 @@ Use `npm run lintTranslations` to lint the JSON file of your current locale.
 Use `npm run lintTranslations [locale]` replacing [locale] with a locale that's in `./assets/translations`.  
 Use `npm run lintTranslations all` to lint all locales.  
 Another part is running the app, to determine if it looks good and doesn't visually break anything (i.e: text falling off areas, too long sets of words).  
-You can also test the app in the language that you are wanting to translate it to without setting the language by changing `null` in `"testLanguage": null` in `buildconfig/buildmode.json` to the locale name of your language (i.e: `"testLanguage": "de"`). Note: When you're finished with your testing of the translation, and want to submit a pull request, please revert back to `"testLanguage": null` in `buildconfig/buildmode.json`  
+You can also test the app in the language that you are wanting to translate it to without setting the language by changing `null` in `"testLanguage": null` in `package.json` to the locale name of your language (i.e: `"testLanguage": "de"`). Note: When you're finished with your testing of the translation, and want to submit a pull request, please revert back to `"testLanguage": null` in `package.json`  
 
 ## Some things to take note of
 - The length of the translation--Please be brief yet keep as much information as possible.  

@@ -20,13 +20,13 @@
 //
 
 const path = require("path"),
- electron = require('electron'),
- logging = require('./logging.js'),
- fs = require('fs'),
- BUILDMODEJSON = require('../../buildconfig/buildmode.json');
+  electron = require('electron'),
+  logging = require('./logging.js'),
+  fs = require('fs'),
+  packageJSON = require('../../package.json'),
+  testLanguage = packageJSON.appOptions.testLanguage;
 let loadedLanguage,
  app = electron.app ? electron.app : electron.remote.app;
-var testLanguage = BUILDMODEJSON.testLanguage;
 
 // export undefined function
 module.exports = i18n;

@@ -40,4 +40,3 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\SafeSurfer-Desktop
 
 [Run]
 Filename: "{app}\SafeSurfer-Desktop.exe"; Description: "{cm:LaunchProgram,SafeSurfer-Desktop}"; Flags: nowait postinstall skipifsilent
-

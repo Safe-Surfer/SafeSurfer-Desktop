@@ -21,10 +21,10 @@
 
 // import libraries
 const {app, BrowserWindow, Menu, clipboard} = require('electron'),
- path = require('path'),
- windowStateKeeper = require('electron-window-state'),
- BUILDMODEJSON = require('../../buildconfig/buildmode.json'),
- isBeta = BUILDMODEJSON.isBeta;
+  path = require('path'),
+  windowStateKeeper = require('electron-window-state'),
+  packageJSON = require('../../package.json'),
+  isBeta = packageJSON.appOptions.isBeta;
 
 let mainWindow,
  childWindow;

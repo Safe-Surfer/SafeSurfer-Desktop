@@ -61,7 +61,8 @@
 			"ls /run/build/SafeSurfer-Desktop/npm-cache",
 			"npm cache verify --prefix=main --offline --cache=/run/build/SafeSurfer-Desktop/npm-cache",
 			"npm install --prefix=main --offline --cache=/run/build/SafeSurfer-Desktop/npm-cache",
-			"make PACKAGEFORMAT=flatpak BUILDMODE= build-linux",
+                	"cd main && make PACKAGEFORMAT=flatpak BUILDMODE= configure",
+			"make build-linux",
 			"make DESTDIR=/app/ install"
 		]
         }],

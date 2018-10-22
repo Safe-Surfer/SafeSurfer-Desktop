@@ -62,7 +62,8 @@
             ],
             "build-commands": [
                 "npm install --prefix=main --offline --cache=/run/build/SafeSurfer-Desktop/npm-cache",
-		"cd main && make PACKAGEFORMAT=flatpak BUILDMODE= build-linux",
+                "cd main && make PACKAGEFORMAT=flatpak BUILDMODE= configure",
+		"cd main && make build-linux",
 		"cd main && make DESTDIR=/app/ install",
                 "mkdir -p /app/main /app/bin",
                 "cp -ra main/* /app/main/",

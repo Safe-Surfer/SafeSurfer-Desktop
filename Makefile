@@ -4,29 +4,26 @@ COMPLETIONDIR ?= /usr/share/bash-completion/completions
 
 all: help
 
+configure:
+	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./package.json; fi
+	@if [[ ! -z "$(PACKAGEFORMAT)" ]]; then echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json; fi;
+
 check-deps:
 	@if [ ! -d node_modules ]; then echo "Whoops, you're missing node dependencies. Run 'npm i'."; exit 1; fi;
 
 build-linux: check-deps
-	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
-	@if [[ ! -z "$(PACKAGEFORMAT)" ]]; then echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json; fi;
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds
 
 build-linux32: check-deps
-	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
-	@if [[ ! -z "$(PACKAGEFORMAT)" ]]; then echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json; fi;
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=ia32 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds
 
 build-windows: check-deps
-	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"
 
 build-windows32: check-deps
-	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"
 
 build-macos: check-deps
-	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./buildconfig/buildmode.json; fi
 	node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds
 
 install:
@@ -59,7 +56,8 @@ uninstall:
 	@rm -rf $(DESTDIR)/usr/share/pixmaps/ss-logo.png
 
 prep-deb:
-	make PACKAGEFORMAT=deb BUILDMODE=$(BUILDMODE) build-linux
+	make BUILDMODE=$(BUILDMODE) PACKAGEFORMAT=rpm configure
+	make build-linux
 	@mkdir -p deb-build/safesurfer-desktop
 	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
 	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop
@@ -92,13 +90,20 @@ build-flatpak:
 
 prep-appimage:
 	@if [ -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "appimagetool is already downloaded."; exit 1; fi;
-	@mkdir -p tools
+	@mkdir -p tools/resources/libgconf
+	@mkdir -p tools/resources/libXScrnSaver
 	cd tools && wget https://github.com/AppImage/AppImageKit/releases/download/10/appimagetool-x86_64.AppImage && chmod +x appimagetool-x86_64.AppImage
+	cd tools/resources/libgconf && wget http://mirrors.kernel.org/ubuntu/pool/main/g/gconf/libgconf-2-4_3.2.6-0ubuntu2_amd64.deb
+	cd tools/resources/libgconf && ar x libgconf-2-4_3.2.6-0ubuntu2_amd64.deb && tar xvf data.tar.xz
+	cd tools/resources/libXScrnSaver && wget http://dl.fedoraproject.org/pub/fedora/linux/releases/27/Everything/x86_64/os/Packages/l/libXScrnSaver-1.2.2-13.fc27.x86_64.rpm
+	cd tools/resources/libXScrnSaver && rpm2cpio libXScrnSaver-1.2.2-13.fc27.x86_64.rpm | cpio -idmv
 
 build-appimage:
 	@if [ ! -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "Please run 'make prep-appimage'."; exit 1; fi;
-	make PACKAGEFORMAT=appimage BUILDMODE=$(BUILDMODE) build-linux
+	make BUILDMODE=$(BUILDMODE) PACKAGEFORMAT=appimage configure
+	make build-linux
 	make DESTDIR=SafeSurfer-Desktop.AppDir install
+	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/lib
 	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/16x16/apps
 	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/24x24/apps
 	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/32x32/apps
@@ -121,11 +126,14 @@ build-appimage:
 	@cp ./assets/media/icons/png/256x256.png SafeSurfer-Desktop.AppDir/ss-logo.png
 	@cp ./support/linux/AppImage/AppRun SafeSurfer-Desktop.AppDir
 	@chmod +x SafeSurfer-Desktop.AppDir/AppRun
+	@cp -r tools/resources/libgconf/usr/lib/x86_64-linux-gnu/. SafeSurfer-Desktop.AppDir/usr/lib
+	@cp -r tools/resources/libXScrnSaver/usr/lib64/. SafeSurfer-Desktop.AppDir/usr/lib64
 	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop
 	./tools/appimagetool-x86_64.AppImage -n $(OPTS) SafeSurfer-Desktop.AppDir
 
 prepare-rpm-bin:
-	make PACKAGEFORMAT=rpm BUILDMODE=$(BUILDMODE) build-linux
+	make BUILDMODE=$(BUILDMODE) PACKAGEFORMAT=rpm configure
+	make build-linux
 
 compile-win-setup:
 	npm run compile-win-setup
@@ -136,7 +144,7 @@ compile-win-setup32:
 clean:
 	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder
 	@echo '{"linuxpackageformat":""}' > buildconfig/packageformat.json
-	@sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./buildconfig/buildmode.json
+	@sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json
 
 slim:
 	@rm -rf node_modules tools

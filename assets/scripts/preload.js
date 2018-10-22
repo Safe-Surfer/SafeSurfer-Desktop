@@ -7,7 +7,7 @@ global.desktop = Object.freeze({
   global: {
     jquery: () => require('jquery'),
     linuxpackageformat: () => require('../../buildconfig/packageformat.json'),
-    buildmodejson: () => require('../../buildconfig/buildmode.json'),
+    packageJSON: () => require('../../package.json'),
     i18n: () => new (require('./i18n.js')),
     logging: () => require('./logging.js'),
     Store: () => require('electron-store'),
@@ -29,7 +29,6 @@ global.desktop = Object.freeze({
     electronIsDev: () => require('electron-is-dev'),
     copy_sscli_toTmp: (appimagePATH) => require('shelljs').cp(require('path').join(appimagePATH, 'sscli'), '/tmp/sscli-appimage'),
     remove_sscli: () => require('shelljs').rm('/tmp/sscli-appimage'),
-    checkFor_sscli: () => require('shelljs').test('/tmp/sscli-appimage'),
     testForFile: (file) => require('shelljs').test('-f', file),
     isAdmin: () => require('is-admin')(),
     letsGetMeta: () => require("lets-get-meta"),

@@ -5,6 +5,7 @@ GenericName=Safe Surfer
 Comment=Keep safe in the digitial surf
 Exec=/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
 Icon=ss-logo
+StartupNotify=true
 Terminal=false
 Categories=Network;Monitor;
 Name[en_US]=Safe Surfer

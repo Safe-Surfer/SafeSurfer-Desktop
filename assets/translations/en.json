@@ -112,5 +112,6 @@
 	"There version of Windows that you seem to be running appears to be not compatible with this app.": "There version of Windows that you seem to be running appears to be not compatible with this app.",
 	"Please wait while the service is being enabled": "Please wait while the service is being enabled",
 	"Please wait while the service is being disabled": "Please wait while the service is being disabled",
-	"If you wish to copy any of the data, you can select and copy it from there.": "If you wish to copy any of the data, you can select and copy it from there."
+	"If you wish to copy any of the data, you can select and copy it from there.": "If you wish to copy any of the data, you can select and copy it from there.",
+	"The state of the service is being determined. Please wait.": "The state of the service is being determined. Please wait."
 }

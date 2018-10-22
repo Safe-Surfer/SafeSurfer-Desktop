@@ -14,11 +14,12 @@ md5sums=('SKIP')
 prepare() {
 	cd "SafeSurfer-Desktop-$pkgver"
 	npm install
+	make PACKAGEFORMAT=arch BUILDMODE= configure
 }
 
 build() {
 	cd "SafeSurfer-Desktop-$pkgver"
-	make PACKAGEFORMAT=arch build-linux
+	make build-linux
 }
 
 package() {
