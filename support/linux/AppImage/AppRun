@@ -37,6 +37,12 @@ VENDORPREFIX=appimagekit
 
 THIS="$0"
 
+if [[ "$(whoami)" = root ]]
+then
+	cliOrGUIinfoMsg "ERROR" "You should not running Safe Surfer desktop as root."
+	exit 1
+fi
+
 function dirResolve() {
 # resolve a directory
 path="$(dirname "$(readlink -f "${THIS}")")"
@@ -124,6 +130,18 @@ then
 else
 	echo "zenity, kdialog, Xdialog missing. Skipping ${THIS}."
 	exit 0
+fi
+}
+
+function cliOrGUIinfoMsg() {
+# display a message whether user is running app from cli or GUI
+TITLE="$1"
+MSG="$2"
+if ! tty -s
+then
+	infoMsg "$TITLE" "$MSG"
+else
+  	echo "$TITLE: $MSG"
 fi
 }
 
@@ -266,8 +284,8 @@ then
 	InstalledAppBuild=$(grep "X-AppImage-Build=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
 	InstalledAppVersion=$(grep "X-AppImage-Version=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
 	echo
-	echo "[Version# installed] : $InstalledAppVersion"
-	echo "[Build# installed]   : $InstalledAppBuild"
+	echo "[Version # installed] : $InstalledAppVersion"
+	echo "[Build   # installed]   : $InstalledAppBuild"
 	if [ ! "$InstalledAppBuild" -lt "$AppBuild" ]
 	then
 		exit 0
