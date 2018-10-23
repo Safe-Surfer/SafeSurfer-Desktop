@@ -184,7 +184,7 @@ function rm_sscli() {
 rm -f /tmp/sscli-appimage
 }
 
-check_dep curl || ( DISPLAY_A_MSG=0 check_dep wget "Since your system doesn't have cURL or wget, some important functionality is comprimised and the app cannot be used. Please install cURL or wget via your software repositories.." || exit 1 )
+check_dep curl || ( DISPLAY_A_MSG=0 check_dep wget "Since your system doesn't have cURL or wget, the app cannot be used. Please install cURL or wget via your software repositories.." || exit 1 )
 
 case "$args" in
 	--remove-integration|-r)
