@@ -104,7 +104,7 @@ const appFrame = Object.freeze({
 
       default:
         logging('SUDOGUI: Running with xdg-su');
-        appFrame.callProgram(`xdg-su -c "${command}"`);
+        appFrame.callProgram(`xdg-su -c '${command}'`);
         break;
     }
   },

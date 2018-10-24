@@ -85,7 +85,8 @@ deb: `make deb-pkg`
 arch: `make arch-pkg` PKGBUILD in [support/linux/arch](support/linux/arch)  
 rpm: use spec file in [support/linux/specs](support/linux/specs)  
 appimage: `make prep-appimage && make build-appimage`  
-flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)  
+flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)
+linux binary zip: `make build-linuxzip`  
 exe: use iss file in [support\\windows\\inno-script](support/windows/inno-script)  
 
 Notes:
