@@ -23,7 +23,7 @@
 const {dialog} = global.desktop.logic.dialogBox(),
   app = global.desktop.logic.electron.app ? global.desktop.logic.electron.app: global.desktop.logic.electronremoteapp,
   packageJSON = window.desktop.global.packageJSON(),
-  APPBUILD = packageJSON.appOptions.APPBUILD,
+  APPBUILD = parseInt(packageJSON.APPBUILD),
   APPVERSION = packageJSON.version,
   BUILDMODE = packageJSON.appOptions.BUILDMODE,
   isBeta = packageJSON.appOptions.isBeta,
@@ -50,18 +50,24 @@ window.appStates = {
   userIsAdmin: undefined,
   progressBarCounter: 0,
   elevationFailureCount: 0,
-  toggleLock: false
+  toggleLock: false,
+  guiSudo: "pkexec",
 }
 
 // if a linux package format can't be found, then state unsureness
 if (typeof LINUXPACKAGEFORMAT.linuxpackageformat === undefined) LINUXPACKAGEFORMAT="???";
-logging(String("INFO: platform - " + os.platform()));
-logging(String("INFO: cwd - " + process.cwd()));
+logging(String("INFO: platform  - " + os.platform()));
+logging(String("INFO: cwd       - " + process.cwd()));
 
 // find path where AppImage is mounted to, if packaged for AppImage
 if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
   var aPath = process.env.PATH.split(path.delimiter);
   aPath.map(i => {if (i.includes('/tmp/.mount_')) appStates.appimagePATH = i;});
+}
+
+if (os.platform() == 'linux') {
+  if (window.desktop.logic.shelljs_which('pkexec') != null) window.appStates.guiSudo = 'pkexec';
+  else window.appStates.guiSudo = 'xdg-su';
 }
 
 // functions
@@ -86,6 +92,21 @@ const appFrame = Object.freeze({
     });
     let result = await promise;
     return result;
+  },
+
+  linuxGuiSudo(command) {
+    // run program with pkexec or xdg-su
+    switch (window.appStates.guiSudo) {
+      case 'pkexec':
+        logging('SUDOGUI: Running with pkexec');
+        appFrame.callProgram(`pkexec ${command}`);
+        break;
+
+      default:
+        logging('SUDOGUI: Running with xdg-su');
+        appFrame.callProgram(`xdg-su -c "${command}"`);
+        break;
+    }
   },
 
   elevateWindows: function() {
@@ -274,14 +295,14 @@ const appFrame = Object.freeze({
         switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
           case 'appimage':
             // if sscli is able to be copyied to /tmp, run it
-            if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.callProgram(String('pkexec /tmp/sscli-appimage enable ' + forced));
+            if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage enable ${forced}`);
             break;
 
           default:
             // run from project folder ./
-            if (window.desktop.logic.testForFile(String(process.cwd() + '/support/linux/shared-resources/sscli')) == true) appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli enable ' + forced));
+            if (window.desktop.logic.testForFile(String(process.cwd() + '/support/linux/shared-resources/sscli')) == true) appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli enable ${forced}`);
             // run from system if installed
-            else appFrame.callProgram(String('pkexec sscli enable ' + forced));
+            else appFrame.linuxGuiSudo(`sscli enable ${forced}`);
             break;
         }
         break;
@@ -325,13 +346,13 @@ const appFrame = Object.freeze({
           case 'appimage':
             // if sscli is able to be copyied to /tmp, run it
             if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) {
-              appFrame.callProgram(String('pkexec /tmp/sscli-appimage disable ' + forced));
+              appFrame.linuxGuiSudo(`/tmp/sscli-appimage disable ${forced}`);
             }
             break;
           default:
             // run from project folder ./
-            if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') appFrame.callProgram(String('pkexec ' + process.cwd() + '/support/linux/shared-resources/sscli disable ' + forced));
-            else appFrame.callProgram(String('pkexec sscli disable ' + forced));
+            if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
+            else appFrame.linuxGuiSudo(`sscli disable ${forced}`);
             break;
         }
         break;
@@ -403,14 +424,15 @@ const appFrame = Object.freeze({
      serverDataFile = "/files/desktop/version-information.json",
      updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String(i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong."))};
 
-    Request.get(String("http://" + serverAddress + ":" + serverPort + serverDataFile), (error, response, body) => {
-      if(error >= 400 && error <= 599) {
+    logging(`UPDATES: About to fetch http://${serverAddress}:${serverPort}${serverDataFile}`);
+    Request.get(`http://${serverAddress}:${serverPort}${serverDataFile}`, (error, response, body) => {
+      if (error >= 400 && error <= 599) {
         window.appStates.internet[0] = false;
         // if something goes wrong
-        logging(String("HTTP error:" + error));
+        logging(`UPDATES: HTTP error ${error}`);
         if (options.showErrors == true) {
           dialog.showErrorBox(updateErrorDialog, updateResponse => {
-            logging("UPDATE: Error with updates.");
+            logging("UPDATES: Error with updates.");
             return;
           });
         }
@@ -418,26 +440,26 @@ const appFrame = Object.freeze({
       }
       window.appStates.internet[0] = true;
       // read the data as JSON
-      remoteData=JSON.parse(body);
+      remoteData = JSON.parse(body);
       for (var item = 0; item < remoteData.versions.length; item++) {
         versionList = [...versionList, remoteData.versions[item].build];
       }
       var iteration,
         versionRecommended;
-      buildRecommended = !store.get('betaCheck') ? remoteData.recommendedBuild : remoteData.recommendedBetaBuild;
+      buildRecommended = parseInt(store.get('betaCheck') == true ? remoteData.recommendedBuild : remoteData.recommendedBetaBuild);
       for (var i = 0; i < remoteData.versions.length; i++) {
         if (remoteData.versions[i].build == buildRecommended) {
           iteration = i;
           break;
         }
       }
-      if (buildRecommended > APPBUILD && versionList.indexOf(buildRecommended) != -1) {
+
+      if (buildRecommended > parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // update available
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('There is an update available' ) + '(v' + remoteData.versions[iteration].version + '). ' + i18n.__('Do you want to install it now?'))}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: String(i18n.__('There is an update available' ) + '(v' + remoteData.versions[iteration].version + '). ' + i18n.__('Do you want to install it now?'))}, updateResponse => {
           if (updateResponse == 0) {
-            logging("UPDATE: User wants update.");
+            logging("UPDATES: User wants update.");
             if (remoteData.versions[iteration].altLink === undefined) {
-              //global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
               var ext,
                 genLink;
               switch (os.platform()) {
@@ -466,16 +488,18 @@ const appFrame = Object.freeze({
               global.desktop.logic.electronOpenExternal()(remoteData.versions[iteration].altLink);
             }
           }
-          else {
-            return;
+          else if (updateResponse == 2) {
+            global.desktop.logic.electronOpenExternal()(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${remoteData.versions[iteration].version}`);
           }
+          else return;
         });
       }
-      else if (buildRecommended == APPBUILD && versionList.indexOf(buildRecommended) != -1 && options.current == true) {
+
+      else if (buildRecommended == parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1 && options.current == true) {
         // up to date
         dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: String(i18n.__("You're up to date."))}, updateResponse => {
           if (updateResponse == 0) {
-            logging("UPDATE: User has the latest version installed.");
+            logging("UPDATES: User has the latest version installed.");
             return;
           }
           else {
@@ -483,11 +507,12 @@ const appFrame = Object.freeze({
           }
         });
       }
-      else if (buildRecommended < APPBUILD && versionList.indexOf(buildRecommended) != -1) {
+
+      else if (buildRecommended < parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // user must downgrade
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('Please downgrade to version ') + remoteData.versions[iteration].version + '. ' + i18n.__('Do you want to install it now?'))}, updateResponse => {
           if (updateResponse == 0) {
-            logging("UPDATE: User wants to downgrade.");
+            logging("UPDATES: User wants to downgrade.");
             //global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
               var ext,
                 genLink;
@@ -517,11 +542,12 @@ const appFrame = Object.freeze({
           }
         });
       }
+
       else {
         // if something goes wrong
         if (options.showErrors == true) {
           dialog.showMessageBox(updateErrorDialog, updateResponse => {
-            logging("UPDATE: Error.");
+            logging("UPDATES: Error.");
             return;
           });
         }
@@ -586,7 +612,7 @@ const appFrame = Object.freeze({
      messageText = {
       nothingSent: {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")},
       teleMsg: {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: String(i18n.__("Data sharing") + "\n\n" + String(i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.") + "\n" + i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.") + "\n- " + i18n.__("Safe Surfer team")))},
-      previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(sharingData)+"\n\n" + i18n.__("In case you don't understand this data, it includes (such things as):") + "\n- " + i18n.__("Which operating system you use") + "\n- " + i18n.__("How many CPU cores you have") + "\n -" + i18n.__("The language you have set") + "\n - " + i18n.__("If the service is setup on your computer"))}
+      previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(sharingData)+"\n\n" + i18n.__("In case you don't understand this data, it includes (such things as):") + "\n- " + i18n.__("Which operating system you use") + "\n- " + i18n.__("How many CPU cores you have") + "\n -" + i18n.__("The language you have set") + "\n - " + i18n.__("If the service is setup on your computer") + "\n\n" + i18n.__("We are also interested in updates, so with data sharing we will also be notified of which version you've to updated."))}
     };
     dialog.showMessageBox(messageText.teleMsg, dialogResponse => {
       logging("TELE: User has agreed to the prompt.");
@@ -712,7 +738,7 @@ const appFrame = Object.freeze({
             appFrame.callProgram(String('shutdown /r /t 0'));
             break;
           case 'linux':
-            appFrame.callProgram(String('pkexec /sbin/reboot'));
+            appFrame.linuxGuiSudo(`/sbin/reboot`);
             break;
           case 'darwin':
             appFrame.callProgram(String("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'"));
@@ -870,7 +896,7 @@ const appFrame = Object.freeze({
       return;
     }
     var releaseVer = os.release().split('.');
-    if (parseInt(releaseVer[0]) == 6 && parseInt(releaseVer[1]) == 1 || parseInt(releaseVer[0]) == 10) {
+    if (parseInt(releaseVer[0]) == 6 && parseInt(releaseVer[1]) >= 1 || parseInt(releaseVer[0]) == 10) {
       return;
     }
     logging("WINVERCHECK: User is not on a compatible version of Windows")
@@ -964,7 +990,7 @@ $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET 
 $('#toggleButton').text(i18n.__('CHECKING SERVICE STATE').toUpperCase());
 
 // if auto-update checking is enabled and updates are enabled, check for them
-if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || packageJSON.appOptions.buildType == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) appFrame.checkForAppUpdate({
+if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || packageJSON.appOptions.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) appFrame.checkForAppUpdate({
   current: false,
   showErrors: false
 });

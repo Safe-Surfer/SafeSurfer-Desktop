@@ -90,7 +90,7 @@ exe: use iss file in [support\\windows\\inno-script](support/windows/inno-script
 
 Notes:
 - for use in inno scripts, you must adjust path to the compiled folder in the scripts (under files --> source).  
-- Current versions of this program have been tested on openSUSE Leap 15, Windows 10 (1803, 1809), Windows 7 (SP1), Fedora 28, Ubuntu 18.04, Arch Linux, Windows 7, and macOS.  
+- Current versions of this program have been tested on openSUSE Leap 15, Windows 10 (1803, 1809), Windows 7 (SP1), Fedora 28, Ubuntu 18.04, Arch Linux, Windows 7, Windows 8.1, and macOS.  
 
 ## License
 Copyright 2018 Safe Surfer.  

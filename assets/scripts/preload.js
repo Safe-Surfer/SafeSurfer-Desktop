@@ -29,6 +29,7 @@ global.desktop = Object.freeze({
     electronIsDev: () => require('electron-is-dev'),
     copy_sscli_toTmp: (appimagePATH) => require('shelljs').cp(require('path').join(appimagePATH, 'sscli'), '/tmp/sscli-appimage'),
     remove_sscli: () => require('shelljs').rm('/tmp/sscli-appimage'),
+    shelljs_which: (prog) => require('shelljs').which(prog),
     testForFile: (file) => require('shelljs').test('-f', file),
     isAdmin: () => require('is-admin')(),
     letsGetMeta: () => require("lets-get-meta"),

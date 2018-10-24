@@ -37,12 +37,6 @@ VENDORPREFIX=appimagekit
 
 THIS="$0"
 
-if [[ "$(whoami)" = root ]]
-then
-	cliOrGUIinfoMsg "ERROR" "You should not running Safe Surfer desktop as root."
-	exit 1
-fi
-
 function dirResolve() {
 # resolve a directory
 path="$(dirname "$(readlink -f "${THIS}")")"
@@ -184,6 +178,12 @@ function rm_sscli() {
 rm -f /tmp/sscli-appimage
 }
 
+if [[ "$(whoami)" = root ]] && [[ $# = 0 ]]
+then
+	cliOrGUIinfoMsg "ERROR" "You should not running Safe Surfer desktop as root."
+	exit 1
+fi
+
 check_dep curl || ( DISPLAY_A_MSG=0 check_dep wget "Since your system doesn't have cURL or wget, the app cannot be used. Please install cURL or wget via your software repositories.." || exit 1 )
 
 case "$args" in
@@ -207,7 +207,7 @@ case "$args" in
 	sscli)
 		shift
 		trap rm_sscli EXIT
-		cp "${APPDIR}"/usr/bin/sscli /tmp/sscli-appimage
+		cp "${APPDIR}"/usr/bin/sscli /tmp/sscli-appimage || (echo "ERROR: Unable to copy sscli to /tmp" && exit 1)
 		ISAPPIMAGE=0 APPRUN=${0} /tmp/sscli-appimage "$1"
 		exit
 		;;
@@ -285,7 +285,7 @@ then
 	InstalledAppVersion=$(grep "X-AppImage-Version=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
 	echo
 	echo "[Version # installed] : $InstalledAppVersion"
-	echo "[Build   # installed]   : $InstalledAppBuild"
+	echo "[Build   # installed] : $InstalledAppBuild"
 	if [ ! "$InstalledAppBuild" -lt "$AppBuild" ]
 	then
 		exit 0

@@ -73,7 +73,7 @@ deb-src:
 	make BUILDMODE=$(BUILDMODE) prep-deb
 	@cd deb-build/safesurfer-desktop/debian && debuild -S
 
-build-zip:
+build-linuxzip:
 	@mkdir -p zip-build
 	@make DESTDIR=zip-build install
 	@cd zip-build && zip -r ../SafeSurfer-Desktop-Linux.zip .
