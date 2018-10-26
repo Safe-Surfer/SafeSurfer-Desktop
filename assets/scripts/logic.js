@@ -67,7 +67,7 @@ if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
 
 if (os.platform() == 'linux') {
   if (window.desktop.logic.shelljs_which('pkexec') != null) window.appStates.guiSudo = 'pkexec';
-  else window.appStates.guiSudo = 'xdg-su';
+  else if (window.desktop.logic.shelljs_which('xdg-su') != null) window.appStates.guiSudo = 'xdg-su';
 }
 
 // functions
@@ -75,7 +75,7 @@ const appFrame = Object.freeze({
   callProgram: async function(command) {
     // call a child process
     let promise = new Promise((resolve, reject) => {
-      logging(String('COMMAND: calling - ' + command));
+      logging(`COMMAND: calling - '${command}'`);
       var command_split = command.split(" "),
         command_arg = [];
       // concatinate 2+ into a variable
@@ -83,10 +83,10 @@ const appFrame = Object.freeze({
         command_arg = [...command_arg, command_split[i]];
       }
       // command will be executed as: comand [ARGS]
-      require('child_process').execFile(command_split[0],command_arg, function(err, stdout, stderr) {
-        logging(String("COMMAND: output - " + stdout));
-        if (err) logging(String("COMMAND: output error - " + err));
-        if (stderr) logging(String("COMMAND: output stderr - " + stderr));
+      require('child_process').execFile(command_split[0], command_arg, function(err, stdout, stderr) {
+        logging(`COMMAND: output - ${stdout}`);
+        if (err) logging(`COMMAND: output error - ${err}`);
+        if (stderr) logging(`COMMAND: output stderr - ${stderr}`);
         if (!err && !stderr) resolve(true);
       });
     });
@@ -102,16 +102,19 @@ const appFrame = Object.freeze({
         appFrame.callProgram(`pkexec ${command}`);
         break;
 
-      default:
+      /*case 'xdg-su':
         logging('SUDOGUI: Running with xdg-su');
         appFrame.callProgram(`xdg-su -c '${command}'`);
+        break;*/
+
+      default:
         break;
     }
   },
 
   elevateWindows: function() {
     // call a child process
-    appFrame.callProgram(String("powershell Start-Process '" + process.argv0 + "' -ArgumentList '.' -Verb runAs")).then((response) => {
+    appFrame.callProgram(`powershell Start-Process '${process.argv0}' -ArgumentList '.' -Verb runAs`).then((response) => {
       if (response == true) window.close();
     });
   },
@@ -735,13 +738,13 @@ const appFrame = Object.freeze({
       if (updateResponse == 1) {
         switch (os.platform()) {
           case 'win32':
-            appFrame.callProgram(String('shutdown /r /t 0'));
+            appFrame.callProgram('shutdown /r /t 0');
             break;
           case 'linux':
             appFrame.linuxGuiSudo(`/sbin/reboot`);
             break;
           case 'darwin':
-            appFrame.callProgram(String("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'"));
+            appFrame.callProgram("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'");
             break;
           default:
             dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")}, response => {});

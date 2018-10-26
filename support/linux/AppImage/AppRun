@@ -23,8 +23,8 @@
 
 set -e
 
-AppVersion="1.0.0b5"
-AppBuild=5
+AppVersion="1.0.0rc1"
+AppBuild=6
 
 if [ ! -z "$DEBUG" ]
 then

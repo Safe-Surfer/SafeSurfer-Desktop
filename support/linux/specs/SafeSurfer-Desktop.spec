@@ -1,5 +1,5 @@
 Name:           SafeSurfer-Desktop
-Version:        1.0.0b5
+Version:        1.0.0rc1
 Release:        0
 Summary:        Keep safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
@@ -125,6 +125,9 @@ make PACKAGEFORMAT=flatpak BUILDMODE=RELEASE configure
 
 
 %changelog
+* Fri Oct 26 2018 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc1
+
 * Fri Oct  12 2018 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0b5
 

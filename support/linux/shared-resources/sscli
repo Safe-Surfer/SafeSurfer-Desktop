@@ -23,8 +23,8 @@ arg="$1"
 resolvconf="/etc/resolv.conf"
 primaryDNS="104.197.28.121"
 secondaryDNS="104.155.237.225"
-appVersion="1.0.0b5"
-appBuild="5"
+appVersion="1.0.0rc1"
+appBuild="6"
 
 function sudoUserCheck() {
 # check if user is root
@@ -70,6 +70,7 @@ done
 
 function checkServiceState() {
 # return if the service is enabled
+[ ! -z "$VERBOSE" ] && echo "STATUS: Checking status of service"
 if eval "$fetchCmd" | grep -q '<meta name="ss_status" content="protected">' || grep -E -q "$primaryDNS|$secondaryDNS" /etc/resolv.conf
 then
 	return 0
@@ -146,7 +147,7 @@ case "$arg" in
 		sudoUserCheck
 		if [ ! "$1" = "-f" ] || [ ! "$1" = "force" ]
 		then
-			checkServiceState && echo "SERVICE: Already enabled." || setDNSservers
+			VERBOSE=0 checkServiceState && echo "SERVICE: Already enabled." || setDNSservers
 		else
 			setDNSservers
 		fi
@@ -156,7 +157,7 @@ case "$arg" in
 		sudoUserCheck
 		if [ ! "$1" = "-f" ] || [ ! "$1" = "force" ]
 		then
-			checkServiceState && restoreDNSservers || echo "SERVICE: Already disabled."
+			VERBOSE=0 checkServiceState && restoreDNSservers || echo "SERVICE: Already disabled."
 		else
 			restoreDNSservers
 		fi
@@ -166,7 +167,7 @@ case "$arg" in
 		enableBackgroundService
 		;;
 	check|status|-c|--check|-s|--status)
-		checkServiceState && echo "SERVICE: Enabled." || echo "SERIVCE: Disabled."
+		VERBOSE=0 checkServiceState && echo "SERVICE: Enabled." || echo "SERIVCE: Disabled."
 		;;
 	launch|-l|--launch)
 		[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1

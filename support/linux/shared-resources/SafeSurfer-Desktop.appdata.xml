@@ -16,7 +16,12 @@
     </p>
   </description>
   <releases>
-    <release version="1.0.0b5" date="2018-10-5">
+    <release version="1.0.0rc1" date="2018-10-26">
+      <description>
+        <p>This release marks the first release candidate of Safe Surfer's desktop app.</p>
+      </description>
+    </release>
+    <release version="1.0.0b5" date="2018-10-12">
       <description>
         <p>This release marks the fifth beta of Safe Surfer's desktop app.</p>
       </description>

@@ -49,7 +49,7 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0b5/SafeSurfer-Desktop-1.0.0b5.zip",
+                    "url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0rc1/SafeSurfer-Desktop-1.0.0rc1.zip",
                     "sha256": "e1ff1e08cc7ebbaf165a6f80f4965ca3202eb2f2a50952ce87328f8bf0dc7748",
                     "dest": "main"
                 },
