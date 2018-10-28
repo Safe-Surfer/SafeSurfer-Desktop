@@ -14,7 +14,7 @@ For enterprise/business use, it is recommmend to apply the DNS settings on a rou
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
 For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
 
-### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc1): version 1.0.0rc1 (THIS IS A STABLE BETA)
+### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc1): version 1.0.0rc1 (Current release is a stable release candidate)
 ## Install the latest release candidate
 We need testers.  
 If you're wanting to test this software, please download the binaries or source and give it a go.  
@@ -74,10 +74,10 @@ deb:  debhelper devscripts
 rpm:  rpmbuild  
 arch: base-devel  
 AppImage: rpm2cpio wget tar ar  
-flatpak:
-- flatpak-builder
-- org.freedesktop.Sdk//1.6
-- io.atom.electron.BaseApp//stable
+flatpak:  
+- flatpak-builder  
+- org.freedesktop.Sdk//1.6  
+- io.atom.electron.BaseApp//stable  
 windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)  
 
 ### Packaging
@@ -85,7 +85,7 @@ deb: `make deb-pkg`
 arch: `make arch-pkg` PKGBUILD in [support/linux/arch](support/linux/arch)  
 rpm: use spec file in [support/linux/specs](support/linux/specs)  
 appimage: `make prep-appimage && make build-appimage`  
-flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)
+flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)  
 linux binary zip: `make build-linuxzip`  
 exe: use iss file in [support\\windows\\inno-script](support/windows/inno-script)  
 
