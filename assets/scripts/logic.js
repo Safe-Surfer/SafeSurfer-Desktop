@@ -993,12 +993,12 @@ $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET 
 $('#toggleButton').text(i18n.__('CHECKING SERVICE STATE').toUpperCase());
 
 // if auto-update checking is enabled and updates are enabled, check for them
-if (store.get('appUpdateAutoCheck') == true && updatesEnabled == true && (os.platform() != 'linux' || packageJSON.appOptions.BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) appFrame.checkForAppUpdate({
+if (updatesEnabled == true && store.get('appUpdateAutoCheck') == true) appFrame.checkForAppUpdate({
   current: false,
   showErrors: false
 });
 
-// log a message in the console for devs; yeah that's probably you if you're reading this :);
+// log a message in the console for devs; yeah that's probably you if you're reading this :)
 console.log(`> Are you a developer? Do you want to help us with this project?
 Join us by going to:
   - https://gitlab.com/safesurfer/SafeSurfer-Desktop

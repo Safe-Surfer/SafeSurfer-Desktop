@@ -95,7 +95,7 @@ module.exports = (app, mainWindow) => {
 	];
 
 	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-	if (updatesEnabled == true && (os.platform() != 'linux' || BUILDMODE == 'dev' || LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage')) menu[1].submenu.splice(2, 0, {
+	if (updatesEnabled == true) menu[1].submenu.splice(2, 0, {
 		label: i18n.__('Updates'),
 		submenu:
 		[

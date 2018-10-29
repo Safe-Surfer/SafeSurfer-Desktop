@@ -7,6 +7,7 @@ all: help
 configure:
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./package.json; fi
 	@if [[ ! -z "$(PACKAGEFORMAT)" ]]; then echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json; fi;
+	@if [[ "$(UPDATES)" = false ]]; then sed -i -e 's/"enableUpdates": true/"enableUpdates": false/g' ./package.json; fi
 
 check-deps:
 	@if [ ! -d node_modules ]; then echo "Whoops, you're missing node dependencies. Run 'npm i'."; exit 1; fi;
@@ -56,7 +57,7 @@ uninstall:
 	@rm -rf $(DESTDIR)/usr/share/pixmaps/ss-logo.png
 
 prep-deb:
-	make BUILDMODE=$(BUILDMODE) PACKAGEFORMAT=rpm configure
+	make BUILDMODE=$(BUILDMODE) PACKAGEFORMAT=rpm UPDATES=false configure
 	make build-linux
 	@mkdir -p deb-build/safesurfer-desktop
 	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
@@ -145,6 +146,7 @@ clean:
 	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder
 	@echo '{"linuxpackageformat":""}' > buildconfig/packageformat.json
 	@sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json
+	@sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json
 
 slim:
 	@rm -rf node_modules tools

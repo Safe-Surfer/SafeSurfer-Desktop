@@ -14,7 +14,7 @@ md5sums=('SKIP')
 prepare() {
 	cd "SafeSurfer-Desktop-$pkgver"
 	npm install
-	make PACKAGEFORMAT=arch BUILDMODE= configure
+	make PACKAGEFORMAT=arch BUILDMODE= UPDATES=false configure
 }
 
 build() {
