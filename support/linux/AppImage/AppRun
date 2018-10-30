@@ -65,9 +65,9 @@ if [ -z "$APPIMAGE_EXIT_AFTER_INSTALL" ]
 then
 	if [[ $NUMBER_OF_ARGS -eq 0 ]]
 	then
-		exec "$BIN"
+		LINUXPACKAGEFORMAT=appimage exec "$BIN"
 	else
-		exec "$BIN" "${args[@]}"
+		LINUXPACKAGEFORMAT=appimage exec "$BIN" "${args[@]}"
 	fi
 fi
 }

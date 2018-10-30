@@ -13,10 +13,10 @@ Linux:
 `npm i`  
 
 ### Configure the build (if needed)
-`make PACKAGEFORMAT=??? BUILDMODE=DEV UPDATES=true configure`
-i.e: `make PACKAGEFORMAT=rpm BUILDMODE=RELEASE UPDATES=false configure`
+`make BUILDMODE=DEV UPDATES=true configure`
+i.e: `make BUILDMODE=RELEASE UPDATES=false configure`
 Notes:
-- If you are packaging for a new Linux format, make sure when configuring to use 'PACKAGEFORMAT=' followed by the format type.
+- If you are packaging for a new Linux format, you must use the `LINUXPACKAGEFORMAT` runtime environment variable to tell the program how to use sscli is run properly. For instance, if `LINUXPACKAGEFORMAT` is `'appimage'` then it will look for it in `/tmp`, otherwise it will look for it installed in the `PATH` variable
 - Make sure you disable updates, since it will be handled by your package manager
 
 ### Building binaries

@@ -6,7 +6,7 @@ Store = require('electron-store'),
 global.desktop = Object.freeze({
   global: {
     jquery: () => require('jquery'),
-    linuxpackageformat: () => require('../../buildconfig/packageformat.json'),
+    linuxpackageformat: process.env.LINUXPACKAGEFORMAT === undefined ? undefined : process.env.LINUXPACKAGEFORMAT,
     packageJSON: () => require('../../package.json'),
     i18n: () => new (require('./i18n.js')),
     logging: () => require('./logging.js'),

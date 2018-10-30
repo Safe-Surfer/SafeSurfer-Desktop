@@ -37,7 +37,7 @@ const {dialog} = global.desktop.logic.dialogBox(),
   store = global.desktop.global.store(),
   i18n = global.desktop.global.i18n(),
   logging = global.desktop.global.logging(),
-  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat();
+  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat;
 
 // an object to keep track of multiple things
 window.appStates = {
@@ -55,12 +55,12 @@ window.appStates = {
 }
 
 // if a linux package format can't be found, then state unsureness
-if (typeof LINUXPACKAGEFORMAT.linuxpackageformat === undefined) LINUXPACKAGEFORMAT="???";
+if (typeof LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
 logging(String("INFO: platform  - " + os.platform()));
 logging(String("INFO: cwd       - " + process.cwd()));
 
 // find path where AppImage is mounted to, if packaged for AppImage
-if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
+if (LINUXPACKAGEFORMAT == 'appimage') {
   var aPath = process.env.PATH.split(path.delimiter);
   aPath.map(i => {if (i.includes('/tmp/.mount_')) appStates.appimagePATH = i;});
 }
@@ -295,7 +295,7 @@ const appFrame = Object.freeze({
     switch (os.platform()) {
       case 'linux':
         window.appStates.toggleLock = true;
-        switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
+        switch (LINUXPACKAGEFORMAT) {
           case 'appimage':
             // if sscli is able to be copyied to /tmp, run it
             if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage enable ${forced}`);
@@ -345,7 +345,7 @@ const appFrame = Object.freeze({
       case 'linux':
         // if sscli is able to be copyied to /tmp, run it
         window.appStates.toggleLock = true;
-        switch (LINUXPACKAGEFORMAT.linuxpackageformat) {
+        switch (LINUXPACKAGEFORMAT) {
           case 'appimage':
             // if sscli is able to be copyied to /tmp, run it
             if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) {
@@ -354,7 +354,7 @@ const appFrame = Object.freeze({
             break;
           default:
             // run from project folder ./
-            if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT.linuxpackageformat == '') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
+            if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT == '') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
             else appFrame.linuxGuiSudo(`sscli disable ${forced}`);
             break;
         }
@@ -467,7 +467,7 @@ const appFrame = Object.freeze({
                 genLink;
               switch (os.platform()) {
                 case 'linux':
-                  if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
+                  if (LINUXPACKAGEFORMAT == 'appimage') {
                     ext = ".AppImage";
                     genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
                   }
@@ -521,7 +521,7 @@ const appFrame = Object.freeze({
                 genLink;
               switch (os.platform()) {
                 case 'linux':
-                  if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage') {
+                  if (LINUXPACKAGEFORMAT == 'appimage') {
                     ext = ".AppImage";
                     genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
                   }
@@ -574,7 +574,7 @@ const appFrame = Object.freeze({
       BUILDMODE: BUILDMODE,
       ISSERVICEENABLED: window.appStates.serviceEnabled[0],
     };
-    if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
+    if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
     return JSON.stringify(dataGathered);
   },
 
@@ -769,7 +769,7 @@ const appFrame = Object.freeze({
         dataGathered.APPVERSION = APPVERSION;
         dataGathered.PLATFORM = os.platform();
         dataGathered.ISSERVICEENABLED = window.appStates.serviceEnabled[0];
-        if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT.linuxpackageformat;
+        if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
         appFrame.sendTelemetry(JSON.stringify(dataGathered));
 
         var previous = store.get('teleHistory');
@@ -809,7 +809,7 @@ const appFrame = Object.freeze({
           $('.progressInfoBar').css("height", "0px");
           window.appStates.toggleLock = false;
           appFrame.displayRebootMessage();
-          if (LINUXPACKAGEFORMAT.linuxpackageformat == 'appimage' && global.desktop.logic.testForFile('/tmp/sscli-appimage')) global.desktop.logic.remove_sscli();
+          if (LINUXPACKAGEFORMAT == 'appimage' && global.desktop.logic.testForFile('/tmp/sscli-appimage')) global.desktop.logic.remove_sscli();
         }
     }
     if (window.appStates.serviceEnabled[0] == true) {
@@ -993,7 +993,7 @@ $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET 
 $('#toggleButton').text(i18n.__('CHECKING SERVICE STATE').toUpperCase());
 
 // if auto-update checking is enabled and updates are enabled, check for them
-if (updatesEnabled == true && store.get('appUpdateAutoCheck') == true) appFrame.checkForAppUpdate({
+if ((updatesEnabled == true && store.get('appUpdateAutoCheck') == true) || process.env.APPUPDATES === "true") appFrame.checkForAppUpdate({
   current: false,
   showErrors: false
 });

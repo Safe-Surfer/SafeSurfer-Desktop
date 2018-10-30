@@ -6,7 +6,6 @@ all: help
 
 configure:
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./package.json; fi
-	@if [[ ! -z "$(PACKAGEFORMAT)" ]]; then echo '{"linuxpackageformat":"$(PACKAGEFORMAT)"}' > ./buildconfig/packageformat.json; fi;
 	@if [[ "$(UPDATES)" = false ]]; then sed -i -e 's/"enableUpdates": true/"enableUpdates": false/g' ./package.json; fi
 
 check-deps:
@@ -57,7 +56,7 @@ uninstall:
 	@rm -rf $(DESTDIR)/usr/share/pixmaps/ss-logo.png
 
 prep-deb:
-	make BUILDMODE=$(BUILDMODE) PACKAGEFORMAT=rpm UPDATES=false configure
+	make BUILDMODE=$(BUILDMODE) UPDATES=false configure
 	make build-linux
 	@mkdir -p deb-build/safesurfer-desktop
 	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
@@ -101,7 +100,7 @@ prep-appimage:
 
 build-appimage:
 	@if [ ! -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "Please run 'make prep-appimage'."; exit 1; fi;
-	make BUILDMODE=$(BUILDMODE) PACKAGEFORMAT=appimage configure
+	make BUILDMODE=$(BUILDMODE) configure
 	make build-linux
 	make DESTDIR=SafeSurfer-Desktop.AppDir install
 	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/lib
@@ -133,7 +132,7 @@ build-appimage:
 	./tools/appimagetool-x86_64.AppImage -n $(OPTS) SafeSurfer-Desktop.AppDir
 
 prepare-rpm-bin:
-	make BUILDMODE=$(BUILDMODE) PACKAGEFORMAT=rpm configure
+	make BUILDMODE=$(BUILDMODE) configure
 	make build-linux
 
 compile-win-setup:
@@ -144,7 +143,6 @@ compile-win-setup32:
 
 clean:
 	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder
-	@echo '{"linuxpackageformat":""}' > buildconfig/packageformat.json
 	@sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json
 	@sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json
 

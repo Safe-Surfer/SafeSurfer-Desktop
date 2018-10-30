@@ -36,7 +36,7 @@ var accountIsAssigned = store.get('accountInformation'),
   appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
   betaCheck,
   teleEnabled = store.get('telemetryAllow'),
-  LINUXPACKAGEFORMAT = require('../../buildconfig/packageformat.json');
+  LINUXPACKAGEFORMAT = process.env.LINUXPACKAGEFORMAT === undefined ? '' : process.env.LINUXPACKAGEFORMAT;
 
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
 if (betaCheck === undefined && BUILDMODE != 'dev') {
@@ -95,7 +95,7 @@ module.exports = (app, mainWindow) => {
 	];
 
 	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-	if (updatesEnabled == true) menu[1].submenu.splice(2, 0, {
+	if (updatesEnabled == true || process.env.APPUPDATES === "true") menu[1].submenu.splice(2, 0, {
 		label: i18n.__('Updates'),
 		submenu:
 		[
