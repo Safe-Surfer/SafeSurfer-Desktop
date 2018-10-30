@@ -102,34 +102,39 @@ build-appimage:
 	@if [ ! -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "Please run 'make prep-appimage'."; exit 1; fi;
 	make BUILDMODE=$(BUILDMODE) configure
 	make build-linux
-	make DESTDIR=SafeSurfer-Desktop.AppDir install
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/lib
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/16x16/apps
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/24x24/apps
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/32x32/apps
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/48x48/apps
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/64x64/apps
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/128x128/apps
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/256x256/apps
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/512x512/apps
-	@mkdir -p ./SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/1024x1024/apps
-	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop
-	@cp ./assets/media/icons/png/16x16.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/16x16/apps/ss-logo.png
-	@cp ./assets/media/icons/png/24x24.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/24x24/apps/ss-logo.png
-	@cp ./assets/media/icons/png/32x32.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/32x32/apps/ss-logo.png
-	@cp ./assets/media/icons/png/48x48.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/48x48/apps/ss-logo.png
-	@cp ./assets/media/icons/png/64x64.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/64x64/apps/ss-logo.png
-	@cp ./assets/media/icons/png/128x128.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/128x128/apps/ss-logo.png
-	@cp ./assets/media/icons/png/256x256.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/256x256/apps/ss-logo.png
-	@cp ./assets/media/icons/png/512x512.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/512x512/apps/ss-logo.png
-	@cp ./assets/media/icons/png/1024x1024.png SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/1024x1024/apps/ss-logo.png
-	@cp ./assets/media/icons/png/256x256.png SafeSurfer-Desktop.AppDir/ss-logo.png
-	@cp ./support/linux/AppImage/AppRun SafeSurfer-Desktop.AppDir
-	@chmod +x SafeSurfer-Desktop.AppDir/AppRun
-	@cp -r tools/resources/libgconf/usr/lib/x86_64-linux-gnu/. SafeSurfer-Desktop.AppDir/usr/lib
-	@cp -r tools/resources/libXScrnSaver/usr/lib64/. SafeSurfer-Desktop.AppDir/usr/lib64
-	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop
-	./tools/appimagetool-x86_64.AppImage -n $(OPTS) SafeSurfer-Desktop.AppDir
+	make DESTDIR=nz.co.safesurfer.SafeSurfer-Desktop.AppDir install
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/lib
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/16x16/apps
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/24x24/apps
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/32x32/apps
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/48x48/apps
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/64x64/apps
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/128x128/apps
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/256x256/apps
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/512x512/apps
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/1024x1024/apps
+	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop nz.co.safesurfer.SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop
+	@cp ./assets/media/icons/png/16x16.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/16x16/apps/ss-logo.png
+	@cp ./assets/media/icons/png/24x24.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/24x24/apps/ss-logo.png
+	@cp ./assets/media/icons/png/32x32.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/32x32/apps/ss-logo.png
+	@cp ./assets/media/icons/png/48x48.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/48x48/apps/ss-logo.png
+	@cp ./assets/media/icons/png/64x64.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/64x64/apps/ss-logo.png
+	@cp ./assets/media/icons/png/128x128.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/128x128/apps/ss-logo.png
+	@cp ./assets/media/icons/png/256x256.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/256x256/apps/ss-logo.png
+	@cp ./assets/media/icons/png/512x512.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/512x512/apps/ss-logo.png
+	@cp ./assets/media/icons/png/1024x1024.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/1024x1024/apps/ss-logo.png
+	@cp ./assets/media/icons/png/256x256.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/ss-logo.png
+	@cp ./support/linux/AppImage/AppRun nz.co.safesurfer.SafeSurfer-Desktop.AppDir
+	@chmod +x nz.co.safesurfer.SafeSurfer-Desktop.AppDir/AppRun
+	@cp -r tools/resources/libgconf/usr/lib/x86_64-linux-gnu/. nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/lib
+	@cp -r tools/resources/libXScrnSaver/usr/lib64/. nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/lib64
+	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/nz.co.safesurfer.SafeSurfer-Desktop.desktop
+	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/applications/SafeSurfer-Desktop.desktop ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/applications/nz.co.safesurfer.SafeSurfer-Desktop.desktop
+	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurfer-Desktop.appdata.xml
+	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/nz.co.safesurfer.SafeSurfer-Desktop.desktop
+	@sed -i -e "s#<id>SafeSurfer-Desktop.desktop</id>#<id>nz.co.safesurfer.SafeSurfer-Desktop.desktop</id>#g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurfer-Desktop.appdata.xml
+	@if [ $(DISABLEINTEGRATION) = true ]; then sed -i -e "s,#exit # Uncomment to disable integration,exit,g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/AppRun; fi
+	./tools/appimagetool-x86_64.AppImage $(OPTS) nz.co.safesurfer.SafeSurfer-Desktop.AppDir
 
 prepare-rpm-bin:
 	make BUILDMODE=$(BUILDMODE) configure
@@ -142,7 +147,7 @@ compile-win-setup32:
 	npm run compile-win-setup32
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder
+	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder
 	@sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json
 	@sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json
 

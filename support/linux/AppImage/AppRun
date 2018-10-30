@@ -56,7 +56,7 @@ export LD_LIBRARY_PATH="${APPDIR}/usr/lib":$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH="${APPDIR}/usr/lib64":$LD_LIBRARY_PATH
 export APPIMAGE_LIBRARY_PATH="${APPIMAGE_LIBRARY_PATH}:/usr/lib"
 export APPIMAGE_LIBRARY_PATH="${APPIMAGE_LIBRARY_PATH}:/usr/lib64"
-DESKTOP_FILE="$APPDIR/SafeSurfer-Desktop.desktop"
+DESKTOP_FILE="$APPDIR/nz.co.safesurfer.SafeSurfer-Desktop.desktop"
 BIN="$APPDIR/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop"
 
 function atexit() {
@@ -223,6 +223,10 @@ esac
 
 trap atexit EXIT
 
+DISPLAY_A_MSG=0 check_dep pkexec "Without pkexec/polkit, SafeSurfer-desktop is unable to enable DNS settings. Please install polkit-1 from via software repositories."
+
+#exit # Uncomment to disable integration
+
 # Exit immediately of one of these files is present
 # (e.g., because the desktop environment wants to handle desktop integration itself)
 check_prevent "$HOME/.local/share/$VENDORPREFIX/no_desktopintegration"
@@ -244,7 +248,6 @@ then
 	exit 0
 fi
 
-DISPLAY_A_MSG=0 check_dep pkexec "Without pkexec/polkit, SafeSurfer-desktop is unable to enable DNS settings. Please install polkit-1 from via software repositories."
 # Check whether dependencies are present in base system (we do not bundle these)
 # http://cgit.freedesktop.org/xdg/desktop-file-utils/
 DISPLAY_A_MSG=0 check_dep desktop-file-install

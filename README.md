@@ -49,6 +49,9 @@ Check out our [bug reporting guide](docs/BUGS.md).
 Have you used SafeSurfer-Desktop and want to give feedback?
 Visit our [feedback](http://safesurfer.co.nz/feedback) site to leave us some feedback.
 
+## Notes
+- This program have been tested on openSUSE Leap 15, Windows 10 (1803, 1809), Windows 7 (SP1), Fedora 28, Ubuntu (18.04, 14.04), Arch Linux, Windows 8.1, and macOS.  
+
 ## License
 Copyright 2018 Safe Surfer.  
 This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html) and is [free software](https://www.gnu.org/philosophy/free-sw.en.html).  
