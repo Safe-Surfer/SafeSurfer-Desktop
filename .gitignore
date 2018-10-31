@@ -6,4 +6,4 @@ build
 .flatpak-builder
 zip-build
 tools
-SafeSurfer-Desktop.AppDir
+nz.co.safesurfer.SafeSurfer-Desktop.AppDir

@@ -37,7 +37,7 @@ const {dialog} = global.desktop.logic.dialogBox(),
   store = global.desktop.global.store(),
   i18n = global.desktop.global.i18n(),
   logging = global.desktop.global.logging(),
-  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat;
+  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat === undefined ? '' : global.desktop.global.linuxpackageformat === undefined;
 
 // an object to keep track of multiple things
 window.appStates = {
@@ -56,8 +56,8 @@ window.appStates = {
 
 // if a linux package format can't be found, then state unsureness
 if (typeof LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
-logging(String("INFO: platform  - " + os.platform()));
-logging(String("INFO: cwd       - " + process.cwd()));
+logging(`INFO: platform  - ${os.platform()}`);
+logging(`INFO: cwd       - ${process.cwd()}`);
 
 // find path where AppImage is mounted to, if packaged for AppImage
 if (LINUXPACKAGEFORMAT == 'appimage') {
@@ -250,23 +250,21 @@ const appFrame = Object.freeze({
       Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
         if (error >= 400 && error <= 599) {
           window.appStates.internet[0] = false;
-          logging(String("HTTP error:" + error));
+          logging(`HTTP error: ${error}`);
         }
         else window.appStates.internet[0] = true;
 
         var metaResponse = global.desktop.logic.letsGetMeta()(body),
           searchForResp = body.search('<meta name="ss_status" content="protected">');
-        logging(String("STATE - metaResponse.ss_status :: " + metaResponse.ss_status));
+        logging(`STATE - metaResponse.ss_status :: ${metaResponse.ss_status}`);
         if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
           window.appStates.serviceEnabled[0] = false;
           logging('STATE: Get Request - Service disabled');
-          //appFrame.affirmServiceState();
         }
         // if the meta tag returns protected
         if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
           window.appStates.serviceEnabled[0] = true;
           logging('STATE: Get Request - Service enabled');
-          //appFrame.affirmServiceState();
         }
         // if neither are returned
         else {
@@ -303,7 +301,7 @@ const appFrame = Object.freeze({
 
           default:
             // run from project folder ./
-            if (window.desktop.logic.testForFile(String(process.cwd() + '/support/linux/shared-resources/sscli')) == true) appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli enable ${forced}`);
+            if (window.desktop.logic.testForFile(`${process.cwd()}/support/linux/shared-resources/sscli`) == true) appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli enable ${forced}`);
             // run from system if installed
             else appFrame.linuxGuiSudo(`sscli enable ${forced}`);
             break;
@@ -388,7 +386,7 @@ const appFrame = Object.freeze({
         bonjour.findOne({ type: "sslifeguard" }, (service) => {
           // if a lifeguard is found
           if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
-            logging(String("LIFEGUARDSTATE: found " + service.fqdn));
+            logging(`LIFEGUARDSTATE: found ${service.fqdn}`);
             resolve(true);
           }
         });
@@ -406,7 +404,7 @@ const appFrame = Object.freeze({
   internetConnectionCheck: async function() {
     // check the user's internet connection
     global.desktop.logic.connectivity()((online) => {
-      logging(String("INTERNETSTATE: " + online));
+      logging(`INTERNETSTATE: ${online}`);
       window.appStates.appHasLoaded = true;
       Promise.resolve(online);
     });
@@ -425,7 +423,7 @@ const appFrame = Object.freeze({
      serverAddress = "142.93.48.189",
      serverPort = 80,
      serverDataFile = "/files/desktop/version-information.json",
-     updateErrorDialog = {type: 'info', buttons: ['Ok'], message: String(i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong."))};
+     updateErrorDialog = {type: 'info', buttons: ['Ok'], message: i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong.")};
 
     logging(`UPDATES: About to fetch http://${serverAddress}:${serverPort}${serverDataFile}`);
     Request.get(`http://${serverAddress}:${serverPort}${serverDataFile}`, (error, response, body) => {
@@ -459,7 +457,7 @@ const appFrame = Object.freeze({
 
       if (buildRecommended > parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // update available
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: String(i18n.__('There is an update available' ) + '(v' + remoteData.versions[iteration].version + '). ' + i18n.__('Do you want to install it now?'))}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${remoteData.versions[iteration].version}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("UPDATES: User wants update.");
             if (remoteData.versions[iteration].altLink === undefined) {
@@ -467,21 +465,21 @@ const appFrame = Object.freeze({
                 genLink;
               switch (os.platform()) {
                 case 'linux':
-                  if (LINUXPACKAGEFORMAT == 'appimage') {
+                  if (LINUXPACKAGEFORMAT === 'appimage') {
                     ext = ".AppImage";
-                    genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+                    genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
                   }
                   else genLink = remoteData.linkBase;
                   break;
 
                 case 'win32':
                   ext = ".exe";
-                  genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
                   break;
 
                 case 'darwin':
                   ext = ".app.zip";
-                  genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
                   break;
               }
               global.desktop.logic.electronOpenExternal()(genLink);
@@ -500,7 +498,7 @@ const appFrame = Object.freeze({
 
       else if (buildRecommended == parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1 && options.current == true) {
         // up to date
-        dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: String(i18n.__("You're up to date."))}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: i18n.__("You're up to date.")}, updateResponse => {
           if (updateResponse == 0) {
             logging("UPDATES: User has the latest version installed.");
             return;
@@ -513,7 +511,7 @@ const appFrame = Object.freeze({
 
       else if (buildRecommended < parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // user must downgrade
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: String(i18n.__('Please downgrade to version ') + remoteData.versions[iteration].version + '. ' + i18n.__('Do you want to install it now?'))}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version ')} ${remoteData.versions[iteration].version}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("UPDATES: User wants to downgrade.");
             //global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
@@ -523,19 +521,19 @@ const appFrame = Object.freeze({
                 case 'linux':
                   if (LINUXPACKAGEFORMAT == 'appimage') {
                     ext = ".AppImage";
-                    genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+                    genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
                   }
                   else genLink = remoteData.linkBase;
                   break;
 
                 case 'win32':
                   ext = ".exe";
-                  genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
                   break;
 
                 case 'darwin':
                   ext = ".app.zip";
-                  genLink = String(remoteData.linkBase + "/files/desktop/" + buildRecommended + "-" + remoteData.versions[iteration].version + "/SafeSurfer-Desktop-" + remoteData.versions[iteration].version + "-" + buildRecommended + "-" + os.arch() + ext);
+                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
                   break;
               }
               global.desktop.logic.electronOpenExternal()(genLink);
@@ -603,7 +601,7 @@ const appFrame = Object.freeze({
       }
       if (err >= 400 && err <= 599) {
         logging('TELE: Could not send.');
-        logging(String("HTTP error:" + err));
+        logging(`HTTP error: ${err}`);
         return;
       }
     });
@@ -614,8 +612,8 @@ const appFrame = Object.freeze({
     var sharingData = appFrame.collectTelemetry(),
      messageText = {
       nothingSent: {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")},
-      teleMsg: {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: String(i18n.__("Data sharing") + "\n\n" + String(i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.") + "\n" + i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.") + "\n- " + i18n.__("Safe Surfer team")))},
-      previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: String(i18n.__("Here is what will be sent:")+"\n\n"+(sharingData)+"\n\n" + i18n.__("In case you don't understand this data, it includes (such things as):") + "\n- " + i18n.__("Which operating system you use") + "\n- " + i18n.__("How many CPU cores you have") + "\n -" + i18n.__("The language you have set") + "\n - " + i18n.__("If the service is setup on your computer") + "\n\n" + i18n.__("We are also interested in updates, so with data sharing we will also be notified of which version you've to updated."))}
+      teleMsg: {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: `${i18n.__("Data sharing")}\n\n${i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.")}\n${i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.")}\n- ${i18n.__("Safe Surfer team")}`},
+      previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is setup on your computer")}\n\n${i18n.__("We are also interested in updates, so with data sharing we will also be notified of which version you've to updated.")}`}
     };
     dialog.showMessageBox(messageText.teleMsg, dialogResponse => {
       logging("TELE: User has agreed to the prompt.");
@@ -668,7 +666,7 @@ const appFrame = Object.freeze({
   forceToggleWarning: function({wantedState}) {
     // display warning message as this could break settings
     const messageText = {
-      toggleWarning: {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: String(i18n.__('The service is already in the state which you request.' + "\n" + i18n.__('Forcing the service to be enabled in this manner may have consequences.') + '\n' + i18n.__('Your computer\'s network configuration could break by doing this action.')))},
+      toggleWarning: {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: `${i18n.__('The service is already in the state which you request.')}\n${i18n.__('Forcing the service to be enabled in this manner may have consequences.')}\n${i18n.__('Your computer\'s network configuration could break by doing this action.')}`},
      lifeguardMessage: {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.")}
     }
     if (window.appStates.lifeguardFound[0] == true) {
@@ -733,7 +731,7 @@ const appFrame = Object.freeze({
 
   displayRebootMessage: function() {
     // tell the user to reboot
-    var dialogRebootMessage = window.appStates.serviceEnabled[0] ? {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Great, your computer is setup.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))} : {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: String(i18n.__("Ok, Safe Surfer has been removed.") + "\n" + i18n.__("To make sure of this, we recommend that you please reboot/restart your computer."))}
+    var dialogRebootMessage = window.appStates.serviceEnabled[0] ? {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: `${i18n.__("Great, your computer is setup.")}\n${i18n.__("To make sure of this, we recommend that you please reboot/restart your computer.")}`} : {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: `${i18n.__("Ok, Safe Surfer has been removed.")}\n${i18n.__("To make sure of this, we recommend that you please reboot/restart your computer.")}`}
     dialog.showMessageBox(dialogRebootMessage, updateResponse => {
       if (updateResponse == 1) {
         switch (os.platform()) {
@@ -903,7 +901,7 @@ const appFrame = Object.freeze({
       return;
     }
     logging("WINVERCHECK: User is not on a compatible version of Windows")
-    var dialogMsg = {type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: String(i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app."))}
+    var dialogMsg = {type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app.")}
     dialog.showMessageBox(dialogMsg, msgResponse => {
       if (msgResponse == 1) global.desktop.logic.electronOpenExternal()('https://safesurfer.desk.com/desktop-app-required-specs');
     });
@@ -912,7 +910,7 @@ const appFrame = Object.freeze({
 
 global.desktop.logic.electronIPCon('toggleAppUpdateAutoCheck', (event, arg) => {
   // if user changes the state of auto check for updates
-  logging(String("UPDATES: Auto check state changed to " + !arg));
+  logging(`UPDATES: Auto check state changed to ${!arg}`);
   if (arg == true) {
     store.set('appUpdateAutoCheck', false);
   }
@@ -924,7 +922,7 @@ global.desktop.logic.electronIPCon('toggleAppUpdateAutoCheck', (event, arg) => {
 
 global.desktop.logic.electronIPCon('betaCheck', (event, arg) => {
   // if user changes the state of auto check for updates
-  logging(String("UPDATES: Beta state changed to " + !arg));
+  logging(`UPDATES: Beta state changed to ${!arg}`);
   if (arg == true) {
     store.set('betaCheck', false);
   }
