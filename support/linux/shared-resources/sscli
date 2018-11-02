@@ -106,7 +106,11 @@ fi
 function restoreDNSservers() {
 # restore DNS settings
 chattr -i /etc/resolv.conf
-[ ! -f "$resolvconf.before_safesurfer" ] && echo "ERROR: Could not find DNS backup file."
+if [ ! -e "$resolvconf.before_safesurfer" ]
+then
+	echo "ERROR: Unable to find backup."
+	exit 1
+fi
 mv "$resolvconf"{.before_safesurfer,}
 if ! checkServiceState
 then
@@ -145,7 +149,7 @@ case "$arg" in
 	enable|-e|--enable)
 		shift
 		sudoUserCheck
-		if [ ! "$1" = "-f" ] || [ ! "$1" = "force" ]
+		if [ ! "$1" = "-f" ] && [ ! "$1" = "force" ]
 		then
 			VERBOSE=0 checkServiceState && echo "SERVICE: Already enabled." || setDNSservers
 		else
@@ -155,7 +159,7 @@ case "$arg" in
 	disable|-d|--disable)
 		shift
 		sudoUserCheck
-		if [ ! "$1" = "-f" ] || [ ! "$1" = "force" ]
+		if [ ! "$1" = "-f" ] && [ ! "$1" = "force" ]
 		then
 			VERBOSE=0 checkServiceState && restoreDNSservers || echo "SERVICE: Already disabled."
 		else

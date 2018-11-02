@@ -8,28 +8,6 @@
   position: absolute;
   z-index: -50;
   background-color: white;
-  /*background: linear-gradient(94deg, #ffffff, #ffffff, #e6faff, #ffffff);
-  background-size: 1000% 1000%;
-
-  -webkit-animation: AboutApp 180s ease infinite;
-  -moz-animation: AboutApp 180s ease infinite;
-  animation: AboutApp 180s ease infinite;*/
-}
-
-@-webkit-keyframes AboutApp {
-  0%{background-position:0% 96%}
-  50%{background-position:100% 5%}
-  100%{background-position:0% 96%}
-}
-@-moz-keyframes AboutApp {
-  0%{background-position:0% 96%}
-  50%{background-position:100% 5%}
-  100%{background-position:0% 96%}
-}
-@keyframes AboutApp {
-  0%{background-position:0% 96%}
-  50%{background-position:100% 5%}
-  100%{background-position:0% 96%}
 }
 
 .descriptionText {

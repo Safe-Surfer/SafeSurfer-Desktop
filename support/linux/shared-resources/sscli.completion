@@ -2,15 +2,20 @@
 
 _sscli()
 {
-    local cur prev
-    COMPREPLY=()
-    cur="${COMP_WORDS[COMP_CWORD]}"
-    prev="${COMP_WORDS[COMP_CWORD-1]}"
+	local cur prev
+	_init_completion -s || return
+	case $prev in
+	-e|--enable|-d|--disable)
+		COMPREPLY=( $( compgen -W "-f force" -- ${cur} ) )
+		return
+	;;
+	esac
 
-    if [[ ${cur} == * ]] ; then
-        COMPREPLY=( $(compgen -W "enable -e --enable disable -d --disable launch -l --launch check -c --check status -s --status service -s --service help -h --help" -- ${cur}) )
-        return 0
-    fi
+	if [[ $cword -eq 1 ]]
+	then
+		COMPREPLY=( $(compgen -W "enable -e --enable disable -d --disable launch -l --launch check -c --check status -s --status service -s --service help -h --help" -- ${cur}) )
+		return 0
+	fi
 }
 
 complete -F _sscli sscli

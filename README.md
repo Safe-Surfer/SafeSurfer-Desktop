@@ -1,15 +1,17 @@
 ![license](https://img.shields.io/badge/License-GPL%20v3-blue.svg)
+[![Translation status](https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
 
 # SafeSurfer-Desktop
-
+![Safe Surfer logo](./assets/media/icons/png/128x128.png)  
 ## Who is [Safe Surfer](http://safesurfer.co.nz)?
 Safe Surfer's mission is to keep children, individuals, and organsations safe online. We achieve this by filtering out harmful material that may be found when browsing the internet and switching on safe search for a number of search engines.  
-Read more [here](http://www.safesurfer.co.nz/the-cause).  
+You can read more [here](http://www.safesurfer.co.nz/the-cause).  
 
 ## App information
-Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS settings for you (on a device, not network).  
-This project's intent is for desktop users (families, persons, etc). Our aim in this project is to make it as easy as possible to get protected and be safe online.  
-For enterprise/business use, it is recommmend to apply the DNS settings on a router which devices are connected to.  
+Safe Surfer Desktop [is an Electron based app, which] sets the Safe Surfer DNS settings on your device.  
+Our aim for this project is to make it as easy as possible to get families and persons protected online on their desktops or laptops, ensuring safety and peace-of-mind.  
+
+For enterprise/business use, we recommmend to apply the DNS settings on a router which devices are connected to.  
 
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
 For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
@@ -21,23 +23,22 @@ If you're wanting to test this software, please download the binaries or source 
 Our temporary site is found [here](http://142.93.48.189).  
 
 ## Features
-- Toggle DNS settings through one button  
+- Toggle DNS settings with one button  
 - Protects against harmful content  
 - Easy to use and setup  
+- Configure lifeguard from inside the app  
 
 ## Building
 Consult the [build manual](docs/BUILDING.md) for instructions.  
 
 ## Contributing
 Read our [contribution guide](docs/CONTRIBUTING.md) to get started!  
-We look forward to your help on this project, together helping families and individuals stay safe on the internet!  
+We'd love your help on this project, together helping families and individuals stay safe on the internet!  
 
 ### Translating Safe Surfer desktop
-[![Translation status](https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
-
 [![Translation status list](https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-auto.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
 
-Note: Although it might say that the translation is 100%, it may need review.  
+Note: Although some translations display as 100%, they may need review.  
 Help us speak your language!  
 Read our [translation guide](docs/TRANSLATING.md) to get started!  
 

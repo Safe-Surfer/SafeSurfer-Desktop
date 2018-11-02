@@ -72,7 +72,7 @@ module.exports = (app, mainWindow) => {
 		  submenu:
 		  [
 			  {label: i18n.__('Check status in browser'), click() {electron.shell.openExternal('http://check.safesurfer.co.nz/')} },
-	    	{label: i18n.__('Report a bug'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/BUGS.md')} },
+	    	{label: i18n.__('Report a bug'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/docs/BUGS.md')} },
 		    {type:'separator'},
 			  {label: i18n.__('Restart app'), click() {app.relaunch(); app.quit()} },
         {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }

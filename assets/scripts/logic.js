@@ -37,7 +37,7 @@ const {dialog} = global.desktop.logic.dialogBox(),
   store = global.desktop.global.store(),
   i18n = global.desktop.global.i18n(),
   logging = global.desktop.global.logging(),
-  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat === undefined ? '' : global.desktop.global.linuxpackageformat === undefined;
+  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat === undefined ? '' : global.desktop.global.linuxpackageformat;
 
 // an object to keep track of multiple things
 window.appStates = {
@@ -61,8 +61,9 @@ logging(`INFO: cwd       - ${process.cwd()}`);
 
 // find path where AppImage is mounted to, if packaged for AppImage
 if (LINUXPACKAGEFORMAT == 'appimage') {
-  var aPath = process.env.PATH.split(path.delimiter);
-  aPath.map(i => {if (i.includes('/tmp/.mount_')) appStates.appimagePATH = i;});
+  process.env.PATH.split(path.delimiter).map(i => {
+    if (i.includes('/tmp/.mount_')) appStates.appimagePATH = i;
+  });
 }
 
 if (os.platform() == 'linux') {
@@ -124,15 +125,12 @@ const appFrame = Object.freeze({
     switch (os.platform()) {
       case 'win32':
         global.desktop.logic.isAdmin().then(admin => {
-          if (admin == false) {
-            window.appStates.userIsAdmin = false;
-            appFrame.elevateWindows();
-          }
-          else window.appStates.userIsAdmin = true;
+          window.appStates.userIsAdmin = admin;
+          if (admin == false) appFrame.elevateWindows();
         });
         break;
       default:
-        window.appStates.userIsAdmin = true
+        window.appStates.userIsAdmin = true;
         break;
     }
   },
@@ -233,13 +231,13 @@ const appFrame = Object.freeze({
       case false:
         logging('STATE: trying affirm disable');
         appFrame.displayUnprotection();
-        return 0;
+        return;
         break;
 
       case true:
         logging('STATE: trying affirm enable');
         appFrame.displayProtection();
-        return 0;
+        return;
         break;
     }
   },
@@ -247,37 +245,38 @@ const appFrame = Object.freeze({
   checkServiceState: function() {
     // check the state of the service
     logging('STATE: Getting state of service');
-      Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
-        if (error >= 400 && error <= 599) {
-          window.appStates.internet[0] = false;
-          logging(`HTTP error: ${error}`);
-        }
-        else window.appStates.internet[0] = true;
+    Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
+      // since the request has succeeded, we can count the app as loaded
+      window.appStates.appHasLoaded = true;
+      if (error >= 400 && error <= 599) {
+        window.appStates.internet[0] = false;
+        logging(`HTTP error: ${error}`);
+        return;
+      }
+      else window.appStates.internet[0] = true;
 
-        var metaResponse = global.desktop.logic.letsGetMeta()(body),
-          searchForResp = body.search('<meta name="ss_status" content="protected">');
-        logging(`STATE - metaResponse.ss_status :: ${metaResponse.ss_status}`);
-        if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
-          window.appStates.serviceEnabled[0] = false;
-          logging('STATE: Get Request - Service disabled');
+      var metaResponse = global.desktop.logic.letsGetMeta(body),
+        searchForResp = body.search('<meta name="ss_status" content="protected">');
+      logging(`STATE - metaResponse.ss_status :: ${metaResponse.ss_status}`);
+      if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
+        window.appStates.serviceEnabled[0] = false;
+        logging('STATE: Get Request - Service disabled');
+      }
+      // if the meta tag returns protected
+      if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
+        window.appStates.serviceEnabled[0] = true;
+        logging('STATE: Get Request - Service enabled');
+      }
+      // if neither are returned
+      else {
+        logging("STATE: Get Request - Can't see protection state from meta tag");
+        // check internet connection
+        if (window.appStates.internet[0] == true) {
+          logging('STATE: Get Request - Unsure of state');
         }
-        // if the meta tag returns protected
-        if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
-          window.appStates.serviceEnabled[0] = true;
-          logging('STATE: Get Request - Service enabled');
-        }
-        // if neither are returned
-        else {
-          logging("STATE: Get Request - Can't see protection state from meta tag");
-          // check internet connection
-          if (window.appStates.internet[0] == true) {
-            logging('STATE: Get Request - Unsure of state');
-          }
-          else if (error !== undefined || window.appStates.internet[0] != true) logging('NETWORK: Internet connection unavailable');
-        }
-        // since the request has succeeded, we can count the app as loaded
-        window.appStates.appHasLoaded = true;
-      });
+        else if (error !== undefined || window.appStates.internet[0] != true) logging('NETWORK: Internet connection unavailable');
+      }
+    });
   },
 
   enableServicePerPlatform: function({forced = ""}) {
@@ -293,18 +292,14 @@ const appFrame = Object.freeze({
     switch (os.platform()) {
       case 'linux':
         window.appStates.toggleLock = true;
-        switch (LINUXPACKAGEFORMAT) {
-          case 'appimage':
-            // if sscli is able to be copyied to /tmp, run it
-            if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage enable ${forced}`);
-            break;
-
-          default:
-            // run from project folder ./
-            if (window.desktop.logic.testForFile(`${process.cwd()}/support/linux/shared-resources/sscli`) == true) appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli enable ${forced}`);
-            // run from system if installed
-            else appFrame.linuxGuiSudo(`sscli enable ${forced}`);
-            break;
+        if (LINUXPACKAGEFORMAT === 'appimage') {
+          if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage enable ${forced}`);
+        }
+        else {
+          // run from project folder ./../../
+          if (window.desktop.logic.testForFile(`${process.cwd()}/support/linux/shared-resources/sscli`) == true) appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli enable ${forced}`);
+          // run from system if installed
+          else appFrame.linuxGuiSudo(`sscli enable ${forced}`);
         }
         break;
 
@@ -319,10 +314,10 @@ const appFrame = Object.freeze({
             mkBackup: true
           });
           // if service has still not been enabled, try again
-          if (window.appStates.serviceEnabled[0] == false) {
+          if (window.appStates.serviceEnabled[0] == false && os.platform() != 'darwin') {
             logging("STATE: Service is still not enabled -- trying again.");
             // don't repeat if macOS
-            if (os.platform() != 'darwin') appFrame.enableServicePerPlatform({forced});
+            appFrame.enableServicePerPlatform({forced});
           }
         },3000);
         break;
@@ -341,20 +336,15 @@ const appFrame = Object.freeze({
     window.appStates.notificationCounter += 1;
     switch (os.platform()) {
       case 'linux':
-        // if sscli is able to be copyied to /tmp, run it
+        // if sscli is able to be copied to /tmp, run it
         window.appStates.toggleLock = true;
-        switch (LINUXPACKAGEFORMAT) {
-          case 'appimage':
-            // if sscli is able to be copyied to /tmp, run it
-            if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) {
-              appFrame.linuxGuiSudo(`/tmp/sscli-appimage disable ${forced}`);
-            }
-            break;
-          default:
-            // run from project folder ./
-            if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT == '') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
-            else appFrame.linuxGuiSudo(`sscli disable ${forced}`);
-            break;
+        if (LINUXPACKAGEFORMAT === 'appimage') {
+          if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage disable ${forced}`);
+        }
+        else {
+          // run from project folder ./../../
+          if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT == '') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
+          else appFrame.linuxGuiSudo(`sscli disable ${forced}`);
         }
         break;
 
@@ -368,10 +358,10 @@ const appFrame = Object.freeze({
             rmBackup: os.platform() === 'darwin' ? false : true
           });
           // if service has still not been enabled, try again
-          if (window.appStates.serviceEnabled[0] == true) {
+          if (window.appStates.serviceEnabled[0] == true && os.platform() != 'darwin') {
             logging("STATE: Service is still not disabled -- trying again.");
             // don't repeat if macOS
-            if (os.platform() != 'darwin') appFrame.disableServicePerPlatform({forced});
+            appFrame.disableServicePerPlatform({forced});
           }
         },3000);
         break;
@@ -383,7 +373,7 @@ const appFrame = Object.freeze({
     let promise = new Promise((resolve, reject) => {
         logging('LIFEGUARDSTATE: Checking if on lifeguard network');
         // start searching for lifeguard with bonjour
-        bonjour.findOne({ type: "sslifeguard" }, (service) => {
+        bonjour.findOne({type: "sslifeguard"}, (service) => {
           // if a lifeguard is found
           if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
             logging(`LIFEGUARDSTATE: found ${service.fqdn}`);
@@ -433,7 +423,6 @@ const appFrame = Object.freeze({
         logging(`UPDATES: HTTP error ${error}`);
         if (options.showErrors == true) {
           dialog.showErrorBox(updateErrorDialog, updateResponse => {
-            logging("UPDATES: Error with updates.");
             return;
           });
         }
@@ -482,15 +471,15 @@ const appFrame = Object.freeze({
                   genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
                   break;
               }
-              global.desktop.logic.electronOpenExternal()(genLink);
+              global.desktop.logic.electronOpenExternal(genLink);
 
             }
             else {
-              global.desktop.logic.electronOpenExternal()(remoteData.versions[iteration].altLink);
+              global.desktop.logic.electronOpenExternal(remoteData.versions[iteration].altLink);
             }
           }
           else if (updateResponse == 2) {
-            global.desktop.logic.electronOpenExternal()(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${remoteData.versions[iteration].version}`);
+            global.desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${remoteData.versions[iteration].version}`);
           }
           else return;
         });
@@ -514,7 +503,7 @@ const appFrame = Object.freeze({
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version ')} ${remoteData.versions[iteration].version}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("UPDATES: User wants to downgrade.");
-            //global.desktop.logic.electronOpenExternal()(remoteData.linkBase);
+            //global.desktop.logic.electronOpenExternal(remoteData.linkBase);
               var ext,
                 genLink;
               switch (os.platform()) {
@@ -536,7 +525,7 @@ const appFrame = Object.freeze({
                   genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
                   break;
               }
-              global.desktop.logic.electronOpenExternal()(genLink);
+              global.desktop.logic.electronOpenExternal(genLink);
           }
           else {
             return;
@@ -659,45 +648,25 @@ const appFrame = Object.freeze({
     // copy app build information to clipboard
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')}, dialogResponse => {
       global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer().version()}`);
-      if (dialogResponse == 2) global.desktop.logic.electronOpenExternal()('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
+      if (dialogResponse == 2) global.desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
     });
   },
 
   forceToggleWarning: function({wantedState}) {
     // display warning message as this could break settings
-    const messageText = {
-      toggleWarning: {type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: `${i18n.__('The service is already in the state which you request.')}\n${i18n.__('Forcing the service to be enabled in this manner may have consequences.')}\n${i18n.__('Your computer\'s network configuration could break by doing this action.')}`},
-     lifeguardMessage: {type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.")}
-    }
-    if (window.appStates.lifeguardFound[0] == true) {
-      dialog.showMessageBox(messageText.lifeguardMessage, dialogResponse => {});
-    }
+    if (window.appStates.lifeguardFound[0] == true) dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.")}, dialogResponse => {});
     else {
       if (wantedState == window.appStates.serviceEnabled[0]) {
-        dialog.showMessageBox(messageText.toggleWarning, dialogResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: `${i18n.__('The service is already in the state which you request.')}\n${i18n.__('Forcing the service to be enabled in this manner may have consequences.')}\n${i18n.__('Your computer\'s network configuration could break by doing this action.')}`}, dialogResponse => {
           if (dialogResponse == 1) {
-            switch (window.appStates.serviceEnabled[0]) {
-              case true:
-                appFrame.enableServicePerPlatform({forced: "force"});
-                break;
-
-              case false:
-                appFrame.disableServicePerPlatform({forced: "force"});
-                break;
-            }
+            if (window.appStates.serviceEnabled[0] == true) appFrame.enableServicePerPlatform({forced: "force"});
+            else appFrame.disableServicePerPlatform({forced: "force"});
           }
         });
       }
       else {
-        switch (window.appStates.serviceEnabled[0]) {
-          case true:
-            appFrame.disableServicePerPlatform({forced: "force"});
-            break;
-
-          case false:
-            appFrame.enableServicePerPlatform({forced: "force"});
-            break;
-        }
+        if (window.appStates.serviceEnabled[0] == true) appFrame.disableServicePerPlatform({forced: "force"});
+        else appFrame.enableServicePerPlatform({forced: "force"});
       }
     }
   },
@@ -709,7 +678,7 @@ const appFrame = Object.freeze({
     dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
       if (updateResponse == 1) window.close();
       if (updateResponse == 0) {
-        global.desktop.logic.electronOpenExternal()('https://safesurfer.desk.com/how-to-uac.php');
+        appFrame.openWindowsUACHelpPage();
         setTimeout(function() {
           window.close();
         },250);
@@ -731,9 +700,8 @@ const appFrame = Object.freeze({
 
   displayRebootMessage: function() {
     // tell the user to reboot
-    var dialogRebootMessage = window.appStates.serviceEnabled[0] ? {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: `${i18n.__("Great, your computer is setup.")}\n${i18n.__("To make sure of this, we recommend that you please reboot/restart your computer.")}`} : {type: 'info', buttons: [i18n.__('Ignore'), i18n.__('Reboot now')], message: `${i18n.__("Ok, Safe Surfer has been removed.")}\n${i18n.__("To make sure of this, we recommend that you please reboot/restart your computer.")}`}
-    dialog.showMessageBox(dialogRebootMessage, updateResponse => {
-      if (updateResponse == 1) {
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Reboot now'), i18n.__('Ignore')], message: `${i18n.__("Ok, your computer is setup.")}\n${i18n.__("To make sure of this, we recommend that you please reboot/restart your computer.")}`}, updateResponse => {
+      if (updateResponse == 0) {
         switch (os.platform()) {
           case 'win32':
             appFrame.callProgram('shutdown /r /t 0');
@@ -750,6 +718,18 @@ const appFrame = Object.freeze({
         }
       }
     });
+  },
+
+  donationMessage: async function() {
+    // give the user a message about donating
+    let promise = new Promise((resolve, reject) => {
+      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Donate'), i18n.__('No')], message: `${i18n.__('Thank you for using the Safe Surfer desktop app.')}\n${i18n.__('Would you like to support the project and help fund future projects?')}`}, response => {
+        if (response == 0) global.desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/');
+        resolve(true);
+      });
+    })
+    let result = await promise;
+    return result;
   },
 
   checkForVersionChange: function() {
@@ -806,10 +786,14 @@ const appFrame = Object.freeze({
           window.appStates.notificationCounter = 0;
           $('.progressInfoBar').css("height", "0px");
           window.appStates.toggleLock = false;
-          appFrame.displayRebootMessage();
+          if (window.appStates.serviceEnabled[0] == true) appFrame.donationMessage().then(response => {
+            if (response) appFrame.displayRebootMessage();
+          });
+          else appFrame.displayRebootMessage();
           if (LINUXPACKAGEFORMAT == 'appimage' && global.desktop.logic.testForFile('/tmp/sscli-appimage')) global.desktop.logic.remove_sscli();
         }
     }
+
     if (window.appStates.serviceEnabled[0] == true) {
       // if the service is enabled, check if a lifeguard is on the network
       appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
@@ -864,7 +848,7 @@ const appFrame = Object.freeze({
 
   openWindowsUACHelpPage: function() {
     // launch a page about how to launch the app as an Administrator (for Windows users)
-    global.desktop.logic.electronOpenExternal()('https://safesurfer.desk.com/how-to-uac.php');
+    global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/how-to-uac.php');
   },
 
   permissionLoop: function() {
@@ -903,7 +887,7 @@ const appFrame = Object.freeze({
     logging("WINVERCHECK: User is not on a compatible version of Windows")
     var dialogMsg = {type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app.")}
     dialog.showMessageBox(dialogMsg, msgResponse => {
-      if (msgResponse == 1) global.desktop.logic.electronOpenExternal()('https://safesurfer.desk.com/desktop-app-required-specs');
+      if (msgResponse == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
     });
   }
 });

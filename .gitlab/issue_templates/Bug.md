@@ -1,3 +1,4 @@
+# Bug
 ## App information (Info -> Click on version information):
 
 
