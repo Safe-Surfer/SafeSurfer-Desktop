@@ -343,7 +343,8 @@ const appFrame = Object.freeze({
         }
         else {
           // run from project folder ./../../
-          if (global.desktop.logic.electronIsDev() == true && LINUXPACKAGEFORMAT == '') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
+          if (window.desktop.logic.testForFile(`${process.cwd()}/support/linux/shared-resources/sscli`) == true) appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
+          // run from system if installed
           else appFrame.linuxGuiSudo(`sscli disable ${forced}`);
         }
         break;
