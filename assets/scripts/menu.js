@@ -87,7 +87,7 @@ module.exports = (app, mainWindow) => {
 	      {label: i18n.__('Contribute to this project'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
 	      {label: i18n.__('Donate'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/donate-now/')}},
 		    {type:'separator'},
-	      {label:String(i18n.__("Version") + ": "+APPVERSION+" - " + i18n.__("Build") + ": "+APPBUILD + " (" + BUILDMODE + ")"), click() {mainWindow.webContents.send('goBuildToClipboard')} },
+	      {label:`${i18n.__("Version")}: ${APPVERSION} - ${i18n.__("Build")}:${APPBUILD} - (${BUILDMODE})`, click() {mainWindow.webContents.send('goBuildToClipboard')} },
 		    {type:'separator'},
 	      {label: i18n.__('About this app'), click() {mainWindow.webContents.send('openAboutMenu')} }
 	    ]

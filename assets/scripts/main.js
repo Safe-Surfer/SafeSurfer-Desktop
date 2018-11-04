@@ -64,19 +64,19 @@ function createWindow() {
 	mainWindowState.manage(mainWindow);
 }
 
-  // create window when app is ready
-	app.on('ready', function() {
-		createWindow();
-	});
+// create window when app is ready
+app.on('ready', function() {
+  createWindow();
+});
 
-	app.on('window-all-closed', function () {
-	  if (process.platform !== 'darwin') {
-	    app.quit();
-	  }
-	})
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+})
 
-	app.on('activate', function () {
-	  if (mainWindow === null) {
-	    createWindow();
-	  }
+app.on('activate', function () {
+  if (mainWindow === null) {
+    createWindow();
+  }
 });

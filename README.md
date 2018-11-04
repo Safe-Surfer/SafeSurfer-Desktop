@@ -1,5 +1,7 @@
 ![license](https://img.shields.io/badge/License-GPL%20v3-blue.svg)
-[![Translation status](https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
+<a href="https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget">
+    <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
+</a>
 
 # SafeSurfer-Desktop
 ![Safe Surfer logo](./assets/media/icons/png/128x128.png)  
@@ -36,7 +38,9 @@ Read our [contribution guide](docs/CONTRIBUTING.md) to get started!
 We'd love your help on this project, together helping families and individuals stay safe on the internet!  
 
 ### Translating Safe Surfer desktop
-[![Translation status list](https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-auto.svg)](https://hosted.weblate.org/projects/safe-surfer/translations)  
+<a href="https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget">
+    <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-auto.svg" alt="Translation status" />
+</a>
 
 Note: Although some translations display as 100%, they may need review.  
 Help us speak your language!  

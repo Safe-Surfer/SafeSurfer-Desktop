@@ -52,19 +52,13 @@ window.appStates = {
   elevationFailureCount: 0,
   toggleLock: false,
   guiSudo: "pkexec",
+  binFolder: window.desktop.logic.path().resolve(window.desktop.logic.path().dirname(process.argv[0]), '..', '..', 'bin')
 }
 
 // if a linux package format can't be found, then state unsureness
 if (typeof LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
 logging(`INFO: platform  - ${os.platform()}`);
 logging(`INFO: cwd       - ${process.cwd()}`);
-
-// find path where AppImage is mounted to, if packaged for AppImage
-if (LINUXPACKAGEFORMAT == 'appimage') {
-  process.env.PATH.split(path.delimiter).map(i => {
-    if (i.includes('/tmp/.mount_')) appStates.appimagePATH = i;
-  });
-}
 
 if (os.platform() == 'linux') {
   if (window.desktop.logic.shelljs_which('pkexec') != null) window.appStates.guiSudo = 'pkexec';
@@ -293,13 +287,11 @@ const appFrame = Object.freeze({
       case 'linux':
         window.appStates.toggleLock = true;
         if (LINUXPACKAGEFORMAT === 'appimage') {
-          if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage enable ${forced}`);
+          if (global.desktop.logic.copy_sscli_toTmp(appStates.binFolder).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage enable ${forced}`);
         }
+        else if (process.env.SSRUNDEV === 'true') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli enable ${forced}`);
         else {
-          // run from project folder ./../../
-          if (window.desktop.logic.testForFile(`${process.cwd()}/support/linux/shared-resources/sscli`) == true) appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli enable ${forced}`);
-          // run from system if installed
-          else appFrame.linuxGuiSudo(`sscli enable ${forced}`);
+          appFrame.linuxGuiSudo(`${appStates.binFolder}/sscli enable ${forced}`);
         }
         break;
 
@@ -339,13 +331,11 @@ const appFrame = Object.freeze({
         // if sscli is able to be copied to /tmp, run it
         window.appStates.toggleLock = true;
         if (LINUXPACKAGEFORMAT === 'appimage') {
-          if (global.desktop.logic.copy_sscli_toTmp(appStates.appimagePATH).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage disable ${forced}`);
+          if (global.desktop.logic.copy_sscli_toTmp(appStates.binFolder).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage disable ${forced}`);
         }
+        else if (process.env.SSRUNDEV === 'true') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
         else {
-          // run from project folder ./../../
-          if (window.desktop.logic.testForFile(`${process.cwd()}/support/linux/shared-resources/sscli`) == true) appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
-          // run from system if installed
-          else appFrame.linuxGuiSudo(`sscli disable ${forced}`);
+          appFrame.linuxGuiSudo(`${appStates.binFolder}/sscli disable ${forced}`);
         }
         break;
 
@@ -562,7 +552,7 @@ const appFrame = Object.freeze({
       BUILDMODE: BUILDMODE,
       ISSERVICEENABLED: window.appStates.serviceEnabled[0],
     };
-    if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
+    if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
     return JSON.stringify(dataGathered);
   },
 

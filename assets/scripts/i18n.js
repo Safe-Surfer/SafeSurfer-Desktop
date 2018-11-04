@@ -27,6 +27,7 @@ const path = require("path"),
   testLanguage = packageJSON.appOptions.testLanguage;
 let loadedLanguage,
  app = electron.app ? electron.app : electron.remote.app;
+var locale = testLanguage === null ? app.getLocale() : testLanguage;
 
 // export undefined function
 module.exports = i18n;
@@ -34,18 +35,9 @@ module.exports = i18n;
 // define translation loading function
 function i18n() {
   // if there is no language set in config
-  switch(testLanguage) {
-    case null:
-      if(fs.existsSync(path.join(__dirname, '../translations', app.getLocale() + '.json'))) loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '../translations', app.getLocale() + '.json'), 'utf8'));
-		  // if the langauge set in system or config doesn't have a locale
-		  else loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '../translations', 'en.json'), 'utf8'));
-      break;
-    default:
-      if (fs.existsSync(path.join(__dirname, '../translations', testLanguage + '.json'))) loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '../translations', testLanguage + '.json'), 'utf8'));
-		  // if language in config doesn't exist, load english
-		  else loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '../translations', 'en.json'), 'utf8'));
-      break;
-  }
+  if(fs.existsSync(path.join(__dirname, '../translations', locale + '.json'))) loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '../translations', locale + '.json'), 'utf8'));
+  // if the langauge set in system or config doesn't have a locale
+  else loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '../translations', 'en.json'), 'utf8'));
 }
 
 // export function
@@ -55,8 +47,8 @@ i18n.prototype.__ = function(phrase) {
     if (translation === undefined || translation === '') {
       // use the phrase which doesn't have a translation from en.json
       translation = phrase;
-      logging(String("i18n: phrase not defined: '" + phrase + "'"));
+      logging(`[i18n] ${locale} phrase not defined: '${phrase}'`);
     }
-    if (translation == phrase && app.getLocale() != 'en-US') logging(String("i18n: phrase not translated: '" + phrase + "'"));
+    if (translation == phrase && locale != 'en-US') logging(`[i18n] ${locale} phrase not translated: '${phrase}'`);
     return translation;
 }

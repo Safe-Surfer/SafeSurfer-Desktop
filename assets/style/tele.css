@@ -50,12 +50,12 @@ body, html {
   background-color: black;
   padding-top: 10px;
   line-height: 75px;
-  font-size: 3.3em;
+  font-size: 3em;
 }
 
 #teleInfoMsg {
   color: white;
-  font-size: 36px;
+  font-size: 1.9em;
 	font-family: 'Raleway', sans-serif;
 	text-align: center;
 }

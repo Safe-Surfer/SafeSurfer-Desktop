@@ -24,7 +24,8 @@ const store = window.desktop.global.store(),
   logging = window.desktop.global.logging(),
   $ = window.desktop.global.jquery();
 var teleHist = store.get('teleHistory'),
-  textBody = "";
+  textBody = "",
+  itemCounter = "";
 
 // write and translate text on the main page
 $("#teleInfoMsg").text(i18n.__("Here's the data we've collected:"));
@@ -44,8 +45,7 @@ switch(store.get('telemetryAllow')) {
 }
 
 // add all items that have been shared
-var itemCounter
-for (i in teleHist) {
+for (var i in teleHist) {
   itemCounter = parseInt(i) + 1;
   textBody += `<h1 class="counter">${itemCounter}:</h1><p id="teleDataHistory${i}" class="teleDataHistory">${teleHist[i]}</p>\n\n`;
 }
@@ -54,7 +54,7 @@ for (i in teleHist) {
 if (textBody !== undefined) {
   $("#teleDataHistory").remove();
   if (store.get('teleHistory') === undefined) {
-    textBody += String('<p id="teleDataHistory" class="teleDataHistory">' + i18n.__("No data is available.") + '</p>\n\n');
+    textBody += `<p id="teleDataHistory" class="teleDataHistory">${i18n.__("No data is available.")}</p>\n\n`;
     $("#teleInfoMsg_copy").text('');
   }
 }
