@@ -108,7 +108,7 @@ const appFrame = Object.freeze({
   elevateWindows: function() {
     // call a child process
     appFrame.callProgram(`powershell Start-Process '${process.argv0}' -ArgumentList '.' -Verb runAs`).then((response) => {
-    	logging(`[elevateWindows]: response was '${response}'.`)
+    	logging(`[elevateWindows]: response was '${response}'.`);
       if (response == true) window.close();
     });
   },
@@ -420,29 +420,29 @@ const appFrame = Object.freeze({
         }
       }
 
+      var genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}`;
+      switch (os.platform()) {
+        case 'linux':
+          if (LINUXPACKAGEFORMAT == 'appimage') genLink = `${genLink}.AppImage`;
+          else genLink = remoteData.linkBase;
+          break;
+
+        case 'win32':
+          genLink = `${genLink}.exe`;
+          break;
+
+        case 'darwin':
+          genLink = `${genLink}.app.zip`;
+          break;
+      }
+
       if (buildRecommended > parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // update available
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${remoteData.versions[iteration].version}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants update.");
             if (remoteData.versions[iteration].altLink === undefined) {
-              var genLink;
-              switch (os.platform()) {
-                case 'linux':
-                  if (LINUXPACKAGEFORMAT === 'appimage') genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.AppImage`;
-                  else genLink = remoteData.linkBase;
-                  break;
-
-                case 'win32':
-                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.exe`;
-                  break;
-
-                case 'darwin':
-                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.app.zip`;
-                  break;
-              }
               global.desktop.logic.electronOpenExternal(genLink);
-
             }
             else {
               global.desktop.logic.electronOpenExternal(remoteData.versions[iteration].altLink);
@@ -458,13 +458,8 @@ const appFrame = Object.freeze({
       else if (buildRecommended == parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1 && options.current == true) {
         // up to date
         dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: i18n.__("You're up to date.")}, updateResponse => {
-          if (updateResponse == 0) {
-            logging("[checkForAppUpdate]: User has the latest version installed.");
-            return;
-          }
-          else {
-            return;
-          }
+          if (updateResponse == 0) logging("[checkForAppUpdate]: User has the latest version installed.");
+          return;
         });
       }
 
@@ -473,27 +468,14 @@ const appFrame = Object.freeze({
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version ')} ${remoteData.versions[iteration].version}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants to downgrade.");
-            //global.desktop.logic.electronOpenExternal(remoteData.linkBase);
-              var genLink;
-              switch (os.platform()) {
-                case 'linux':
-                  if (LINUXPACKAGEFORMAT == 'appimage') genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.AppImage`;
-                  else genLink = remoteData.linkBase;
-                  break;
-
-                case 'win32':
-                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.exe`;
-                  break;
-
-                case 'darwin':
-                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.app.zip`;
-                  break;
-              }
+            if (remoteData.versions[iteration].altLink === undefined) {
               global.desktop.logic.electronOpenExternal(genLink);
+            }
+            else {
+              global.desktop.logic.electronOpenExternal(remoteData.versions[iteration].altLink);
+            }
           }
-          else {
-            return;
-          }
+          else return;
         });
       }
 
@@ -546,7 +528,7 @@ const appFrame = Object.freeze({
     Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
       store.set('telemetryAllow', true);
       store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
-      logging({"[sendTelemetry]: DATA": 'Sent.', "[sendTelemetry]: TELEDATA": source})
+      logging({"[sendTelemetry]: DATA": 'Sent.', "[sendTelemetry]: TELEDATA": source});
       if (response || body) {;
         if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
       }
@@ -564,7 +546,7 @@ const appFrame = Object.freeze({
      messageText = {
       nothingSent: {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")},
       teleMsg: {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: `${i18n.__("Data sharing")}\n\n${i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.")}\n${i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.")}\n- ${i18n.__("Safe Surfer team")}`},
-      previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is setup on your computer")}\n\n${i18n.__("We are also interested in updates, so with data sharing we will also be notified of which version you've to updated.")}`}
+      previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is setup on your computer")}\n\n${i18n.__("We are also interested in updates, so with data sharing we will also be notified of which version you've updated to.")}`}
     };
     dialog.showMessageBox(messageText.teleMsg, dialogResponse => {
       logging("[telemetryPrompt]: User has agreed to the prompt.");
@@ -689,7 +671,7 @@ const appFrame = Object.freeze({
         if (response == 0) global.desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/');
         resolve(true);
       });
-    })
+    });
     let result = await promise;
     return result;
   },
@@ -841,7 +823,7 @@ const appFrame = Object.freeze({
     if (parseInt(releaseVer[0]) == 6 && parseInt(releaseVer[1]) >= 1 || parseInt(releaseVer[0]) == 10) {
       return;
     }
-    logging("[windowsVersionCheck]: User is not on a compatible version of Windows")
+    logging("[windowsVersionCheck]: User is not on a compatible version of Windows");
     var dialogMsg = {type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app.")}
     dialog.showMessageBox(dialogMsg, msgResponse => {
       if (msgResponse == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
