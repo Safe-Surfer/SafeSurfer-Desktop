@@ -1,5 +1,5 @@
-![license](https://img.shields.io/badge/License-GPL%20v3-blue.svg)
 <a href="https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget">
+    <img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="License" />
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
 </a>
 

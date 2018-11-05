@@ -52,11 +52,9 @@ window.appStates = {
   elevationFailureCount: 0,
   toggleLock: false,
   guiSudo: "pkexec",
-  binFolder: window.desktop.logic.path().resolve(window.desktop.logic.path().dirname(process.argv[0]), '..', '..', 'bin')
+  binFolder: process.env.SSCLILOCATION === undefined ? `${window.desktop.logic.path().resolve(window.desktop.logic.path().dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION
 }
 
-// if a linux package format can't be found, then state unsureness
-if (typeof LINUXPACKAGEFORMAT === undefined) LINUXPACKAGEFORMAT="???";
 logging(`INFO: platform  - ${os.platform()}`);
 logging(`INFO: cwd       - ${process.cwd()}`);
 
@@ -70,7 +68,7 @@ const appFrame = Object.freeze({
   callProgram: async function(command) {
     // call a child process
     let promise = new Promise((resolve, reject) => {
-      logging(`COMMAND: calling - '${command}'`);
+      logging(`[callProgram]: calling - '${command}'`);
       var command_split = command.split(" "),
         command_arg = [];
       // concatinate 2+ into a variable
@@ -79,9 +77,9 @@ const appFrame = Object.freeze({
       }
       // command will be executed as: comand [ARGS]
       require('child_process').execFile(command_split[0], command_arg, function(err, stdout, stderr) {
-        logging(`COMMAND: output - ${stdout}`);
-        if (err) logging(`COMMAND: output error - ${err}`);
-        if (stderr) logging(`COMMAND: output stderr - ${stderr}`);
+        logging(`[callProgram]: output -\n ${stdout}`);
+        if (err) logging(`[callProgram]: output error - ${err}`);
+        if (stderr) logging(`[callProgram]: output stderr - ${stderr}`);
         if (!err && !stderr) resolve(true);
       });
     });
@@ -93,7 +91,7 @@ const appFrame = Object.freeze({
     // run program with pkexec or xdg-su
     switch (window.appStates.guiSudo) {
       case 'pkexec':
-        logging('SUDOGUI: Running with pkexec');
+        logging('[linuxGuiSudo]: Running with pkexec');
         appFrame.callProgram(`pkexec ${command}`);
         break;
 
@@ -110,6 +108,7 @@ const appFrame = Object.freeze({
   elevateWindows: function() {
     // call a child process
     appFrame.callProgram(`powershell Start-Process '${process.argv0}' -ArgumentList '.' -Verb runAs`).then((response) => {
+    	logging(`[elevateWindows]: response was '${response}'.`)
       if (response == true) window.close();
     });
   },
@@ -132,7 +131,7 @@ const appFrame = Object.freeze({
   displayProtection: function() {
     // show the user that the service has been enabled
     if (window.appStates.internet[0] == true) {
-      logging("STATE: protected");
+      logging("[displayProtection]: service state is protected");
       $(".serviceActiveScreen").show();
       $(".serviceInactiveScreen").hide();
       // if a lifeguard has been found
@@ -159,7 +158,7 @@ const appFrame = Object.freeze({
   displayUnprotection: function() {
     // show the user that the service has been enabled
     if (window.appStates.internet[0] == true) {
-      logging("STATE: Unprotected");
+      logging("[displayUnprotection]: service state is unprotected");
       $(".serviceInactiveScreen").show();
       $(".serviceActiveScreen").hide();
       $("#toggleButton").html(i18n.__("GET PROTECTED").toUpperCase());
@@ -188,20 +187,20 @@ const appFrame = Object.freeze({
 
   toggleServiceState: function() {
     // switch between states
-    logging("USER: In switch");
+    logging("[toggleServiceState]: In switch");
     window.appStates.notificationCounter = 0;
     if (window.appStates.toggleLock === true) return;
     switch (window.appStates.serviceEnabled[0]) {
       // if service is enabled
       case true:
-        logging('STATE: trying toggle disable');
+        logging('[toggleServiceState]: trying toggle disable');
         if (window.appStates.lifeguardFound[0] == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
         else appFrame.displayDisableWarning();
         break;
 
       // if service is disabled
       case false:
-        logging('STATE: trying toggle enable');
+        logging('[toggleServiceState]: trying toggle enable');
         appFrame.enableServicePerPlatform({});
         break;
 
@@ -220,16 +219,16 @@ const appFrame = Object.freeze({
 
   affirmServiceState: function() {
     // affirm the state of the service
-    logging("STATE: Affirming the state");
+    logging("[affirmServiceState]: Affirming the state");
     switch (window.appStates.serviceEnabled[0]) {
       case false:
-        logging('STATE: trying affirm disable');
+        logging('[affirmServiceState]: trying affirm disable');
         appFrame.displayUnprotection();
         return;
         break;
 
       case true:
-        logging('STATE: trying affirm enable');
+        logging('[affirmServiceState]: trying affirm enable');
         appFrame.displayProtection();
         return;
         break;
@@ -238,7 +237,7 @@ const appFrame = Object.freeze({
 
   checkServiceState: function() {
     // check the state of the service
-    logging('STATE: Getting state of service');
+    logging('[checkServiceState]: Getting state of service');
     Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
       // since the request has succeeded, we can count the app as loaded
       window.appStates.appHasLoaded = true;
@@ -251,22 +250,22 @@ const appFrame = Object.freeze({
 
       var metaResponse = global.desktop.logic.letsGetMeta(body),
         searchForResp = body.search('<meta name="ss_status" content="protected">');
-      logging(`STATE - metaResponse.ss_status :: ${metaResponse.ss_status}`);
+      logging(`[checkServiceState]: metaResponse.ss_status :: ${metaResponse.ss_status}`);
       if (searchForResp == -1 || metaResponse.ss_state == 'unprotected') {
         window.appStates.serviceEnabled[0] = false;
-        logging('STATE: Get Request - Service disabled');
+        logging('[checkServiceState]: Get Request - Service disabled');
       }
       // if the meta tag returns protected
       if (searchForResp != -1 || metaResponse.ss_status == 'protected') {
         window.appStates.serviceEnabled[0] = true;
-        logging('STATE: Get Request - Service enabled');
+        logging('[checkServiceState]: Get Request - Service enabled');
       }
       // if neither are returned
       else {
-        logging("STATE: Get Request - Can't see protection state from meta tag");
+        logging("[checkServiceState]: Get Request - Can't see protection state from meta tag");
         // check internet connection
         if (window.appStates.internet[0] == true) {
-          logging('STATE: Get Request - Unsure of state');
+          logging('[checkServiceState]: Get Request - Unsure of state');
         }
         else if (error !== undefined || window.appStates.internet[0] != true) logging('NETWORK: Internet connection unavailable');
       }
@@ -283,22 +282,15 @@ const appFrame = Object.freeze({
       icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
     });
     window.appStates.notificationCounter += 1;
+    window.appStates.toggleLock = true;
     switch (os.platform()) {
       case 'linux':
-        window.appStates.toggleLock = true;
-        if (LINUXPACKAGEFORMAT === 'appimage') {
-          if (global.desktop.logic.copy_sscli_toTmp(appStates.binFolder).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage enable ${forced}`);
-        }
-        else if (process.env.SSRUNDEV === 'true') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli enable ${forced}`);
-        else {
-          appFrame.linuxGuiSudo(`${appStates.binFolder}/sscli enable ${forced}`);
-        }
+        appFrame.linuxGuiSudo(`${appStates.binFolder}sscli enable ${forced}`);
         break;
 
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
-        window.appStates.toggleLock = true;
-        setTimeout(function () {
+        setTimeout(function() {
           global.desktop.logic.node_dns_changer().setDNSservers({
             DNSservers: ['104.197.28.121','104.155.237.225'],
             DNSbackupName: 'before_safesurfer',
@@ -307,7 +299,7 @@ const appFrame = Object.freeze({
           });
           // if service has still not been enabled, try again
           if (window.appStates.serviceEnabled[0] == false && os.platform() != 'darwin') {
-            logging("STATE: Service is still not enabled -- trying again.");
+            logging("[enableServicePerPlatform]: Service is still not enabled -- trying again.");
             // don't repeat if macOS
             appFrame.enableServicePerPlatform({forced});
           }
@@ -326,23 +318,16 @@ const appFrame = Object.freeze({
       icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
     });
     window.appStates.notificationCounter += 1;
+    window.appStates.toggleLock = true;
     switch (os.platform()) {
       case 'linux':
         // if sscli is able to be copied to /tmp, run it
-        window.appStates.toggleLock = true;
-        if (LINUXPACKAGEFORMAT === 'appimage') {
-          if (global.desktop.logic.copy_sscli_toTmp(appStates.binFolder).code === 0) appFrame.linuxGuiSudo(`/tmp/sscli-appimage disable ${forced}`);
-        }
-        else if (process.env.SSRUNDEV === 'true') appFrame.linuxGuiSudo(`${process.cwd()}/support/linux/shared-resources/sscli disable ${forced}`);
-        else {
-          appFrame.linuxGuiSudo(`${appStates.binFolder}/sscli disable ${forced}`);
-        }
+        appFrame.linuxGuiSudo(`${appStates.binFolder}sscli disable ${forced}`);
         break;
 
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
-        window.appStates.toggleLock = true;
-        setTimeout(function () {
+        setTimeout(function() {
           global.desktop.logic.node_dns_changer().restoreDNSservers({
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
@@ -350,7 +335,7 @@ const appFrame = Object.freeze({
           });
           // if service has still not been enabled, try again
           if (window.appStates.serviceEnabled[0] == true && os.platform() != 'darwin') {
-            logging("STATE: Service is still not disabled -- trying again.");
+            logging("[disableServicePerPlatform]: Service is still not disabled -- trying again.");
             // don't repeat if macOS
             appFrame.disableServicePerPlatform({forced});
           }
@@ -362,12 +347,12 @@ const appFrame = Object.freeze({
   checkIfOnLifeGuardNetwork: async function() {
     // check if current device is on lifeguard network
     let promise = new Promise((resolve, reject) => {
-        logging('LIFEGUARDSTATE: Checking if on lifeguard network');
+        logging('[checkIfOnLifeGuardNetwork]: Checking if on lifeguard network');
         // start searching for lifeguard with bonjour
         bonjour.findOne({type: "sslifeguard"}, (service) => {
           // if a lifeguard is found
           if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
-            logging(`LIFEGUARDSTATE: found ${service.fqdn}`);
+            logging(`[checkIfOnLifeGuardNetwork]: found ${service.fqdn}`);
             resolve(true);
           }
         });
@@ -385,7 +370,7 @@ const appFrame = Object.freeze({
   internetConnectionCheck: async function() {
     // check the user's internet connection
     global.desktop.logic.connectivity()((online) => {
-      logging(`INTERNETSTATE: ${online}`);
+      logging(`[internetConnectionCheck]: ${online}`);
       window.appStates.appHasLoaded = true;
       Promise.resolve(online);
     });
@@ -406,12 +391,12 @@ const appFrame = Object.freeze({
      serverDataFile = "/files/desktop/version-information.json",
      updateErrorDialog = {type: 'info', buttons: ['Ok'], message: i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong.")};
 
-    logging(`UPDATES: About to fetch http://${serverAddress}:${serverPort}${serverDataFile}`);
+    logging(`[checkForAppUpdate]: About to fetch http://${serverAddress}:${serverPort}${serverDataFile}`);
     Request.get(`http://${serverAddress}:${serverPort}${serverDataFile}`, (error, response, body) => {
       if (error >= 400 && error <= 599) {
         window.appStates.internet[0] = false;
         // if something goes wrong
-        logging(`UPDATES: HTTP error ${error}`);
+        logging(`[checkForAppUpdate]: HTTP error ${error}`);
         if (options.showErrors == true) {
           dialog.showErrorBox(updateErrorDialog, updateResponse => {
             return;
@@ -439,27 +424,21 @@ const appFrame = Object.freeze({
         // update available
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${remoteData.versions[iteration].version}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
-            logging("UPDATES: User wants update.");
+            logging("[checkForAppUpdate]: User wants update.");
             if (remoteData.versions[iteration].altLink === undefined) {
-              var ext,
-                genLink;
+              var genLink;
               switch (os.platform()) {
                 case 'linux':
-                  if (LINUXPACKAGEFORMAT === 'appimage') {
-                    ext = ".AppImage";
-                    genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
-                  }
+                  if (LINUXPACKAGEFORMAT === 'appimage') genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.AppImage`;
                   else genLink = remoteData.linkBase;
                   break;
 
                 case 'win32':
-                  ext = ".exe";
-                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
+                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.exe`;
                   break;
 
                 case 'darwin':
-                  ext = ".app.zip";
-                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
+                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.app.zip`;
                   break;
               }
               global.desktop.logic.electronOpenExternal(genLink);
@@ -480,7 +459,7 @@ const appFrame = Object.freeze({
         // up to date
         dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: i18n.__("You're up to date.")}, updateResponse => {
           if (updateResponse == 0) {
-            logging("UPDATES: User has the latest version installed.");
+            logging("[checkForAppUpdate]: User has the latest version installed.");
             return;
           }
           else {
@@ -493,27 +472,21 @@ const appFrame = Object.freeze({
         // user must downgrade
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version ')} ${remoteData.versions[iteration].version}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
-            logging("UPDATES: User wants to downgrade.");
+            logging("[checkForAppUpdate]: User wants to downgrade.");
             //global.desktop.logic.electronOpenExternal(remoteData.linkBase);
-              var ext,
-                genLink;
+              var genLink;
               switch (os.platform()) {
                 case 'linux':
-                  if (LINUXPACKAGEFORMAT == 'appimage') {
-                    ext = ".AppImage";
-                    genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
-                  }
+                  if (LINUXPACKAGEFORMAT == 'appimage') genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.AppImage`;
                   else genLink = remoteData.linkBase;
                   break;
 
                 case 'win32':
-                  ext = ".exe";
-                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
+                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.exe`;
                   break;
 
                 case 'darwin':
-                  ext = ".app.zip";
-                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}${ext}`;
+                  genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}.app.zip`;
                   break;
               }
               global.desktop.logic.electronOpenExternal(genLink);
@@ -528,7 +501,7 @@ const appFrame = Object.freeze({
         // if something goes wrong
         if (options.showErrors == true) {
           dialog.showMessageBox(updateErrorDialog, updateResponse => {
-            logging("UPDATES: Error.");
+            logging("[checkForAppUpdate]: Error.");
             return;
           });
         }
@@ -558,9 +531,7 @@ const appFrame = Object.freeze({
 
   storeInitalData: function(input) {
   // write inital data from sharing to cache
-    if (store.get('teleHistory') === undefined) {
-      store.set('teleHistory', [input]);
-    }
+    if (store.get('teleHistory') === undefined) store.set('teleHistory', [input]);
     else {
       var previous = store.get('teleHistory');
       previous = [...previous, input];
@@ -575,13 +546,13 @@ const appFrame = Object.freeze({
     Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
       store.set('telemetryAllow', true);
       store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
-      logging({"TELE": 'Sent.', "TELEDATA": source})
+      logging({"[sendTelemetry]: DATA": 'Sent.', "[sendTelemetry]: TELEDATA": source})
       if (response || body) {;
         if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
       }
       if (err >= 400 && err <= 599) {
-        logging('TELE: Could not send.');
-        logging(`HTTP error: ${err}`);
+        logging('[sendTelemetry]: Could not send.');
+        logging(`[sendTelemetry]: error ${err}`);
         return;
       }
     });
@@ -596,7 +567,7 @@ const appFrame = Object.freeze({
       previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is setup on your computer")}\n\n${i18n.__("We are also interested in updates, so with data sharing we will also be notified of which version you've to updated.")}`}
     };
     dialog.showMessageBox(messageText.teleMsg, dialogResponse => {
-      logging("TELE: User has agreed to the prompt.");
+      logging("[telemetryPrompt]: User has agreed to the prompt.");
       // if user agrees to sending telemetry
       switch (dialogResponse) {
         case 0:
@@ -665,7 +636,7 @@ const appFrame = Object.freeze({
   showUnprivillegedMessage: function() {
     // display dialog for if the app hasn't been started with root privileges
     const dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')};
-    logging("PRIV: User is not admin -- displaying dialog message.");
+    logging("[showUnprivillegedMessage]: User is not admin -- displaying dialog message.");
     dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
       if (updateResponse == 1) window.close();
       if (updateResponse == 0) {
@@ -728,17 +699,17 @@ const appFrame = Object.freeze({
     var previousVersionData,
      dataGathered = {};
     if (store.get('telemetryAllow') == true) {
-      logging("TELE: Checking if user has reached a newer version");
+      logging("[checkForVersionChange]: Checking if user has reached a newer version");
       previousVersionData = store.get('lastVersionToSendTelemetry');
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
-        logging('TELE: Sending update data');
+        logging('[checkForVersionChange]: Sending update data');
         dataGathered.DATESENT = global.desktop.logic.moment().format('X');
         dataGathered.TYPESEND = "update";
         dataGathered.APPBUILD = APPBUILD;
         dataGathered.APPVERSION = APPVERSION;
         dataGathered.PLATFORM = os.platform();
         dataGathered.ISSERVICEENABLED = window.appStates.serviceEnabled[0];
-        if (os.platform() == 'linux') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
+        if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
         appFrame.sendTelemetry(JSON.stringify(dataGathered));
 
         var previous = store.get('teleHistory');
@@ -746,30 +717,26 @@ const appFrame = Object.freeze({
         store.set('teleHistory', previous);
         store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
       }
-      else logging('TELE: User has not reached new version.');
+      else logging('[checkForVersionChange]: User has not reached new version.');
     }
   },
 
   mainReloadProcess: function() {
     // reload function
-    logging("MAIN: begin reload");
+    logging("[mainReloadProcess]: begin reload");
     appFrame.checkServiceState();
     appFrame.internetConnectionCheck().then((state) => {
       window.appStates.internet[0] = state;
       // if there is an internet connection
-      if (state == true) {
-        appFrame.hideNoInternetConnection();
-      }
-      else if (state == false && window.appStates.lifeguardFound[0] == false) {
-        // if there is no internet
-        appFrame.displayNoInternetConnection();
-      }
+      if (state == true) appFrame.hideNoInternetConnection();
+      // if there is no internet
+      else if (state == false && window.appStates.lifeguardFound[0] == false) appFrame.displayNoInternetConnection();
     });
 
     if (window.appStates.internet[0] == true) {
       if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined) {
           // if the state changes of the service being enabled changes
-          logging('STATE: State has changed.');
+          logging('[mainReloadProcess]: State has changed.');
           appFrame.sendAppStateNotifications();
           $('#progressBar').css("height", "0px");
           window.appStates.progressBarCounter = 0;
@@ -781,7 +748,6 @@ const appFrame = Object.freeze({
             if (response) appFrame.displayRebootMessage();
           });
           else appFrame.displayRebootMessage();
-          if (LINUXPACKAGEFORMAT == 'appimage' && global.desktop.logic.testForFile('/tmp/sscli-appimage')) global.desktop.logic.remove_sscli();
         }
     }
 
@@ -794,13 +760,13 @@ const appFrame = Object.freeze({
 
     if (window.appStates.internet[0] != window.appStates.internet[1]) {
       // if the state of the internet connection changes
-      logging('NETWORK: State has changed.');
+      logging('[mainReloadProcess]: NETWORK State has changed.');
       window.appStates.internet[1] = window.appStates.internet[0];
     }
 
     if (window.appStates.lifeguardFound[0] != window.appStates.lifeguardFound[1]) {
       // if the state of a lifeguard being on the network changes
-      logging('LIFEGUARDSTATE: State has changed.');
+      logging('[mainReloadProcess]: LIFEGUARDSTATE State has changed.');
       window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
     }
     // if there are undefined states
@@ -817,7 +783,7 @@ const appFrame = Object.freeze({
     // update the screen to show how the service state (... etc) is
     appFrame.affirmServiceState();
     window.appStates.lifeguardFound[0] = false;
-    logging("MAIN: end reload");
+    logging("[mainReloadProcess]: end reload");
     setTimeout(appFrame.mainReloadProcess, 1000);
   },
 
@@ -875,7 +841,7 @@ const appFrame = Object.freeze({
     if (parseInt(releaseVer[0]) == 6 && parseInt(releaseVer[1]) >= 1 || parseInt(releaseVer[0]) == 10) {
       return;
     }
-    logging("WINVERCHECK: User is not on a compatible version of Windows")
+    logging("[windowsVersionCheck]: User is not on a compatible version of Windows")
     var dialogMsg = {type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app.")}
     dialog.showMessageBox(dialogMsg, msgResponse => {
       if (msgResponse == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
@@ -885,7 +851,7 @@ const appFrame = Object.freeze({
 
 global.desktop.logic.electronIPCon('toggleAppUpdateAutoCheck', (event, arg) => {
   // if user changes the state of auto check for updates
-  logging(`UPDATES: Auto check state changed to ${!arg}`);
+  logging(`[windowsVersionCheck]: UPDATES Auto check state changed to ${!arg}`);
   if (arg == true) {
     store.set('appUpdateAutoCheck', false);
   }
@@ -897,7 +863,7 @@ global.desktop.logic.electronIPCon('toggleAppUpdateAutoCheck', (event, arg) => {
 
 global.desktop.logic.electronIPCon('betaCheck', (event, arg) => {
   // if user changes the state of auto check for updates
-  logging(`UPDATES: Beta state changed to ${!arg}`);
+  logging(`[windowsVersionCheck]: UPDATES Beta state changed to ${!arg}`);
   if (arg == true) {
     store.set('betaCheck', false);
   }

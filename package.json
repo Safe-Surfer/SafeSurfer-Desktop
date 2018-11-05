@@ -6,7 +6,7 @@
   "main": "./assets/scripts/main.js",
   "license": "GPL-3.0",
   "scripts": {
-    "start": "SSRUNDEV=true electron .",
+    "start": "SSCLILOCATION=$(pwd)/support/linux/shared-resources/ electron .",
     "sscli-node": "node ./assets/scripts/sscli.js",
     "sscli": "bash ./support/linux/shared-resources/sscli",
     "electron-builder": "node_modules/.bin/electron-builder",
@@ -68,7 +68,6 @@
   "dependencies": {
     "bonjour": "^3.5.0",
     "connectivity": "^1.0.1",
-    "electron-is-dev": "^1.0.1",
     "electron-osx-sign": "^0.4.10",
     "electron-store": "^2.0.0",
     "electron-window-state": "^5.0.1",

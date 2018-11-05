@@ -1,6 +1,6 @@
 SHELL := /bin/bash
-PREFIX ?= /usr/lib64/SafeSurfer-Desktop
-COMPLETIONDIR ?= /usr/share/bash-completion/completions
+PREFIX := /usr/lib64/SafeSurfer-Desktop
+COMPLETIONDIR := /usr/share/bash-completion/completions
 
 all: help
 

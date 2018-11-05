@@ -26,7 +26,6 @@ global.desktop = Object.freeze({
     electronClipboardWriteText: (text) => require('electron').clipboard.writeText(text),
     electronOpenExternal: (link) => require('electron').shell.openExternal(link),
     dialogBox: () => require('electron').remote,
-    electronIsDev: () => require('electron-is-dev'),
     copy_sscli_toTmp: (appimagePATH) => require('shelljs').cp(require('path').join(appimagePATH, 'sscli'), '/tmp/sscli-appimage'),
     remove_sscli: () => require('shelljs').rm('/tmp/sscli-appimage'),
     shelljs_which: (prog) => require('shelljs').which(prog),

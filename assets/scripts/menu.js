@@ -85,6 +85,7 @@ module.exports = (app, mainWindow) => {
 	      {label: i18n.__('About us'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
 	      {label: i18n.__('Contact us'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
 	      {label: i18n.__('Contribute to this project'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
+	      {label: i18n.__('Translate this app'), click() {electron.shell.openExternal('https://hosted.weblate.org/projects/safe-surfer/translations/')} },
 	      {label: i18n.__('Donate'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/donate-now/')}},
 		    {type:'separator'},
 	      {label:`${i18n.__("Version")}: ${APPVERSION} - ${i18n.__("Build")}:${APPBUILD} - (${BUILDMODE})`, click() {mainWindow.webContents.send('goBuildToClipboard')} },
