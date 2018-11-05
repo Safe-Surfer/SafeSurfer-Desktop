@@ -35,7 +35,7 @@ const {app} = require('electron'),
 var accountIsAssigned = store.get('accountInformation'),
   appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
   betaCheck,
-  teleEnabled = store.get('telemetryAllow'),
+  teleEnabled = store.get('statisticAllow'),
   LINUXPACKAGEFORMAT = process.env.LINUXPACKAGEFORMAT === undefined ? '' : process.env.LINUXPACKAGEFORMAT;
 
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
@@ -45,6 +45,11 @@ if (betaCheck === undefined && BUILDMODE != 'dev') {
 else if (isBeta == true) {
   store.set('betaCheck', true);
 }
+
+if (store.get('telemetryHasAnswer') !== undefined) store.set('statHasAnswer', store.get('telemetryHasAnswer'));
+if (store.get('statHasAnswer') !== undefined) store.delete('telemetryHasAnswer');
+if (store.get('telemetryAllow') !== undefined) store.set('statisticAllow', store.get('telemetryAllow'));
+if (store.get('statisticAllow') !== undefined) store.delete('telemetryAllow');
 
 betaCheck = store.get('betaCheck');
 
@@ -106,14 +111,14 @@ module.exports = (app, mainWindow) => {
 		]
 	});
 
-	// add data sharing menu, once user has inputted answer
-	if (store.get('telemetryHasAnswer') == true) {
+	// add statistic sharing menu, once user has inputted answer
+	if (store.get('statHasAnswer') == true) {
 	  menu[1].submenu.splice(2, 0, {
-		  label: i18n.__('Data sharing'),
+		  label: i18n.__('Statistics'),
       submenu:
       [
-        {label: i18n.__('Enable data sharing'), type: 'checkbox', checked: teleEnabled, click() {mainWindow.webContents.send('toggleTeleState')} },
-        {label: i18n.__('View shared data'), click() {mainWindow.webContents.send('viewTeleHistory')} }
+        {label: i18n.__('Enable statistic sharing'), type: 'checkbox', checked: teleEnabled, click() {mainWindow.webContents.send('toggleStatState')} },
+        {label: i18n.__('View statistic data'), click() {mainWindow.webContents.send('viewStatHistory')} }
       ]
 	  });
 	}

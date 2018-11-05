@@ -45,7 +45,7 @@ body, html {
 	overflow-y: auto;
 }
 
-#teleState {
+#statState {
   color: white;
   background-color: black;
   padding-top: 10px;
@@ -53,21 +53,21 @@ body, html {
   font-size: 3em;
 }
 
-#teleInfoMsg {
+#statInfoMsg {
   color: white;
   font-size: 1.9em;
 	font-family: 'Raleway', sans-serif;
 	text-align: center;
 }
 
-#teleInfoMsg_copy {
+#statInfoMsg_copy {
   color: white;
   font-size: 26px;
   font-family: 'Yanone Kaffeesatz', sans-serif;
 	text-align: center;
 }
 
-.teleDataHistory {
+.statDataHistory {
   word-wrap: break-word;
   margin-right: 10px;
   -webkit-user-select: text;

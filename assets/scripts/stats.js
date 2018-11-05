@@ -1,4 +1,4 @@
-// SafeSurfer-Desktop - tele.js
+// SafeSurfer-Desktop - stat.js
 
 //
 // Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
@@ -23,39 +23,39 @@ const store = window.desktop.global.store(),
   i18n = window.desktop.global.i18n(),
   logging = window.desktop.global.logging(),
   $ = window.desktop.global.jquery();
-var teleHist = store.get('teleHistory'),
+var statHist = store.get('statHistory'),
   textBody = "",
   itemCounter = "";
 
 // write and translate text on the main page
-$("#teleInfoMsg").text(i18n.__("Here's the data we've collected:"));
-$("#teleInfoMsg_copy").text(i18n.__("If you wish to copy any of the data, you can select and copy it from there."));
+$("#statInfoMsg").text(i18n.__("Here's the data you've shared:"));
+$("#statInfoMsg_copy").text(i18n.__("If you wish to copy any of the data, you can select and copy it from there."));
 $("#optOutMsg").text(i18n.__("You can opt out at any time in the support menu."));
-$("#title").text(i18n.__("View shared data"));
+$("#title").text(i18n.__("View statistic data"));
 
 // choose message to display
-switch(store.get('telemetryAllow')) {
+switch(store.get('statisticAllow')) {
   case true:
-    $("#teleState").text(i18n.__("You're opted in."));
+    $("#statState").text(i18n.__("You're opted in."));
     break;
   default:
-    $("#teleState").text(i18n.__("You're not opted in."));
+    $("#statState").text(i18n.__("You're not opted in."));
     $("#optOutMsg").text(i18n.__("If you feel that you want to opt in, you can do so in the menu."));
     break;
 }
 
 // add all items that have been shared
-for (var i in teleHist) {
+for (var i in statHist) {
   itemCounter = parseInt(i) + 1;
-  textBody += `<h1 class="counter">${itemCounter}:</h1><p id="teleDataHistory${i}" class="teleDataHistory">${teleHist[i]}</p>\n\n`;
+  textBody += `<h1 class="counter">${itemCounter}:</h1><p id="statDataHistory${i}" class="statDataHistory">${statHist[i]}</p>\n\n`;
 }
 
 // if there is no data shared
 if (textBody !== undefined) {
-  $("#teleDataHistory").remove();
-  if (store.get('teleHistory') === undefined) {
-    textBody += `<p id="teleDataHistory" class="teleDataHistory">${i18n.__("No data is available.")}</p>\n\n`;
-    $("#teleInfoMsg_copy").text('');
+  $("#statDataHistory").remove();
+  if (store.get('statHistory') === undefined) {
+    textBody += `<p id="statDataHistory" class="statDataHistory">${i18n.__("No data is available.")}</p>\n\n`;
+    $("#statInfoMsg_copy").text('');
   }
 }
 

@@ -49,5 +49,6 @@ i18n.prototype.__ = function(phrase) {
     logging(`[i18n] ${locale} phrase not defined: '${phrase}'`);
   }
   if (translation == phrase && locale != 'en-US') logging(`[i18n] ${locale} phrase not translated: '${phrase}'`);
+  else if (translation === undefined) logging(`[i18n] ${locale} phrase '${phrase}' is not in translation JSON files`);
   return translation;
 }

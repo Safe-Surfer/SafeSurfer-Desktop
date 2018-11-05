@@ -491,7 +491,7 @@ const appFrame = Object.freeze({
     });
   },
 
-  collectTelemetry: function() {
+  collectStatistics: function() {
     // if the user agrees to it, collect non identifiable information about their setup
     var dataGathered = {
       TYPESEND: "general",
@@ -513,66 +513,66 @@ const appFrame = Object.freeze({
 
   storeInitalData: function(input) {
   // write inital data from sharing to cache
-    if (store.get('teleHistory') === undefined) store.set('teleHistory', [input]);
+    if (store.get('statHistory') === undefined) store.set('statHistory', [input]);
     else {
-      var previous = store.get('teleHistory');
+      var previous = store.get('statHistory');
       previous = [...previous, input];
-      store.set('teleHistory', previous);
+      store.set('statHistory', previous);
     }
   },
 
-  sendTelemetry: function(source) {
+  sendStatistics: function(source) {
     // send information to server
     var dataToSend = global.desktop.logic.base64Encode().encode(source,'base64');
     // make a post request to the database
     Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
-      store.set('telemetryAllow', true);
-      store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
-      logging({"[sendTelemetry]: DATA": 'Sent.', "[sendTelemetry]: TELEDATA": source});
+      store.set('statisticAllow', true);
+      store.set('lastVersionTosendStatistics', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
+      logging({"[sendStatistics]: DATA": 'Sent.', "[sendStatistics]: STATDATA": source});
       if (response || body) {;
-        if (store.get('teleID') === undefined) store.set('teleID', dataToSend.DATESENT);
+        if (store.get('statID') === undefined) store.set('statID', dataToSend.DATESENT);
       }
       if (err >= 400 && err <= 599) {
-        logging('[sendTelemetry]: Could not send.');
-        logging(`[sendTelemetry]: error ${err}`);
+        logging('[sendStatistics]: Could not send.');
+        logging(`[sendStatistics]: error ${err}`);
         return;
       }
     });
   },
 
-  telemetryPrompt: function() {
-    // ask if user wants to participate in telemetry collection
-    var sharingData = appFrame.collectTelemetry(),
+  statPrompt: function() {
+    // ask if user wants to participate in statistics
+    var sharingData = appFrame.collectStatistics(),
      messageText = {
       nothingSent: {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")},
-      teleMsg: {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: `${i18n.__("Data sharing")}\n\n${i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.")}\n${i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.")}\n- ${i18n.__("Safe Surfer team")}`},
-      previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is setup on your computer")}\n\n${i18n.__("We are also interested in updates, so with data sharing we will also be notified of which version you've updated to.")}`}
+      statMsg: {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: `${i18n.__("Statistics")}\n\n${i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.")}\n${i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.")}\n- ${i18n.__("Safe Surfer team")}`},
+      previewdataGathered: {type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is setup on your computer")}\n\n${i18n.__("We are also interested in updates, so with statistic sharing we will also be notified of which version you've updated to.")}`}
     };
-    dialog.showMessageBox(messageText.teleMsg, dialogResponse => {
-      logging("[telemetryPrompt]: User has agreed to the prompt.");
-      // if user agrees to sending telemetry
+    dialog.showMessageBox(messageText.statMsg, dialogResponse => {
+      logging("[statPrompt]: User has agreed to the prompt.");
+      // if user agrees to sending stats
       switch (dialogResponse) {
         case 0:
-          appFrame.sendTelemetry(sharingData);
-          store.set('telemetryHasAnswer', true);
-          store.set('telemetryAllow', true);
+          appFrame.sendStatistics(sharingData);
+          store.set('statHasAnswer', true);
+          store.set('statisticAllow', true);
           appFrame.storeInitalData(sharingData);
           break;
 
         case 1:
           dialog.showMessageBox(messageText.previewdataGathered, dialogResponse => {
-            // if user agrees to sending telemetry
+            // if user agrees to sending stats
             switch (dialogResponse) {
               case 0:
-                appFrame.sendTelemetry(sharingData);
-                store.set('telemetryHasAnswer', true);
-                store.set('telemetryAllow', true);
+                appFrame.sendStatistics(sharingData);
+                store.set('statHasAnswer', true);
+                store.set('statisticAllow', true);
                 appFrame.storeInitalData(sharingData);
                 break;
 
               case 1:
-                store.set('telemetryHasAnswer', true);
-                store.set('telemetryAllow', false);
+                store.set('statHasAnswer', true);
+                store.set('statisticAllow', false);
                 dialog.showMessageBox(messageText.nothingSent, dialogResponse => {});
                 break;
             }
@@ -580,8 +580,8 @@ const appFrame = Object.freeze({
           break;
 
         case 2:
-          store.set('telemetryHasAnswer', true);
-          store.set('telemetryAllow', false);
+          store.set('statHasAnswer', true);
+          store.set('statisticAllow', false);
           dialog.showMessageBox(messageText.nothingSent, dialogResponse => {});
           break;
       }
@@ -677,12 +677,12 @@ const appFrame = Object.freeze({
   },
 
   checkForVersionChange: function() {
-    // if the version of the app has been updated, let the telemetry server know, if allowed by user
+    // if the version of the app has been updated, let the statistic server know, if allowed by user
     var previousVersionData,
      dataGathered = {};
-    if (store.get('telemetryAllow') == true) {
+    if (store.get('statisticAllow') == true) {
       logging("[checkForVersionChange]: Checking if user has reached a newer version");
-      previousVersionData = store.get('lastVersionToSendTelemetry');
+      previousVersionData = store.get('lastVersionTosendStatistics');
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
         logging('[checkForVersionChange]: Sending update data');
         dataGathered.DATESENT = global.desktop.logic.moment().format('X');
@@ -692,12 +692,12 @@ const appFrame = Object.freeze({
         dataGathered.PLATFORM = os.platform();
         dataGathered.ISSERVICEENABLED = window.appStates.serviceEnabled[0];
         if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
-        appFrame.sendTelemetry(JSON.stringify(dataGathered));
+        appFrame.sendStatistics(JSON.stringify(dataGathered));
 
-        var previous = store.get('teleHistory');
+        var previous = store.get('statHistory');
         previous = [...previous, JSON.stringify(dataGathered)];
-        store.set('teleHistory', previous);
-        store.set('lastVersionToSendTelemetry', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
+        store.set('statHistory', previous);
+        store.set('lastVersionTosendStatistics', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
       }
       else logging('[checkForVersionChange]: User has not reached new version.');
     }
@@ -776,10 +776,10 @@ const appFrame = Object.freeze({
       // run main process which loops
       appFrame.finishedLoading();
       appFrame.mainReloadProcess();
-      // if user hasn't provided a response to telemetry
-      if (store.get('telemetryHasAnswer') != true) {
+      // if user hasn't provided a response to statistics
+      if (store.get('statHasAnswer') != true) {
         setTimeout(() => {
-          appFrame.telemetryPrompt();
+          appFrame.statPrompt();
         }, 5000);
       }
     }, 1000);
@@ -883,19 +883,19 @@ global.desktop.logic.electronIPCon('openAboutMenu', () => {
   window.open(path.join(__dirname, '..', 'html', 'about.html'), i18n.__("About this app"));
 });
 
-global.desktop.logic.electronIPCon('viewTeleHistory', () => {
-  // go to data sharing page
-  window.open(path.join(__dirname, '..', 'html', 'tele.html'), i18n.__("View shared data"));
+global.desktop.logic.electronIPCon('viewStatHistory', () => {
+  // go to statistic sharing page
+  window.open(path.join(__dirname, '..', 'html', 'stats.html'), i18n.__("View statistic data"));
 });
 
-global.desktop.logic.electronIPCon('toggleTeleState', () => {
-  // changing the data sharing state
-  switch (store.get('telemetryAllow')) {
+global.desktop.logic.electronIPCon('toggleStatState', () => {
+  // changing the statistic sharing state
+  switch (store.get('statisticAllow')) {
     case true:
-      store.set('telemetryAllow', false);
+      store.set('statisticAllow', false);
       break;
     default:
-      store.set('telemetryAllow', true);
+      store.set('statisticAllow', true);
       break;
   }
 });
@@ -927,6 +927,10 @@ Join us by going to:
 
 Yours,
 Safe Surfer team.`);
+
+// move
+if (store.get('teleHistory') !== undefined) store.set('statHistory', store.get('teleHistory'));
+if (store.get('statHistory') !== undefined) store.delete('teleHistory');
 
 // connect button in html to a function
 document.querySelector('#toggleButton').addEventListener('click', appFrame.toggleServiceState);
