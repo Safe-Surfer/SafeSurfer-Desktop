@@ -148,8 +148,8 @@ compile-win-setup32:
 
 clean:
 	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder
-	@sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json
-	@sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json
+	@if grep -q '"BUILDMODE": "release"' ./package.json; then sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json; fi
+	@if grep -q '"enableUpdates": false' ./package.json; then sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json; fi
 
 slim:
 	@rm -rf node_modules tools

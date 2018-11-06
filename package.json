@@ -35,7 +35,7 @@
     "isBeta": false,
     "enableUpdates": true,
     "enableNotifications": true,
-    "enableLogging": true,
+    "enableLogging": false,
     "testLanguage": null
   },
   "author": "Safe Surfer",
