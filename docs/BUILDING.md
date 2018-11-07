@@ -12,6 +12,11 @@ Linux:
 ### Install node modules
 `npm i`  
 
+### Run from source
+`npm start`  
+or if on Windows  
+`npm run startNa`  
+
 ### Configure the build (if needed)
 `make BUILDMODE=DEV UPDATES=true configure`
 i.e: `make BUILDMODE=RELEASE UPDATES=false configure`

@@ -37,10 +37,13 @@ function createWindow() {
   });
 
   var windowObj = {
+    /* set default sizing */
 		width: mainWindowState.width,
 		height: mainWindowState.height,
+    /* set minimum standard sizing */
 		minWidth: 500,
 		minHeight: 600,
+    /* set default position sizing */
     'x': mainWindowState.x,
     'y': mainWindowState.y,
 		title: 'Safe Surfer',
@@ -50,6 +53,8 @@ function createWindow() {
 		  preload: path.join(__dirname, 'preload.js')
 		}
 	}
+
+  // if app is a beta, add message beta to title
 	if (isBeta == true) windowObj.title += " (beta)";
 	mainWindow = new BrowserWindow(windowObj);
 

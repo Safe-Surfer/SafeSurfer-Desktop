@@ -46,6 +46,7 @@ else if (isBeta == true) {
   store.set('betaCheck', true);
 }
 
+// REMOVE THIS after a while, as user's will have their stat data migrated in no time
 if (store.get('telemetryHasAnswer') !== undefined) store.set('statHasAnswer', store.get('telemetryHasAnswer'));
 if (store.get('statHasAnswer') !== undefined) store.delete('telemetryHasAnswer');
 if (store.get('telemetryAllow') !== undefined) store.set('statisticAllow', store.get('telemetryAllow'));

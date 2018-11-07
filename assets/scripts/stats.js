@@ -40,7 +40,7 @@ switch(store.get('statisticAllow')) {
     break;
   default:
     $("#statState").text(i18n.__("You're not opted in."));
-    $("#optOutMsg").text(i18n.__("If you feel that you want to opt in, you can do so in the menu."));
+    $("#optOutMsg").text(i18n.__("If you would that you want to opt in to giving statistics, you can do so in the menu."));
     break;
 }
 

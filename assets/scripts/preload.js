@@ -12,6 +12,7 @@ global.desktop = Object.freeze({
     logging: () => require('./logging.js'),
     Store: () => require('electron-store'),
     store: () => new Store(),
+    loadLogic: () => require('./logic.js'),
   },
   logic: {
     node_dns_changer: () => require('node_dns_changer'),
@@ -26,15 +27,11 @@ global.desktop = Object.freeze({
     electronClipboardWriteText: (text) => require('electron').clipboard.writeText(text),
     electronOpenExternal: (link) => require('electron').shell.openExternal(link),
     dialogBox: () => require('electron').remote,
-    copy_sscli_toTmp: (appimagePATH) => require('shelljs').cp(require('path').join(appimagePATH, 'sscli'), '/tmp/sscli-appimage'),
-    remove_sscli: () => require('shelljs').rm('/tmp/sscli-appimage'),
     shelljs_which: (prog) => require('shelljs').which(prog),
-    testForFile: (file) => require('shelljs').test('-f', file),
     isAdmin: () => require('is-admin')(),
     letsGetMeta: (site) => require("lets-get-meta")(site),
     moment: () => require('moment')(),
     base64Encode: () => require('nodejs-base64-encode'),
-    loadLogic: () => require('./logic.js'),
     connectivity: () => require('connectivity')
   }
 });

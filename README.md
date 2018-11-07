@@ -31,7 +31,7 @@ Our temporary site is found [here](http://142.93.48.189).
 - Configure lifeguard from inside the app  
 
 ## Building
-Consult the [build manual](docs/BUILDING.md) for instructions.  
+Consult the [build manual](docs/BUILDING.md) for instructions on building and running from source.  
 
 ## Contributing
 Read our [contribution guide](docs/CONTRIBUTING.md) to get started!  
@@ -55,7 +55,14 @@ Have you used SafeSurfer-Desktop and want to give feedback?
 Visit our [feedback](http://safesurfer.co.nz/feedback) site to leave us some feedback.
 
 ## Notes
-- This program have been tested on openSUSE Leap 15, Windows 10 (1803, 1809), Windows 7 (SP1), Fedora 28, Ubuntu (18.04, 14.04), Arch Linux, Windows 8.1, and macOS.  
+This program offically supports:
+- Fedora Workstation (28, 29)
+- macOS
+- openSUSE Leap 15
+- Ubuntu (18.04, 14.04)
+- Windows 10 (1803, 1809)
+- Windows 7 (SP1)
+- Windows 8.1
 
 ## License
 Copyright 2018 Safe Surfer.  

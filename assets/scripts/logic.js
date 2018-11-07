@@ -928,7 +928,7 @@ Join us by going to:
 Yours,
 Safe Surfer team.`);
 
-// move
+// REMOVE THIS after a while, as user's will have their stat data migrated in no time
 if (store.get('teleHistory') !== undefined) store.set('statHistory', store.get('teleHistory'));
 if (store.get('statHistory') !== undefined) store.delete('teleHistory');
 
