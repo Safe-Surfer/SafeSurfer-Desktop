@@ -30,7 +30,7 @@ const {app} = require('electron'),
   APPVERSION = packageJSON.version,
   APPBUILD = packageJSON.APPBUILD,
   isBeta = packageJSON.appOptions.isBeta,
-  updatesEnabled = packageJSON.appOptions.enableUpdates,
+  updatesEnabled =  process.env.APPUPDATES !== undefined ? process.env.APPUPDATES : packageJSON.appOptions.enableUpdates,
   i18n = new (require('./i18n.js'));
 var accountIsAssigned = store.get('accountInformation'),
   appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
