@@ -101,7 +101,7 @@ prep-appimage:
 
 build-appimage:
 	@if [ ! -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "Please run 'make prep-appimage'."; exit 1; fi;
-	make BUILDMODE=$(BUILDMODE) configure
+	make BUILDMODE=$(BUILDMODE) UPDATES=$(UPDATES) configure
 	make build-linux
 	make DESTDIR=nz.co.safesurfer.SafeSurfer-Desktop.AppDir install
 	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/lib
