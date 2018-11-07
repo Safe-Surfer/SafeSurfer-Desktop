@@ -1,12 +1,12 @@
 Name:           SafeSurfer-Desktop
-Version:        1.0.0rc1
+Version:        1.0.0rc2
 Release:        0
 Summary:        Keep safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
 License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
-Source0:	http://142.93.48.189/files/desktop/5-%{version}/%{name}-%{version}.zip
+Source0:	http://142.93.48.189/files/desktop/7-%{version}/%{name}-%{version}.zip
 Requires:       polkit, curl
 BuildRequires:	unzip, nodejs, npm, desktop-file-utils
 %if 0%{?suse_version}
@@ -116,6 +116,9 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 
 
 %changelog
+* Fri Nov 7  2018 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc2
+
 * Fri Oct 26 2018 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc1
 
