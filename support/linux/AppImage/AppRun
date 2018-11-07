@@ -32,6 +32,12 @@ then
 	set -x
 fi
 
+if [ ! -z "$VERBOSE" ]
+then
+	env
+	set -v
+fi
+
 args="$1"
 VENDORPREFIX=appimagekit
 
@@ -193,9 +199,9 @@ case "$args" in
 		uninstall_icons
 		if [[ $EUID -ne 0 ]]
 		then
-			rm -f "$HOME/.local/share/applications/$VENDORPREFIX-SafeSurfer-Desktop.desktop"
+			rm -f "$HOME/.local/share/applications/$VENDORPREFIX-nz.co.safesurfer.SafeSurfer-Desktop.desktop"
 		else
-			rm -f "/usr/local/share/applications/$VENDORPREFIX-SafeSurfer-Desktop.desktop"
+			rm -f "/usr/local/share/applications/$VENDORPREFIX-nz.co.safesurfer.SafeSurfer-Desktop.desktop"
 		fi
 		xdg-desktop-menu forceupdate
 		# for MIME
@@ -280,16 +286,16 @@ fi
 
 # Check if the desktop file is already there
 # and if so, whether it points to the same AppImage
-if [ -e "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" ] && [ -z "$APPIMAGE_NO_UPGRADE" ]
+if [ -e "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-nz.co.safesurfer.SafeSurfer-Desktop.desktop" ] && [ -z "$APPIMAGE_NO_UPGRADE" ]
 then
-	#INSTALLED_APP_VERSION=$(grep "^X-AppImage-BuildId=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | head -n 1 | cut -d " " -f 1)
+	#INSTALLED_APP_VERSION=$(grep "^X-AppImage-BuildId=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-nz.co.safesurfer.SafeSurfer-Desktop.desktop" | head -n 1 | cut -d " " -f 1)
 	#APP_VERSION=$(grep "^X-AppImage-BuildId=" "$DESKTOP_FILE" | head -n 1 | cut -d " " -f 1)
-	InstalledAppBuild=$(grep "X-AppImage-Build=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
-	InstalledAppVersion=$(grep "X-AppImage-Version=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
+	InstalledAppBuild=$(grep "X-AppImage-Build=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-nz.co.safesurfer.SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
+	InstalledAppVersion=$(grep "X-AppImage-Version=" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-nz.co.safesurfer.SafeSurfer-Desktop.desktop" | cut -d '=' -f2)
 	echo
 	echo "[Version # installed] : $InstalledAppVersion"
 	echo "[Build   # installed] : $InstalledAppBuild"
-	if [ ! "$InstalledAppBuild" -lt "$AppBuild" ]
+	if [ "$InstalledAppBuild" = "$AppBuild" ]
 	then
 		exit 0
 	else
@@ -299,7 +305,7 @@ then
 			APPIMAGE_UPGRADE=true
 		fi
 		uninstall_icons
-		rm -f "$HOME/.local/share/applications/$VENDORPREFIX-SafeSurfer-Desktop.desktop"
+		rm -f "$HOME/.local/share/applications/$VENDORPREFIX-nz.co.safesurfer.SafeSurfer-Desktop.desktop"
 	fi
 fi
 
