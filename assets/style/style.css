@@ -267,7 +267,8 @@ body, html {
   transform-style: preserve-3d;
 }
 .serviceToggle:hover {
-	background-color:#d12d00;
+	font-size: 63px;
+	background-color: #d12d00;
 	color: #fff600;
 	text-shadow: 2px 2px 8px black;
 }
@@ -279,6 +280,23 @@ body, html {
 
 .serviceToggle_lifeguard {
 	white-space: nowrap;
+}
+
+.serviceToggle_locked {
+  background-color: #ababab;
+  color: #4f5051;
+	border: 1px solid black;
+}
+.serviceToggle_locked:hover {
+	background-color: #939696;
+	color: white;
+	text-shadow: 2px 2px 8px black;
+}
+.serviceToggle_locked:active {
+	font-size: 68px;
+	background-color: #7c7b79;
+	color: #dcdcdc;
+	border: 2px solid black;
 }
 
 .no-wrap {

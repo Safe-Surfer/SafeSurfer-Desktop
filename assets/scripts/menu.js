@@ -81,7 +81,9 @@ module.exports = (app, mainWindow) => {
 	    	{label: i18n.__('Report a bug'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/docs/BUGS.md')} },
 		    {type:'separator'},
 			  {label: i18n.__('Restart app'), click() {app.relaunch(); app.quit()} },
-        {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' }
+        {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' },
+		    {type:'separator'},
+	    	{label: i18n.__('I need help with my addiction'), click() {electron.shell.openExternal('https://thelightproject.co.nz/need-help/i-need-help/')} },
 		  ]
 	  },
 	  {

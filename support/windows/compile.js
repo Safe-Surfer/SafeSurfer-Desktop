@@ -1,4 +1,4 @@
-var file = process.argv[2];
+const file = process.argv[2];
 
 require("innosetup-compiler")(file, {
     O: 'release-builds'

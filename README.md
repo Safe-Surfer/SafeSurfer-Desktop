@@ -30,8 +30,16 @@ Our temporary site is found [here](http://142.93.48.189).
 - Easy to use and setup  
 - Configure lifeguard from inside the app  
 
+## Feedback
+Have you used SafeSurfer-Desktop and want to give feedback?
+Visit our [feedback site](http://safesurfer.co.nz/feedback) to leave us some feedback.
+
 ## Building
 Consult the [build manual](docs/BUILDING.md) for instructions on building and running from source.  
+
+### Bugs
+Wanna help us find and squash bugs?  
+Check out our [bug reporting guide](docs/BUGS.md).  
 
 ## Contributing
 Read our [contribution guide](docs/CONTRIBUTING.md) to get started!  
@@ -46,23 +54,16 @@ Note: Although some translations display as 100%, they may need review.
 Help us speak your language!  
 Read our [translation guide](docs/TRANSLATING.md) to get started!  
 
-### Bugs
-Wanna help us find and squash bugs?  
-Check out our [bug reporting guide](docs/BUGS.md).  
-
-## Feedback
-Have you used SafeSurfer-Desktop and want to give feedback?
-Visit our [feedback](http://safesurfer.co.nz/feedback) site to leave us some feedback.
-
 ## Notes
-This program offically supports:
-- Fedora Workstation (28, 29)
-- macOS
-- openSUSE Leap 15
-- Ubuntu (18.04, 14.04)
-- Windows 10 (1803, 1809)
-- Windows 7 (SP1)
-- Windows 8.1
+- This program offically supports:
+    - Fedora Workstation (28, 29)
+    - macOS El Capitan (hasn't been tested on anything newer)
+    - openSUSE Leap 15
+    - Ubuntu (18.04, 14.04)
+    - Windows 10 (1803, 1809)
+    - Windows 7 (SP1)
+    - Windows 8.1
+- If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
 
 ## License
 Copyright 2018 Safe Surfer.  

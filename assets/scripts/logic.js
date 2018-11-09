@@ -63,8 +63,41 @@ if (os.platform() == 'linux') {
   else if (window.desktop.logic.shelljs_which('xdg-su') != null) window.appStates.guiSudo = 'xdg-su';
 }
 
+window.actions = {
+  unlockButton: function() {
+    store.set('lockDeactivateButtons', false);
+    logging('[unlockButton]: button has been unlocked');
+  },
+
+  lockButton: function() {
+    store.set('lockDeactivateButtons', true);
+    logging('[unlockButton]: button has been locked');
+  },
+
+  logging: {
+    enable: function() {
+      window.appStates.enableLogging = true;
+    },
+
+    disable: function() {
+      window.appStates.enableLogging = false;
+    }
+  },
+
+  status: function() {
+    console.log("==========================");
+    console.log(`| This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`)
+    console.log(`| This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer().version()} of node_dns_changer.`)
+    console.log(`| The service is ${appStates.serviceEnabled[0] === true ? "enabled" : "disabled"}.`);
+    console.log(`| You have ${appStates.internet[0] === true ? "" : "no "}internet.`);
+    console.log(`| The app has${appStates.appHasLoaded === true ? "" : "n't"} loaded.`);
+    if (os.platform() === 'win32') console.log(`Your version of Windows is ${window.appStates.windowsVersionCompatible === true ? "" : "not"}compatible.`)
+    console.log("==========================");
+  }
+}
+
 // functions
-const appFrame = Object.freeze({
+const appFrame = {
   callProgram: async function(command) {
     // call a child process
     let promise = new Promise((resolve, reject) => {
@@ -140,18 +173,32 @@ const appFrame = Object.freeze({
         $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD").toUpperCase());
         $('.serviceToggle').addClass('serviceToggle_lifeguard');
         $('.topTextBox_active').addClass('topTextBox_active_lifeguard');
+        $('.serviceToggle').removeClass('serviceToggle_locked');
+      }
+      else if (store.get('lockDeactivateButtons') == true) {
+        $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
+        $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
+        $('.serviceToggle').addClass('serviceToggle_locked');
+        $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
+        $('.serviceToggle').removeClass('serviceToggle_lifeguard');
       }
       else {
         // if lifeguard is not found
         $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
         $("#toggleButton").html(i18n.__("STOP PROTECTION").toUpperCase());
         $('.serviceToggle').removeClass('serviceToggle_lifeguard');
+        $('.serviceToggle').removeClass('serviceToggle_locked');
         $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
       }
       // make sure that button is persistent
       $('.serviceToggle').show();
       $('.appNoInternetConnectionScreen').hide();
       $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+    }
+    else if (store.get('lockDeactivateButtons') == true) {
+      $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
+      $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
+      $('.serviceToggle').addClass('serviceToggle_locked');
     }
   },
 
@@ -195,7 +242,9 @@ const appFrame = Object.freeze({
       case true:
         logging('[toggleServiceState]: trying toggle disable');
         if (window.appStates.lifeguardFound[0] == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-        else appFrame.displayDisableWarning();
+        else {
+          if (store.get('lockDeactivateButtons') != true) appFrame.displayDisableWarning();
+        }
         break;
 
       // if service is disabled
@@ -604,12 +653,16 @@ const appFrame = Object.freeze({
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: `${i18n.__('The service is already in the state which you request.')}\n${i18n.__('Forcing the service to be enabled in this manner may have consequences.')}\n${i18n.__('Your computer\'s network configuration could break by doing this action.')}`}, dialogResponse => {
           if (dialogResponse == 1) {
             if (window.appStates.serviceEnabled[0] == true) appFrame.enableServicePerPlatform({forced: "force"});
-            else appFrame.disableServicePerPlatform({forced: "force"});
+            else {
+              if (store.get('lockDeactivateButtons') != true) appFrame.disableServicePerPlatform({forced: "force"});
+            }
           }
         });
       }
       else {
-        if (window.appStates.serviceEnabled[0] == true) appFrame.disableServicePerPlatform({forced: "force"});
+        if (window.appStates.serviceEnabled[0] == true) {
+          if (store.get('lockDeactivateButtons') != true) appFrame.disableServicePerPlatform({forced: "force"});
+        }
         else appFrame.enableServicePerPlatform({forced: "force"});
       }
     }
@@ -640,6 +693,30 @@ const appFrame = Object.freeze({
       body: i18n.__('Safe Surfer has been disabled. You are now unprotected.'),
       icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
     });
+  },
+
+  lockDeactivateButtons: function() {
+    // disallow pressing of deactivate
+    $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
+    store.set('lockDeactivateButtons', true);
+  },
+
+  lockEnableMessage: async function() {
+    // tell the user to reboot
+    let promise = new Promise((resolve, reject) => {
+      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Would you like to lock deactivate buttons?")}`}, response => {
+        if (response == 1) resolve(true);
+        if (response == 0) dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Are you absolutely sure that you want to lock deactivate buttons?")}`}, response => {
+          if (response == 0) resolve(true);
+          if (response == 1) {
+            appFrame.lockDeactivateButtons();
+            resolve(true);
+          }
+        });
+      });
+    });
+    let result = await promise;
+    return result;
   },
 
   displayRebootMessage: function() {
@@ -678,19 +755,20 @@ const appFrame = Object.freeze({
 
   checkForVersionChange: function() {
     // if the version of the app has been updated, let the statistic server know, if allowed by user
-    var previousVersionData,
-     dataGathered = {};
+    var previousVersionData;
     if (store.get('statisticAllow') == true) {
       logging("[checkForVersionChange]: Checking if user has reached a newer version");
       previousVersionData = store.get('lastVersionTosendStatistics');
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
         logging('[checkForVersionChange]: Sending update data');
-        dataGathered.DATESENT = global.desktop.logic.moment().format('X');
-        dataGathered.TYPESEND = "update";
-        dataGathered.APPBUILD = APPBUILD;
-        dataGathered.APPVERSION = APPVERSION;
-        dataGathered.PLATFORM = os.platform();
-        dataGathered.ISSERVICEENABLED = window.appStates.serviceEnabled[0];
+        var dataGathered = {
+          DATESENT: global.desktop.logic.moment().format('X'),
+          TYPESEND: "update",
+          APPBUILD: APPBUILD,
+          APPVERSION: APPVERSION,
+          PLATFORM: os.platform(),
+          ISSERVICEENABLED: window.appStates.serviceEnabled[0]
+        }
         if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
         appFrame.sendStatistics(JSON.stringify(dataGathered));
 
@@ -727,7 +805,9 @@ const appFrame = Object.freeze({
           $('.progressInfoBar').css("height", "0px");
           window.appStates.toggleLock = false;
           if (window.appStates.serviceEnabled[0] == true) appFrame.donationMessage().then(response => {
-            if (response) appFrame.displayRebootMessage();
+            if (response) appFrame.lockEnableMessage().then(response => {
+              if (response) appFrame.displayRebootMessage();
+            });
           });
           else appFrame.displayRebootMessage();
         }
@@ -777,17 +857,17 @@ const appFrame = Object.freeze({
       appFrame.finishedLoading();
       appFrame.mainReloadProcess();
       // if user hasn't provided a response to statistics
-      if (store.get('statHasAnswer') != true) {
+      if (store.get('statHasAnswer') != true && appStates.userIsAdmin == true) {
         setTimeout(() => {
           appFrame.statPrompt();
-        }, 5000);
+        }, 3000);
       }
     }, 1000);
   },
 
   openWindowsUACHelpPage: function() {
     // launch a page about how to launch the app as an Administrator (for Windows users)
-    global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/how-to-uac.php');
+    global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/customer/en/portal/articles/2957007-run-app-as-administrator');
   },
 
   permissionLoop: function() {
@@ -821,15 +901,17 @@ const appFrame = Object.freeze({
     }
     var releaseVer = os.release().split('.');
     if (parseInt(releaseVer[0]) == 6 && parseInt(releaseVer[1]) >= 1 || parseInt(releaseVer[0]) == 10) {
+      window.appStates.windowsVersionCompatible = true;
       return;
     }
+    window.appStates.windowsVersionCompatible = false;
     logging("[windowsVersionCheck]: User is not on a compatible version of Windows");
     var dialogMsg = {type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app.")}
     dialog.showMessageBox(dialogMsg, msgResponse => {
       if (msgResponse == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
     });
   }
-});
+};
 
 global.desktop.logic.electronIPCon('toggleAppUpdateAutoCheck', (event, arg) => {
   // if user changes the state of auto check for updates

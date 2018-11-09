@@ -25,7 +25,7 @@ const path = require("path"),
   fs = require('fs'),
   testLanguage = require('../../package.json').appOptions.testLanguage;
 let loadedLanguage,
- app = electron.app ? electron.app : electron.remote.app;
+  app = electron.app ? electron.app : electron.remote.app;
 var locale = testLanguage === null ? app.getLocale() : testLanguage;
 
 // export undefined function

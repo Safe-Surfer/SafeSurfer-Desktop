@@ -15,7 +15,7 @@
 	"About us": "Über uns",
 	"Contact us": "Kontaktiere uns",
 	"Contribute to this project": "Steuere zu diesem Projekt bei",
-	"Donate": "",
+	"Donate": "Spenden",
 	"Version": "Version",
 	"Build": "Überarbeitung",
 	"Help": "Hilfe",
@@ -106,6 +106,5 @@
 	"See the GNU General Public License, version 3 or later for details.": "Sieh dir die GNU (generelle, öffentliche Lizenz) Version 3 oder später, für Details an.",
 	"Please wait while the app asks for Administrative privileges": "",
 	"Help me to run this app as an Administrator": "",
-	"I can't seem run this app as an Administrator for you.": "",
-	"Donate": ""
+	"I can't seem run this app as an Administrator for you.": ""
 }

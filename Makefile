@@ -75,6 +75,7 @@ deb-src:
 
 build-linuxzip:
 	make BUILDMODE=$(BUILDMODE) UPDATES=false configure
+	make build-linux
 	@mkdir -p zip-build
 	@make DESTDIR=zip-build install
 	@cd zip-build && zip -r ../SafeSurfer-Desktop-Linux.zip .
