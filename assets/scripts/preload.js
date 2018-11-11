@@ -35,5 +35,3 @@ global.desktop = Object.freeze({
     connectivity: () => require('connectivity')
   }
 });
-
-

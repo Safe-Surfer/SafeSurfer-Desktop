@@ -6,68 +6,30 @@
     "sdk": "org.freedesktop.Sdk",
     "base": "io.atom.electron.BaseApp",
     "base-version": "stable",
-    "command": "run.sh",
+    "command": "/app/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop",
     "separate-locales": false,
     "finish-args": [
         "--share=ipc",
         "--socket=x11",
         "--socket=pulseaudio",
-        "--share=network"
+        "--share=network",
+        "--talk-name=org.freedesktop.Notifications"
     ],
-    "build-options" : {
-        "cflags": "-O2 -g",
-        "cxxflags": "-O2 -g",
-        "env": {
-            "NPM_CONFIG_LOGLEVEL": "info"
-        }
-    },
     "modules": [
         {
-            "name": "node",
-		"buildsystem": "simple",
-		"build-commands": [
-			"mkdir -p /app/{usr/local/lib/nodejs/node-v8.12.0,bin}",
-			"cp -r * /app/usr/local/lib/nodejs/node-v8.12.0/.",
-			"ln -s /app/usr/local/lib/nodejs/node-v8.12.0/bin/node /app/bin/node",
-			"ln -s /app/usr/local/lib/nodejs/node-v8.12.0/bin/npm /app/bin/npm",
-			"ln -s /app/usr/local/lib/nodejs/node-v8.12.0/bin/npx /app/bin/npx"
-		],
-        	"sources": [{
-			"type": "archive",
-			"url": "https://nodejs.org/dist/v8.12.0/node-v8.12.0-linux-x64.tar.xz",
-			"sha256": "29a20479cd1e3a03396a4e74a1784ccdd1cf2f96928b56f6ffa4c8dae40c88f2"
-		}]
-        },
-        {
             "name": "SafeSurfer-Desktop",
-            "build-options" : {
-                "env": {
-                    "electron_config_cache": "/run/build/SafeSurfer-Desktop/npm-cache"
-                }
-            },
             "buildsystem": "simple",
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0rc2/SafeSurfer-Desktop-1.0.0rc2.zip",
-                    "sha256": "e1ff1e08cc7ebbaf165a6f80f4965ca3202eb2f2a50952ce87328f8bf0dc7748",
+                    "url": "http://142.93.48.189/files/desktop/7-1.0.0rc2/linux-precompiled/SafeSurfer-Desktop-1.0.0rc2.zip",
+                    "sha256": "86a5d26700e2e2a6eea82853838e398605baa31bc8747cf9fef23b8908c2e33a",
                     "dest": "main"
-                },
-                "generated-sources.json",
-                {
-                    "type": "script",
-                    "dest-filename": "run.sh",
-                    "commands": [ "npm start --prefix=/app/main" ]
                 }
             ],
             "build-commands": [
-                "npm install --prefix=main --offline --cache=/run/build/SafeSurfer-Desktop/npm-cache",
-                "cd main && make PACKAGEFORMAT=flatpak BUILDMODE= UPDATES=false configure",
-		"cd main && make build-linux",
-		"cd main && make DESTDIR=/app/ install",
-                "mkdir -p /app/main /app/bin",
-                "cp -ra main/* /app/main/",
-                "install run.sh /app/bin/"
+            	"mkdir -p /app/usr",
+                "cp -ra main/* /app/usr/."
             ]
         }
     ]

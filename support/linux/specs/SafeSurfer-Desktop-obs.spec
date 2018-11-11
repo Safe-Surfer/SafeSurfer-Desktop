@@ -8,7 +8,7 @@ Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
 Source0:	http://142.93.48.189/files/desktop/7-%{version}/%{name}-%{version}.zip
 Requires:       polkit, curl
-BuildRequires:	unzip, nodejs, npm, desktop-file-utils
+BuildRequires:	unzip, desktop-file-utils
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
 %endif
@@ -18,18 +18,20 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 
 
 %prep
-%autosetup
-
+mkdir %{name}-%{version}/
+unzip ../SOURCES/%{name}-%{version}.zip -d ./%{name}-%{version}/
 
 %build
 
 
 %install
-%{__make} DESTDIR=$RPM_BUILD_ROOT install
+cp -r ./%{name}-%{version}/. $RPM_BUILD_ROOT/
+echo "APPUPDATES=false /usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop" > $RPM_BUILD_ROOT/usr/lib64/SafeSurfer-Desktop/apprun.sh
+chmod +x $RPM_BUILD_ROOT/usr/lib64/SafeSurfer-Desktop/apprun.sh
+sed -i -e "s,/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop,/usr/lib64/SafeSurfer-Desktop/apprun.sh,g" $RPM_BUILD_ROOT/usr/share/applications/SafeSurfer-Desktop.desktop
 
 
 %files
-%doc README.md
 /usr/lib64/%{name}
 /usr/lib64/%{name}/locales
 /usr/lib64/%{name}/resources
@@ -104,6 +106,7 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 /usr/lib64/%{name}/views_resources_200_percent.pak
 /usr/lib64/%{name}/libnode.so
 /usr/lib64/%{name}/LICENSE
+/usr/lib64/%{name}/apprun.sh
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli

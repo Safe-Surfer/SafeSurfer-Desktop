@@ -14,7 +14,6 @@ AppPublisherURL=http://www.safesurfer.co.nz
 AppSupportURL=http://www.safesurfer.co.nz
 AppUpdatesURL=http://www.safesurfer.co.nz
 DefaultDirName={pf}\SafeSurfer-Desktop
-DisableDirPage=yes
 DisableProgramGroupPage=yes
 OutputBaseFilename=SafeSurfer-Desktop-Installer
 SetupIconFile=Z:\root\build\SafeSurfer-Desktop-1.0.0rc2\assets\media\icons\win\icon.ico

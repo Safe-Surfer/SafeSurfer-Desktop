@@ -5,11 +5,29 @@
   <link rel="stylesheet" type="text/css" href="../style/style.css">
   </head>
   <body>
+    <!-- Drop down text -->
     <div class="progressInfoBar">
       <p class="progressInfoBar_text">Please wait while the app ...</p>
     </div>
+    <!-- Main screen -->
+    <!--<div class="serviceMainScreen" style="z-index: 3">
+      <img src="../media/ss-surfer-water.png" style="width:160%; height:auto; z-index:-2;" id="mainScreen_background" class="mainCenter_down">
+      <div class="topTextBox_background"></div>
+        <div class="topTextBox">
+          <div class="leftCenter">
+	          <div class="topTextFrame">
+		          <h1 class="bigText_white nowrap" id="bigText">YOU ARE PROTECTED</h1>
+	          </div>
+	          <div class="subTextFrame">
+		          <h4 class="subText" id="subText">YOU ARE SAFE TO SURF THE INTERNET</h4>
+	          </div>
+          </div>
+        </div>
+      </div>
+    </div>-->
+    <!-- Main screen active -->
     <div class="serviceActiveScreen" style="z-index: 3">
-      <img src="../media/ss-water-water-lifeguard.png" style="width:160%; height:auto; z-index:-2;" id="mainScreen_background" class="mainCenter_down">
+      <img src="../media/ss-surfer-water-lifeguard.png" style="width:160%; height:auto; z-index:-2;" id="mainScreen_background_active" class="mainCenter_down">
       <div class="topTextBox_background"></div>
         <div class="topTextBox_active">
           <div class="leftCenter">
@@ -23,8 +41,9 @@
         </div>
       </div>
     </div>
+    <!-- Main screen inactive -->
     <div class="serviceInactiveScreen" style="z-index: 4">
-      <img src="../media/ss-surfer-water.png" style="width:160%; height:auto; z-index:-2;" id="mainScreen_background" class="mainCenter_down">
+      <img src="../media/ss-surfer-water.png" style="width:160%; height:auto; z-index:-2;" id="mainScreen_background_inactive" class="mainCenter_down">
       <div class="topTextBox_background"></div>
         <div class="topTextBox_inactive">
           <div class="leftCenter">
@@ -38,20 +57,24 @@
         </div>
       </div>
     </div>
+    <!-- Internet connection loss screen -->
     <div class="appNoInternetConnectionScreen" style="z-index: 2">
       <h1 class="bigText bigText_nointernet" style="color:black;" id="bigTextNoInternet">IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION.</h1>
     </div>
+    <!-- App launch screen -->
     <div class="appLoadingScreen" style="z-index: 45">
       <div id="privBar">
         <p id="privBarText">Please wait while the app asks for Administrative privileges</p>
         <button id="privBarText_error" class="mainCenter_left">Help me to run this app as an Administrator</button>
       </div>
-      <img src="../media/ss-surfer-head.png" style="width:200px; height:200px; z-index:-2;" id="mainScreen_background" class="mainCenter">
+      <img src="../media/ss-surfer-head.png" style="width:200px; height:200px; z-index:-2;" id="mainScreen_background_logo" class="mainCenter">
       <h1 class="bigText nowrap mainCenter_init bigText_init" style="color:black; white-space: nowrap;" id="bigTextBrandName">SAFE SURFER</h1>
     </div>
+    <!-- Toggle button -->
     <div class="mainCenter_down" style="z-index: 40;">
       <button type="button" class="serviceToggle" style="z-index:50;" id="toggleButton">CHECKING SERVICE STATE</button>
     </div>
+    <!-- Bottom progress bar -->
     <div id="progressBar"></div>
     <script>
       window.desktop.global.loadLogic();

@@ -64,14 +64,16 @@ if (os.platform() == 'linux') {
 }
 
 window.actions = {
-  unlockButton: function() {
-    store.set('lockDeactivateButtons', false);
-    logging('[unlockButton]: button has been unlocked');
-  },
+  buttons: {
+    unlock: function() {
+      store.set('lockDeactivateButtons', false);
+      logging('[unlockButton]: button has been unlocked');
+    },
 
-  lockButton: function() {
-    store.set('lockDeactivateButtons', true);
-    logging('[unlockButton]: button has been locked');
+    lock: function() {
+      store.set('lockDeactivateButtons', true);
+      logging('[unlockButton]: button has been locked');
+    }
   },
 
   logging: {
@@ -86,15 +88,33 @@ window.actions = {
 
   status: function() {
     console.log("==========================");
-    console.log(`| This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`)
-    console.log(`| This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer().version()} of node_dns_changer.`)
+    console.log(`| This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`);
+    console.log(`| This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer().version()} of node_dns_changer.`);
     console.log(`| The service is ${appStates.serviceEnabled[0] === true ? "enabled" : "disabled"}.`);
-    console.log(`| You have ${appStates.internet[0] === true ? "" : "no "}internet.`);
+    console.log(`| There is ${appStates.lifeguardFound[0] === true ? "a" : "no"} LifeGuard on your network.`);
+    console.log(`| You have ${appStates.internet[0] === true ? "a connection to the" : "no"} internet.`);
     console.log(`| The app has${appStates.appHasLoaded === true ? "" : "n't"} loaded.`);
-    if (os.platform() === 'win32') console.log(`Your version of Windows is ${window.appStates.windowsVersionCompatible === true ? "" : "not"}compatible.`)
+    console.log(`| The buttons are ${store.get('lockDeactivateButtons') === true ? 'locked' : 'not locked'}.`);
+    if (os.platform() === 'win32') console.log(`| Your version of Windows is ${window.appStates.windowsVersionCompatible === true ? "" : "not "}compatible.`);
     console.log("==========================");
   }
 }
+
+window.help = `Help menu
+---------
+Here are a list of commands which may be of use.
+The commands are run the same way you type 'help'.
+
+View statuses:
+  actions.status()
+
+Toggle logging:
+  actions.logging.enable()
+  actions.logging.disable()
+
+Toggle button lock
+  actions.buttons.unlock()
+  actions.buttons.lock()`;
 
 // functions
 const appFrame = {
@@ -208,7 +228,9 @@ const appFrame = {
       logging("[displayUnprotection]: service state is unprotected");
       $(".serviceInactiveScreen").show();
       $(".serviceActiveScreen").hide();
+      $('#bigTextUnprotected').text(i18n.__('DANGER AHEAD').toUpperCase());
       $("#toggleButton").html(i18n.__("GET PROTECTED").toUpperCase());
+      $('#subTextUnprotected').text(i18n.__('YOU ARE NOT PROTECTED IN THE ONLINE SURF').toUpperCase());
       $('.serviceToggle').show();
       $('.appNoInternetConnectionScreen').hide();
       $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
@@ -217,6 +239,7 @@ const appFrame = {
 
   displayNoInternetConnection: function() {
     // show the user that they don't have an internet connection
+    $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION.").toUpperCase());
     $('.appNoInternetConnectionScreen').show();
     $('.appNoInternetConnectionScreen').parent().css('z-index', 58);
     $('.bigText_nointernet').show();
@@ -244,6 +267,7 @@ const appFrame = {
         if (window.appStates.lifeguardFound[0] == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
         else {
           if (store.get('lockDeactivateButtons') != true) appFrame.displayDisableWarning();
+          else appFrame.lockAlertMessage();
         }
         break;
 
@@ -456,20 +480,14 @@ const appFrame = {
       window.appStates.internet[0] = true;
       // read the data as JSON
       remoteData = JSON.parse(body);
-      for (var item = 0; item < remoteData.versions.length; item++) {
-        versionList = [...versionList, remoteData.versions[item].build];
-      }
-      var iteration,
-        versionRecommended;
+      var versionRecommended;
       buildRecommended = parseInt(store.get('betaCheck') == true ? remoteData.recommendedBuild : remoteData.recommendedBetaBuild);
-      for (var i = 0; i < remoteData.versions.length; i++) {
-        if (remoteData.versions[i].build == buildRecommended) {
-          iteration = i;
-          break;
-        }
-      }
+      remoteData.versions.map(build => {
+        if (build.build == buildRecommended) versionRecommended = build;
+        versionList = [...versionList, build.build];
+      });
 
-      var genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${remoteData.versions[iteration].version}/SafeSurfer-Desktop-${remoteData.versions[iteration].version}-${buildRecommended}-${os.arch()}`;
+      var genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${versionRecommended.version}/SafeSurfer-Desktop-${versionRecommended.version}-${buildRecommended}-${os.arch()}`;
       switch (os.platform()) {
         case 'linux':
           if (LINUXPACKAGEFORMAT == 'appimage') genLink = `${genLink}.AppImage`;
@@ -487,18 +505,14 @@ const appFrame = {
 
       if (buildRecommended > parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // update available
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${remoteData.versions[iteration].version}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${versionRecommended.version}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants update.");
-            if (remoteData.versions[iteration].altLink === undefined) {
-              global.desktop.logic.electronOpenExternal(genLink);
-            }
-            else {
-              global.desktop.logic.electronOpenExternal(remoteData.versions[iteration].altLink);
-            }
+            if (versionRecommended.altLink === undefined) global.desktop.logic.electronOpenExternal(genLink);
+            else global.desktop.logic.electronOpenExternal(versionRecommended.altLink);
           }
           else if (updateResponse == 2) {
-            global.desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${remoteData.versions[iteration].version}`);
+            global.desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${versionRecommended.version}`);
           }
           else return;
         });
@@ -506,23 +520,18 @@ const appFrame = {
 
       else if (buildRecommended == parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1 && options.current == true) {
         // up to date
-        dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: i18n.__("You're up to date.")}, updateResponse => {
-          if (updateResponse == 0) logging("[checkForAppUpdate]: User has the latest version installed.");
-          return;
-        });
+        logging("[checkForAppUpdate]: User has the latest version installed.");
+        dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: i18n.__("You're up to date.")}, updateResponse => {});
+        return;
       }
 
       else if (buildRecommended < parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // user must downgrade
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version ')} ${remoteData.versions[iteration].version}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version ')} ${versionRecommended.version}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants to downgrade.");
-            if (remoteData.versions[iteration].altLink === undefined) {
-              global.desktop.logic.electronOpenExternal(genLink);
-            }
-            else {
-              global.desktop.logic.electronOpenExternal(remoteData.versions[iteration].altLink);
-            }
+            if (versionRecommended.altLink === undefined) global.desktop.logic.electronOpenExternal(genLink);
+            else global.desktop.logic.electronOpenExternal(versionRecommended.altLink);
           }
           else return;
         });
@@ -655,6 +664,7 @@ const appFrame = {
             if (window.appStates.serviceEnabled[0] == true) appFrame.enableServicePerPlatform({forced: "force"});
             else {
               if (store.get('lockDeactivateButtons') != true) appFrame.disableServicePerPlatform({forced: "force"});
+              else appFrame.lockAlertMessage();
             }
           }
         });
@@ -662,6 +672,7 @@ const appFrame = {
       else {
         if (window.appStates.serviceEnabled[0] == true) {
           if (store.get('lockDeactivateButtons') != true) appFrame.disableServicePerPlatform({forced: "force"});
+          else appFrame.lockAlertMessage();
         }
         else appFrame.enableServicePerPlatform({forced: "force"});
       }
@@ -706,7 +717,7 @@ const appFrame = {
     let promise = new Promise((resolve, reject) => {
       dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Would you like to lock deactivate buttons?")}`}, response => {
         if (response == 1) resolve(true);
-        if (response == 0) dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Are you absolutely sure that you want to lock deactivate buttons?")}`}, response => {
+        if (response == 0) dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Are you absolutely sure that you want to lock deactivate buttons?")}\n${i18n.__("Unlocking the buttons will require help from support.")}`}, response => {
           if (response == 0) resolve(true);
           if (response == 1) {
             appFrame.lockDeactivateButtons();
@@ -717,6 +728,13 @@ const appFrame = {
     });
     let result = await promise;
     return result;
+  },
+
+  lockAlertMessage: function() {
+    // tell the user to go to support for help on unlocking it
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Get support')], message: `${i18n.__("Locked deactivate buttons")}\n${i18n.__("The toggle buttons are locked, unlocking them will require help from support to unlock the buttons.")}`}, response => {
+      if (response == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/customer/portal/emails/new');
+    });
   },
 
   displayRebootMessage: function() {
@@ -970,6 +988,19 @@ global.desktop.logic.electronIPCon('viewStatHistory', () => {
   window.open(path.join(__dirname, '..', 'html', 'stats.html'), i18n.__("View statistic data"));
 });
 
+global.desktop.logic.electronIPCon('goLockDeactivateButtons', () => {
+  // give a prompt about locking the toggle button
+  if (appStates.serviceEnabled[0] != true) {
+    dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__('You must enable the service before you can lock it.')}`}, response => {});
+    return;
+  }
+  if (store.get('lockDeactivateButtons') === true) {
+    dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__('You appear to already have locked the buttons.')}`}, response => {});
+    return;
+  }
+  appFrame.lockEnableMessage();
+});
+
 global.desktop.logic.electronIPCon('toggleStatState', () => {
   // changing the statistic sharing state
   switch (store.get('statisticAllow')) {
@@ -986,14 +1017,6 @@ global.desktop.logic.electronIPCon('toggleStatState', () => {
 appFrame.windowsVersionCheck();
 appFrame.checkUserPrivileges();
 appFrame.checkForVersionChange();
-
-// translate HTML elements
-$('#bigTextProtected').text(i18n.__('YOU ARE PROTECTED').toUpperCase());
-$('#subTextProtected').text(i18n.__('YOU ARE SAFE TO SURF THE INTERNET').toUpperCase());
-$('#bigTextUnprotected').text(i18n.__('DANGER AHEAD').toUpperCase());
-$('#subTextUnprotected').text(i18n.__('YOU ARE NOT PROTECTED IN THE ONLINE SURF').toUpperCase());
-$('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION.").toUpperCase());
-$('#toggleButton').text(i18n.__('CHECKING SERVICE STATE').toUpperCase());
 
 // if auto-update checking is enabled and updates are enabled, check for them
 if ((updatesEnabled == true && store.get('appUpdateAutoCheck') == true) || process.env.APPUPDATES === "true") appFrame.checkForAppUpdate({

@@ -1,6 +1,6 @@
-SHELL := /bin/bash
-PREFIX := /usr/lib64/SafeSurfer-Desktop
-COMPLETIONDIR := /usr/share/bash-completion/completions
+SHELL = /bin/bash
+PREFIX = /usr/lib64/SafeSurfer-Desktop
+COMPLETIONDIR = /usr/share/bash-completion/completions
 
 all: help
 
@@ -58,9 +58,8 @@ uninstall:
 prep-deb:
 	make BUILDMODE=$(BUILDMODE) UPDATES=false configure
 	make build-linux
-	@mkdir -p deb-build/safesurfer-desktop
-	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
 	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop
+	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
 	@make DESTDIR=deb-build/safesurfer-desktop/debian/safesurfer-desktop install
 	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop/usr/share/doc/safesurfer-desktop
 	@mv deb-build/safesurfer-desktop/debian/copyright deb-build/safesurfer-desktop/debian/safesurfer-desktop/usr/share/doc/safesurfer-desktop
@@ -97,8 +96,8 @@ prep-appimage:
 	cd tools && wget https://github.com/AppImage/AppImageKit/releases/download/10/appimagetool-x86_64.AppImage && chmod +x appimagetool-x86_64.AppImage
 	cd tools/resources/libgconf && wget http://mirrors.kernel.org/ubuntu/pool/main/g/gconf/libgconf-2-4_3.2.6-0ubuntu2_amd64.deb
 	cd tools/resources/libgconf && ar x libgconf-2-4_3.2.6-0ubuntu2_amd64.deb && tar xvf data.tar.xz
-	cd tools/resources/libXScrnSaver && wget http://dl.fedoraproject.org/pub/fedora/linux/releases/27/Everything/x86_64/os/Packages/l/libXScrnSaver-1.2.2-13.fc27.x86_64.rpm
-	cd tools/resources/libXScrnSaver && rpm2cpio libXScrnSaver-1.2.2-13.fc27.x86_64.rpm | cpio -idmv
+	cd tools/resources/libXScrnSaver && wget https://kojipkgs.fedoraproject.org/packages/libXScrnSaver/1.2.3/2.fc29/x86_64/libXScrnSaver-1.2.3-2.fc29.x86_64.rpm
+	cd tools/resources/libXScrnSaver && rpm2cpio libXScrnSaver-1.2.3-2.fc29.x86_64.rpm | cpio -idmv
 
 build-appimage:
 	@if [ ! -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "Please run 'make prep-appimage'."; exit 1; fi;
@@ -137,10 +136,6 @@ build-appimage:
 	@sed -i -e "s#<id>SafeSurfer-Desktop.desktop</id>#<id>nz.co.safesurfer.SafeSurfer-Desktop.desktop</id>#g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurfer-Desktop.appdata.xml
 	@if [ $(DISABLEINTEGRATION) = true ]; then sed -i -e "s,#exit # Uncomment to disable integration,exit,g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/AppRun; fi
 	./tools/appimagetool-x86_64.AppImage $(OPTS) nz.co.safesurfer.SafeSurfer-Desktop.AppDir
-
-prepare-rpm-bin:
-	make BUILDMODE=$(BUILDMODE) configure
-	make build-linux
 
 compile-win-setup:
 	npm run compile-win-setup

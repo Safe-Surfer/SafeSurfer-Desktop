@@ -123,22 +123,6 @@ body, html {
 	background-size: 600% 600%;
 }
 
-@-webkit-keyframes activeScroll {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
-}
-@-moz-keyframes activeScroll {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
-}
-@keyframes activeScroll {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
-}
-
 .serviceInactiveScreen {
 	height: 100%;
 	width: 100%;
@@ -151,22 +135,6 @@ body, html {
 
 	background-image: linear-gradient(to right, #000000, #b51014, #a51317, #a02200);
 	background-size: 600% 600%;
-}
-
-@-webkit-keyframes inactiveScroll {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
-}
-@-moz-keyframes inactiveScroll {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
-}
-@keyframes inactiveScroll {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
 }
 
 .topTextFrame {

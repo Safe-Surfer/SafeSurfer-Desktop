@@ -125,5 +125,11 @@
 	"Would you like to lock deactivate buttons?": "Would you like to lock deactivate buttons?",
 	"Are you absolutely sure that you want to lock deactivate buttons?": "Are you absolutely sure that you want to lock deactivate buttons?",
 	"Yes, I'm absolutely sure": "Yes, I'm absolutely sure",
-	"Ok, your computer is setup.": "Ok, your computer is setup."
+	"Ok, your computer is setup.": "Ok, your computer is setup.",
+	"Locked deactivate buttons": "Locked deactivate buttons",
+	"Get support": "Get support",
+	"You must enable the service before you can lock it.": "You must enable the service before you can lock it.",
+	"You appear to already have locked the buttons.": "You appear to already have locked the buttons.",
+	"Unlocking the buttons will require help from support.": "Unlocking the buttons will require help from support.",
+	"Clear stats locally": "Clear stats locally"
 }

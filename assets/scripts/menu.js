@@ -66,11 +66,15 @@ module.exports = (app, mainWindow) => {
 				  submenu:
 				  [
 					  {label: i18n.__('Activate'), click() {mainWindow.webContents.send('goForceEnable')} },
-					  {label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} }
+					  {label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} },
+	    	    {type:'separator'},
+	    	    {label: i18n.__('Lock deactivate buttons'), click() {mainWindow.webContents.send('goLockDeactivateButtons')} }
 				  ]
 			  },
 			  {label: i18n.__('Give feedback'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
-	    	{label: i18n.__('Help'), click() {electron.shell.openExternal('https://safesurfer.desk.com/')}, accelerator: 'CmdOrCtrl+H' }
+	    	{label: i18n.__('Help'), click() {electron.shell.openExternal('https://safesurfer.desk.com/')}, accelerator: 'CmdOrCtrl+H' },
+	    	{type:'separator'},
+	    	{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
 		  ]
 	  },
 	  {
@@ -136,17 +140,9 @@ module.exports = (app, mainWindow) => {
 	}
 	// add seperate menu for name and quit, like on standard macOS apps
 	if (os.platform() == 'darwin') {
-	  menu = [{
-	    label: 'Safe Surfer',
-	    submenu: [
-			  {type:'separator'},
-			  {label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
-	    ]
-	  }, ...menu];
+	  menu[0].label = "SafeSurfer-Desktop";
+	  menu[0].submenu[4].label = "Quit";
 	}
 	// add exit and a separator to Linux and Windows versions
-	else {
-    menu[0].submenu = [...menu[0].submenu, {type:'separator'},{label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }];
-	}
 	return menu;
 }

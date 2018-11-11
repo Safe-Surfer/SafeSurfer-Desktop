@@ -60,12 +60,13 @@ function createWindow() {
 
 	// load in main html document
  	mainWindow.loadFile(path.join(__dirname, '..', 'html', 'index.html'));
-	mainWindow.on('closed', function () {
+	mainWindow.on('closed', function() {
 		mainWindow = null;
 	});
 	// set menu from menu.js
 	Menu.setApplicationMenu(
-	Menu.buildFromTemplate(require('./menu.js')(app, mainWindow)));
+	  Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
+	);
 	mainWindowState.manage(mainWindow);
 }
 

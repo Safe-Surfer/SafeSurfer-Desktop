@@ -67,6 +67,35 @@ body, html {
 	text-align: center;
 }
 
+#statClear {
+	margin: 0;
+	position: absolute;
+	left: 50%;
+	transform: translate(-50%);
+  font-weight: bold;
+	background-color: #e5e6e5;
+	border-radius: 5px;
+	border: 1px solid black;
+	display: inline-block;
+	cursor: pointer;
+	color: black;
+	font-size: 13px;
+	padding: 9px 23px;
+	text-decoration: none;
+	position: relative;
+	margin-top: 0px;
+}
+
+#statClear:hover {
+	color: black;
+	background-color: #c8c9cb;
+}
+
+#statClear:active {
+	background-color: #a9a9aa;
+	font-size: 12px;
+}
+
 .statDataHistory {
   word-wrap: break-word;
   margin-right: 10px;
