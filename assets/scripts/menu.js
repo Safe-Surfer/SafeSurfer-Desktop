@@ -71,6 +71,7 @@ module.exports = (app, mainWindow) => {
 	    	    {label: i18n.__('Lock deactivate buttons'), click() {mainWindow.webContents.send('goLockDeactivateButtons')} }
 				  ]
 			  },
+  	    {label: i18n.__('Configure LifeGuard device'), click() {mainWindow.webContents.send('goOpenMyDeviceLifeGuard')} },
 			  {label: i18n.__('Give feedback'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
 	    	{label: i18n.__('Help'), click() {electron.shell.openExternal('https://safesurfer.desk.com/')}, accelerator: 'CmdOrCtrl+H' },
 	    	{type:'separator'},

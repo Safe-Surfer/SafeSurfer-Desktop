@@ -131,5 +131,7 @@
 	"You must enable the service before you can lock it.": "You must enable the service before you can lock it.",
 	"You appear to already have locked the buttons.": "You appear to already have locked the buttons.",
 	"Unlocking the buttons will require help from support.": "Unlocking the buttons will require help from support.",
-	"Clear stats locally": "Clear stats locally"
+	"Clear stats locally": "Clear stats locally",
+	"I can't see a LifeGuard device on your network.": "I can't see a LifeGuard device on your network.",
+	"Configure LifeGuard device": "Configure LifeGuard device"
 }

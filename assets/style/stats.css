@@ -45,11 +45,19 @@ body, html {
 	overflow-y: auto;
 }
 
+.topBar {
+  background-color: black;
+  top: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+}
+
 #statState {
   color: white;
-  background-color: black;
-  padding-top: 10px;
-  line-height: 75px;
+  padding-top: 0px;
+  padding-bottom: 10px;
+  line-height: 55px;
   font-size: 3em;
 }
 
@@ -93,7 +101,6 @@ body, html {
 
 #statClear:active {
 	background-color: #a9a9aa;
-	font-size: 12px;
 }
 
 .statDataHistory {

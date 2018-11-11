@@ -43,7 +43,8 @@
 }
 
 #ss-waves {
-	filter: blur(2px);
+	filter: blur(5px);
+	background-color: white;
 }
 
 #bigTextBrandName {

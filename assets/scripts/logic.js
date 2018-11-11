@@ -988,6 +988,11 @@ global.desktop.logic.electronIPCon('viewStatHistory', () => {
   window.open(path.join(__dirname, '..', 'html', 'stats.html'), i18n.__("View statistic data"));
 });
 
+global.desktop.logic.electronIPCon('goOpenMyDeviceLifeGuard', () => {
+  if (appStates.lifeguardFound[0] === true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
+  else dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}`}, response => {});
+});
+
 global.desktop.logic.electronIPCon('goLockDeactivateButtons', () => {
   // give a prompt about locking the toggle button
   if (appStates.serviceEnabled[0] != true) {
