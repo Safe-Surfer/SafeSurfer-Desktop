@@ -51,6 +51,7 @@ window.appStates = {
   progressBarCounter: 0,
   elevationFailureCount: 0,
   toggleLock: false,
+  macOSuseDHCP: true,
   guiSudo: "pkexec",
   binFolder: process.env.SSCLILOCATION === undefined ? `${window.desktop.logic.path().resolve(window.desktop.logic.path().dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION
 }
@@ -86,22 +87,28 @@ window.actions = {
     }
   },
 
+  stats: {
+    clear: function() {
+      store.delete('statHistory');
+    }
+  },
+
   status: function() {
     console.log("==========================");
-    console.log(`| This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`);
-    console.log(`| This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer().version()} of node_dns_changer.`);
-    console.log(`| The service is ${appStates.serviceEnabled[0] === true ? "enabled" : "disabled"}.`);
-    console.log(`| There is ${appStates.lifeguardFound[0] === true ? "a" : "no"} LifeGuard on your network.`);
-    console.log(`| You have ${appStates.internet[0] === true ? "a connection to the" : "no"} internet.`);
-    console.log(`| The app has${appStates.appHasLoaded === true ? "" : "n't"} loaded.`);
-    console.log(`| The buttons are ${store.get('lockDeactivateButtons') === true ? 'locked' : 'not locked'}.`);
-    if (os.platform() === 'win32') console.log(`| Your version of Windows is ${window.appStates.windowsVersionCompatible === true ? "" : "not "}compatible.`);
+    console.log(`- This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`);
+    console.log(`- This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer().version()} of node_dns_changer.`);
+    console.log(`- The service is ${appStates.serviceEnabled[0] === true ? "enabled" : "disabled"}.`);
+    console.log(`- There is ${appStates.lifeguardFound[0] === true ? "a" : "no"} LifeGuard on your network.`);
+    console.log(`- You have ${appStates.internet[0] === true ? "a connection to the" : "no"} internet.`);
+    console.log(`- The app has${appStates.appHasLoaded === true ? "" : "n't"} loaded.`);
+    console.log(`- The buttons are ${store.get('lockDeactivateButtons') === true ? 'locked' : 'not locked'}.`);
+    if (os.platform() === 'win32') console.log(`- Your version of Windows is ${window.appStates.windowsVersionCompatible === true ? "" : "not "}compatible.`);
     console.log("==========================");
   }
 }
 
 window.help = `Help menu
----------
+----------
 Here are a list of commands which may be of use.
 The commands are run the same way you type 'help'.
 
@@ -114,7 +121,14 @@ Toggle logging:
 
 Toggle button lock
   actions.buttons.unlock()
-  actions.buttons.lock()`;
+  actions.buttons.lock()
+
+Delete cached stats
+  actions.stats.clear()
+
+
+If this is not the help that you require, please consider contacting our support
+  http://www.safesurfer.co.nz/contact`;
 
 // functions
 const appFrame = {
@@ -130,7 +144,7 @@ const appFrame = {
       }
       // command will be executed as: comand [ARGS]
       require('child_process').execFile(command_split[0], command_arg, function(err, stdout, stderr) {
-        logging(`[callProgram]: output -\n ${stdout}`);
+        logging(`[callProgram]: output -\n${stdout}`);
         if (err) logging(`[callProgram]: output error - ${err}`);
         if (stderr) logging(`[callProgram]: output stderr - ${stderr}`);
         if (!err && !stderr) resolve(true);
@@ -187,20 +201,21 @@ const appFrame = {
       logging("[displayProtection]: service state is protected");
       $(".serviceActiveScreen").show();
       $(".serviceInactiveScreen").hide();
-      // if a lifeguard has been found
-      if (window.appStates.lifeguardFound[0] == true) {
-        $("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD").toUpperCase());
-        $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD").toUpperCase());
-        $('.serviceToggle').addClass('serviceToggle_lifeguard');
-        $('.topTextBox_active').addClass('topTextBox_active_lifeguard');
-        $('.serviceToggle').removeClass('serviceToggle_locked');
-      }
-      else if (store.get('lockDeactivateButtons') == true) {
+      // if buttons have been locked
+      if (store.get('lockDeactivateButtons') == true) {
         $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
         $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
         $('.serviceToggle').addClass('serviceToggle_locked');
         $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
         $('.serviceToggle').removeClass('serviceToggle_lifeguard');
+      }
+      // if a lifeguard has been found
+      else if (window.appStates.lifeguardFound[0] == true) {
+        $("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD").toUpperCase());
+        $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD").toUpperCase());
+        $('.serviceToggle').addClass('serviceToggle_lifeguard');
+        $('.topTextBox_active').addClass('topTextBox_active_lifeguard');
+        $('.serviceToggle').removeClass('serviceToggle_locked');
       }
       else {
         // if lifeguard is not found
@@ -404,7 +419,8 @@ const appFrame = {
           global.desktop.logic.node_dns_changer().restoreDNSservers({
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
-            rmBackup: os.platform() === 'darwin' ? false : true
+            rmBackup: os.platform() === 'darwin' ? false : true,
+            macOSuseDHCP: macOSuseDHCP
           });
           // if service has still not been enabled, try again
           if (window.appStates.serviceEnabled[0] == true && os.platform() != 'darwin') {
@@ -715,9 +731,9 @@ const appFrame = {
   lockEnableMessage: async function() {
     // tell the user to reboot
     let promise = new Promise((resolve, reject) => {
-      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Would you like to lock deactivate buttons?")}`}, response => {
+      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Would you like to lock deactivate buttons?")}\n${i18n.__("Unlocking the buttons will require help from support.")}`}, response => {
         if (response == 1) resolve(true);
-        if (response == 0) dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Are you absolutely sure that you want to lock deactivate buttons?")}\n${i18n.__("Unlocking the buttons will require help from support.")}`}, response => {
+        if (response == 0) dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Are you absolutely sure that you want to lock deactivate buttons?")}`}, response => {
           if (response == 0) resolve(true);
           if (response == 1) {
             appFrame.lockDeactivateButtons();
@@ -733,7 +749,7 @@ const appFrame = {
   lockAlertMessage: function() {
     // tell the user to go to support for help on unlocking it
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Get support')], message: `${i18n.__("Locked deactivate buttons")}\n${i18n.__("The toggle buttons are locked, unlocking them will require help from support to unlock the buttons.")}`}, response => {
-      if (response == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/customer/portal/emails/new');
+      if (response == 1) global.desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/contact');
     });
   },
 
@@ -813,6 +829,7 @@ const appFrame = {
 
     if (window.appStates.internet[0] == true) {
       if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined) {
+        if (window.appStates.toggleLock == true) {
           // if the state changes of the service being enabled changes
           logging('[mainReloadProcess]: State has changed.');
           appFrame.sendAppStateNotifications();
@@ -822,20 +839,27 @@ const appFrame = {
           window.appStates.notificationCounter = 0;
           $('.progressInfoBar').css("height", "0px");
           window.appStates.toggleLock = false;
-          if (window.appStates.serviceEnabled[0] == true) appFrame.donationMessage().then(response => {
-            if (response) appFrame.lockEnableMessage().then(response => {
-              if (response) appFrame.displayRebootMessage();
+          if (window.appStates.serviceEnabled[0] == true) {
+            appFrame.donationMessage().then(response => {
+              if (response) appFrame.lockEnableMessage().then(response => {
+                if (response) appFrame.displayRebootMessage();
+              });
             });
-          });
+          }
           else appFrame.displayRebootMessage();
         }
+      }
     }
 
-    if (window.appStates.serviceEnabled[0] == true) {
-      // if the service is enabled, check if a lifeguard is on the network
-      appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
-        window.appStates.lifeguardFound[0] = lgstate;
-      });
+    // if the service is enabled, check if a lifeguard is on the network
+    appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
+      window.appStates.lifeguardFound[0] = lgstate;
+    });
+
+    if (window.appStates.lifeguardFound[0] != window.appStates.lifeguardFound[1]) {
+      // if the state of a lifeguard being on the network changes
+      logging('[mainReloadProcess]: LIFEGUARDSTATE State has changed.');
+      window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
     }
 
     if (window.appStates.internet[0] != window.appStates.internet[1]) {
@@ -844,11 +868,6 @@ const appFrame = {
       window.appStates.internet[1] = window.appStates.internet[0];
     }
 
-    if (window.appStates.lifeguardFound[0] != window.appStates.lifeguardFound[1]) {
-      // if the state of a lifeguard being on the network changes
-      logging('[mainReloadProcess]: LIFEGUARDSTATE State has changed.');
-      window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
-    }
     // if there are undefined states
     if (window.appStates.serviceEnabled[1] === undefined) window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0];
     if (window.appStates.internet[1] === undefined) window.appStates.internet[1] = window.appStates.internet[0];
@@ -897,7 +916,7 @@ const appFrame = {
           $('#privBarText').text(i18n.__('Please wait while the app asks for Administrative privileges'));
         }
         else {
-          document.querySelector('#privBarText_error').addEventListener('click', appFrame.openWindowsUACHelpPage);
+          $('#privBarText_error').bind('click', appFrame.openWindowsUACHelpPage);
           $('#privBarText_error').text(i18n.__('Help me to run this app as an Administrator'));
           $('#privBarText').text(i18n.__("I can't seem run this app as an Administrator for you."));
           $('#privBar').css("height", "115px");
@@ -996,14 +1015,20 @@ global.desktop.logic.electronIPCon('goOpenMyDeviceLifeGuard', () => {
 global.desktop.logic.electronIPCon('goLockDeactivateButtons', () => {
   // give a prompt about locking the toggle button
   if (appStates.serviceEnabled[0] != true) {
-    dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__('You must enable the service before you can lock it.')}`}, response => {});
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You must enable the service before you can lock it.')}`}, response => {});
     return;
   }
   if (store.get('lockDeactivateButtons') === true) {
-    dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__('You appear to already have locked the buttons.')}`}, response => {});
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You appear to already have locked the buttons.')}`}, response => {});
     return;
   }
-  appFrame.lockEnableMessage();
+  if (appStates.lifeguardFound[0] === true) {
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('No'), i18n.__('Yes')], message: `${i18n.__('You appear to be on a LifeGuard network, the settings given from the LifeGuard cannot be disabled when on this network, are you sure you still want to lock the buttons?')}`}, response => {
+      if (response === 0) return;
+      if (response === 1) appFrame.lockEnableMessage();
+    });
+  }
+  else appFrame.lockEnableMessage();
 });
 
 global.desktop.logic.electronIPCon('toggleStatState', () => {
@@ -1043,7 +1068,7 @@ if (store.get('teleHistory') !== undefined) store.set('statHistory', store.get('
 if (store.get('statHistory') !== undefined) store.delete('teleHistory');
 
 // connect button in html to a function
-document.querySelector('#toggleButton').addEventListener('click', appFrame.toggleServiceState);
+$('#toggleButton').bind('click', appFrame.toggleServiceState);
 
 // initalise the rest of the app
 if (appStates.userIsAdmin == true) appFrame.initApp();

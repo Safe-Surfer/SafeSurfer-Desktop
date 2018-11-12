@@ -34,7 +34,7 @@ module.exports = i18n;
 // define translation loading function
 function i18n() {
   // if there is no language set in config
-  if(fs.existsSync(path.join(__dirname, '..', 'translations', locale + '.json'))) loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'translations', locale + '.json'), 'utf8'));
+  if (fs.existsSync(path.join(__dirname, '..', 'translations', locale + '.json'))) loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'translations', locale + '.json'), 'utf8'));
   // if the langauge set in system or config doesn't have a locale
   else loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'translations', 'en.json'), 'utf8'));
 }

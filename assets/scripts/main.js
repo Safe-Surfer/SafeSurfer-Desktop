@@ -49,7 +49,7 @@ function createWindow() {
 		title: 'Safe Surfer',
 		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png'),
 		webPreferences: {
-		  nodeIntegration: false,
+		  nodeIntegration: packageJSON.appOptions.disableNodeIntegration !== true ? true : false,
 		  preload: path.join(__dirname, 'preload.js')
 		}
 	}

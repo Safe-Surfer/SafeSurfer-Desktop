@@ -36,6 +36,7 @@
     "enableUpdates": true,
     "enableNotifications": true,
     "enableLogging": false,
+    "disableNodeIntegration": true,
     "testLanguage": null
   },
   "author": "Safe Surfer",
@@ -79,7 +80,7 @@
     "lets-get-meta": "^2.1.1",
     "moment": "^2.22.2",
     "node-dns-sd": "^0.2.0",
-    "node_dns_changer": "^1.1.4",
+    "node_dns_changer": "^1.1.5",
     "nodejs-base64-encode": "0.0.2",
     "os-locale": "^3.0.0",
     "request": "^2.88.0",

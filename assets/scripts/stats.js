@@ -76,5 +76,5 @@ function clearStats() {
 }
 
 loadStatsPage();
-document.querySelector('#statClear').addEventListener('click', clearStats);
+$('#statClear').bind('click', clearStats);
 logging("DATASHARING PAGE: loaded");

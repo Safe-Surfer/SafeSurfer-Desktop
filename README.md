@@ -65,6 +65,9 @@ Read our [translation guide](docs/TRANSLATING.md) to get started!
     - Windows 8.1
 - If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
 
+Known issues
+- When connected to a LifeGuard network, the screen may flicker between seeing LifeGuard and not
+
 ## License
 Copyright 2018 Safe Surfer.  
 This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html) and is [free software](https://www.gnu.org/philosophy/free-sw.en.html).  

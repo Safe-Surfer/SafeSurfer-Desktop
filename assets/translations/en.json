@@ -133,5 +133,6 @@
 	"Unlocking the buttons will require help from support.": "Unlocking the buttons will require help from support.",
 	"Clear stats locally": "Clear stats locally",
 	"I can't see a LifeGuard device on your network.": "I can't see a LifeGuard device on your network.",
-	"Configure LifeGuard device": "Configure LifeGuard device"
+	"Configure LifeGuard device": "Configure LifeGuard device",
+	"You appear to be on a LifeGuard network, the settings given from the LifeGuard cannot be disabled when on this network, are you sure you still want to lock the buttons?": "You appear to be on a LifeGuard network, the settings given from the LifeGuard cannot be disabled when on this network, are you sure you still want to lock the buttons?"
 }
