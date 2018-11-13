@@ -454,23 +454,37 @@ body, html {
 
 #privBarText_error:active {
 	background-color: #a9a9aa;
-	top:1px;
+	top: 1px;
+}
+
+#mainScreen_background_active, #mainScreen_background_inactive {
+  width: 110%;
+  padding-bottom: 60px;
+  transition: width 0.4s, padding-bottom 0.4s;
 }
 
 @media only screen and (max-width: 1099px) {
 	.subText {
 		font-size: 1.5em;
 	}
+
 	.bigText, .bigText_white, .subText {
 		white-space: normal;
 	}
+
 	.bigText, .bigText_white {
 		line-height: 80px;
 		font-size: 4em;
 	}
+
 	.bigText_init {
-	  font-size: 4em;
+	  font-size: 3.7em;
 	}
+
+	.bigText_nointernet {
+	  font-size: 3.3em;
+	}
+
 	.topTextBox {
 		height: 550px;
 		padding-top: 1000px;
@@ -506,12 +520,15 @@ body, html {
 	.serviceToggle {
 		font-size: 45px;
 	}
+
 	.serviceToggle:hover {
 		font-size: 41.5px;
 	}
+
 	.serviceToggle:active {
 		font-size: 38.8px;
 	}
+
 	.topTextBox_inactive {
 	  background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));
 	}
@@ -521,4 +538,9 @@ body, html {
 	  margin-right: 0%;
 	  width: 100%;
 	}
+
+	#mainScreen_background_active, #mainScreen_background_inactive {
+    width: 160%;
+    padding-bottom: 0px;
+  }
 }

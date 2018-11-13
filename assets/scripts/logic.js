@@ -93,6 +93,32 @@ window.actions = {
     }
   },
 
+  diagnostics: function() {
+    var info = {
+      allowStatistics: store.get('statisticAllow'),
+      appBuild: APPBUILD,
+      appHasLoaded: appStates.appHasLoaded,
+      appVersion: APPVERSION,
+      autoUpdateChecking: store.get('appUpdateAutoCheck'),
+      buildMode: BUILDMODE,
+      internet: appStates.internet,
+      lifeguardFound: appStates.lifeguardFound,
+      loggingEnabled: window.appStates.enableLogging,
+      node_dns_changerVersion: window.desktop.logic.node_dns_changer().version(),
+      os: os.platform(),
+      processEnv: process.env,
+      serviceEnabled: appStates.serviceEnabled,
+      statHistory: store.get('statHistory'),
+      toggleButtonIsLocked: appStates.toggleLock,
+      userLocale: app().getLocale()
+    }
+    if (os.platform() === 'linux') {
+      info.binFolder = appStates.binFolder;
+      info.linuxPackageFormat = LINUXPACKAGEFORMAT;
+    }
+    return global.desktop.logic.base64Encode().encode(JSON.stringify(info),'base64');
+  },
+
   status: function() {
     console.log("==========================");
     console.log(`- This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`);
@@ -134,7 +160,7 @@ If this is not the help that you require, please consider contacting our support
 const appFrame = {
   callProgram: async function(command) {
     // call a child process
-    let promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       logging(`[callProgram]: calling - '${command}'`);
       var command_split = command.split(" "),
         command_arg = [];
@@ -150,8 +176,6 @@ const appFrame = {
         if (!err && !stderr) resolve(true);
       });
     });
-    let result = await promise;
-    return result;
   },
 
   linuxGuiSudo(command) {
@@ -202,6 +226,7 @@ const appFrame = {
       $(".serviceActiveScreen").show();
       $(".serviceInactiveScreen").hide();
       // if buttons have been locked
+      $('#subTextProtected').html(i18n.__('YOU ARE SAFE TO SURF THE INTERNET').toUpperCase());
       if (store.get('lockDeactivateButtons') == true) {
         $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
         $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
@@ -435,19 +460,17 @@ const appFrame = {
 
   checkIfOnLifeGuardNetwork: async function() {
     // check if current device is on lifeguard network
-    let promise = new Promise((resolve, reject) => {
-        logging('[checkIfOnLifeGuardNetwork]: Checking if on lifeguard network');
-        // start searching for lifeguard with bonjour
-        bonjour.findOne({type: "sslifeguard"}, (service) => {
-          // if a lifeguard is found
-          if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
-            logging(`[checkIfOnLifeGuardNetwork]: found ${service.fqdn}`);
-            resolve(true);
-          }
-        });
+    return new Promise((resolve, reject) => {
+      logging('[checkIfOnLifeGuardNetwork]: Checking if on lifeguard network');
+      // start searching for lifeguard with bonjour
+      bonjour.findOne({type: "sslifeguard"}, (service) => {
+        // if a lifeguard is found
+        if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
+          logging(`[checkIfOnLifeGuardNetwork]: found ${service.fqdn}`);
+          resolve(true);
+        }
       });
-    let result = await promise;
-    return result;
+    });
   },
 
   publishDesktopAppOnNetwork: function(state) {
@@ -458,10 +481,12 @@ const appFrame = {
 
   internetConnectionCheck: async function() {
     // check the user's internet connection
-    global.desktop.logic.connectivity()((online) => {
-      logging(`[internetConnectionCheck]: ${online}`);
-      window.appStates.appHasLoaded = true;
-      Promise.resolve(online);
+    return new Promise((resolve, reject) => {
+      global.desktop.logic.connectivity()((online) => {
+        logging(`[internetConnectionCheck]: ${online}`);
+        window.appStates.appHasLoaded = true;
+        resolve(online);
+      });
     });
   },
 
@@ -730,7 +755,7 @@ const appFrame = {
 
   lockEnableMessage: async function() {
     // tell the user to reboot
-    let promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Would you like to lock deactivate buttons?")}\n${i18n.__("Unlocking the buttons will require help from support.")}`}, response => {
         if (response == 1) resolve(true);
         if (response == 0) dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Are you absolutely sure that you want to lock deactivate buttons?")}`}, response => {
@@ -742,8 +767,6 @@ const appFrame = {
         });
       });
     });
-    let result = await promise;
-    return result;
   },
 
   lockAlertMessage: function() {
@@ -777,21 +800,19 @@ const appFrame = {
 
   donationMessage: async function() {
     // give the user a message about donating
-    let promise = new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
       dialog.showMessageBox({type: 'info', buttons: [i18n.__('Donate'), i18n.__('No')], message: `${i18n.__('Thank you for using the Safe Surfer desktop app.')}\n${i18n.__('Would you like to support the project and help fund future projects?')}`}, response => {
         if (response == 0) global.desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/');
         resolve(true);
       });
     });
-    let result = await promise;
-    return result;
   },
 
   checkForVersionChange: function() {
     // if the version of the app has been updated, let the statistic server know, if allowed by user
     var previousVersionData;
+    logging("[checkForVersionChange]: Checking if user has reached a newer version");
     if (store.get('statisticAllow') == true) {
-      logging("[checkForVersionChange]: Checking if user has reached a newer version");
       previousVersionData = store.get('lastVersionTosendStatistics');
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
         logging('[checkForVersionChange]: Sending update data');

@@ -20,7 +20,7 @@
 //
 
 // import libraries
-const {app, BrowserWindow, Menu, clipboard} = require('electron'),
+const {app, BrowserWindow, Menu, clipboard, globalShortcut} = require('electron'),
   path = require('path'),
   windowStateKeeper = require('electron-window-state'),
   packageJSON = require('../../package.json'),
@@ -32,7 +32,7 @@ let mainWindow,
 function createWindow() {
 	// Create the browser window.
 	let mainWindowState = windowStateKeeper({
-    defaultWidth: 500,
+    defaultWidth: 490,
     defaultHeight: 600
   });
 
@@ -41,7 +41,7 @@ function createWindow() {
 		width: mainWindowState.width,
 		height: mainWindowState.height,
     /* set minimum standard sizing */
-		minWidth: 500,
+		minWidth: 490,
 		minHeight: 600,
     /* set default position sizing */
     'x': mainWindowState.x,
@@ -68,11 +68,22 @@ function createWindow() {
 	  Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
 	);
 	mainWindowState.manage(mainWindow);
+	mainWindow.setAutoHideMenuBar(false);
+	mainWindow.setMenuBarVisibility(true);
 }
 
 // create window when app is ready
-app.on('ready', function() {
+app.on('ready', function(window) {
   createWindow();
+});
+
+app.on('browser-window-created', (event, window) => {
+	window.setAutoHideMenuBar(true);
+	window.setMenuBarVisibility(false);
+	globalShortcut.register('CmdOrCtrl+H', () => {
+	  window.setAutoHideMenuBar(!window.isMenuBarAutoHide());
+	  window.setMenuBarVisibility(!window.isMenuBarVisible());
+  });
 });
 
 // behave like a macOS app, don't quit when user presses the red button
