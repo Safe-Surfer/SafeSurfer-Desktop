@@ -1,5 +1,7 @@
-<a href="https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget">
+<a href="http://www.gnu.org/licenses/gpl-3.0.html">
     <img src="https://img.shields.io/badge/License-GPL%20v3-blue.svg" alt="License" />
+</a>
+<a href="https://hosted.weblate.org/projects/safe-surfer/translations">
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
 </a>
 
@@ -18,7 +20,7 @@ For enterprise/business use, we recommmend to apply the DNS settings on a router
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
 For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
 
-### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc2): version 1.0.0rc2 (Current release is a stable release candidate)
+### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc3): version 1.0.0rc3 (Current release is a stable release candidate)
 ## Install the latest release candidate
 We need testers.  
 If you're wanting to test this software, please download the binaries or source and give it a go.  
@@ -46,7 +48,7 @@ Read our [contribution guide](docs/CONTRIBUTING.md) to get started!
 We'd love your help on this project, together helping families and individuals stay safe on the internet!  
 
 ### Translating Safe Surfer desktop
-<a href="https://hosted.weblate.org/engage/safe-surfer/?utm_source=widget">
+<a href="https://hosted.weblate.org/projects/safe-surfer/translations">
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/multi-auto.svg" alt="Translation status" />
 </a>
 

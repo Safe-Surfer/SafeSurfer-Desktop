@@ -94,6 +94,7 @@ window.actions = {
   },
 
   diagnostics: function() {
+    // bundle together a bunch of information that will be of use to diagnosing issues
     var info = {
       allowStatistics: store.get('statisticAllow'),
       appBuild: APPBUILD,
@@ -116,16 +117,18 @@ window.actions = {
       info.binFolder = appStates.binFolder;
       info.linuxPackageFormat = LINUXPACKAGEFORMAT;
     }
+    // encode with base64, so it make it easier to send (as it's just a huge block of data)
     return global.desktop.logic.base64Encode().encode(JSON.stringify(info),'base64');
   },
 
   status: function() {
+    // display human readable information
     console.log("==========================");
     console.log(`- This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`);
     console.log(`- This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer().version()} of node_dns_changer.`);
     console.log(`- The service is ${appStates.serviceEnabled[0] === true ? "enabled" : "disabled"}.`);
     console.log(`- There is ${appStates.lifeguardFound[0] === true ? "a" : "no"} LifeGuard on your network.`);
-    console.log(`- You have ${appStates.internet[0] === true ? "a connection to the" : "no"} internet.`);
+    console.log(`- You have ${appStates.internet[0] === true ? "an" : "no"} internet connection.`);
     console.log(`- The app has${appStates.appHasLoaded === true ? "" : "n't"} loaded.`);
     console.log(`- The buttons are ${store.get('lockDeactivateButtons') === true ? 'locked' : 'not locked'}.`);
     if (os.platform() === 'win32') console.log(`- Your version of Windows is ${window.appStates.windowsVersionCompatible === true ? "" : "not "}compatible.`);
@@ -133,6 +136,7 @@ window.actions = {
   }
 }
 
+// print some useful commands
 window.help = `Help menu
 ----------
 Here are a list of commands which may be of use.

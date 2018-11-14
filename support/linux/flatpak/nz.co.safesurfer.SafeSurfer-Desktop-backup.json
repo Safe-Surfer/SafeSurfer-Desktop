@@ -46,7 +46,7 @@
 		"buildsystem": "simple",
 		"sources": [{
 			"type": "archive",
-			"url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0rc2/SafeSurfer-Desktop-1.0.0rc2.zip",
+			"url": "https://gitlab.com/safesurfer/SafeSurfer-Desktop/-/archive/1.0.0rc3/SafeSurfer-Desktop-1.0.0rc3.zip",
 			"sha256": "e1ff1e08cc7ebbaf165a6f80f4965ca3202eb2f2a50952ce87328f8bf0dc7748",
                     	"dest": "main"
 			},
