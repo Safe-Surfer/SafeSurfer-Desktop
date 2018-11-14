@@ -90,6 +90,20 @@ window.actions = {
   stats: {
     clear: function() {
       store.delete('statHistory');
+      console.log("Stats have been emptied locally");
+    },
+
+    uncompleted: function() {
+      store.set('statHasAnswer', false);
+      console.log("Stats will be prompted again");
+    }
+  },
+
+  config: {
+    macOS: {
+      dhcp: function() {
+        appStates.macOSuseDHCP = !appStates.macOSuseDHCP;
+      }
     }
   },
 
@@ -449,7 +463,7 @@ const appFrame = {
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
             rmBackup: os.platform() === 'darwin' ? false : true,
-            macOSuseDHCP: macOSuseDHCP
+            macOSuseDHCP: appStates.macOSuseDHCP
           });
           // if service has still not been enabled, try again
           if (window.appStates.serviceEnabled[0] == true && os.platform() != 'darwin') {
@@ -507,7 +521,7 @@ const appFrame = {
      serverAddress = "142.93.48.189",
      serverPort = 80,
      serverDataFile = "/files/desktop/version-information.json",
-     updateErrorDialog = {type: 'info', buttons: ['Ok'], message: i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong.")};
+     updateErrorDialog = {type: 'info', buttons: [i18n.__('Manually check on downloads page'), i18n.__('Ok')], message: i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong.")};
 
     logging(`[checkForAppUpdate]: About to fetch http://${serverAddress}:${serverPort}${serverDataFile}`);
     Request.get(`http://${serverAddress}:${serverPort}${serverDataFile}`, (error, response, body) => {
@@ -587,6 +601,7 @@ const appFrame = {
         if (options.showErrors == true) {
           dialog.showMessageBox(updateErrorDialog, updateResponse => {
             logging("[checkForAppUpdate]: Error.");
+            if (updateResponse == 0) global.desktop.logic.electronOpenExternal(serverAddress);
             return;
           });
         }
