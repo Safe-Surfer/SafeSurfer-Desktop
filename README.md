@@ -4,6 +4,9 @@
 <a href="https://hosted.weblate.org/projects/safe-surfer/translations">
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
 </a>
+<a href="http://142.93.48.189">
+    <img src="https://img.shields.io/badge/version-1.0.0rc3-brightgreen.svg" />
+</a>
 
 # SafeSurfer-Desktop
 ![Safe Surfer logo](./assets/media/icons/png/128x128.png)  
@@ -20,7 +23,7 @@ For enterprise/business use, we recommmend to apply the DNS settings on a router
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
 For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
 
-### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc3): version 1.0.0rc3 (Current release is a stable release candidate)
+### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc3)
 ## Install the latest release candidate
 We need testers.  
 If you're wanting to test this software, please download the binaries or source and give it a go.  

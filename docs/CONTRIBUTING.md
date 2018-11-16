@@ -39,14 +39,14 @@ Steps to report bugs:
 5. Fill in the rest of the fields in the template
 
 ## Which js documents do what?
-`assets/scripts` is where most of the code lives.  
-`assets/style` is where the styling is.  
+`assets/scripts` is the folder where most of the code lives.  
+`assets/style` is the app's styling is.  
 `assets/media` is where all artwork it stored.  
-`assets/translations` is where all the translation string are stored.  
+`assets/translations` is where all the translation JSON files are stored.  
 `assets/scripts/logic.js` is where most of the code is.  
-`assets/scripts/main.js` is where initalising takes place.  
+`assets/scripts/main.js` initalises the app.  
 `assets/scripts/menu.js` is where the code for the app's menu lives.  
-`assets/scripts/i18n.js` is where the framework of translating the app is stored.  
+`assets/scripts/i18n.js` is the framework for translating.  
 `support/` is where the platform specific files are stored.  
 
 ## Request features

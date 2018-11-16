@@ -29,8 +29,8 @@ const {dialog} = global.desktop.logic.dialogBox(),
   isBeta = packageJSON.appOptions.isBeta,
   updatesEnabled = packageJSON.appOptions.enableUpdates,
   enableNotifications = packageJSON.appOptions.enableNotifications,
-  os = global.desktop.logic.os(),
-  path = window.desktop.logic.path(),
+  os = require('os'),
+  path = require('path'),
   bonjour = global.desktop.logic.bonjour(),
   Request = global.desktop.logic.request(),
   $ = global.desktop.global.jquery(),
@@ -107,32 +107,37 @@ window.actions = {
     }
   },
 
-  diagnostics: function() {
-    // bundle together a bunch of information that will be of use to diagnosing issues
-    var info = {
-      allowStatistics: store.get('statisticAllow'),
-      appBuild: APPBUILD,
-      appHasLoaded: appStates.appHasLoaded,
-      appVersion: APPVERSION,
-      autoUpdateChecking: store.get('appUpdateAutoCheck'),
-      buildMode: BUILDMODE,
-      internet: appStates.internet,
-      lifeguardFound: appStates.lifeguardFound,
-      loggingEnabled: window.appStates.enableLogging,
-      node_dns_changerVersion: window.desktop.logic.node_dns_changer().version(),
-      os: os.platform(),
-      processEnv: process.env,
-      serviceEnabled: appStates.serviceEnabled,
-      statHistory: store.get('statHistory'),
-      toggleButtonIsLocked: appStates.toggleLock,
-      userLocale: app().getLocale()
+  diagnostics: {
+    generate: function() {
+      // bundle together a bunch of information that will be of use to diagnosing issues
+      var info = {
+        allowStatistics: store.get('statisticAllow'),
+        appBuild: APPBUILD,
+        appHasLoaded: appStates.appHasLoaded,
+        appVersion: APPVERSION,
+        autoUpdateChecking: store.get('appUpdateAutoCheck'),
+        buildMode: BUILDMODE,
+        internet: appStates.internet,
+        lifeguardFound: appStates.lifeguardFound,
+        loggingEnabled: window.appStates.enableLogging,
+        node_dns_changerVersion: window.desktop.logic.node_dns_changer().version(),
+        os: os.platform(),
+        processEnv: process.env,
+        serviceEnabled: appStates.serviceEnabled,
+        statHistory: store.get('statHistory'),
+        toggleButtonIsLocked: appStates.toggleLock,
+        userLocale: app().getLocale()
+      }
+      if (os.platform() === 'linux') {
+        info.binFolder = appStates.binFolder;
+        info.linuxPackageFormat = LINUXPACKAGEFORMAT;
+      }
+      // encode with base64, so it make it easier to send (as it's just a huge block of data)
+      return global.desktop.logic.base64Encode().encode(JSON.stringify(info),'base64');
+    },
+    decode: function(info) {
+      return JSON.parse(global.desktop.logic.base64Encode().decode(info,'base64'));
     }
-    if (os.platform() === 'linux') {
-      info.binFolder = appStates.binFolder;
-      info.linuxPackageFormat = LINUXPACKAGEFORMAT;
-    }
-    // encode with base64, so it make it easier to send (as it's just a huge block of data)
-    return global.desktop.logic.base64Encode().encode(JSON.stringify(info),'base64');
   },
 
   status: function() {
@@ -1096,7 +1101,7 @@ if ((updatesEnabled == true && store.get('appUpdateAutoCheck') == true) || proce
 
 // log a message in the console for devs; yeah that's probably you if you're reading this :)
 console.log(`> Are you a developer? Do you want to help us with this project?
-Join us by going to:
+If so, join us by going to:
   - https://gitlab.com/safesurfer/SafeSurfer-Desktop
   - http://www.safesurfer.co.nz/become-safe-safe-volunteer
 

@@ -16,8 +16,6 @@ global.desktop = Object.freeze({
   },
   logic: {
     node_dns_changer: () => require('node_dns_changer'),
-    os: () => require('os'),
-    path: () => require('path'),
     bonjour: () => require('bonjour')(),
     request: () => require("request"),
     electron: () => require('electron'),

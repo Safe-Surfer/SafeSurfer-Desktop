@@ -1,7 +1,7 @@
 # Reporting bugs
 As a prerequisite, you'll need a GitLab account (if you don't have one already).  
 
-Head over to the [GitLab issues](https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new) page, choose the `bugs.md` template (if there is no pre-written bug template).  
+Head over to the [GitLab issues](https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new) page, choose the `bugs.md` template (if there is no pre-written bug template given).  
 
 Steps to report bugs:  
 1. Find a bug (you will to be able to replicated it)

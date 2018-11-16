@@ -4,9 +4,9 @@ Linux: nodejs npm (libgconf2-dev on Debian based systems)
 Windows and macOS: [NodeJS package](https://nodejs.org/en/download)  
 
 ### Runtime dependencies
-Linux:
-- `polkit`
-- `curl` or `wget`
+Linux:  
+- `polkit`  
+- `curl` or `wget`  
 - `libgconf2-4` (on Debian based systems)  
 
 ### Install node modules
@@ -18,10 +18,10 @@ or if on Windows
 `npm run startNa`  
 
 ### Configure the build (if needed)
-`make BUILDMODE=DEV UPDATES=true configure`
-i.e: `make BUILDMODE=RELEASE UPDATES=false configure`
+`make BUILDMODE=DEV UPDATES=true configure`  
+i.e: `make BUILDMODE=RELEASE UPDATES=false configure`  
 Notes:
-- If you are packaging for a new Linux format, you must use the `LINUXPACKAGEFORMAT` runtime environment variable to tell the program how to use sscli is run properly. For instance, if `LINUXPACKAGEFORMAT` is `'appimage'` then it will look for it in `/tmp`, otherwise it will look for it installed in the `PATH` variable
+- BUILDMODE let's the app know if it's a release build or a dev build  
 - Make sure you disable updates, since it will be handled by your package manager
 
 ### Building binaries
@@ -35,7 +35,6 @@ Please note that building Windows versions on Linux or macOS requires [Wine](htt
 ### Packaging dependencies
 deb: `debhelper devscripts`  
 rpm: `rpmbuild`  
-arch: `base-devel`  
 AppImage: `rpm2cpio wget tar ar`  
 flatpak:  
 - `flatpak-builder`  
@@ -43,9 +42,11 @@ flatpak:
 - `io.atom.electron.BaseApp//stable`  
 windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)  
 
+Notes:
+- You may need to specify SSCLILOCATION as an environment variable followed by the directory of which `sscli` should be located in a package, to get the app to see and use it
+
 ### Packaging
 deb: `make deb-pkg`  
-arch: `make arch-pkg` PKGBUILD in [support/linux/arch](support/linux/arch)  
 rpm: use spec file in [support/linux/specs](support/linux/specs)  
 appimage: `make prep-appimage && make build-appimage`  
 flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)  
