@@ -26,8 +26,7 @@ const {app, BrowserWindow, Menu, clipboard, globalShortcut} = require('electron'
   packageJSON = require('../../package.json'),
   isBeta = packageJSON.appOptions.isBeta;
 
-let mainWindow,
- childWindow;
+let mainWindow;
 
 function createWindow() {
 	// Create the browser window.
@@ -49,7 +48,7 @@ function createWindow() {
 		title: 'Safe Surfer',
 		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png'),
 		webPreferences: {
-		  nodeIntegration: packageJSON.appOptions.disableNodeIntegration !== true ? true : false,
+		  nodeIntegration: !packageJSON.appOptions.disableNodeIntegration,
 		  preload: path.join(__dirname, 'preload.js')
 		}
 	}

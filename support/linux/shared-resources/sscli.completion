@@ -13,7 +13,7 @@ _sscli()
 
 	if [[ $cword -eq 1 ]]
 	then
-		COMPREPLY=( $(compgen -W "enable -e --enable disable -d --disable launch -l --launch check -c --check status -s --status service -s --service help -h --help" -- ${cur}) )
+		COMPREPLY=( $(compgen -W "enable -e --enable disable -d --disable launch -l --launch check -c --check status -s --status service -s --service flush -f --flush help -h --help" -- ${cur}) )
 		return 0
 	fi
 }

@@ -68,6 +68,8 @@ module.exports = (app, mainWindow) => {
 					  {label: i18n.__('Activate'), click() {mainWindow.webContents.send('goForceEnable')} },
 					  {label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} },
 	    	    {type:'separator'},
+	    	    {label: `${i18n.__('Flush DNS cache')}${os.platform() === 'darwin' ? " (experimental)" : ""}`, click() {mainWindow.webContents.send('goFlushDNScache')} },
+	    	    {type:'separator'},
 	    	    {label: i18n.__('Lock deactivate buttons'), click() {mainWindow.webContents.send('goLockDeactivateButtons')} }
 				  ]
 			  },
@@ -101,9 +103,9 @@ module.exports = (app, mainWindow) => {
 	      {label: i18n.__('Translate this app'), click() {electron.shell.openExternal('https://hosted.weblate.org/projects/safe-surfer/translations/')} },
 	      {label: i18n.__('Donate'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/donate-now/')}},
 		    {type:'separator'},
-	      {label:`${i18n.__("Version")}: ${APPVERSION} - ${i18n.__("Build")}:${APPBUILD} - (${BUILDMODE})`, click() {mainWindow.webContents.send('goBuildToClipboard')} },
+	      {label:`${i18n.__("Version")}: ${APPVERSION}:${APPBUILD}${BUILDMODE}`, click() {mainWindow.webContents.send('goBuildToClipboard')} },
 		    {type:'separator'},
-	      {label: i18n.__('About this app'), click() {mainWindow.webContents.send('openAboutMenu')} }
+	      {label: i18n.__('About this app'), click() {mainWindow.webContents.send('showAboutMenu')} }
 	    ]
 	  },
 	];
@@ -126,7 +128,7 @@ module.exports = (app, mainWindow) => {
       submenu:
       [
         {label: i18n.__('Enable statistic sharing'), type: 'checkbox', checked: teleEnabled, click() {mainWindow.webContents.send('toggleStatState')} },
-        {label: i18n.__('View statistic data'), click() {mainWindow.webContents.send('viewStatHistory')} }
+        {label: i18n.__('View statistic data'), click() {mainWindow.webContents.send('showStatHistory')} }
       ]
 	  });
 	}

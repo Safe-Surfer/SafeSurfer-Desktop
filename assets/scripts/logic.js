@@ -31,7 +31,7 @@ const {dialog} = global.desktop.logic.dialogBox(),
   enableNotifications = packageJSON.appOptions.enableNotifications,
   os = require('os'),
   path = require('path'),
-  bonjour = global.desktop.logic.bonjour(),
+  bonjour = global.desktop.logic.bonjour,
   Request = global.desktop.logic.request(),
   $ = global.desktop.global.jquery(),
   store = global.desktop.global.store(),
@@ -53,7 +53,7 @@ window.appStates = {
   toggleLock: false,
   macOSuseDHCP: true,
   guiSudo: "pkexec",
-  binFolder: process.env.SSCLILOCATION === undefined ? `${window.desktop.logic.path().resolve(window.desktop.logic.path().dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION
+  binFolder: process.env.SSCLILOCATION === undefined ? `${path.resolve(path.dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION
 }
 
 logging(`INFO: platform  - ${os.platform()}`);
@@ -120,7 +120,7 @@ window.actions = {
         internet: appStates.internet,
         lifeguardFound: appStates.lifeguardFound,
         loggingEnabled: window.appStates.enableLogging,
-        node_dns_changerVersion: window.desktop.logic.node_dns_changer().version(),
+        node_dns_changerVersion: window.desktop.logic.node_dns_changer.version(),
         os: os.platform(),
         processEnv: process.env,
         serviceEnabled: appStates.serviceEnabled,
@@ -140,11 +140,16 @@ window.actions = {
     }
   },
 
+  flushdnscache: function() {
+    // flush the DNS cache per OS
+    appFrame.flushDNScache();
+  },
+
   status: function() {
     // display human readable information
     console.log("==========================");
     console.log(`- This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`);
-    console.log(`- This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer().version()} of node_dns_changer.`);
+    console.log(`- This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer.version()} of node_dns_changer.`);
     console.log(`- The service is ${appStates.serviceEnabled[0] === true ? "enabled" : "disabled"}.`);
     console.log(`- There is ${appStates.lifeguardFound[0] === true ? "a" : "no"} LifeGuard on your network.`);
     console.log(`- You have ${appStates.internet[0] === true ? "an" : "no"} internet connection.`);
@@ -161,10 +166,10 @@ window.help = `Help menu
 Here are a list of commands which may be of use.
 The commands are run the same way you type 'help'.
 
-View statuses:
+View statuses
   actions.status()
 
-Toggle logging:
+Toggle logging
   actions.logging.enable()
   actions.logging.disable()
 
@@ -174,6 +179,9 @@ Toggle button lock
 
 Delete cached stats
   actions.stats.clear()
+
+Flush DNS cache manually
+  actions.flushdnscache()
 
 
 If this is not the help that you require, please consider contacting our support
@@ -203,25 +211,48 @@ const appFrame = {
 
   linuxGuiSudo(command) {
     // run program with pkexec or xdg-su
-    switch (window.appStates.guiSudo) {
-      case 'pkexec':
-        logging('[linuxGuiSudo]: Running with pkexec');
-        appFrame.callProgram(`pkexec ${command}`);
-        break;
+    return new Promise((resolve, reject) => {
+      switch (window.appStates.guiSudo) {
+        case 'pkexec':
+          logging('[linuxGuiSudo]: Running with pkexec');
+          appFrame.callProgram(`pkexec ${command}`).then(response => {
+            resolve(response);
+          });
+          break;
 
-      /*case 'xdg-su':
-        logging('SUDOGUI: Running with xdg-su');
-        appFrame.callProgram(`xdg-su -c '${command}'`);
-        break;*/
+        /*case 'xdg-su':
+          logging('SUDOGUI: Running with xdg-su');
+          appFrame.callProgram(`xdg-su -c '${command}'`);
+          break;*/
 
-      default:
-        break;
-    }
+        default:
+          break;
+      }
+    });
+  },
+
+  exec: function(command) {
+    // a standard platform based exec function
+    return new Promise((resolve, reject) => {
+      switch (os.platform()) {
+        case 'linux':
+          appFrame.linuxGuiSudo(command).then(response => {
+            resolve(response);
+          });
+          break;
+
+        default:
+          appFrame.callProgram(command).then(response => {
+            resolve(response);
+          });
+          break;
+      }
+    });
   },
 
   elevateWindows: function() {
     // call a child process
-    appFrame.callProgram(`powershell Start-Process '${process.argv0}' -ArgumentList '.' -Verb runAs`).then((response) => {
+    appFrame.exec(`powershell Start-Process '${process.argv0}' -ArgumentList '.' -Verb runAs`).then((response) => {
     	logging(`[elevateWindows]: response was '${response}'.`);
       if (response == true) window.close();
     });
@@ -238,6 +269,33 @@ const appFrame = {
         break;
       default:
         window.appStates.userIsAdmin = true;
+        break;
+    }
+  },
+
+  flushDNScache: function() {
+    // flush the DNS cache per OS
+    var flushedMessage = function() {
+      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__('The DNS cache has been flushed.')})
+    }
+
+    switch (os.platform()) {
+      case 'linux':
+        appFrame.exec(`${appStates.binFolder}sscli flush`).then(response => {
+          if (response === true) flushedMessage();
+        });
+        break;
+
+      case 'darwin':
+        appFrame.exec("osascript -e 'do shell script \"killall -HUP mDNSResponder; killall mDNSResponderHelper; dscacheutil -flushcache\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'").then(response => {
+          if (response === true) flushedMessage();
+        });
+        break;
+
+      case 'win32':
+        appFrame.exec('ipconfig /flushdns').then(response => {
+          if (response === true) flushedMessage();
+        });
         break;
     }
   },
@@ -427,7 +485,7 @@ const appFrame = {
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
         setTimeout(function() {
-          global.desktop.logic.node_dns_changer().setDNSservers({
+          global.desktop.logic.node_dns_changer.setDNSservers({
             DNSservers: ['104.197.28.121','104.155.237.225'],
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
@@ -464,7 +522,7 @@ const appFrame = {
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
         setTimeout(function() {
-          global.desktop.logic.node_dns_changer().restoreDNSservers({
+          global.desktop.logic.node_dns_changer.restoreDNSservers({
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
             rmBackup: os.platform() === 'darwin' ? false : true,
@@ -714,7 +772,7 @@ const appFrame = {
   versionInformationCopy: function() {
     // copy app build information to clipboard
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')}, dialogResponse => {
-      global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer().version()}`);
+      global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer.version()}`);
       if (dialogResponse == 2) global.desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
     });
   },
@@ -806,13 +864,13 @@ const appFrame = {
       if (updateResponse == 0) {
         switch (os.platform()) {
           case 'win32':
-            appFrame.callProgram('shutdown /r /t 0');
+            appFrame.exec('shutdown /r /t 0');
             break;
           case 'linux':
             appFrame.linuxGuiSudo(`/sbin/reboot`);
             break;
           case 'darwin':
-            appFrame.callProgram("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'");
+            appFrame.exec("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'");
             break;
           default:
             dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")}, response => {});
@@ -1042,14 +1100,19 @@ global.desktop.logic.electronIPCon('goBuildToClipboard', () => {
   appFrame.versionInformationCopy();
 });
 
-global.desktop.logic.electronIPCon('openAboutMenu', () => {
+global.desktop.logic.electronIPCon('showAboutMenu', (opt) => {
   // go to about app page
   window.open(path.join(__dirname, '..', 'html', 'about.html'), i18n.__("About this app"));
 });
 
-global.desktop.logic.electronIPCon('viewStatHistory', () => {
+global.desktop.logic.electronIPCon('showStatHistory', (opt) => {
   // go to statistic sharing page
   window.open(path.join(__dirname, '..', 'html', 'stats.html'), i18n.__("View statistic data"));
+});
+
+global.desktop.logic.electronIPCon('goFlushDNScache', () => {
+  // go to statistic sharing page
+  appFrame.flushDNScache();
 });
 
 global.desktop.logic.electronIPCon('goOpenMyDeviceLifeGuard', () => {

@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-Store = require('electron-store'),
+var Store = require('electron-store'),
  store = new Store()
 
 global.desktop = Object.freeze({
@@ -12,11 +12,11 @@ global.desktop = Object.freeze({
     logging: () => require('./logging.js'),
     Store: () => require('electron-store'),
     store: () => new Store(),
-    loadLogic: () => require('./logic.js'),
+    loadLogic: () => require('./logic.js')
   },
   logic: {
-    node_dns_changer: () => require('node_dns_changer'),
-    bonjour: () => require('bonjour')(),
+    node_dns_changer: require('node_dns_changer'),
+    bonjour: require('bonjour')(),
     request: () => require("request"),
     electron: () => require('electron'),
     electronremote: () => require('electron').remote,

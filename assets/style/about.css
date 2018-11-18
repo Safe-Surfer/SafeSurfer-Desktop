@@ -37,8 +37,8 @@
 }
 
 #ss-logo {
-  width: 200px;
-  height: 200px;
+  width: 150px;
+  height: 150px;
 	transition: width 0.3s, height 0.3s;
 }
 
@@ -65,7 +65,7 @@
   }
 
   .descriptionText {
-	  font-size: 1.1em;
+	  font-size: 1em;
 	  line-height: 1.2em;
   }
 
