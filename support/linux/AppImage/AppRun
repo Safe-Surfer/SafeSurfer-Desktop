@@ -65,16 +65,21 @@ export APPIMAGE_LIBRARY_PATH="${APPIMAGE_LIBRARY_PATH}:/usr/lib64"
 DESKTOP_FILE="$APPDIR/nz.co.safesurfer.SafeSurfer-Desktop.desktop"
 BIN="$APPDIR/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop"
 
+if [[ ! -x "$(which curl)" ]] && [[ ! -x "$(which wget)" ]]
+then
+	export PATH="${APPDIR}/usr/local/bin/curl:${PATH}"
+fi
+
+if [[ ! -x "$(which zenity)" ]] && [[ ! -x "$(which kdialog)" ]] && [[ ! -x "$(which Xdialog)" ]]
+then
+	export PATH="${APPDIR}/usr/local/bin/zenity:${PATH}"
+fi
+
 function atexit() {
 # execute on trap
 if [ -z "$APPIMAGE_EXIT_AFTER_INSTALL" ]
 then
-	if [[ $NUMBER_OF_ARGS -eq 0 ]]
-	then
-		SSCLILOCATION="$APPIMAGE " LINUXPACKAGEFORMAT="appimage" exec "$BIN"
-	else
-		SSCLILOCATION="$APPIMAGE " LINUXPACKAGEFORMAT="appimage" exec "$BIN" "${args[@]}"
-	fi
+	SSCLILOCATION="$APPIMAGE " LINUXPACKAGEFORMAT="appimage" exec "$BIN"
 fi
 }
 
@@ -186,7 +191,7 @@ rm -f /tmp/sscli-appimage
 
 if [[ "$(whoami)" = root ]] && [[ $# = 0 ]]
 then
-	cliOrGUIinfoMsg "ERROR" "You should not running Safe Surfer desktop as root."
+	cliOrGUIinfoMsg "ERROR" "You should not run Safe Surfer desktop as root."
 	exit 1
 fi
 
@@ -217,7 +222,17 @@ case "$args" in
 		ISAPPIMAGE=0 APPRUN=${0} /tmp/sscli-appimage "$1"
 		exit
 		;;
-	help|--help)
+	curl)
+		shift
+		exec "${APPDIR}"/usr/local/bin/curl/curl $@
+		exit $?
+		;;
+	zenity)
+		shift
+		exec "${APPDIR}"/usr/local/bin/zenity/zenity $@
+		exit $?
+		;;
+	help|--help|-h)
 		echo "SafeSurfer-Desktop (AppImage) help menu"
 		echo "---------------------------------------"
 		echo
@@ -231,7 +246,10 @@ trap atexit EXIT
 
 DISPLAY_A_MSG=0 check_dep pkexec "Without pkexec/polkit, SafeSurfer-desktop is unable to enable DNS settings. Please install polkit-1 from via software repositories."
 
-#exit # Uncomment to disable integration
+if [[ -e "${APPDIR}/NOINTEGRATION" ]]
+then
+	exit
+fi
 
 # Exit immediately of one of these files is present
 # (e.g., because the desktop environment wants to handle desktop integration itself)

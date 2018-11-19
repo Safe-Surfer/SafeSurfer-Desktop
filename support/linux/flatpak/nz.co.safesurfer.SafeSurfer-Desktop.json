@@ -13,8 +13,20 @@
         "--socket=x11",
         "--socket=pulseaudio",
         "--share=network",
+        "--share=ipc",
+        "--socket=x11",
+        "--socket=wayland",
+        "--allow=devel",
         "--talk-name=org.freedesktop.Notifications",
-        "--filesystem=host"
+        "--filesystem=host",
+        "--env=PATH=/app/bin:/usr/bin:/run/host/usr/bin/",
+        "--env=LD_LIBRARY_PATH=/app/lib:/usr/lib/ffmpeg/lib",
+        "--filesystem=/usr/bin",
+        "--filesystem=/usr/lib64",
+        "--filesystem=xdg-run/dconf",
+        "--filesystem=~/.config/dconf:ro",
+        "--talk-name=ca.desrt.dconf",
+        "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
     ],
     "modules": [
         {
@@ -30,7 +42,8 @@
             ],
             "build-commands": [
             	"mkdir -p /app/usr",
-                "cp -ra main/* /app/usr/."
+                "cp -ra main/* /app/usr/.",
+                "echo $LD_LIBRARY_PATH"
             ]
         }
     ]

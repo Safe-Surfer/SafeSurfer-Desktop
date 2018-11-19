@@ -20,7 +20,7 @@
 //
 
 // import libraries
-const {app, BrowserWindow, Menu, clipboard, globalShortcut} = require('electron'),
+const {app, BrowserWindow, Menu, clipboard, globalShortcut, ipcMain} = require('electron'),
   path = require('path'),
   windowStateKeeper = require('electron-window-state'),
   packageJSON = require('../../package.json'),
@@ -74,6 +74,12 @@ function createWindow() {
 // create window when app is ready
 app.on('ready', function(window) {
   createWindow();
+});
+
+ipcMain.on('updateAppMenu', (event, arg) => {
+	Menu.setApplicationMenu(
+	  Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
+	);
 });
 
 app.on('browser-window-created', (event, window) => {

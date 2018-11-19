@@ -19,7 +19,7 @@
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-sscliDir=$(cd $(dirname $0) && pwd)
+sscliDir="$(dirname $(realpath $0))"
 arg="$1"
 resolvconf="/etc/resolv.conf"
 primaryDNS="104.197.28.121"
@@ -83,8 +83,13 @@ fi
 
 function flushAndRestart() {
 # flush and restart DNS related services
-[ ! -z "$(which systemd-resolve)" ] && systemd-resolve --flush-caches && echo "* Flushed systemd-resolv caches."
-[ ! -z "$(which nscd)" ] && systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "* Restarted nscd"
+if [ ! -z "$(which nscd)" ]
+then
+	systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "* Flushed nscd DNS cache and restarted"
+else
+	echo "ERROR: cannot find nscd"
+	exit 1
+fi
 }
 
 function setDNSservers() {

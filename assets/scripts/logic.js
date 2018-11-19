@@ -21,6 +21,7 @@
 
 // include libraries
 const {dialog} = global.desktop.logic.dialogBox(),
+  {ipcRenderer} = require('electron'),
   app = global.desktop.logic.electron.app ? global.desktop.logic.electron.app: global.desktop.logic.electronremoteapp,
   packageJSON = window.desktop.global.packageJSON(),
   APPBUILD = parseInt(packageJSON.APPBUILD),
@@ -145,6 +146,10 @@ window.actions = {
     appFrame.flushDNScache();
   },
 
+  updatemenu: function() {
+    ipcRenderer.send('updateAppMenu', true);
+  },
+
   status: function() {
     // display human readable information
     console.log("==========================");
@@ -213,7 +218,7 @@ const appFrame = {
     // run program with pkexec or xdg-su
     return new Promise((resolve, reject) => {
       switch (window.appStates.guiSudo) {
-        case 'pkexec':
+        default:
           logging('[linuxGuiSudo]: Running with pkexec');
           appFrame.callProgram(`pkexec ${command}`).then(response => {
             resolve(response);
@@ -224,9 +229,6 @@ const appFrame = {
           logging('SUDOGUI: Running with xdg-su');
           appFrame.callProgram(`xdg-su -c '${command}'`);
           break;*/
-
-        default:
-          break;
       }
     });
   },
@@ -360,7 +362,7 @@ const appFrame = {
 
   displayNoInternetConnection: function() {
     // show the user that they don't have an internet connection
-    $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE YOUR LOST INTERNET CONNECTION.").toUpperCase());
+    $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE LOST YOUR INTERNET CONNECTION.").toUpperCase());
     $('.appNoInternetConnectionScreen').show();
     $('.appNoInternetConnectionScreen').parent().css('z-index', 58);
     $('.bigText_nointernet').show();
@@ -766,6 +768,7 @@ const appFrame = {
           dialog.showMessageBox(messageText.nothingSent, dialogResponse => {});
           break;
       }
+      ipcRenderer.send('updateAppMenu', true);
     });
   },
 
@@ -922,15 +925,16 @@ const appFrame = {
     // reload function
     logging("[mainReloadProcess]: begin reload");
     appFrame.checkServiceState();
-    appFrame.internetConnectionCheck().then((state) => {
+    /*appFrame.internetConnectionCheck().then((state) => {
       window.appStates.internet[0] = state;
       // if there is an internet connection
       if (state == true) appFrame.hideNoInternetConnection();
       // if there is no internet
       else if (state == false && window.appStates.lifeguardFound[0] == false) appFrame.displayNoInternetConnection();
-    });
+    });*/
 
     if (window.appStates.internet[0] == true) {
+      appFrame.hideNoInternetConnection();
       if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined) {
         if (window.appStates.toggleLock == true) {
           // if the state changes of the service being enabled changes
@@ -953,6 +957,7 @@ const appFrame = {
         }
       }
     }
+    else appFrame.displayNoInternetConnection();
 
     // if the service is enabled, check if a lifeguard is on the network
     appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {

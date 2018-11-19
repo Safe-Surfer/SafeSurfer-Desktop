@@ -89,15 +89,21 @@ prep-flatpak:
 build-flatpak:
 	cd ./support/linux/flatpak && flatpak-builder flatpak-build nz.co.safesurfer.SafeSurfer-Desktop.json --force-clean
 
+run-flatpak:
+	cd ./support/linux/flatpak && flatpak-builder --run flatpak-build nz.co.safesurfer.SafeSurfer-Desktop.json /app/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
+
 prep-appimage:
 	@if [ -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "appimagetool is already downloaded."; exit 1; fi;
-	@mkdir -p tools/resources/libgconf
-	@mkdir -p tools/resources/libXScrnSaver
+	@mkdir -p tools/resources/libgconf tools/resources/libXScrnSaver tools/resources/curl tools/resources/zenity
 	cd tools && wget https://github.com/AppImage/AppImageKit/releases/download/10/appimagetool-x86_64.AppImage && chmod +x appimagetool-x86_64.AppImage
 	cd tools/resources/libgconf && wget http://mirrors.kernel.org/ubuntu/pool/main/g/gconf/libgconf-2-4_3.2.6-0ubuntu2_amd64.deb
 	cd tools/resources/libgconf && ar x libgconf-2-4_3.2.6-0ubuntu2_amd64.deb && tar xvf data.tar.xz
 	cd tools/resources/libXScrnSaver && wget https://kojipkgs.fedoraproject.org/packages/libXScrnSaver/1.2.3/2.fc29/x86_64/libXScrnSaver-1.2.3-2.fc29.x86_64.rpm
 	cd tools/resources/libXScrnSaver && rpm2cpio libXScrnSaver-1.2.3-2.fc29.x86_64.rpm | cpio -idmv
+	cd tools/resources/curl && wget http://opensuse-mirror-gce-ap.susecloud.net/update/leap/15.0/oss/x86_64/curl-7.60.0-lp150.2.15.1.x86_64.rpm
+	cd tools/resources/curl && rpm2cpio curl-7.60.0-lp150.2.15.1.x86_64.rpm | cpio -idmv
+	cd tools/resources/zenity && wget http://download.opensuse.org/repositories/openSUSE:/Leap:/15.0/standard/x86_64/zenity-3.26.0-lp150.2.5.x86_64.rpm
+	cd tools/resources/zenity && rpm2cpio zenity-3.26.0-lp150.2.5.x86_64.rpm | cpio -idmv
 
 build-appimage:
 	@if [ ! -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "Please run 'make prep-appimage'."; exit 1; fi;
@@ -105,6 +111,9 @@ build-appimage:
 	make build-linux
 	make DESTDIR=nz.co.safesurfer.SafeSurfer-Desktop.AppDir install
 	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/lib
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/local/bin/curl
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/local/bin/zenity
+	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/zenity
 	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/16x16/apps
 	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/24x24/apps
 	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/32x32/apps
@@ -129,12 +138,15 @@ build-appimage:
 	@chmod +x nz.co.safesurfer.SafeSurfer-Desktop.AppDir/AppRun
 	@cp -r tools/resources/libgconf/usr/lib/x86_64-linux-gnu/. nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/lib
 	@cp -r tools/resources/libXScrnSaver/usr/lib64/. nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/lib64
+	@cp tools/resources/curl/usr/bin/curl nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/local/bin/curl
+	@cp tools/resources/zenity/usr/bin/* nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/local/bin/zenity
+	@cp -r tools/resources/zenity/usr/share/zenity/. nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/zenity
 	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/nz.co.safesurfer.SafeSurfer-Desktop.desktop
 	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/applications/SafeSurfer-Desktop.desktop ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/applications/nz.co.safesurfer.SafeSurfer-Desktop.desktop
 	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurfer-Desktop.appdata.xml
 	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/nz.co.safesurfer.SafeSurfer-Desktop.desktop
 	@sed -i -e "s#<id>SafeSurfer-Desktop.desktop</id>#<id>nz.co.safesurfer.SafeSurfer-Desktop.desktop</id>#g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurfer-Desktop.appdata.xml
-	@if [[ "$(DISABLEINTEGRATION)" = true ]]; then sed -i -e "s,#exit # Uncomment to disable integration,exit,g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/AppRun; fi
+	@if [[ "$(DISABLEINTEGRATION)" = true ]]; then touch nz.co.safesurfer.SafeSurfer-Desktop.AppDir/NOINTEGRATION; fi
 	./tools/appimagetool-x86_64.AppImage $(OPTS) nz.co.safesurfer.SafeSurfer-Desktop.AppDir
 
 compile-win-setup:

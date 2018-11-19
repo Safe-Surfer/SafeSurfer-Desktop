@@ -26,6 +26,7 @@ global.desktop = Object.freeze({
     electronOpenExternal: (link) => require('electron').shell.openExternal(link),
     dialogBox: () => require('electron').remote,
     shelljs_which: (prog) => require('shelljs').which(prog),
+    shelljs_test: require('shelljs').test,
     isAdmin: () => require('is-admin')(),
     letsGetMeta: (site) => require("lets-get-meta")(site),
     moment: () => require('moment')(),
