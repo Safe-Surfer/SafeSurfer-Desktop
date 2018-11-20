@@ -23,5 +23,5 @@
 module.exports = function(text) {
   loggingEnable = typeof appStates === 'undefined' ? false : window.appStates.enableLogging;
   // logging is enabled via config file or variable
-	if (require('../../package.json').appOptions.enableLogging == true || loggingEnable == true) console.log(text);
+  if (require('../../package.json').appOptions.enableLogging == true || loggingEnable == true) console.log(text);
 }

@@ -232,7 +232,7 @@ const appFrame = {
   elevateWindows: function() {
     // call a child process
     appFrame.exec(`powershell Start-Process '${process.argv0}' -ArgumentList '.' -Verb runAs`).then((response) => {
-    	logging(`[elevateWindows]: response was '${response}'.`);
+      logging(`[elevateWindows]: response was '${response}'.`);
       if (response == true) window.close();
     });
   },

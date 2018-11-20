@@ -30,46 +30,46 @@ const {app, BrowserWindow, Menu, clipboard, globalShortcut, ipcMain} = require('
 let mainWindow;
 
 function createWindow() {
-	// Create the browser window.
-	let mainWindowState = windowStateKeeper({
+  // Create the browser window.
+  let mainWindowState = windowStateKeeper({
     defaultWidth: 490,
     defaultHeight: 600
   });
 
   var windowObj = {
     /* set default sizing */
-		width: mainWindowState.width,
-		height: mainWindowState.height,
+    width: mainWindowState.width,
+    height: mainWindowState.height,
     /* set minimum standard sizing */
-		minWidth: 490,
-		minHeight: 600,
+    minWidth: 490,
+    minHeight: 600,
     /* set default position sizing */
     'x': mainWindowState.x,
     'y': mainWindowState.y,
-		title: 'Safe Surfer',
-		icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png'),
-		webPreferences: {
-		  nodeIntegration: !packageJSON.appOptions.disableNodeIntegration,
-		  preload: path.join(__dirname, 'preload.js')
-		}
-	}
+    title: 'Safe Surfer',
+    icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png'),
+    webPreferences: {
+      nodeIntegration: !packageJSON.appOptions.disableNodeIntegration,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  }
 
   // if app is a beta, add message beta to title
-	if (isBeta == true) windowObj.title += " (beta)";
-	mainWindow = new BrowserWindow(windowObj);
+  if (isBeta == true) windowObj.title += " (beta)";
+  mainWindow = new BrowserWindow(windowObj);
 
-	// load in main html document
- 	mainWindow.loadFile(path.join(__dirname, '..', 'html', 'index.html'));
-	mainWindow.on('closed', function() {
-		mainWindow = null;
-	});
-	// set menu from menu.js
-	Menu.setApplicationMenu(
-	  Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
-	);
-	mainWindowState.manage(mainWindow);
-	mainWindow.setAutoHideMenuBar(false);
-	mainWindow.setMenuBarVisibility(true);
+  // load in main html document
+   mainWindow.loadFile(path.join(__dirname, '..', 'html', 'index.html'));
+  mainWindow.on('closed', function() {
+    mainWindow = null;
+  });
+  // set menu from menu.js
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
+  );
+  mainWindowState.manage(mainWindow);
+  mainWindow.setAutoHideMenuBar(false);
+  mainWindow.setMenuBarVisibility(true);
 }
 
 // create window when app is ready
@@ -88,18 +88,18 @@ app.on('ready', function(window) {
 
 // reload the menu on command
 ipcMain.on('updateAppMenu', (event, arg) => {
-	Menu.setApplicationMenu(
-	  Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
-	);
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
+  );
 });
 
 // use Ctrl^H or Cmd^H to toggle menu bar
 app.on('browser-window-created', (event, window) => {
-	window.setAutoHideMenuBar(true);
-	window.setMenuBarVisibility(false);
-	globalShortcut.register('CmdOrCtrl+H', () => {
-	  window.setAutoHideMenuBar(!window.isMenuBarAutoHide());
-	  window.setMenuBarVisibility(!window.isMenuBarVisible());
+  window.setAutoHideMenuBar(true);
+  window.setMenuBarVisibility(false);
+  globalShortcut.register('CmdOrCtrl+H', () => {
+    window.setAutoHideMenuBar(!window.isMenuBarAutoHide());
+    window.setMenuBarVisibility(!window.isMenuBarVisible());
   });
 });
 
