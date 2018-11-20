@@ -24,7 +24,8 @@ const {app, BrowserWindow, Menu, clipboard, globalShortcut, ipcMain} = require('
   path = require('path'),
   windowStateKeeper = require('electron-window-state'),
   packageJSON = require('../../package.json'),
-  isBeta = packageJSON.appOptions.isBeta;
+  isBeta = packageJSON.appOptions.isBeta,
+  args = process.argv[2] !== undefined ? process.argv[2] : process.argv[1] !== undefined ? process.argv[1] : "";
 
 let mainWindow;
 
@@ -73,15 +74,26 @@ function createWindow() {
 
 // create window when app is ready
 app.on('ready', function(window) {
-  createWindow();
+  switch (args) {
+    case '-v': case '--version': case 'version': case '/v': case '/version':
+      console.log(`SafeSurfer-Desktop ${packageJSON.version}:${packageJSON.APPBUILD}${packageJSON.appOptions.BUILDMODE}`);
+      app.quit();
+      break;
+
+    default:
+      createWindow();
+      break;
+  }
 });
 
+// reload the menu on command
 ipcMain.on('updateAppMenu', (event, arg) => {
 	Menu.setApplicationMenu(
 	  Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
 	);
 });
 
+// use Ctrl^H or Cmd^H to toggle menu bar
 app.on('browser-window-created', (event, window) => {
 	window.setAutoHideMenuBar(true);
 	window.setMenuBarVisibility(false);

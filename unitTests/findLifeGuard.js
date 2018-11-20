@@ -24,19 +24,17 @@ var count = 0,
  lgState = false;
 
 async function findLifeGuard() {
-  let promise = new Promise((resolve, reject) => {
-    console.log('LIFEGUARDSTATE: Checking if on lifeguard network');
+  return new Promise((resolve, reject) => {
+    console.log('[checkIfOnLifeGuardNetwork]: Checking if on lifeguard network');
     // start searching for lifeguard with bonjour
-    bonjour.findOne({ type: "sslifeguard" }, (service) => {
+    bonjour.findOne({type: "sslifeguard"}, (service) => {
       // if a lifeguard is found
       if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
+        console.log(`[checkIfOnLifeGuardNetwork]: found ${service.fqdn}`);
         resolve(true);
       }
     });
   });
-
-  let result = await promise;
-  return promise;
 }
 
 function loop() {

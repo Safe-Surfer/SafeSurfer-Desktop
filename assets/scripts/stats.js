@@ -27,22 +27,22 @@ var statHist = store.get('statHistory'),
   textBody = "",
   itemCounter = "";
 
-  $("#statInfoMsg").text(i18n.__("Here's the data you've shared:"));
-  $("#statInfoMsg_copy").text(i18n.__("If you wish to copy any of the data, you can select and copy it from there."));
-  $("#optOutMsg").text(i18n.__("You can opt out at any time in the support menu."));
-  $("#title").text(i18n.__("View statistic data"));
-  $("#statClear").text(i18n.__("Clear stats locally").toUpperCase());
+$("#statInfoMsg").text(i18n.__("Here's the data you've shared:"));
+$("#statInfoMsg_copy").text(i18n.__("If you wish to copy any of the data, you can select and copy it from there."));
+$("#optOutMsg").text(i18n.__("You can opt out at any time in the support menu."));
+$("#title").text(i18n.__("View statistic data"));
+$("#statClear").text(i18n.__("Clear stats locally").toUpperCase());
 
-  // choose message to display
-  switch(store.get('statisticAllow')) {
-    case true:
-      $("#statState").text(i18n.__("You're opted in."));
-      break;
-    default:
-      $("#statState").text(i18n.__("You're not opted in."));
-      $("#optOutMsg").text(i18n.__("If you want to opt in to giving statistics, you can do so in the menu."));
-      break;
-  }
+// choose message to display
+switch(store.get('statisticAllow')) {
+  case true:
+    $("#statState").text(i18n.__("You're opted in."));
+    break;
+  default:
+    $("#statState").text(i18n.__("You're not opted in."));
+    $("#optOutMsg").text(i18n.__("If you want to opt in to giving statistics, you can do so in the menu."));
+    break;
+}
 
 function loadStatsPage() {
   // write and translate text on the main page

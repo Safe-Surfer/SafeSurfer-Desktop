@@ -28,7 +28,7 @@ const packageJSON = window.desktop.global.packageJSON(),
   $ = window.desktop.global.jquery();
 
 // function to make \n multiline
-$.fn.multiline = function(text, rt){
+$.fn.multiline = function(text){
     this.html(text);
     this.html(this.html().replace(/\n/g,'<br/>'));
     return this;

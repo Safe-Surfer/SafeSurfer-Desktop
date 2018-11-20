@@ -6,7 +6,7 @@ BuildArch:	x86_64
 License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
-Source0:	http://142.93.48.189/files/desktop/7-%{version}/%{name}-%{version}.zip
+Source0:	http://142.93.48.189/files/desktop/8-%{version}/linux-precompiled/%{name}-%{version}-8-linux.zip
 Requires:       polkit, curl
 BuildRequires:	unzip, desktop-file-utils
 %if 0%{?suse_version}
@@ -18,18 +18,14 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 
 
 %prep
-mkdir %{name}-%{version}/
-unzip ../SOURCES/%{name}-%{version}.zip -d ./%{name}-%{version}/
+mkdir %{name}-%{version}-8-linux/
+unzip ../SOURCES/%{name}-%{version}-8-linux.zip -d ./%{name}-%{version}-8-linux/
 
 %build
 
 
 %install
-cp -r ./%{name}-%{version}/. $RPM_BUILD_ROOT/
-echo "APPUPDATES=false /usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop" > $RPM_BUILD_ROOT/usr/lib64/SafeSurfer-Desktop/apprun.sh
-chmod +x $RPM_BUILD_ROOT/usr/lib64/SafeSurfer-Desktop/apprun.sh
-sed -i -e "s,/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop,/usr/lib64/SafeSurfer-Desktop/apprun.sh,g" $RPM_BUILD_ROOT/usr/share/applications/SafeSurfer-Desktop.desktop
-
+cp -r ./%{name}-%{version}-8-linux/. $RPM_BUILD_ROOT/
 
 %files
 /usr/lib64/%{name}
@@ -106,7 +102,7 @@ sed -i -e "s,/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop,/usr/lib64/SafeSur
 /usr/lib64/%{name}/views_resources_200_percent.pak
 /usr/lib64/%{name}/libnode.so
 /usr/lib64/%{name}/LICENSE
-/usr/lib64/%{name}/apprun.sh
+#/usr/lib64/%{name}/apprun.sh
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli
@@ -119,7 +115,7 @@ sed -i -e "s,/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop,/usr/lib64/SafeSur
 
 
 %changelog
-* Fri Nov 11 2018 caleb
+* Fri Nov 14 2018 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc3
 
 * Fri Nov 7  2018 caleb

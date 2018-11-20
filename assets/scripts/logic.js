@@ -28,7 +28,7 @@ const {dialog} = global.desktop.logic.dialogBox(),
   APPVERSION = packageJSON.version,
   BUILDMODE = packageJSON.appOptions.BUILDMODE,
   isBeta = packageJSON.appOptions.isBeta,
-  updatesEnabled = packageJSON.appOptions.enableUpdates,
+  updatesEnabled = process.env.SAFESURFER_APPUPDATES !== undefined ? process.env.SAFESURFER_APPUPDATES : packageJSON.appOptions.enableUpdates,
   enableNotifications = packageJSON.appOptions.enableNotifications,
   os = require('os'),
   path = require('path'),
@@ -60,12 +60,7 @@ window.appStates = {
 logging(`INFO: platform  - ${os.platform()}`);
 logging(`INFO: cwd       - ${process.cwd()}`);
 
-if (os.platform() == 'linux') {
-  if (window.desktop.logic.shelljs_which('pkexec') != null) window.appStates.guiSudo = 'pkexec';
-  else if (window.desktop.logic.shelljs_which('xdg-su') != null) window.appStates.guiSudo = 'xdg-su';
-}
-
-window.actions = {
+window.actions = Object.freeze({
   buttons: {
     unlock: function() {
       store.set('lockDeactivateButtons', false);
@@ -155,6 +150,7 @@ window.actions = {
     console.log("==========================");
     console.log(`- This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`);
     console.log(`- This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer.version()} of node_dns_changer.`);
+    console.log(`---------------------------------------------`)
     console.log(`- The service is ${appStates.serviceEnabled[0] === true ? "enabled" : "disabled"}.`);
     console.log(`- There is ${appStates.lifeguardFound[0] === true ? "a" : "no"} LifeGuard on your network.`);
     console.log(`- You have ${appStates.internet[0] === true ? "an" : "no"} internet connection.`);
@@ -163,7 +159,7 @@ window.actions = {
     if (os.platform() === 'win32') console.log(`- Your version of Windows is ${window.appStates.windowsVersionCompatible === true ? "" : "not "}compatible.`);
     console.log("==========================");
   }
-}
+});
 
 // print some useful commands
 window.help = `Help menu
@@ -214,31 +210,12 @@ const appFrame = {
     });
   },
 
-  linuxGuiSudo(command) {
-    // run program with pkexec or xdg-su
-    return new Promise((resolve, reject) => {
-      switch (window.appStates.guiSudo) {
-        default:
-          logging('[linuxGuiSudo]: Running with pkexec');
-          appFrame.callProgram(`pkexec ${command}`).then(response => {
-            resolve(response);
-          });
-          break;
-
-        /*case 'xdg-su':
-          logging('SUDOGUI: Running with xdg-su');
-          appFrame.callProgram(`xdg-su -c '${command}'`);
-          break;*/
-      }
-    });
-  },
-
   exec: function(command) {
     // a standard platform based exec function
     return new Promise((resolve, reject) => {
       switch (os.platform()) {
         case 'linux':
-          appFrame.linuxGuiSudo(command).then(response => {
+          appFrame.callProgram(`${appStates.guiSudo} ${command}`).then(response => {
             resolve(response);
           });
           break;
@@ -262,17 +239,14 @@ const appFrame = {
 
   checkUserPrivileges: function() {
     // keep note of which user the app is run as
-    switch (os.platform()) {
-      case 'win32':
-        global.desktop.logic.isAdmin().then(admin => {
-          window.appStates.userIsAdmin = admin;
-          if (admin == false) appFrame.elevateWindows();
-        });
-        break;
-      default:
-        window.appStates.userIsAdmin = true;
-        break;
+    if (os.platform() != 'win32') {
+      window.appStates.userIsAdmin = true;
+      return
     }
+    global.desktop.logic.isAdmin().then(admin => {
+      window.appStates.userIsAdmin = admin;
+      if (admin == false) appFrame.elevateWindows();
+    });
   },
 
   flushDNScache: function() {
@@ -481,7 +455,7 @@ const appFrame = {
     window.appStates.toggleLock = true;
     switch (os.platform()) {
       case 'linux':
-        appFrame.linuxGuiSudo(`${appStates.binFolder}sscli enable ${forced}`);
+        appFrame.exec(`${appStates.binFolder}sscli enable ${forced}`);
         break;
 
       default:
@@ -518,7 +492,7 @@ const appFrame = {
     switch (os.platform()) {
       case 'linux':
         // if sscli is able to be copied to /tmp, run it
-        appFrame.linuxGuiSudo(`${appStates.binFolder}sscli disable ${forced}`);
+        appFrame.exec(`${appStates.binFolder}sscli disable ${forced}`);
         break;
 
       default:
@@ -716,8 +690,7 @@ const appFrame = {
         if (store.get('statID') === undefined) store.set('statID', dataToSend.DATESENT);
       }
       if (err >= 400 && err <= 599) {
-        logging('[sendStatistics]: Could not send.');
-        logging(`[sendStatistics]: error ${err}`);
+        logging('[sendStatistics]: Could not send -- error ${err}');
         return;
       }
     });
@@ -775,7 +748,7 @@ const appFrame = {
   versionInformationCopy: function() {
     // copy app build information to clipboard
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')}, dialogResponse => {
-      global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer.version()}`);
+      if (dialogResponse != 0) global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer.version()}`);
       if (dialogResponse == 2) global.desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
     });
   },
@@ -807,9 +780,8 @@ const appFrame = {
 
   showUnprivillegedMessage: function() {
     // display dialog for if the app hasn't been started with root privileges
-    const dialogNotRunningAsAdmin = {type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')};
     logging("[showUnprivillegedMessage]: User is not admin -- displaying dialog message.");
-    dialog.showMessageBox(dialogNotRunningAsAdmin, updateResponse => {
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')}, updateResponse => {
       if (updateResponse == 1) window.close();
       if (updateResponse == 0) {
         appFrame.openWindowsUACHelpPage();
@@ -870,7 +842,7 @@ const appFrame = {
             appFrame.exec('shutdown /r /t 0');
             break;
           case 'linux':
-            appFrame.linuxGuiSudo(`/sbin/reboot`);
+            appFrame.exec(`/sbin/reboot`);
             break;
           case 'darwin':
             appFrame.exec("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'");
@@ -1051,35 +1023,24 @@ const appFrame = {
     }
     window.appStates.windowsVersionCompatible = false;
     logging("[windowsVersionCheck]: User is not on a compatible version of Windows");
-    var dialogMsg = {type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app.")}
-    dialog.showMessageBox(dialogMsg, msgResponse => {
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app.")}, msgResponse => {
       if (msgResponse == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
     });
   }
 };
 
+if (BUILDMODE == 'dev') window.appFrame = appFrame;
+
 global.desktop.logic.electronIPCon('toggleAppUpdateAutoCheck', (event, arg) => {
   // if user changes the state of auto check for updates
   logging(`[windowsVersionCheck]: UPDATES Auto check state changed to ${!arg}`);
-  if (arg == true) {
-    store.set('appUpdateAutoCheck', false);
-  }
-
-  else if (arg == false) {
-    store.set('appUpdateAutoCheck', true);
-  }
+  store.set('appUpdateAutoCheck', !arg);
 });
 
 global.desktop.logic.electronIPCon('betaCheck', (event, arg) => {
   // if user changes the state of auto check for updates
   logging(`[windowsVersionCheck]: UPDATES Beta state changed to ${!arg}`);
-  if (arg == true) {
-    store.set('betaCheck', false);
-  }
-
-  else if (arg == false) {
-    store.set('betaCheck', true);
-  }
+  store.set('betaCheck', !arg);
 });
 
 global.desktop.logic.electronIPCon('checkIfUpdateAvailable', (event, arg) => {
@@ -1146,14 +1107,7 @@ global.desktop.logic.electronIPCon('goLockDeactivateButtons', () => {
 
 global.desktop.logic.electronIPCon('toggleStatState', () => {
   // changing the statistic sharing state
-  switch (store.get('statisticAllow')) {
-    case true:
-      store.set('statisticAllow', false);
-      break;
-    default:
-      store.set('statisticAllow', true);
-      break;
-  }
+  store.set('statisticAllow', !store.get('statisticAllow'));
 });
 
 // keep note of if the user is running as admin or not
@@ -1162,7 +1116,7 @@ appFrame.checkUserPrivileges();
 appFrame.checkForVersionChange();
 
 // if auto-update checking is enabled and updates are enabled, check for them
-if ((updatesEnabled == true && store.get('appUpdateAutoCheck') == true) || process.env.APPUPDATES === "true") appFrame.checkForAppUpdate({
+if (updatesEnabled == true && store.get('appUpdateAutoCheck') == true) appFrame.checkForAppUpdate({
   current: false,
   showErrors: false
 });

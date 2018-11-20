@@ -30,7 +30,7 @@ const {app} = require('electron'),
   APPVERSION = packageJSON.version,
   APPBUILD = packageJSON.APPBUILD,
   isBeta = packageJSON.appOptions.isBeta,
-  updatesEnabled =  process.env.APPUPDATES !== undefined ? process.env.APPUPDATES : packageJSON.appOptions.enableUpdates,
+  updatesEnabled =  process.env.SAFESURFER_APPUPDATES !== undefined ? process.env.SAFESURFER_APPUPDATES : packageJSON.appOptions.enableUpdates,
   i18n = new (require('./i18n.js'));
 var accountIsAssigned = store.get('accountInformation'),
   appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
@@ -111,12 +111,13 @@ module.exports = (app, mainWindow) => {
 	];
 
 	// show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-	if (updatesEnabled == true || process.env.APPUPDATES === "true") menu[1].submenu.splice(2, 0, {
+	if (updatesEnabled == true) menu[1].submenu.splice(2, 0, {
 		label: i18n.__('Updates'),
 		submenu:
 		[
 			{label: i18n.__('Check for update'), click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
 			{label: i18n.__('Automatically check for updates'), type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
+    	{type:'separator'},
 			{label: i18n.__('Opt in to beta releases'), type: 'checkbox', checked: betaCheck, click() {mainWindow.webContents.send('betaCheck', betaCheck)} },
 		]
 	});
