@@ -25,7 +25,7 @@ const {app, BrowserWindow, Menu, clipboard, globalShortcut, ipcMain} = require('
   windowStateKeeper = require('electron-window-state'),
   packageJSON = require('../../package.json'),
   isBeta = packageJSON.appOptions.isBeta,
-  args = process.argv[2] !== undefined ? process.argv[2] : process.argv[1] !== undefined ? process.argv[1] : "";
+  args = process.argv.slice(process.argv[1] !== '.' ? 1 : 2, process.argv.length);
 
 let mainWindow;
 
@@ -74,7 +74,7 @@ function createWindow() {
 
 // create window when app is ready
 app.on('ready', function(window) {
-  switch (args) {
+  switch (args[0]) {
     case '-v': case '--version': case 'version': case '/v': case '/version':
       console.log(`SafeSurfer-Desktop ${packageJSON.version}:${packageJSON.APPBUILD}${packageJSON.appOptions.BUILDMODE}`);
       app.quit();

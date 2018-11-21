@@ -686,9 +686,6 @@ const appFrame = {
       store.set('statisticAllow', true);
       store.set('lastVersionTosendStatistics', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
       logging({"[sendStatistics]: DATA": 'Sent.', "[sendStatistics]: STATDATA": source});
-      if (response || body) {;
-        if (store.get('statID') === undefined) store.set('statID', dataToSend.DATESENT);
-      }
       if (err >= 400 && err <= 599) {
         logging('[sendStatistics]: Could not send -- error ${err}');
         return;
