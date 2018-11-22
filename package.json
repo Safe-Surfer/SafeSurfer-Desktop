@@ -42,20 +42,34 @@
   "build": {
     "appId": "nz.co.SafeSurfer.SafeSurfer-Desktop",
     "mac": {
-      "category": "public.app-category.utilities"
+      "category": "public.app-category.utilities",
+      "target": [
+	"pkg",
+	"dmg",
+	"zip",
+	"mas"
+      ],
+      "icon": "assets/media/icons/mac/icon.icns",
+      "entitlements": "build/entitlements.mac.plist",
+      "type": "distribution"
+    },
+    "mas": {
+	"entitlements": "support/macOS/entitlements.mas.plist",
+	"type": "distribution",
+	"category": "public.app-category.utilities"
     },
     "dmg": {
       "contents": [
-        {
-          "x": 110,
-          "y": 150
-        },
-        {
-          "x": 240,
-          "y": 150,
-          "type": "link",
-          "path": "/Applications"
-        }
+	{
+	  "x": 110,
+	  "y": 150
+	},
+	{
+	  "x": 240,
+	  "y": 150,
+	  "type": "link",
+	  "path": "/Applications"
+	}
       ]
     }
   },

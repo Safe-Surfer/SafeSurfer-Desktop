@@ -63,7 +63,13 @@ Help us speak your language!
 Read our [translation guide](docs/TRANSLATING.md) to get started!  
 
 ## Notes
-- This program offically supports:
+- If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
+
+Known issues
+- When connected to a LifeGuard network, the screen may flicker between seeing LifeGuard and not
+
+## System requirements
+Compatible operating systems:  
     - Fedora Workstation (28, 29)
     - macOS El Capitan (hasn't been tested on anything newer)
     - openSUSE Leap 15
@@ -71,10 +77,10 @@ Read our [translation guide](docs/TRANSLATING.md) to get started!
     - Windows 10 (1803, 1809)
     - Windows 7 (SP1)
     - Windows 8.1
-- If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
 
-Known issues
-- When connected to a LifeGuard network, the screen may flicker between seeing LifeGuard and not
+Minimum computer specifications  
+CPU: 2 core - 1 GHz - 64-bit  
+RAM: 2 GB of RAM  
 
 ## License
 Copyright 2018 Safe Surfer.  

@@ -36,10 +36,11 @@ Please note that building Windows versions on Linux or macOS requires [Wine](htt
 deb: `debhelper devscripts`  
 rpm: `rpmbuild`  
 AppImage: `rpm2cpio wget tar ar`  
+snap: `snapcraft lxd build-essential`  
 flatpak:  
 - `flatpak-builder`  
 - `org.freedesktop.Sdk//1.6`  
-- `io.atom.electron.BaseApp//stable`  
+- `io.atom.electron.BaseApp//stable` (depending on JSON file)  
 windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)  
 
 Notes:

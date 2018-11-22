@@ -149,11 +149,22 @@ build-appimage:
 	@if [[ "$(DISABLEINTEGRATION)" = true ]]; then touch nz.co.safesurfer.SafeSurfer-Desktop.AppDir/NOINTEGRATION; fi
 	./tools/appimagetool-x86_64.AppImage $(OPTS) nz.co.safesurfer.SafeSurfer-Desktop.AppDir
 
+build-snap:
+	cd support/linux/snap && snapcraft cleanbuild
+
 compile-win-setup:
 	npm run compile-win-setup
 
 compile-win-setup32:
 	npm run compile-win-setup32
+
+sign-macos:
+	npm run sign-macos-app
+
+macos-publish-prepare:
+	make BUILDMODE=RELEASE UPDATES=false configure
+	make build-macos
+	make sign-macos
 
 clean:
 	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild
