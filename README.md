@@ -70,13 +70,13 @@ Known issues
 
 ## System requirements
 Compatible operating systems:  
-    - Fedora Workstation (28, 29)
-    - macOS El Capitan (hasn't been tested on anything newer)
-    - openSUSE Leap 15
-    - Ubuntu (18.04, 14.04)
-    - Windows 10 (1803, 1809)
-    - Windows 7 (SP1)
-    - Windows 8.1
+    - Fedora Workstation (28, 29)  
+    - macOS El Capitan (hasn't been tested on anything newer)  
+    - openSUSE Leap 15  
+    - Ubuntu (18.04, 14.04)  
+    - Windows 10 (1803, 1809)  
+    - Windows 7 (SP1)  
+    - Windows 8.1  
 
 Minimum computer specifications  
 CPU: 2 core - 1 GHz - 64-bit  
