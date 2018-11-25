@@ -894,13 +894,6 @@ const appFrame = {
     // reload function
     logging("[mainReloadProcess]: begin reload");
     appFrame.checkServiceState();
-    /*appFrame.internetConnectionCheck().then((state) => {
-      window.appStates.internet[0] = state;
-      // if there is an internet connection
-      if (state == true) appFrame.hideNoInternetConnection();
-      // if there is no internet
-      else if (state == false && window.appStates.lifeguardFound[0] == false) appFrame.displayNoInternetConnection();
-    });*/
 
     if (window.appStates.internet[0] == true) {
       appFrame.hideNoInternetConnection();

@@ -36,7 +36,7 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://142.93.48.189/files/desktop/8-1.0.0rc3/linux-precompiled/SafeSurfer-Desktop-1.0.0rc3-8-linux.zip",
+                    "url": "http://142.93.48.189/files/desktop/9-1.0.0rc4/linux-precompiled/SafeSurfer-Desktop-1.0.0rc4-9-linux.zip",
                     "sha256": "80b2024c8ee10715992436157ec83834a76ad559c47ef81c5b57010cfed2cdfc",
                     "dest": "main"
                 }
