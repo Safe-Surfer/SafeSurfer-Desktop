@@ -37,7 +37,7 @@
                 {
                     "type": "archive",
                     "url": "http://142.93.48.189/files/desktop/9-1.0.0rc4/linux-precompiled/SafeSurfer-Desktop-1.0.0rc4-9-linux.zip",
-                    "sha256": "80b2024c8ee10715992436157ec83834a76ad559c47ef81c5b57010cfed2cdfc",
+                    "sha256": "2f9a217d7dfa74a99255a1feacccb3a7930a43feb6733bab838a2bb2c7952dcb",
                     "dest": "main"
                 }
             ],

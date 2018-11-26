@@ -79,7 +79,12 @@ function atexit() {
 # execute on trap
 if [ -z "$APPIMAGE_EXIT_AFTER_INSTALL" ]
 then
-	SSCLILOCATION="$APPIMAGE " LINUXPACKAGEFORMAT="appimage" exec "$BIN"
+	if [[ -f "${APPDIR}/ENABLEUPDATES" ]]
+	then
+		SAFESURFER_APPUPDATES="true" SSCLILOCATION="$APPIMAGE " LINUXPACKAGEFORMAT="appimage" exec "$BIN"
+	else
+		SSCLILOCATION="$APPIMAGE " LINUXPACKAGEFORMAT="appimage" exec "$BIN"
+	fi
 fi
 }
 
@@ -319,7 +324,7 @@ then
 	else
 		if [ -z "$APPIMAGE_SILENT_INSTALL" ]
 		then
-			yesnoPrompt "Upgrade" "You've launched a version ($AppVersion) which is newer than what is installed ($InstalledAppVersion) of SafeSurfer-Desktop.\\nWould you like to update the integration?"
+			yesnoPrompt "Upgrade" "You've launched a version ($AppVersion) which is not what is installed ($InstalledAppVersion) of SafeSurfer-Desktop.\\nWould you like to update the integration?"
 			APPIMAGE_UPGRADE=true
 		fi
 		uninstall_icons

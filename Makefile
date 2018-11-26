@@ -7,7 +7,7 @@ all: help
 configure:
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./package.json; fi
 	@if [[ "$(UPDATES)" = false ]]; then sed -i -e 's/"enableUpdates": true/"enableUpdates": false/g' ./package.json; fi
-
+	@if [[ ! -z "$(MACOSDEVID)" ]]; then cp ./support/macOS/entitlements.mas.plist ./support/macOS/entitlements.mas.plist.bak; sed -i -e "s/DEVIDSTUFF/$(MACOSDEVID)/g" ./support/macOS/entitlements.mas.plist; fi
 check-deps:
 	@if [ ! -d node_modules ]; then echo "Whoops, you're missing node dependencies. Run 'npm i'."; exit 1; fi;
 
@@ -162,14 +162,16 @@ sign-macos:
 	npm run sign-macos-app
 
 macos-publish-prepare:
-	make BUILDMODE=RELEASE UPDATES=false configure
+	make BUILDMODE=RELEASE UPDATES=$(UPDATES) MACOSDEVID=$(MACOSDEVID) configure
 	make build-macos
 	make sign-macos
+	npm run build-macos-dmg
 
 clean:
 	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild
 	@if grep -q '"BUILDMODE": "release"' ./package.json; then sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json; fi
 	@if grep -q '"enableUpdates": false' ./package.json; then sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json; fi
+	@if ! grep -q "DEVIDSTUFF" ./support/macOS/entitlements.mas.plist && [[ -f "./support/macOS/entitlements.mas.plist.bak" ]]; then mv ./support/macOS/entitlements.mas.plist.bak ./support/macOS/entitlements.mas.plist; fi
 
 slim:
 	@rm -rf node_modules tools

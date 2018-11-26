@@ -18,14 +18,14 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 
 
 %prep
-mkdir %{name}-%{version}-8-linux/
-unzip ../SOURCES/%{name}-%{version}-8-linux.zip -d ./%{name}-%{version}-8-linux/
+mkdir %{name}-%{version}-9-linux/
+unzip ../SOURCES/%{name}-%{version}-9-linux.zip -d ./%{name}-%{version}-9-linux/
 
 %build
 
 
 %install
-cp -r ./%{name}-%{version}-8-linux/. $RPM_BUILD_ROOT/
+cp -r ./%{name}-%{version}-9-linux/. $RPM_BUILD_ROOT/
 
 %files
 /usr/lib64/%{name}
@@ -102,7 +102,6 @@ cp -r ./%{name}-%{version}-8-linux/. $RPM_BUILD_ROOT/
 /usr/lib64/%{name}/views_resources_200_percent.pak
 /usr/lib64/%{name}/libnode.so
 /usr/lib64/%{name}/LICENSE
-#/usr/lib64/%{name}/apprun.sh
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli

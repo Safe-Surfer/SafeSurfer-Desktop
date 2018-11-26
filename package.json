@@ -18,7 +18,7 @@
     "package-win32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"",
     "compile-win-setup": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer.iss",
     "compile-win-setup32": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer32.iss",
-    "build-macos-dmg": "node_modules/.bin/electron-installer-dmg --icon=./assets/media/icons/mac/icon.icns --out=./release-builds ./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app SafeSurfer-Desktop",
+    "build-macos-dmg": "node_modules/.bin/electron-installer-dmg --icon=./assets/media/icons/mac/icon.icns --background=./support/macOS/dmg-background.png --out=./release-builds ./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app SafeSurfer-Desktop",
     "sign-macos-app": "node_modules/.bin/electron-osx-sign \"./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app\" --verbose",
     "lintTranslations": "node ./unitTests/lintTranslations.js"
   },

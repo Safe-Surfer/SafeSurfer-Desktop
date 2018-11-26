@@ -28,7 +28,7 @@ const {dialog} = global.desktop.logic.dialogBox(),
   APPVERSION = packageJSON.version,
   BUILDMODE = packageJSON.appOptions.BUILDMODE,
   isBeta = packageJSON.appOptions.isBeta,
-  updatesEnabled = process.env.SAFESURFER_APPUPDATES !== undefined ? process.env.SAFESURFER_APPUPDATES : packageJSON.appOptions.enableUpdates,
+  updatesEnabled = process.env.SAFESURFER_APPUPDATES !== undefined ? JSON.parse(process.env.SAFESURFER_APPUPDATES) : packageJSON.appOptions.enableUpdates,
   enableNotifications = packageJSON.appOptions.enableNotifications,
   os = require('os'),
   path = require('path'),
@@ -597,13 +597,13 @@ const appFrame = {
           break;
 
         case 'darwin':
-          genLink = `${genLink}.app.zip`;
+          genLink = `${genLink}.dmg`;
           break;
       }
 
       if (buildRecommended > parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // update available
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${versionRecommended.version}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants update.");
             if (versionRecommended.altLink === undefined) global.desktop.logic.electronOpenExternal(genLink);
@@ -625,7 +625,7 @@ const appFrame = {
 
       else if (buildRecommended < parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // user must downgrade
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version ')} ${versionRecommended.version}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version ')} ${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants to downgrade.");
             if (versionRecommended.altLink === undefined) global.desktop.logic.electronOpenExternal(genLink);
@@ -1019,7 +1019,7 @@ const appFrame = {
   }
 };
 
-if (BUILDMODE == 'dev') window.appFrame = appFrame;
+if (BUILDMODE == 'dev') window.appFrame = Object.freeze(appFrame);
 
 global.desktop.logic.electronIPCon('toggleAppUpdateAutoCheck', (event, arg) => {
   // if user changes the state of auto check for updates
