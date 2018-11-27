@@ -145,7 +145,7 @@ module.exports = (app, mainWindow) => {
   // add seperate menu for name and quit, like on standard macOS apps
   if (os.platform() == 'darwin') {
     menu[0].label = "SafeSurfer-Desktop";
-    menu[0].submenu[4].label = "Quit";
+    menu[0].submenu[5].label = i18n.__("Quit");
   }
   // add exit and a separator to Linux and Windows versions
   return menu;

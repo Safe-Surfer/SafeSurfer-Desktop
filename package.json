@@ -20,7 +20,8 @@
     "compile-win-setup32": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer32.iss",
     "build-macos-dmg": "node_modules/.bin/electron-installer-dmg --icon=./assets/media/icons/mac/icon.icns --background=./support/macOS/dmg-background.png --out=./release-builds ./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app SafeSurfer-Desktop",
     "sign-macos-app": "node_modules/.bin/electron-osx-sign \"./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app\" --verbose",
-    "lintTranslations": "node ./unitTests/lintTranslations.js"
+    "lintTranslations": "node ./unitTests/lintTranslations.js",
+    "genTranslations": "node ./unitTests/genTranslations.js"
   },
   "repository": "https://gitlab.com/safesurfer/SafeSurfer-Desktop",
   "keywords": [
@@ -74,7 +75,7 @@
     }
   },
   "devDependencies": {
-    "electron": "^2.0.8",
+    "electron": "^2.0.10",
     "electron-builder": "^20.28.2",
     "electron-icon-maker": "0.0.4",
     "electron-installer-dmg": "^2.0.0",

@@ -7,9 +7,16 @@
 <a href="http://142.93.48.189">
     <img src="https://img.shields.io/badge/version-1.0.0rc4-brightgreen.svg" />
 </a>
+<a href="http://142.93.48.189">
+    <img src="https://img.shields.io/badge/build-9-orange.svg" />
+</a>
 
-# SafeSurfer-Desktop
+
 ![Safe Surfer logo](./assets/media/icons/png/128x128.png)  
+# SafeSurfer-Desktop
+![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
+For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
+
 ## Who is [Safe Surfer](http://safesurfer.co.nz)?
 Safe Surfer's mission is to keep children, individuals, and organsations safe online. We achieve this by filtering out harmful material that may be found when browsing the internet and switching on safe search for a number of search engines.  
 You can read more [here](http://www.safesurfer.co.nz/the-cause).  
@@ -19,9 +26,6 @@ Safe Surfer Desktop [is an Electron based app, which] sets the Safe Surfer DNS s
 Our aim for this project is to make it as easy as possible to get families and persons protected online on their desktops or laptops, ensuring safety and peace-of-mind.  
 
 For enterprise/business use, we recommmend to apply the DNS settings on a router which devices are connected to.  
-
-![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
-For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
 
 ### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc4)
 ## Install the latest release candidate

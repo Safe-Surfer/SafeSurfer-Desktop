@@ -44,7 +44,9 @@ const {dialog} = global.desktop.logic.dialogBox(),
 window.appStates = {
   serviceEnabled: [undefined, undefined,],
   internet: [undefined, undefined,],
+  internetCheckCounter: 0,
   lifeguardFound: [undefined, undefined,],
+  lifeguardOnNetworkLock: false,
   appHasLoaded: false,
   enableLogging: packageJSON.appOptions.enableLogging,
   notificationCounter: 0,
@@ -745,7 +747,7 @@ const appFrame = {
   versionInformationCopy: function() {
     // copy app build information to clipboard
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')}, dialogResponse => {
-      if (dialogResponse != 0) global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer.version()}`);
+      if (dialogResponse != 0) global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer.version()}\nelectron version: ${process.versions.electron}`);
       if (dialogResponse == 2) global.desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
     });
   },
@@ -919,17 +921,22 @@ const appFrame = {
         }
       }
     }
-    else appFrame.displayNoInternetConnection();
+    else {
+      appFrame.displayNoInternetConnection();
+      appStates.lifeguardOnNetworkLock = false;
+    }
 
     // if the service is enabled, check if a lifeguard is on the network
-    appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
+    if (appStates.lifeguardOnNetworkLock !== true) appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
       window.appStates.lifeguardFound[0] = lgstate;
+      if (appStates.lifeguardFound[0] === true) appStates.lifeguardOnNetworkLock = true;
     });
 
     if (window.appStates.lifeguardFound[0] != window.appStates.lifeguardFound[1]) {
       // if the state of a lifeguard being on the network changes
       logging('[mainReloadProcess]: LIFEGUARDSTATE State has changed.');
       window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
+      if (appStates.lifeguardFound[0] === true) appStates.lifeguardOnNetworkLock = true;
     }
 
     if (window.appStates.internet[0] != window.appStates.internet[1]) {
@@ -949,9 +956,16 @@ const appFrame = {
       $('.progressInfoBar').css("height", "0px");
     }
     else if ($("#progressBar").css("height") == "20px") window.appStates.progressBarCounter += 1;
+
+    if (appStates.internetCheckCounter === 5) {
+      appFrame.internetConnectionCheck();
+      appStates.internetCheckCounter = 0;
+    }
+    else appStates.internetCheckCounter += 1;
+
     // update the screen to show how the service state (... etc) is
     appFrame.affirmServiceState();
-    window.appStates.lifeguardFound[0] = false;
+    if (appStates.lifeguardOnNetworkLock !== true) window.appStates.lifeguardFound[0] = false;
     logging("[mainReloadProcess]: end reload");
     setTimeout(appFrame.mainReloadProcess, 1000);
   },

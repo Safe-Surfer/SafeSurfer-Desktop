@@ -1,4 +1,5 @@
 #!/usr/bin/node
+
 // SafeSurfer-Desktop - lintTranslations.js
 
 //
