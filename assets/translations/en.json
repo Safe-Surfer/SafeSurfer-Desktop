@@ -136,5 +136,21 @@
 	"Configure LifeGuard device": "Configure LifeGuard device",
 	"You appear to be on a LifeGuard network, the settings given from the LifeGuard cannot be disabled when on this network, are you sure you still want to lock the buttons?": "You appear to be on a LifeGuard network, the settings given from the LifeGuard cannot be disabled when on this network, are you sure you still want to lock the buttons?",
 	"Flush DNS cache": "Flush DNS cache",
-	"experimental": "experimental"
+	"experimental": "experimental",
+	"Copy diagnostics information to clipboard": "Copy diagnostics information to clipboard",
+	"Get statuses": "Get statuses",
+	"Diagnostics": "Diagnostics",
+	"Are you sure you want to copy diagnostics data to your clipboard?": "Are you sure you want to copy diagnostics data to your clipboard?",
+	"Only ever send the data given to Safe Surfer if necessary. The information sent may contain some data detailing about your computer.": "Only ever send the data given to Safe Surfer if necessary. The information sent may contain some data detailing about your computer.",
+	"Status": "Status",
+	"Safe Surfer desktop version:": "Safe Surfer desktop version:",
+	"Safe Surfer desktop build:": "Safe Surfer desktop build:",
+	"node_dns_changer version:": "node_dns_changer version:",
+	"The service is enabled:": "The service is enabled:",
+	"LifeGuard discovered on network:": "LifeGuard discovered on network:",
+	"Internet is available:": "Internet is available:",
+	"The app has loaded:": "The app has loaded:",
+	"The buttons are locked:": "The buttons are locked:",
+	"Your version of Windows is compatible:": "Your version of Windows is compatible:",
+	"Manually check on downloads page": "Manually check on downloads page"
 }

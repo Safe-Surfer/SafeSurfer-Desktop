@@ -86,6 +86,14 @@ module.exports = (app, mainWindow) => {
       [
         {label: i18n.__('Check status in browser'), click() {electron.shell.openExternal('http://check.safesurfer.co.nz/')} },
         {label: i18n.__('Report a bug'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/docs/BUGS.md')} },
+        {
+          label: i18n.__('Diagnostics'),
+          submenu:
+          [
+            {label: i18n.__('Copy diagnostics information to clipboard'), click() {mainWindow.webContents.send('generateDiagnostics')}},
+            {label: i18n.__('Get statuses'), click() {mainWindow.webContents.send('getStatuses')}}
+          ]
+        },
         {type:'separator'},
         {label: i18n.__('Restart app'), click() {app.relaunch(); app.quit()} },
         {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' },

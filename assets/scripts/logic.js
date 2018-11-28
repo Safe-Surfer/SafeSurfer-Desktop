@@ -111,23 +111,18 @@ window.actions = Object.freeze({
       var info = {
         allowStatistics: store.get('statisticAllow'),
         appBuild: APPBUILD,
-        appHasLoaded: appStates.appHasLoaded,
+        appStates: appStates,
         appVersion: APPVERSION,
         autoUpdateChecking: store.get('appUpdateAutoCheck'),
         buildMode: BUILDMODE,
-        internet: appStates.internet,
-        lifeguardFound: appStates.lifeguardFound,
-        loggingEnabled: window.appStates.enableLogging,
         node_dns_changerVersion: window.desktop.logic.node_dns_changer.version(),
         os: os.platform(),
         processEnv: process.env,
-        serviceEnabled: appStates.serviceEnabled,
         statHistory: store.get('statHistory'),
-        toggleButtonIsLocked: appStates.toggleLock,
-        userLocale: app().getLocale()
+        userLocale: app().getLocale(),
+        storedInformation: store.store
       }
       if (os.platform() === 'linux') {
-        info.binFolder = appStates.binFolder;
         info.linuxPackageFormat = LINUXPACKAGEFORMAT;
       }
       // encode with base64, so it make it easier to send (as it's just a huge block of data)
@@ -149,17 +144,19 @@ window.actions = Object.freeze({
 
   status: function() {
     // display human readable information
-    console.log("==========================");
-    console.log(`- This is version ${APPVERSION} and build ${APPBUILD} of Safe Surfer (desktop).`);
-    console.log(`- This version of Safe Surfer (desktop) uses ${window.desktop.logic.node_dns_changer.version()} of node_dns_changer.`);
-    console.log(`---------------------------------------------`)
-    console.log(`- The service is ${appStates.serviceEnabled[0] === true ? "enabled" : "disabled"}.`);
-    console.log(`- There is ${appStates.lifeguardFound[0] === true ? "a" : "no"} LifeGuard on your network.`);
-    console.log(`- You have ${appStates.internet[0] === true ? "an" : "no"} internet connection.`);
-    console.log(`- The app has${appStates.appHasLoaded === true ? "" : "n't"} loaded.`);
-    console.log(`- The buttons are ${store.get('lockDeactivateButtons') === true ? 'locked' : 'not locked'}.`);
-    if (os.platform() === 'win32') console.log(`- Your version of Windows is ${window.appStates.windowsVersionCompatible === true ? "" : "not "}compatible.`);
-    console.log("==========================");
+    var text = `${i18n.__("Status")}
+
+    - ${i18n.__("Safe Surfer desktop version:")} ${APPVERSION}
+    - ${i18n.__("Safe Surfer desktop build:")} ${APPBUILD}
+    - ${i18n.__("node_dns_changer version:")} ${window.desktop.logic.node_dns_changer.version()}
+    ---------------------------------------------
+    - ${i18n.__("The service is enabled:")} ${appStates.serviceEnabled[0]}
+    - ${i18n.__("LifeGuard discovered on network:")} ${appStates.lifeguardFound[0]}
+    - ${i18n.__("Internet is available:")} ${appStates.internet[0]}
+    - ${i18n.__("The app has loaded:")} ${appStates.appHasLoaded}
+    - ${i18n.__("The buttons are locked:")} ${store.get('lockDeactivateButtons')}`
+    if (os.platform() === 'win32') text += `\n- ${i18n.__("Your version of Windows is compatible:")} ${window.appStates.windowsVersionCompatible}`
+    return text;
   }
 });
 
@@ -377,7 +374,7 @@ const appFrame = {
         break;
 
       default:
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("The state of the service is being determined. Please wait.")}, response => {});
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("The state of the service is being determined. Please wait.")});
         break;
     }
   },
@@ -847,7 +844,7 @@ const appFrame = {
             appFrame.exec("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'");
             break;
           default:
-            dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")}, response => {});
+            dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")});
             break;
         }
       }
@@ -925,6 +922,8 @@ const appFrame = {
       appFrame.displayNoInternetConnection();
       appStates.lifeguardOnNetworkLock = false;
     }
+
+    if (appStates.serviceEnabled[0] === false) appStates.lifeguardOnNetworkLock = false;
 
     // if the service is enabled, check if a lifeguard is on the network
     if (appStates.lifeguardOnNetworkLock !== true) appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
@@ -1080,6 +1079,17 @@ global.desktop.logic.electronIPCon('showStatHistory', (opt) => {
   window.open(path.join(__dirname, '..', 'html', 'stats.html'), i18n.__("View statistic data"));
 });
 
+global.desktop.logic.electronIPCon('generateDiagnostics', () => {
+  // copy diagnostics information to clipboard
+  dialog.showMessageBox({type: 'info', buttons: [i18n.__("Yes"), i18n.__("No")], message: `${i18n.__("Diagnostics")}\n\n${i18n.__("Are you sure you want to copy diagnostics data to your clipboard?")}\n\n${i18n.__("Only ever send the data given to Safe Surfer if necessary. The information sent may contain some data detailing about your computer.")}`}, response => {
+    if (response === 0) global.desktop.logic.electronClipboardWriteText(actions.diagnostics.generate());
+  });
+});
+
+global.desktop.logic.electronIPCon('getStatuses', () => {
+  dialog.showMessageBox({type: 'info', buttons: [i18n.__("Ok")], message: actions.status()});
+});
+
 global.desktop.logic.electronIPCon('goFlushDNScache', () => {
   // go to statistic sharing page
   appFrame.flushDNScache();
@@ -1087,17 +1097,17 @@ global.desktop.logic.electronIPCon('goFlushDNScache', () => {
 
 global.desktop.logic.electronIPCon('goOpenMyDeviceLifeGuard', () => {
   if (appStates.lifeguardFound[0] === true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-  else dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}`}, response => {});
+  else dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}`});
 });
 
 global.desktop.logic.electronIPCon('goLockDeactivateButtons', () => {
   // give a prompt about locking the toggle button
   if (appStates.serviceEnabled[0] != true) {
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You must enable the service before you can lock it.')}`}, response => {});
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You must enable the service before you can lock it.')}`});
     return;
   }
   if (store.get('lockDeactivateButtons') === true) {
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You appear to already have locked the buttons.')}`}, response => {});
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You appear to already have locked the buttons.')}`});
     return;
   }
   if (appStates.lifeguardFound[0] === true) {

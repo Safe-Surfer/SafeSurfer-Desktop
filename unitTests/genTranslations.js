@@ -17,8 +17,8 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 const fs = require('fs'),
-  path = require('path'),
-  dirAssets;
+  path = require('path');
+var dirAssets;
 if (fs.existsSync(path.join('..', 'assets', 'translations'))) dirAssets = path.join('..', 'assets', 'translations');
 else if (fs.existsSync(path.resolve(path.join('.', 'assets', 'translations')))) dirAssets = path.resolve(path.join('.', 'assets', 'translations'));
 const enTranslation = require(path.join(`${dirAssets}`, 'en.json'));
@@ -40,7 +40,7 @@ fs.readdirSync(`${dirAssets}`).forEach(file => {
     for (var key in enTranslation) {
       // if a key from English base isn't in the current translation
       if (!(enTranslation[key] in localeFile)) {
-        localeFile[enTranslation[key]] = "";
+        localeFile[key] = "";
         keysAdded += 1;
       }
     }
@@ -54,7 +54,7 @@ fs.readdirSync(`${dirAssets}`).forEach(file => {
     }
     // if anything has been edited
     if (keysAdded != 0 || keysDeleted != 0) {
-      console.log(`[${editCount}] ${file.split('.')[0]} edited. ${keysAdded} have been added. ${keysDeleted} have been removed.`);
+      console.log(`[${editCount}] ${file.split('.')[0]} edited. ${keysAdded} ${keysAdded >= 1 ? "has" : "have"} been added. ${keysDeleted} have been removed.`);
       // write edited locale
       fs.writeFile(localeName, JSON.stringify(localeFile, null, 4), (err) => {
         if (err !== null) console.log(err);
@@ -65,4 +65,4 @@ fs.readdirSync(`${dirAssets}`).forEach(file => {
 });
 
 // summary
-console.log(`${editCount > 0 ? "\n" : ""}${editCount} have been edited.`)
+console.log(`${editCount > 0 ? "\n" : ""}${editCount} ${editCount >= 1 ? "have" : "has"} been edited.`)
