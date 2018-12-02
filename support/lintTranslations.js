@@ -19,6 +19,10 @@
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+/*
+  A small program for displaying untranslated lines in given translation files
+*/
+
 const app = require('electron'),
  osLocale = require('os-locale'),
  fs = require('fs'),
@@ -28,7 +32,7 @@ var translationJSON, englishJSON, keyList = {},
  args = process.argv[2];
 
 englishJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/translations', 'en' + '.json'), 'utf8'));
-console.log("User locale:", localeMod, "\n");
+console.log(`User locale: ${localeMod}\n`);
 
 if (args !== undefined) {
 	localeMod = args;
@@ -40,7 +44,7 @@ if (args !== undefined) {
   }
   else {
     runLint(localeMod);
-    console.log("Using locale:", args);
+    console.log(`Using locale: ${args}`);
   }
 }
 else {
@@ -64,15 +68,16 @@ function runLint(lang) {
 	  translationJSON = JSON.parse(fs.readFileSync(path.join(__dirname, '../assets/translations', lang + '.json'), 'utf8'));
   }
   else {
-	  console.log('Cannot find your locale:', lang);
+	  console.log(`Cannot find your locale: ${lang}`);
+	  process.exit(1);
   }
 
-  console.log(String("-- Checking: [" + lang + "] --"));
+  console.log(`-- Checking: [${lang}] --`);
 
   for (var key in translationJSON) {
 	  if (translationJSON.hasOwnProperty(key)) {
 		  if (key == translationJSON[key] || translationJSON[key] == '') {
-    		console.log(String("UNTRANSLATED KEY #" + keyList.countOfKeys + " :: " + key));
+    		console.log(`UNTRANSLATED KEY # ${keyList.countOfKeys} :: ${key}`);
     		keyList.untranslatedKeys++;
 		  }
 		  else {
@@ -82,21 +87,9 @@ function runLint(lang) {
     keyList.countOfKeys++;
   }
 
-  console.log(String(
-    "\nSUMMARY OF [" +
-    lang +
-    "]\n-------\n" +
-    "UNTRANSLATED: " +
-    keyList.untranslatedKeys+"\n" +
-    "EDITED: " +
-    keyList.goodKeys +
-    "\n" +
-    "TOTAL: " +
-    keyList.countOfKeys +
-    "\n-------"
-  ));
+  console.log(`\nSUMMARY OF [${lang}]\n-------\nUNTRANSLATED: ${keyList.untranslatedKeys}\nEDITED: ${keyList.goodKeys}\nTOTAL: ${keyList.countOfKeys}\n-------`);
   if (keyList.countOfKeys == keyList.goodKeys) {
-	  console.log(String("\nGreat! '" + lang + "' appears to be done."));
+	  console.log(`\nGreat! '${lang}' appears to be done.`);
   }
   console.log();
 }

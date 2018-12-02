@@ -41,12 +41,13 @@ function createWindow() {
     width: mainWindowState.width,
     height: mainWindowState.height,
     /* set minimum standard sizing */
-    minWidth: 490,
-    minHeight: 600,
+    minWidth: 470,
+    minHeight: 560,
     /* set default position sizing */
     'x': mainWindowState.x,
     'y': mainWindowState.y,
     title: 'Safe Surfer',
+    show: false,
     icon: path.join(__dirname, 'assets', 'media', 'icons', 'png', '2000x2000.png'),
     webPreferences: {
       nodeIntegration: !packageJSON.appOptions.disableNodeIntegration,
@@ -59,10 +60,15 @@ function createWindow() {
   mainWindow = new BrowserWindow(windowObj);
 
   // load in main html document
-   mainWindow.loadFile(path.join(__dirname, '..', 'html', 'index.html'));
-  mainWindow.on('closed', function() {
+  mainWindow.loadFile(path.join(__dirname, '..', 'html', 'index.html'));
+  mainWindow.on('closed', () => {
     mainWindow = null;
   });
+
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
   // set menu from menu.js
   Menu.setApplicationMenu(
     Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))

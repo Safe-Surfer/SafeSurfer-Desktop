@@ -41,13 +41,17 @@ $("#title").text(i18n.__("About this app"));
 $('#description').multiline(`${i18n.__("Version")} ${version}; ${i18n.__("Build")}: ${APPBUILD} (${BUILDMODE})\n&copy; 2018 Safe Surfer, et al.\n\n${i18n.__('This program comes with absolutely no warranty.')}\n${i18n.__('See the GNU General Public License, version 3 or later for details.')}`);
 
 function shrinkLogo() {
-  $("#ss-logo").css("height", "130px");
-  $("#ss-logo").css("width", "130px");
+  $("#ss-logo").css("height", "180px");
+  $("#ss-logo").css("width", "180px");
+  $("#ss-logo").css("filter", "blur(9px)");
+  $("#ss-waves").css("filter", "blur(0px)");
 }
 
 function growLogo() {
-  $("#ss-logo").css("height", "150px");
-  $("#ss-logo").css("width", "150px");
+  $("#ss-logo").css("height", "200px");
+  $("#ss-logo").css("width", "200px");
+  $("#ss-logo").css("filter", "blur(0px)");
+  $("#ss-waves").css("filter", "blur(5px)");
 }
 
 logging("[about]: loaded");

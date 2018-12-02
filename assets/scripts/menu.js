@@ -34,7 +34,7 @@ const {app} = require('electron'),
   i18n = new (require('./i18n.js'));
 var accountIsAssigned = store.get('accountInformation'),
   appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
-  betaCheck,
+  betaCheck = store.get('betaCheck'),
   teleEnabled = store.get('statisticAllow'),
   LINUXPACKAGEFORMAT = process.env.LINUXPACKAGEFORMAT === undefined ? '' : process.env.LINUXPACKAGEFORMAT;
 
@@ -90,8 +90,9 @@ module.exports = (app, mainWindow) => {
           label: i18n.__('Diagnostics'),
           submenu:
           [
-            {label: i18n.__('Copy diagnostics information to clipboard'), click() {mainWindow.webContents.send('generateDiagnostics')}},
-            {label: i18n.__('Get statuses'), click() {mainWindow.webContents.send('getStatuses')}}
+            {label: i18n.__('Get statuses'), click() {mainWindow.webContents.send('getStatuses')}},
+            {type:'separator'},
+            {label: i18n.__('Copy diagnostics information to clipboard'), click() {mainWindow.webContents.send('generateDiagnostics')}}
           ]
         },
         {type:'separator'},
@@ -137,6 +138,7 @@ module.exports = (app, mainWindow) => {
       submenu:
       [
         {label: i18n.__('Enable statistic sharing'), type: 'checkbox', checked: teleEnabled, click() {mainWindow.webContents.send('toggleStatState')} },
+        {type:'separator'},
         {label: i18n.__('View statistic data'), click() {mainWindow.webContents.send('showStatHistory')} }
       ]
     });
@@ -155,6 +157,5 @@ module.exports = (app, mainWindow) => {
     menu[0].label = "SafeSurfer-Desktop";
     menu[0].submenu[5].label = i18n.__("Quit");
   }
-  // add exit and a separator to Linux and Windows versions
   return menu;
 }

@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 var Store = require('electron-store'),
  store = new Store()
 
@@ -17,7 +15,7 @@ global.desktop = Object.freeze({
   logic: {
     node_dns_changer: require('node_dns_changer'),
     bonjour: require('bonjour')(),
-    request: () => require("request"),
+    request: () => require('request'),
     electron: () => require('electron'),
     electronremote: () => require('electron').remote,
     electronremoteapp: () => require('electron').remote.app,
@@ -28,7 +26,7 @@ global.desktop = Object.freeze({
     shelljs_which: (prog) => require('shelljs').which(prog),
     shelljs_test: require('shelljs').test,
     isAdmin: () => require('is-admin')(),
-    letsGetMeta: (site) => require("lets-get-meta")(site),
+    letsGetMeta: (site) => require('lets-get-meta')(site),
     moment: () => require('moment')(),
     base64Encode: () => require('nodejs-base64-encode'),
     connectivity: () => require('connectivity')

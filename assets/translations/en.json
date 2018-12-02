@@ -152,5 +152,9 @@
 	"The app has loaded:": "The app has loaded:",
 	"The buttons are locked:": "The buttons are locked:",
 	"Your version of Windows is compatible:": "Your version of Windows is compatible:",
-	"Manually check on downloads page": "Manually check on downloads page"
+	"Manually check on downloads page": "Manually check on downloads page",
+	"Opted into beta releases:": "Opted into beta releases:",
+	"Statistics enabled:": "Statistics enabled:",
+	"Operating system:" :"Operating system:",
+	"Locale:": "Locale:"
 }

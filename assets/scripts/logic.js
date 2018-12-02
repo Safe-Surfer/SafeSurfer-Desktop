@@ -22,7 +22,7 @@
 // include libraries
 const {dialog} = global.desktop.logic.dialogBox(),
   {ipcRenderer} = require('electron'),
-  app = global.desktop.logic.electron.app ? global.desktop.logic.electron.app: global.desktop.logic.electronremoteapp,
+  app = global.desktop.logic.electron.app ? global.desktop.logic.electron.app : global.desktop.logic.electronremoteapp,
   packageJSON = window.desktop.global.packageJSON(),
   APPBUILD = parseInt(packageJSON.APPBUILD),
   APPVERSION = packageJSON.version,
@@ -38,7 +38,7 @@ const {dialog} = global.desktop.logic.dialogBox(),
   store = global.desktop.global.store(),
   i18n = global.desktop.global.i18n(),
   logging = global.desktop.global.logging(),
-  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat === undefined ? '' : global.desktop.global.linuxpackageformat;
+  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat === undefined ? undefined : global.desktop.global.linuxpackageformat;
 
 // an object to keep track of multiple things
 window.appStates = {
@@ -150,12 +150,17 @@ window.actions = Object.freeze({
     - ${i18n.__("Safe Surfer desktop build:")} ${APPBUILD}
     - ${i18n.__("node_dns_changer version:")} ${window.desktop.logic.node_dns_changer.version()}
     ---------------------------------------------
+    - ${i18n.__("Operating system:")} ${os.platform()}
+    - ${i18n.__("Locale:")} ${app().getLocale()}
+    ---------------------------------------------
     - ${i18n.__("The service is enabled:")} ${appStates.serviceEnabled[0]}
     - ${i18n.__("LifeGuard discovered on network:")} ${appStates.lifeguardFound[0]}
     - ${i18n.__("Internet is available:")} ${appStates.internet[0]}
     - ${i18n.__("The app has loaded:")} ${appStates.appHasLoaded}
-    - ${i18n.__("The buttons are locked:")} ${store.get('lockDeactivateButtons')}`
-    if (os.platform() === 'win32') text += `\n- ${i18n.__("Your version of Windows is compatible:")} ${window.appStates.windowsVersionCompatible}`
+    - ${i18n.__("The buttons are locked:")} ${store.get('lockDeactivateButtons')}
+    - ${i18n.__("Opted into beta releases:")} ${store.get('betaCheck')}
+    - ${i18n.__("Statistics enabled:")} ${store.get('statisticAllow')}`
+    if (os.platform() === 'win32') text += `\n    - ${i18n.__("Your version of Windows is compatible:")} ${window.appStates.windowsVersionCompatible}`
     return text;
   }
 });
@@ -193,17 +198,10 @@ const appFrame = {
     // call a child process
     return new Promise((resolve, reject) => {
       logging(`[callProgram]: calling - '${command}'`);
-      var command_split = command.split(" "),
-        command_arg = [];
-      // concatinate 2+ into a variable
-      for (var i = 1; i < command_split.length; i++) {
-        command_arg = [...command_arg, command_split[i]];
-      }
       // command will be executed as: comand [ARGS]
-      require('child_process').execFile(command_split[0], command_arg, function(err, stdout, stderr) {
+      require('child_process').exec(command, (err, stdout, stderr) => {
         logging(`[callProgram]: output -\n${stdout}`);
-        if (err) logging(`[callProgram]: output error - ${err}`);
-        if (stderr) logging(`[callProgram]: output stderr - ${stderr}`);
+        if (err || stderr) logging(`[callProgram]: output error - ${err} - ${stderr}`);
         if (!err && !stderr) resolve(true);
       });
     });
@@ -410,12 +408,12 @@ const appFrame = {
     Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
       // since the request has succeeded, we can count the app as loaded
       window.appStates.appHasLoaded = true;
-      if (error >= 400 && error <= 599) {
+      if ((error < 200 || error >= 300) && error != null) {
         window.appStates.internet[0] = false;
-        logging(`HTTP error: ${error}`);
+        logging(`[checkServiceState]: HTTP error: ${error}`);
         return;
       }
-      else window.appStates.internet[0] = true;
+      //else window.appStates.internet[0] = true;
 
       var metaResponse = global.desktop.logic.letsGetMeta(body),
         searchForResp = body.search('<meta name="ss_status" content="protected">');
@@ -541,6 +539,7 @@ const appFrame = {
       global.desktop.logic.connectivity()((online) => {
         logging(`[internetConnectionCheck]: ${online}`);
         window.appStates.appHasLoaded = true;
+        window.appStates.internet[0] = online;
         resolve(online);
       });
     });
@@ -563,18 +562,18 @@ const appFrame = {
 
     logging(`[checkForAppUpdate]: About to fetch http://${serverAddress}:${serverPort}${serverDataFile}`);
     Request.get(`http://${serverAddress}:${serverPort}${serverDataFile}`, (error, response, body) => {
-      if (error >= 400 && error <= 599) {
+      if ((error < 200 || error >= 300) && error != null) {
         window.appStates.internet[0] = false;
         // if something goes wrong
         logging(`[checkForAppUpdate]: HTTP error ${error}`);
         if (options.showErrors == true) {
-          dialog.showErrorBox(updateErrorDialog, updateResponse => {
+          dialog.showMessageBox(updateErrorDialog, updateResponse => {
             return;
           });
         }
         return console.dir(error);
       }
-      window.appStates.internet[0] = true;
+      //window.appStates.internet[0] = true;
       // read the data as JSON
       remoteData = JSON.parse(body);
       var versionRecommended;
@@ -894,6 +893,12 @@ const appFrame = {
     logging("[mainReloadProcess]: begin reload");
     appFrame.checkServiceState();
 
+    if (appStates.internetCheckCounter === 2) {
+      appFrame.internetConnectionCheck();
+      appStates.internetCheckCounter = 0;
+    }
+    else appStates.internetCheckCounter += 1;
+
     if (window.appStates.internet[0] == true) {
       appFrame.hideNoInternetConnection();
       if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined) {
@@ -955,12 +960,6 @@ const appFrame = {
       $('.progressInfoBar').css("height", "0px");
     }
     else if ($("#progressBar").css("height") == "20px") window.appStates.progressBarCounter += 1;
-
-    if (appStates.internetCheckCounter === 5) {
-      appFrame.internetConnectionCheck();
-      appStates.internetCheckCounter = 0;
-    }
-    else appStates.internetCheckCounter += 1;
 
     // update the screen to show how the service state (... etc) is
     appFrame.affirmServiceState();
@@ -1151,6 +1150,7 @@ if (store.get('statHistory') !== undefined) store.delete('teleHistory');
 // connect button in html to a function
 $('#toggleButton').bind('click', appFrame.toggleServiceState);
 
+appFrame.internetConnectionCheck();
 // initalise the rest of the app
 if (appStates.userIsAdmin == true) appFrame.initApp();
 // since the user isn't admin, we'll keep checking just in case

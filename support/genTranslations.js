@@ -16,6 +16,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 //
+
+/*
+  A small program for generating the missing translations from the English one
+*/
+
 const fs = require('fs'),
   path = require('path');
 var dirAssets;
@@ -54,7 +59,7 @@ fs.readdirSync(`${dirAssets}`).forEach(file => {
     }
     // if anything has been edited
     if (keysAdded != 0 || keysDeleted != 0) {
-      console.log(`[${editCount}] ${file.split('.')[0]} edited. ${keysAdded} ${keysAdded >= 1 ? "has" : "have"} been added. ${keysDeleted} have been removed.`);
+      console.log(`[${editCount}] ${file.split('.')[0]} edited. ${keysAdded} added. ${keysDeleted} removed.`);
       // write edited locale
       fs.writeFile(localeName, JSON.stringify(localeFile, null, 4), (err) => {
         if (err !== null) console.log(err);
@@ -65,4 +70,4 @@ fs.readdirSync(`${dirAssets}`).forEach(file => {
 });
 
 // summary
-console.log(`${editCount > 0 ? "\n" : ""}${editCount} ${editCount >= 1 ? "have" : "has"} been edited.`)
+console.log(`${editCount > 0 ? "\n" : ""}${editCount} edited.`)

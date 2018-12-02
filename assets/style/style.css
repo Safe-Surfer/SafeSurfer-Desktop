@@ -78,7 +78,7 @@ body, html {
   transition: line-height 0.4s, font-size 0.2s, color 0.3s;
   padding-bottom: 0;
   margin-bottom: 0;
-  padding-top: 30px;
+  padding-top: 20px;
   margin-top: 20px;
 }
 
@@ -99,6 +99,11 @@ body, html {
 	white-space: normal;
 	line-height: 100px;
 	transition: line-height 0.4s, font-size 0.2s;
+	margin: 0;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -40%);
 }
 
 .subText {
@@ -107,6 +112,7 @@ body, html {
 	white-space: nowrap;
 	text-shadow: 1px 1px 50px #000000;
   transition: line-height 0.4s, font-size 0.2s, color 0.3s;
+  margin-top: 20px;
 }
 
 .serviceActiveScreen {
@@ -235,13 +241,13 @@ body, html {
   transform-style: preserve-3d;
 }
 .serviceToggle:hover {
-	font-size: 63px;
+	font-size: 66px;
 	background-color: #d12d00;
 	color: #fff600;
 	text-shadow: 2px 2px 8px black;
 }
 .serviceToggle:active {
-	font-size: 58.8px;
+	font-size: 60px;
 	background-color: #931f00;
 	color: #bcb605;
 }
@@ -310,11 +316,9 @@ body, html {
 	right:0;
 	padding-left: 20px;
 	padding-right: 20px;
-	padding-top: 10px;
-	padding-bottom: 10px;
 	-webkit-transition: height 0.3s;
   transition: height 0.3s;
-  min-height: 260px;
+  min-height: 210px;
 }
 
 .topTextBox_active {
@@ -457,10 +461,19 @@ body, html {
 	top: 1px;
 }
 
-#mainScreen_background_active, #mainScreen_background_inactive {
+#mainScreen_background_active, #mainScreen_background_inactive, #mainScreen_background_nointernet {
   width: 110%;
-  padding-bottom: 60px;
+  padding-bottom: 90px;
   transition: width 0.4s, padding-bottom 0.4s;
+}
+
+#mainScreen_background_nointernet {
+	filter: blur(38px) contrast(20%);
+}
+
+#nointernet_glyph {
+  height: 100px;
+  width: 100px;
 }
 
 @media only screen and (max-width: 1099px) {
@@ -474,7 +487,7 @@ body, html {
 
 	.bigText, .bigText_white {
 		line-height: 80px;
-		font-size: 4em;
+		font-size: 3.8em;
 	}
 
 	.bigText_init {
@@ -483,6 +496,8 @@ body, html {
 
 	.bigText_nointernet {
 	  font-size: 3.3em;
+    padding-right: 20px;
+    padding-left: 20px;
 	}
 
 	.topTextBox {
@@ -491,11 +506,11 @@ body, html {
 	}
 
 	.topTextBox, .topTextBox_inactive {
-		min-height: 320px;
+		min-height: 330px;
 	}
 
 	.topTextBox_active {
-		min-height: 300px;
+		min-height: 310px;
 	}
 
 	.topTextBox_active_lifeguard {
@@ -541,6 +556,15 @@ body, html {
 
 	#mainScreen_background_active, #mainScreen_background_inactive {
     width: 160%;
-    padding-bottom: 0px;
+    padding-bottom: 50px;
+  }
+
+	#mainScreen_background_inactive {
+    padding-bottom: 26px;
+  }
+
+  #nointernet_glyph {
+    height: 60px;
+    width: 60px;
   }
 }

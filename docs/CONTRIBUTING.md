@@ -47,7 +47,7 @@ Steps to report bugs:
 `assets/scripts/main.js` initalises the app.  
 `assets/scripts/menu.js` is where the code for the app's menu lives.  
 `assets/scripts/i18n.js` is the framework for translating.  
-`support/` is where the platform specific files are stored.  
+`support/{linux, windows, macOS}` is where the platform specific files are stored.  
 
 ## Request features
 Again, using our [issues](https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new) page, you can request features by using the `features.md` template.  

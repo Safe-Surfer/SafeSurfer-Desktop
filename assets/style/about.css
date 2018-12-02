@@ -37,14 +37,15 @@
 }
 
 #ss-logo {
-  width: 150px;
-  height: 150px;
-	transition: width 0.3s, height 0.3s;
+  width: 200px;
+  height: 200px;
+	transition: width 0.3s, height 0.3s, filter 1s;
 }
 
 #ss-waves {
 	filter: blur(5px);
 	background-color: white;
+	transition: filter 1s;
 }
 
 #bigTextBrandName {

@@ -11,7 +11,6 @@
     <img src="https://img.shields.io/badge/build-9-orange.svg" />
 </a>
 
-
 ![Safe Surfer logo](./assets/media/icons/png/128x128.png)  
 # SafeSurfer-Desktop
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
@@ -37,7 +36,7 @@ Our temporary site is found [here](http://142.93.48.189).
 - Toggle DNS settings with one button  
 - Protects against harmful content  
 - Easy to use and setup  
-- Configure lifeguard from inside the app  
+- Configure lifeguard from inside the app (requires mDNS allowed through firewall)  
 
 ## Feedback
 Have you used SafeSurfer-Desktop and want to give feedback?
@@ -67,9 +66,8 @@ Help us speak your language!
 Read our [translation guide](docs/TRANSLATING.md) to get started!  
 
 ## Notes
-- If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
-
 Known issues
+- If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
 - When connected to a LifeGuard network, the screen may flicker between seeing LifeGuard and not
 
 ## System requirements

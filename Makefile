@@ -24,7 +24,7 @@ build-windows32: check-deps
 	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"
 
 build-macos: check-deps
-	node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds
+	node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --prune --out=release-builds --darwinDarkModeSupport=true
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)
@@ -96,13 +96,13 @@ prep-appimage:
 	@if [ -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "appimagetool is already downloaded."; exit 1; fi;
 	@mkdir -p tools/resources/libgconf tools/resources/libXScrnSaver tools/resources/curl tools/resources/zenity
 	cd tools && wget https://github.com/AppImage/AppImageKit/releases/download/10/appimagetool-x86_64.AppImage && chmod +x appimagetool-x86_64.AppImage
-	cd tools/resources/libgconf && wget http://mirrors.kernel.org/ubuntu/pool/main/g/gconf/libgconf-2-4_3.2.6-0ubuntu2_amd64.deb
+	cd tools/resources/libgconf && wget https://mirrors.kernel.org/ubuntu/pool/main/g/gconf/libgconf-2-4_3.2.6-0ubuntu2_amd64.deb
 	cd tools/resources/libgconf && ar x libgconf-2-4_3.2.6-0ubuntu2_amd64.deb && tar xvf data.tar.xz
 	cd tools/resources/libXScrnSaver && wget https://kojipkgs.fedoraproject.org/packages/libXScrnSaver/1.2.3/2.fc29/x86_64/libXScrnSaver-1.2.3-2.fc29.x86_64.rpm
 	cd tools/resources/libXScrnSaver && rpm2cpio libXScrnSaver-1.2.3-2.fc29.x86_64.rpm | cpio -idmv
-	cd tools/resources/curl && wget http://opensuse-mirror-gce-ap.susecloud.net/update/leap/15.0/oss/x86_64/curl-7.60.0-lp150.2.15.1.x86_64.rpm
+	cd tools/resources/curl && wget https://download.opensuse.org/repositories/openSUSE:/Leap:/15.0:/Update/standard/x86_64/curl-7.60.0-lp150.2.15.1.x86_64.rpm
 	cd tools/resources/curl && rpm2cpio curl-7.60.0-lp150.2.15.1.x86_64.rpm | cpio -idmv
-	cd tools/resources/zenity && wget http://download.opensuse.org/repositories/openSUSE:/Leap:/15.0/standard/x86_64/zenity-3.26.0-lp150.2.5.x86_64.rpm
+	cd tools/resources/zenity && wget https://download.opensuse.org/repositories/openSUSE:/Leap:/15.0/standard/x86_64/zenity-3.26.0-lp150.2.5.x86_64.rpm
 	cd tools/resources/zenity && rpm2cpio zenity-3.26.0-lp150.2.5.x86_64.rpm | cpio -idmv
 
 build-appimage:
