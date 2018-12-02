@@ -57,24 +57,24 @@
 }
 
 * {
-	color: white;
+  color: white;
 }
 
 body, html {
-	overflow-x: hidden;
-	overflow-y: hidden;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .bigText, .bigText_white, .subText, .bigText_init {
-	text-align: center;
+  text-align: center;
 }
 
 .bigText, .bigText_white, .bigText_init {
-	font-family: 'Josefin Sans', sans-serif;
-	font-size: 4.9em;
-	color: #fff600;
-	white-space: nowrap;
-	line-height: 80px;
+  font-family: 'Josefin Sans', sans-serif;
+  font-size: 4.9em;
+  color: #fff600;
+  white-space: nowrap;
+  line-height: 80px;
   transition: line-height 0.4s, font-size 0.2s, color 0.3s;
   padding-bottom: 0;
   margin-bottom: 0;
@@ -83,23 +83,23 @@ body, html {
 }
 
 .bigText_white {
-	color: white;
+  color: white;
 }
 
 .bigText_init {
-	font-size: 6em;
+  font-size: 6em;
 }
 
 .bigText_init:hover {
-	color: #fff600;
+  color: #fff600;
 }
 
 .bigText_nointernet {
-	font-size: 4em;
-	white-space: normal;
-	line-height: 100px;
-	transition: line-height 0.4s, font-size 0.2s;
-	margin: 0;
+  font-size: 4em;
+  white-space: normal;
+  line-height: 100px;
+  transition: line-height 0.4s, font-size 0.2s;
+  margin: 0;
   position: absolute;
   top: 40%;
   left: 50%;
@@ -107,200 +107,200 @@ body, html {
 }
 
 .subText {
-	font-family: 'Raleway', sans-serif;
-	font-size: 2.7em;
-	white-space: nowrap;
-	text-shadow: 1px 1px 50px #000000;
+  font-family: 'Raleway', sans-serif;
+  font-size: 2.7em;
+  white-space: nowrap;
+  text-shadow: 1px 1px 50px #000000;
   transition: line-height 0.4s, font-size 0.2s, color 0.3s;
   margin-top: 20px;
 }
 
 .serviceActiveScreen {
-	height: 100%;
-	width: 100%;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
-	position: absolute;
-	z-index: -50;
+  height: 100%;
+  width: 100%;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  position: absolute;
+  z-index: -50;
 
-	background-image: linear-gradient(to right, #052860, #00a7d6, #0b2c72, #6dd0ed);
-	background-size: 600% 600%;
+  background-image: linear-gradient(to right, #052860, #00a7d6, #0b2c72, #6dd0ed);
+  background-size: 600% 600%;
 }
 
 .serviceInactiveScreen {
-	height: 100%;
-	width: 100%;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
-	position: absolute;
-	z-index: -50;
+  height: 100%;
+  width: 100%;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  position: absolute;
+  z-index: -50;
 
-	background-image: linear-gradient(to right, #000000, #b51014, #a51317, #a02200);
-	background-size: 600% 600%;
+  background-image: linear-gradient(to right, #000000, #b51014, #a51317, #a02200);
+  background-size: 600% 600%;
 }
 
 .topTextFrame {
-	line-height: 10px;
+  line-height: 10px;
 }
 
 .appLoadingScreen {
-	background-color: white;
-	height: 100%;
-	width: 100%;
-	top: 0;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	position: absolute;
-	z-index: -50;
+  background-color: white;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  position: absolute;
+  z-index: -50;
 }
 
 .mainCenter {
-	margin: 0;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	width: 100%
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%
 }
 
 .mainCenter_down {
-	margin: 0;
-	position: absolute;
-	top: 95%;
-	left: 50%;
-	transform: translate(-50%, -95%);
+  margin: 0;
+  position: absolute;
+  top: 95%;
+  left: 50%;
+  transform: translate(-50%, -95%);
 }
 
 .mainCenter_halfDown {
-	margin: 0;
-	position: absolute;
-	top: 70%;
-	left: 50%;
-	transform: translate(-50%, -70%);
+  margin: 0;
+  position: absolute;
+  top: 70%;
+  left: 50%;
+  transform: translate(-50%, -70%);
 }
 
 .mainCenter_midDown {
-	margin: 0;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .mainCenter_init {
-	margin: 0;
-	position: absolute;
-	top: 90%;
-	left: 50%;
-	transform: translate(-50%, -90%);
+  margin: 0;
+  position: absolute;
+  top: 90%;
+  left: 50%;
+  transform: translate(-50%, -90%);
 }
 
 .mainCenter_top {
-	margin: 0;
-	position: absolute;
-	top: 0%;
-	left: 50%;
-	transform: translate(-50%, 0%);
+  margin: 0;
+  position: absolute;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, 0%);
 }
 
 .mainCenter_left {
-	margin: 0;
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%);
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .leftCenter {
-	margin: 0;
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%);
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
 }
 
 .serviceToggle {
-	white-space: nowrap;
-	background-color: #fff600;
-	border-radius: 0px;
-	border: 0.5px solid #fff600;
-	display: inline-block;
-	cursor: pointer;
-	color: #d12d00;
-	font-family: 'BenchNine', sans-serif;
-	font-size: 68px;
-	font-weight: bold;
-	padding: 2px 5px;
-	text-decoration: none;
-	z-index: 50;
+  white-space: nowrap;
+  background-color: #fff600;
+  border-radius: 0px;
+  border: 0.5px solid #fff600;
+  display: inline-block;
+  cursor: pointer;
+  color: #d12d00;
+  font-family: 'BenchNine', sans-serif;
+  font-size: 68px;
+  font-weight: bold;
+  padding: 2px 5px;
+  text-decoration: none;
+  z-index: 50;
   box-shadow: 14px 10px 90px -4px rgba(0,0,0,0.75);
   transition: font-size 0.4s, color 0.2s, background-color 0.2s, transform 0.3s, text-shadow 0.3s;
   transform-style: preserve-3d;
 }
 .serviceToggle:hover {
-	font-size: 66px;
-	background-color: #d12d00;
-	color: #fff600;
-	text-shadow: 2px 2px 8px black;
+  font-size: 66px;
+  background-color: #d12d00;
+  color: #fff600;
+  text-shadow: 2px 2px 8px black;
 }
 .serviceToggle:active {
-	font-size: 60px;
-	background-color: #931f00;
-	color: #bcb605;
+  font-size: 60px;
+  background-color: #931f00;
+  color: #bcb605;
 }
 
 .serviceToggle_lifeguard {
-	white-space: nowrap;
+  white-space: nowrap;
 }
 
 .serviceToggle_locked {
   background-color: #ababab;
   color: #4f5051;
-	border: 1px solid black;
+  border: 1px solid black;
 }
 .serviceToggle_locked:hover {
-	background-color: #939696;
-	color: white;
-	text-shadow: 2px 2px 8px black;
+  background-color: #939696;
+  color: white;
+  text-shadow: 2px 2px 8px black;
 }
 .serviceToggle_locked:active {
-	font-size: 68px;
-	background-color: #7c7b79;
-	color: #dcdcdc;
-	border: 2px solid black;
+  font-size: 68px;
+  background-color: #7c7b79;
+  color: #dcdcdc;
+  border: 2px solid black;
 }
 
 .no-wrap {
-	overflow-wrap: break-word;
-	display: table-cell;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	line-height: 5em;
+  overflow-wrap: break-word;
+  display: table-cell;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 5em;
 }
 
 .serviceAppStatus {
-	top: 0;
-	left: 0;
-	right: 0;
-	margin: 0;
-	padding: 0;
-	width: 100%;
-	padding: -20px;
-	height: 20px;
-	position: absolute;
-	clear: both;
-	display: none;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  padding: -20px;
+  height: 20px;
+  position: absolute;
+  clear: both;
+  display: none;
 }
 
 .serviceAppStatus h1 {
-	text-align: center;
-	font-family: 'Raleway', sans-serif;
-	font-size: 20px;
-	background-color: #184896;
+  text-align: center;
+  font-family: 'Raleway', sans-serif;
+  font-size: 20px;
+  background-color: #184896;
 }
 
 .topTextBox_inactive, .topTextBox_active {
@@ -309,63 +309,63 @@ body, html {
 }
 
 .topTextBox, .topTextBox_active, .topTextBox_inactive {
-	width: 100%;
-	height: auto;
-	top:0;
-	left:0;
-	right:0;
-	padding-left: 20px;
-	padding-right: 20px;
-	-webkit-transition: height 0.3s;
+  width: 100%;
+  height: auto;
+  top:0;
+  left:0;
+  right:0;
+  padding-left: 20px;
+  padding-right: 20px;
+  -webkit-transition: height 0.3s;
   transition: height 0.3s;
   min-height: 210px;
 }
 
 .topTextBox_active {
-	background: rgba(6, 103, 130, 0.55);
+  background: rgba(6, 103, 130, 0.55);
 }
 
 .topTextBox_inactive {
-	background: rgba(165, 38, 41, 0.70);
+  background: rgba(165, 38, 41, 0.70);
 }
 
 .appNoInternetConnectionScreen {
-	height: 100%;
-	width: 100%;
-	top:0;
-	bottom:0;
-	left:0;
-	right:0;
-	position: absolute;
-	background: linear-gradient(270deg, #ffffff, #c6c3c3, #90ffd9, #d9a5a5);
-	background-size: 800% 800%;
+  height: 100%;
+  width: 100%;
+  top:0;
+  bottom:0;
+  left:0;
+  right:0;
+  position: absolute;
+  background: linear-gradient(270deg, #ffffff, #c6c3c3, #90ffd9, #d9a5a5);
+  background-size: 800% 800%;
 
-	-webkit-animation: noInternetGradient 30s ease infinite;
-	-moz-animation: noInternetGradient 30s ease infinite;
-	animation: noInternetGradient 30s ease infinite;
+  -webkit-animation: noInternetGradient 30s ease infinite;
+  -moz-animation: noInternetGradient 30s ease infinite;
+  animation: noInternetGradient 30s ease infinite;
 
 }
 @-webkit-keyframes noInternetGradient {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 @-moz-keyframes noInternetGradient {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 @keyframes noInternetGradient {
-	0%{background-position:0% 50%}
-	50%{background-position:100% 50%}
-	100%{background-position:0% 50%}
+  0%{background-position:0% 50%}
+  50%{background-position:100% 50%}
+  100%{background-position:0% 50%}
 }
 
 *, *::after, *::before {
-	-webkit-user-select: none;
-	-webkit-user-drag: none;
-	-webkit-app-region: no-drag;
-	cursor: default;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+  -webkit-app-region: no-drag;
+  cursor: default;
 }
 
 #progressBar {
@@ -377,15 +377,15 @@ body, html {
   left: 0;
   right: 0;
   z-index: 39;
-	position: absolute;
+  position: absolute;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-	-webkit-transition: height 0.8s;
+  -webkit-transition: height 0.8s;
   transition: height 0.8s;
 
   background: linear-gradient(89deg, #3fb23e, #d2d2d2, #60d4a1, #cecece);
   background-size: 800% 800%;
-	-webkit-transition: height 0.8s;
+  -webkit-transition: height 0.8s;
   transition: height 0.8s;
 
   -webkit-animation: activeProgressBar 5s ease infinite;
@@ -418,18 +418,18 @@ body, html {
   left: 0;
   right: 0;
   z-index: 39;
-	position: absolute;
+  position: absolute;
   border-bottom-left-radius: 20px;
   border-bottom-right-radius: 20px;
   transition: height 0.8s;
   background-color: #d9d9d9;
-	overflow: hidden;
+  overflow: hidden;
 }
 
 #privBarText, #privBarText_error, .progressInfoBar_text {
   color: black;
   text-align: center;
-	font-family: 'Raleway', sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 
 .progressInfoBar_text {
@@ -438,27 +438,27 @@ body, html {
 
 #privBarText_error {
   font-weight: bold;
-	background-color: #e5e6e5;
-	border-radius: 5px;
-	border: 1px solid black;
-	display: inline-block;
-	cursor: pointer;
-	color: black;
-	font-size: 15px;
-	padding: 9px 23px;
-	text-decoration: none;
-	position: relative;
-	margin-top: 5px;
+  background-color: #e5e6e5;
+  border-radius: 5px;
+  border: 1px solid black;
+  display: inline-block;
+  cursor: pointer;
+  color: black;
+  font-size: 15px;
+  padding: 9px 23px;
+  text-decoration: none;
+  position: relative;
+  margin-top: 5px;
 }
 
 #privBarText_error:hover {
-	color: black;
-	background-color: #c8c9cb;
+  color: black;
+  background-color: #c8c9cb;
 }
 
 #privBarText_error:active {
-	background-color: #a9a9aa;
-	top: 1px;
+  background-color: #a9a9aa;
+  top: 1px;
 }
 
 #mainScreen_background_active, #mainScreen_background_inactive, #mainScreen_background_nointernet {
@@ -468,7 +468,7 @@ body, html {
 }
 
 #mainScreen_background_nointernet {
-	filter: blur(38px) contrast(20%);
+  filter: blur(38px) contrast(20%);
 }
 
 #nointernet_glyph {
@@ -477,89 +477,89 @@ body, html {
 }
 
 @media only screen and (max-width: 1099px) {
-	.subText {
-		font-size: 1.5em;
-	}
+  .subText {
+    font-size: 1.5em;
+  }
 
-	.bigText, .bigText_white, .subText {
-		white-space: normal;
-	}
+  .bigText, .bigText_white, .subText {
+    white-space: normal;
+  }
 
-	.bigText, .bigText_white {
-		line-height: 80px;
-		font-size: 3.8em;
-	}
+  .bigText, .bigText_white {
+    line-height: 80px;
+    font-size: 3.8em;
+  }
 
-	.bigText_init {
-	  font-size: 3.7em;
-	}
+  .bigText_init {
+    font-size: 3.7em;
+  }
 
-	.bigText_nointernet {
-	  font-size: 3.3em;
+  .bigText_nointernet {
+    font-size: 3.3em;
     padding-right: 20px;
     padding-left: 20px;
-	}
+  }
 
-	.topTextBox {
-		height: 550px;
-		padding-top: 1000px;
-	}
+  .topTextBox {
+    height: 550px;
+    padding-top: 1000px;
+  }
 
-	.topTextBox, .topTextBox_inactive {
-		min-height: 330px;
-	}
+  .topTextBox, .topTextBox_inactive {
+    min-height: 330px;
+  }
 
-	.topTextBox_active {
-		min-height: 310px;
-	}
+  .topTextBox_active {
+    min-height: 310px;
+  }
 
-	.topTextBox_active_lifeguard {
-		min-height: 390px;
-	}
+  .topTextBox_active_lifeguard {
+    min-height: 390px;
+  }
 
-	.mainCenter_halfDown {
-		top: 87%;
-		transform: translate(-50%, -87%);
-	}
+  .mainCenter_halfDown {
+    top: 87%;
+    transform: translate(-50%, -87%);
+  }
 
-	.mainCenter_midDown {
-	  top: 65%;
-	  transform: translate(-50%, -65%);
-	}
+  .mainCenter_midDown {
+    top: 65%;
+    transform: translate(-50%, -65%);
+  }
 
-	.mainCenter_init {
-		top: 87%
-		transform: translate(-50%, -87%);
-	}
+  .mainCenter_init {
+    top: 87%
+    transform: translate(-50%, -87%);
+  }
 
-	.serviceToggle {
-		font-size: 45px;
-	}
+  .serviceToggle {
+    font-size: 45px;
+  }
 
-	.serviceToggle:hover {
-		font-size: 41.5px;
-	}
+  .serviceToggle:hover {
+    font-size: 41.5px;
+  }
 
-	.serviceToggle:active {
-		font-size: 38.8px;
-	}
+  .serviceToggle:active {
+    font-size: 38.8px;
+  }
 
-	.topTextBox_inactive {
-	  background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));
-	}
+  .topTextBox_inactive {
+    background: linear-gradient(rgba(165, 38, 41, 0.55), rgba(0, 0, 0, 0.40));
+  }
 
-	#progressBar, #privBar, .progressInfoBar {
-	  margin-left: 0%;
-	  margin-right: 0%;
-	  width: 100%;
-	}
+  #progressBar, #privBar, .progressInfoBar {
+    margin-left: 0%;
+    margin-right: 0%;
+    width: 100%;
+  }
 
-	#mainScreen_background_active, #mainScreen_background_inactive {
+  #mainScreen_background_active, #mainScreen_background_inactive {
     width: 160%;
     padding-bottom: 50px;
   }
 
-	#mainScreen_background_inactive {
+  #mainScreen_background_inactive {
     padding-bottom: 26px;
   }
 

@@ -42,7 +42,7 @@
 
 body, html {
   background-color: #1a1a1a;
-	overflow-y: auto;
+  overflow-y: auto;
 }
 
 .topBar {
@@ -65,67 +65,67 @@ body, html {
 #statInfoMsg {
   color: white;
   font-size: 1.9em;
-	font-family: 'Raleway', sans-serif;
-	text-align: center;
+  font-family: 'Raleway', sans-serif;
+  text-align: center;
 }
 
 #statInfoMsg_copy {
   color: white;
   font-size: 26px;
   font-family: 'Yanone Kaffeesatz', sans-serif;
-	text-align: center;
+  text-align: center;
 }
 
 #statClear {
-	margin: 0;
-	position: absolute;
-	left: 50%;
-	transform: translate(-50%);
+  margin: 0;
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%);
   font-weight: bold;
-	background-color: #e5e6e5;
-	border-radius: 5px;
-	border: 1px solid black;
-	display: inline-block;
-	cursor: pointer;
-	color: black;
-	font-size: 13px;
-	padding: 9px 23px;
-	text-decoration: none;
-	position: relative;
-	margin-top: 0px;
+  background-color: #e5e6e5;
+  border-radius: 5px;
+  border: 1px solid black;
+  display: inline-block;
+  cursor: pointer;
+  color: black;
+  font-size: 13px;
+  padding: 9px 23px;
+  text-decoration: none;
+  position: relative;
+  margin-top: 0px;
 }
 
 #statClear:hover {
-	color: black;
-	background-color: #c8c9cb;
+  color: black;
+  background-color: #c8c9cb;
 }
 
 #statClear:active {
-	background-color: #a9a9aa;
+  background-color: #a9a9aa;
 }
 
 .statDataHistory {
   word-wrap: break-word;
   margin-right: 10px;
   -webkit-user-select: text;
-	-webkit-user-drag: text;
-	-webkit-app-region: drag;
-	cursor: text;
-	background-color: black;
-	color: white;
-	margin-bottom: 20px;
-	border-style: outset;
-	padding-top: 10px;
-	padding-bottom: 10px;
-	padding-left: 10px;
-	padding-right: 10px;
-	font-family: 'Share Tech Mono', monospace;
+  -webkit-user-drag: text;
+  -webkit-app-region: drag;
+  cursor: text;
+  background-color: black;
+  color: white;
+  margin-bottom: 20px;
+  border-style: outset;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  font-family: 'Share Tech Mono', monospace;
 }
 
 .counter {
-	font-family: 'BenchNine', sans-serif;
-	padding-bottom: 0px;
-	margin-bottom: 0px;
+  font-family: 'BenchNine', sans-serif;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
 }
 
 h4 {

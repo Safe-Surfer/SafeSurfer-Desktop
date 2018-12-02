@@ -28,24 +28,24 @@
   bottom: 0;
   padding-top: 180px;
   padding-bottom: 10px;
-	border-top-left-radius: 30px;
-	border-top-right-radius: 30px;
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
   background-color: rgba(85, 83, 89, 0.25);
-	overflow-x: hidden;
-	overflow-y: auto;
-	transition: padding-top 0.5s;
+  overflow-x: hidden;
+  overflow-y: auto;
+  transition: padding-top 0.5s;
 }
 
 #ss-logo {
   width: 200px;
   height: 200px;
-	transition: width 0.3s, height 0.3s, filter 1s;
+  transition: width 0.3s, height 0.3s, filter 1s;
 }
 
 #ss-waves {
-	filter: blur(5px);
-	background-color: white;
-	transition: filter 1s;
+  filter: blur(5px);
+  background-color: white;
+  transition: filter 1s;
 }
 
 #bigTextBrandName {
@@ -53,11 +53,11 @@
 }
 
 .mainCenter_logo {
-	margin: 0;
-	position: absolute;
-	top: 36%;
-	left: 50%;
-	transform: translate(-50%, -36%);
+  margin: 0;
+  position: absolute;
+  top: 36%;
+  left: 50%;
+  transform: translate(-50%, -36%);
 }
 
 @media only screen and (max-width: 1099px) {
@@ -66,12 +66,12 @@
   }
 
   .descriptionText {
-	  font-size: 1em;
-	  line-height: 1.2em;
+    font-size: 1em;
+    line-height: 1.2em;
   }
 
-	.mainCenter_logo {
-	  top: 55%;
-	  transform: translate(-50%, -55%);
-	}
+  .mainCenter_logo {
+    top: 55%;
+    transform: translate(-50%, -55%);
+  }
 }
