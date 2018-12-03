@@ -76,7 +76,6 @@
     "Safe Surfer has been disabled. You are now unprotected.": "Safe Surfer is disabled. The seas are rough.",
     "Ok": "Yarr",
     "Great, your computer is setup.": "Yarr, ye seas are safe.",
-    "To make sure of this, we recommend that you please reboot/restart your computer.": "",
     "Ok, Safe Surfer has been removed.": "Yarr, Safe Surfer no longer sails with ye.",
     "Opt in to beta releases": "Get shinny new ships",
     "You can't toggle the service, since you're on a LifeGuard network.": "",
@@ -93,7 +92,6 @@
     "If you feel that you want to opt in, you can do so in the menu.": "",
     "Quit": "",
     "Ignore": "",
-    "Reboot now": "",
     "I'm unable to reboot for you, please reboot manually.": "",
     "Are you sure that you want to disable Safe Surfer on this computer?": "",
     "This program comes with absolutely no warranty.": "",
@@ -116,7 +114,6 @@
     "If you want to opt in to giving statistics, you can do so in the menu.": "",
     "I need help with my addiction": "",
     "Lock deactivate buttons": "",
-    "Would you like to lock deactivate buttons?": "",
     "Are you absolutely sure that you want to lock deactivate buttons?": "",
     "Yes, I'm absolutely sure": "",
     "Ok, your computer is setup.": "",
@@ -150,5 +147,9 @@
     "Opted into beta releases:": "",
     "Statistics enabled:": "",
     "Operating system:": "",
-    "Locale:": ""
+    "Locale:": "",
+    "We recommend you restart your computer to ensure that the settings have applied everywhere on it.": "",
+    "Restart now": "",
+    "To make sure of this, we recommend that you please reboot/restart your computer.": "",
+    "Great you're now protected! Would you like to lock the buttons that allow deactivation?": ""
 }

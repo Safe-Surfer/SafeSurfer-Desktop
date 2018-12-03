@@ -75,7 +75,6 @@
     "You are now safe to surf the internet. Safe Surfer has been setup.": "Biztonságban van az internet szörfözéséhez. A Safe Surfer be van állítva.",
     "Safe Surfer has been disabled. You are now unprotected.": "A Safe Surfer ki van kapcsolva. Nincs védelmezve.",
     "Ok": "Oké",
-    "To make sure of this, we recommend that you please reboot/restart your computer.": "Ahhoz, hogy bistosak lehessünk ebben, azt ajánljuk, hogy indítsa újra a számítógépét.",
     "Ok, Safe Surfer has been removed.": "Oké, a Safe Surfer le van törölve.",
     "Opt in to beta releases": "Béta kiadások választása",
     "You can't toggle the service, since you're on a LifeGuard network.": "Nem lehet átkapcsolni a szolgáltatást, mert a LifeGuard hálózaton van.",
@@ -93,7 +92,6 @@
     "If you feel that you want to opt in, you can do so in the menu.": "Ha be akar szállni, a menüben lehet.",
     "Quit": "Kilépés",
     "Ignore": "Ignore",
-    "Reboot now": "Újraindítás most",
     "I'm unable to reboot for you, please reboot manually.": "Nem tudjuk úraállítani, kérjük állítsa újra kézileg.",
     "Are you sure that you want to disable Safe Surfer on this computer?": "Biztos benne, hogy mi akarja kapcsolni a Safe Surfer-t a számítógépén?",
     "This program comes with absolutely no warranty.": "",
@@ -116,7 +114,6 @@
     "If you want to opt in to giving statistics, you can do so in the menu.": "",
     "I need help with my addiction": "",
     "Lock deactivate buttons": "",
-    "Would you like to lock deactivate buttons?": "",
     "Are you absolutely sure that you want to lock deactivate buttons?": "",
     "Yes, I'm absolutely sure": "",
     "Ok, your computer is setup.": "",
@@ -150,5 +147,9 @@
     "Opted into beta releases:": "",
     "Statistics enabled:": "",
     "Operating system:": "",
-    "Locale:": ""
+    "Locale:": "",
+    "We recommend you restart your computer to ensure that the settings have applied everywhere on it.": "",
+    "Restart now": "",
+    "To make sure of this, we recommend that you please reboot/restart your computer.": "",
+    "Great you're now protected! Would you like to lock the buttons that allow deactivation?": ""
 }

@@ -60,7 +60,7 @@ module.exports = (app, mainWindow) => {
       label: i18n.__('General'),
       submenu:
       [
-        /*{label: i18n.__('Sites of concern'), click() {childWindow.show()} },*/
+        /*{label: i18n.__('Configure blocked sites'), click() {childWindow.show()} },*/
         {
           label: i18n.__('Toggle'),
           submenu:

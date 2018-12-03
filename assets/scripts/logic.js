@@ -409,7 +409,6 @@ const appFrame = {
       // since the request has succeeded, we can count the app as loaded
       window.appStates.appHasLoaded = true;
       if ((error < 200 || error >= 300) && error != null) {
-        window.appStates.internet[0] = false;
         logging(`[checkServiceState]: HTTP error: ${error}`);
         return;
       }
@@ -563,7 +562,6 @@ const appFrame = {
     logging(`[checkForAppUpdate]: About to fetch http://${serverAddress}:${serverPort}${serverDataFile}`);
     Request.get(`http://${serverAddress}:${serverPort}${serverDataFile}`, (error, response, body) => {
       if ((error < 200 || error >= 300) && error != null) {
-        window.appStates.internet[0] = false;
         // if something goes wrong
         logging(`[checkForAppUpdate]: HTTP error ${error}`);
         if (options.showErrors == true) {
@@ -808,7 +806,7 @@ const appFrame = {
   lockEnableMessage: async function() {
     // tell the user to reboot
     return new Promise((resolve, reject) => {
-      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Would you like to lock deactivate buttons?")}\n${i18n.__("Unlocking the buttons will require help from support.")}`}, response => {
+      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Great you're now protected! Would you like to lock the buttons that allow deactivation?")}\n${i18n.__("Unlocking the buttons will require help from support.")}`}, response => {
         if (response == 1) resolve(true);
         if (response == 0) dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Are you absolutely sure that you want to lock deactivate buttons?")}`}, response => {
           if (response == 0) resolve(true);
@@ -830,7 +828,7 @@ const appFrame = {
 
   displayRebootMessage: function() {
     // tell the user to reboot
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Reboot now'), i18n.__('Ignore')], message: `${i18n.__("Ok, your computer is setup.")}\n${i18n.__("To make sure of this, we recommend that you please reboot/restart your computer.")}`}, updateResponse => {
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Restart now'), i18n.__('Ignore')], message: `${i18n.__("Ok, your computer is setup.")}\n${i18n.__("We recommend you restart your computer to ensure that the settings have applied everywhere on it.")}`}, updateResponse => {
       if (updateResponse == 0) {
         switch (os.platform()) {
           case 'win32':
@@ -893,7 +891,7 @@ const appFrame = {
     logging("[mainReloadProcess]: begin reload");
     appFrame.checkServiceState();
 
-    if (appStates.internetCheckCounter === 2) {
+    if (appStates.internetCheckCounter === 3) {
       appFrame.internetConnectionCheck();
       appStates.internetCheckCounter = 0;
     }
@@ -913,8 +911,8 @@ const appFrame = {
           $('.progressInfoBar').css("height", "0px");
           window.appStates.toggleLock = false;
           if (window.appStates.serviceEnabled[0] == true) {
-            appFrame.donationMessage().then(response => {
-              if (response) appFrame.lockEnableMessage().then(response => {
+            appFrame.lockEnableMessage().then(response => {
+              if (response) appFrame.donationMessage().then(response => {
                 if (response) appFrame.displayRebootMessage();
               });
             });
