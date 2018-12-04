@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Package
+   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
+  <Identity Name="safesurferdesktop"
+    ProcessorArchitecture="x64"
+    Publisher="CN=safesurfer"
+    Version="1.0.0.0" />
+  <Properties>
+    <DisplayName>safesurferdesktop</DisplayName>
+    <PublisherDisplayName>Safe Surfer</PublisherDisplayName>
+    <Description>Keep safe in the digitial surf with Safe Surfer</Description>
+    <Logo>assets\safesurferdesktop.50x50.png</Logo>
+  </Properties>
+  <Resources>
+    <Resource Language="en-us" />
+  </Resources>
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14316.0" MaxVersionTested="10.0.14316.0" />
+  </Dependencies>
+  <Capabilities>
+    <rescap:Capability Name="runFullTrust"/>
+  </Capabilities>
+  <Applications>
+    <Application Id="safesurferdesktop" Executable="app\safesurferdesktop.exe" EntryPoint="Windows.FullTrustApplication">
+      <uap:VisualElements
+       BackgroundColor="#00a7d6"
+       DisplayName="safesurferdesktop"
+       Square150x150Logo="assets\safesurferdesktop.128x128.png"
+       Square44x44Logo="assets\safesurferdesktop.44x44.png"
+       Description="safesurferdesktop">
+        <uap:DefaultTile Wide310x150Logo="assets\safesurferdesktop.310x150.png" />
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+</Package>

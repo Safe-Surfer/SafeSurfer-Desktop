@@ -851,8 +851,8 @@ const appFrame = {
   donationMessage: async function() {
     // give the user a message about donating
     return new Promise((resolve, reject) => {
-      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Donate'), i18n.__('No')], message: `${i18n.__('Thank you for using the Safe Surfer desktop app.')}\n${i18n.__('Would you like to support the project and help fund future projects?')}`}, response => {
-        if (response == 0) global.desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/');
+      dialog.showMessageBox({type: 'info', buttons: [i18n.__('No'), i18n.__('Donate')], message: `${i18n.__('Thank you for using the Safe Surfer desktop app.')}\n${i18n.__('Would you like to support the project and help fund future projects?')}`}, response => {
+        if (response == 1) global.desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/');
         resolve(true);
       });
     });

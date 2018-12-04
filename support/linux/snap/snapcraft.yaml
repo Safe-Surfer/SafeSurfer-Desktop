@@ -1,53 +1,38 @@
 name: safesurfer-desktop
 version: 1.0.0rc4
-type: app
 summary: Keep safe in the digitial surf with Safe Surfer.
 description: >
   Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS settings for you (on a device, not network).
 
+grade: stable
 confinement: classic
 
 parts:
-  safesurfer-desktop:
-    plugin: make
-    source: ../../../
-    prepare: |
-     npm i
-     make BUILDMODE=RELEASE UPDATES=false configure
-    build: |
-     make build-linux
-    build-packages:
-     - nodejs
-     - npm
-     - unzip
-    install: |
-     make DESTDIR=$SNAPCRAFT_PART_INSTALL install
-    prime:
-      - -node_modules
-
+  safesurferdesktop:
+    plugin: dump
+    source: http://142.93.48.189/files/desktop/9-$SNAPCRAFT_PROJECT_VERSION/SafeSurfer-Desktop-$SNAPCRAFT_PROJECT_VERSION-9-linux.zip
+    after:
+      - desktop-gtk3
     stage-packages:
-      - libnotify4
-      - libappindicator1
-      - libxtst6
-      - libnss3
-      - libxss1
-      - fontconfig-config
-      - gconf2
       - libasound2
-      - pulseaudio
+      - libgconf2-4
+      - libnotify4
+      - libnspr4
+      - libnss3
+      - libpcre3
+      - libpulse0
+      - libxss1
+      - libxtst6
+
+  curl:
+    plugin: autotools
+    source-type: tar
+    source: https://github.com/curl/curl/releases/download/curl-7_62_0/curl-7.62.0.tar.xz
+    build-packages:
+      - g++
+      - gcc
+      - make
 
 apps:
-  safesurfer-desktop:
-    command: desktop-launch /usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
-    plugs:
-      - home
-      - x11
-      - unity7
-      - browser-support
-      - network
-      - gsettings
-      - pulseaudio
-      - opengl
-
-  sscli:
-    command: sscli
+  safesurferdesktop:
+    command: usr/bin/sscli launch

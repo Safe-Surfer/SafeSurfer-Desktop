@@ -36,6 +36,7 @@ install:
 	@mkdir -p $(DESTDIR)/usr/share/metainfo
 	@cp -p -r ./release-builds/SafeSurfer-Desktop-linux-x64/. $(DESTDIR)$(PREFIX)
 	@cp ./support/linux/shared-resources/sscli $(DESTDIR)/usr/bin
+	@cp ./support/linux/shared-resources/SafeSurfer-Desktop $(DESTDIR)/usr/bin
 	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop $(DESTDIR)/usr/share/applications/
 	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml $(DESTDIR)/usr/share/metainfo/
 	@cp -p ./support/linux/shared-resources/sscli.completion $(DESTDIR)$(COMPLETIONDIR)/sscli
@@ -43,6 +44,7 @@ install:
 	@cp ./assets/media/icons/png/2000x2000.png $(DESTDIR)/usr/share/pixmaps/ss-logo.png
 	@chmod 755 $(DESTDIR)$(PREFIX)/SafeSurfer-Desktop
 	@chmod 755 $(DESTDIR)/usr/bin/sscli
+	@chmod 755 $(DESTDIR)/usr/bin/SafeSurfer-Desktop
 	@chmod 755 $(DESTDIR)$(COMPLETIONDIR)/sscli
 
 uninstall:

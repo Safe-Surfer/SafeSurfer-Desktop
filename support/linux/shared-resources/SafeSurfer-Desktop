@@ -1,0 +1,4 @@
+#!/bin/bash
+
+execLocation="$(dirname $(realpath $0))"
+"${execLocation}/../lib64/SafeSurfer-Desktop/SafeSurfer-Desktop" $@
