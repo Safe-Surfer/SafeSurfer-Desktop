@@ -1023,7 +1023,7 @@ const appFrame = {
     }
     window.appStates.windowsVersionCompatible = false;
     logging("[windowsVersionCheck]: User is not on a compatible version of Windows");
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("There version of Windows that you seem to be running appears to be not compatible with this app.")}, msgResponse => {
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("The version of Windows that you seem to be running appears to be not compatible with this app.")}, msgResponse => {
       if (msgResponse == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
     });
   }

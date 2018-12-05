@@ -100,7 +100,6 @@
     "Please wait while the app asks for Administrative privileges": "",
     "Help me to run this app as an Administrator": "",
     "I can't seem run this app as an Administrator for you.": "",
-    "There version of Windows that you seem to be running appears to be not compatible with this app.": "",
     "Please wait while the service is being enabled": "",
     "Please wait while the service is being disabled": "",
     "If you wish to copy any of the data, you can select and copy it from there.": "",
@@ -151,5 +150,6 @@
     "Restart now": "",
     "To make sure of this, we recommend that you please reboot/restart your computer.": "",
     "Great you're now protected! Would you like to lock the buttons that allow deactivation?": "",
-    "Configure blocked sites": ""
+    "Configure blocked sites": "",
+    "The version of Windows that you seem to be running appears to be not compatible with this app.": ""
 }
