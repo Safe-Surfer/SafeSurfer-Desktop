@@ -881,7 +881,7 @@ const appFrame = {
       previousVersionData = store.get('lastVersionTosendStatistics');
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
         logging('[checkForVersionChange]: Sending update data');
-        appFrame.sendStatistics(collectStatistics_update());
+        appFrame.sendStatistics(appFrame.collectStatistics_update());
         var previous = store.get('statHistory');
         previous = [...previous, JSON.stringify(dataGathered)];
         store.set('statHistory', previous);
