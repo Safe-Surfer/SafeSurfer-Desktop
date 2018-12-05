@@ -2,7 +2,6 @@
     "General": "Ye wheel o' ship",
     "Support": "Aid",
     "Info": "Map",
-    "Sites of concern": "Seas o' concern",
     "Give feedback": "Say ye opinions",
     "Toggle": "Turn the wheel",
     "Activate": "Man the ship",
@@ -151,5 +150,6 @@
     "We recommend you restart your computer to ensure that the settings have applied everywhere on it.": "",
     "Restart now": "",
     "To make sure of this, we recommend that you please reboot/restart your computer.": "",
-    "Great you're now protected! Would you like to lock the buttons that allow deactivation?": ""
+    "Great you're now protected! Would you like to lock the buttons that allow deactivation?": "",
+    "Configure blocked sites": ""
 }
