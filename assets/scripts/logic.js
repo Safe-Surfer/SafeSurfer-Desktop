@@ -644,7 +644,7 @@ const appFrame = {
     });
   },
 
-  collectStatistics: function() {
+  collectStatistics_general: function() {
     // if the user agrees to it, collect non identifiable information about their setup
     var dataGathered = {
       TYPESEND: "general",
@@ -691,7 +691,7 @@ const appFrame = {
 
   statPrompt: function() {
     // ask if user wants to participate in statistics
-    var sharingData = appFrame.collectStatistics(),
+    var sharingData = appFrame.collectStatistics_general(),
      messageText = {
       nothingSent: {type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")},
       statMsg: {type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: `${i18n.__("Statistics")}\n\n${i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.")}\n${i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.")}\n- ${i18n.__("Safe Surfer team")}`},
@@ -858,6 +858,21 @@ const appFrame = {
     });
   },
 
+  collectStatistics_update: function() {
+    // if the user agrees to it, collect non identifiable information about their setup
+    var dataGathered = {
+      DATESENT: global.desktop.logic.moment().format('X'),
+      TYPESEND: "update",
+      APPBUILD: APPBUILD,
+      BUILDMODE: BUILDMODE,
+      APPVERSION: APPVERSION,
+      PLATFORM: os.platform(),
+      ISSERVICEENABLED: window.appStates.serviceEnabled[0]
+    }
+    if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
+    return JSON.stringify(dataGathered);
+  },
+
   checkForVersionChange: function() {
     // if the version of the app has been updated, let the statistic server know, if allowed by user
     var previousVersionData;
@@ -866,17 +881,7 @@ const appFrame = {
       previousVersionData = store.get('lastVersionTosendStatistics');
       if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
         logging('[checkForVersionChange]: Sending update data');
-        var dataGathered = {
-          DATESENT: global.desktop.logic.moment().format('X'),
-          TYPESEND: "update",
-          APPBUILD: APPBUILD,
-          APPVERSION: APPVERSION,
-          PLATFORM: os.platform(),
-          ISSERVICEENABLED: window.appStates.serviceEnabled[0]
-        }
-        if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
-        appFrame.sendStatistics(JSON.stringify(dataGathered));
-
+        appFrame.sendStatistics(collectStatistics_update());
         var previous = store.get('statHistory');
         previous = [...previous, JSON.stringify(dataGathered)];
         store.set('statHistory', previous);
