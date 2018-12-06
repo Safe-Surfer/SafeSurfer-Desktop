@@ -23,6 +23,7 @@
     "build-win-appx": "node_modules/.bin/electron-windows-store --input-directory=release-builds/safesurferdesktop-win32-x64 --output-directory=release-builds/safesurferdesktop-win32-x64.appx --package-version 1.0.0.0 --package-background-color #00a7d6 --identity-name safesurferdesktop --package-description \"Keep safe in the digitial surf with Safe Surfer\" --package-name safesurferdesktop -m support/windows/appx/AppXManifest.xml --assets support/windows/appx/media",
     "package-win-appx32": "node_modules/.bin/electron-packager . safesurferdesktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"safesurferdesktop\"",
     "build-win-appx32": "node_modules/.bin/electron-windows-store --input-directory=release-builds/safesurferdesktop-win32-ia32 --output-directory=release-builds/safesurferdesktop-win32-ia32.appx --package-version 1.0.0.0 --package-background-color #00a7d6 --identity-name safesurferdesktop --package-description \"Keep safe in the digitial surf with Safe Surfer\" --package-name safesurferdesktop -m support/windows/appx/AppXManifest.xml --assets support/windows/appx/media",
+    "sign-win-exe": "node ./support/windows/sign.js",
     "lintTranslations": "node ./support/lintTranslations.js",
     "genTranslations": "node ./support/genTranslations.js"
   },
