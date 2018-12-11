@@ -35,4 +35,8 @@ parts:
 
 apps:
   safesurferdesktop:
-    command: usr/bin/sscli launch
+    command: usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
+    desktop: usr/share/applications/SafeSurfer-Desktop.desktop
+
+  sscli:
+    command: usr/bin/sscli
