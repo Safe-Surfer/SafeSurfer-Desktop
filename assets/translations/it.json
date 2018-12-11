@@ -47,7 +47,7 @@
     "In case you don't understand this data, it includes (such things as):": "Nel caso che non capisci questi dati, include (cose del tipo):",
     "Which operating system you use": "Quale Sistema operativo stai usando",
     "How many CPU cores you have": "Quanti core della CPU possiedi",
-    "The language you have set": "",
+    "The language you have set": "La lingua che hai scelto",
     "If the service is setup on your computer": "Se il servizio è configurato sul tuo computer",
     "Return": "Ritorna",
     "Nothing has been sent.": "Niente è stato inviato.",
@@ -148,8 +148,8 @@
     "Statistics enabled:": "Statistiche attivate:",
     "Operating system:": "Sistema operativo:",
     "Locale:": "Locale:",
-    "Configure blocked sites": "",
+    "Configure blocked sites": "Configura siti bloccati",
     "We recommend you restart your computer to ensure that the settings have applied everywhere on it.": "",
     "Restart now": "",
-    "Great you're now protected! Would you like to lock the buttons that allow deactivation?": ""
+    "Great you're now protected! Would you like to lock the buttons that allow deactivation?": "Bene! Adesso sei protetto! Ti piacerebbe bloccare i bottoni che ti permettono di disattivare?"
 }
