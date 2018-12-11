@@ -45,7 +45,7 @@
   },
   "author": "Safe Surfer",
   "build": {
-    "appId": "nz.co.SafeSurfer.SafeSurfer-Desktop",
+    "appId": "nz.co.safesurfer.SafeSurfer-Desktop",
     "mac": {
       "category": "public.app-category.utilities",
       "target": [
