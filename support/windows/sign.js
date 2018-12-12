@@ -24,20 +24,23 @@
 */
 
 const exec = require('child_process').execSync,
-  fs = require('fs')
+  fs = require('fs'),
+  os = require('os'),
   args = process.argv.splice(2, process.argv.length),
   path = require('path');
 
+var ewsCfg;
+
   if (os.platform() === 'win32') {
     // get content of .electron-windows-store file
-    const ewsCfg = JSON.parse(fs.readFileSync(path.join(process.env['USERPROFILE'], '.electron-windows-store')), 'utf8');
+    ewsCfg = JSON.parse(fs.readFileSync(path.join(process.env['USERPROFILE'], '.electron-windows-store')), 'utf8');
   }
   else {
     const publicKey = path.resolve(process.env['winsign_publicKey']),
       privateKey = path.resolve(process.env['winsign_privateKey']);
   }
 
-const binary = args[0];
+var binary = args[0];
 // if no arg is passed
 if (binary === undefined) {
   console.log(`Please enter a file to sign.`);
@@ -53,3 +56,4 @@ if (fs.existsSync(binary) !== true) {
 // call generated command
 if (os.platform() === 'win32') exec(`cd ${ewsCfg.windowsKit} && signtool.exe sign /f ${ewsCfg.devCert} ${binary}`);
 else exec(`signcode -spc ${publicKey} -v ${privateKey} -a sha1 -$ commercial -n SafeSurfer-Desktop -i https://safesurfer.co.nz/ -t http://timestamp.verisign.com/scripts/timstamp.dll -tr 10 ${binary}`);
+

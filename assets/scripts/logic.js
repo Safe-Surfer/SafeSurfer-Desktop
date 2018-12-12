@@ -200,8 +200,8 @@ const appFrame = {
       logging(`[callProgram]: calling - '${command}'`);
       // command will be executed as: comand [ARGS]
       require('child_process').exec(command, (err, stdout, stderr) => {
-        logging(`[callProgram]: output -\n${stdout}`);
-        if (err || stderr) logging(`[callProgram]: output error - ${err} - ${stderr}`);
+        logging(`[callProgram]: output -\n${stdout}\n`);
+        if (err || stderr) logging(`[callProgram]: output error - ${err} - ${stderr}\n`);
         if (!err && !stderr) resolve(true);
       });
     });
@@ -680,7 +680,6 @@ const appFrame = {
     // make a post request to the database
     Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
       store.set('statisticAllow', true);
-      store.set('lastVersionTosendStatistics', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
       logging({"[sendStatistics]: DATA": 'Sent.', "[sendStatistics]: STATDATA": source});
       if (err >= 400 && err <= 599) {
         logging('[sendStatistics]: Could not send -- error ${err}');
@@ -877,18 +876,25 @@ const appFrame = {
     // if the version of the app has been updated, let the statistic server know, if allowed by user
     var previousVersionData;
     logging("[checkForVersionChange]: Checking if user has reached a newer version");
-    if (store.get('statisticAllow') == true) {
-      previousVersionData = store.get('lastVersionTosendStatistics');
-      if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
+    previousVersionData = store.get('lastVersionInstalled');
+    if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
+      var featureList = "";
+      require('../data/releaseNotes.json').items.map(i => {
+        featureList += `- ${i}\n`;
+      });
+      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Read detailed changelog')], message: `${i18n.__("What's new in version:")} ${APPVERSION}\n\n${i18n.__("Here are the improvements and fixes included in this version:")}\n${featureList}`}, response => {
+        if (response === 1) desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${APPVERSION}`);
+      });
+      store.set('lastVersionInstalled', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
+      if (store.get('statisticAllow') == true) {
         logging('[checkForVersionChange]: Sending update data');
         appFrame.sendStatistics(appFrame.collectStatistics_update());
         var previous = store.get('statHistory');
         previous = [...previous, JSON.stringify(dataGathered)];
         store.set('statHistory', previous);
-        store.set('lastVersionTosendStatistics', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
       }
-      else logging('[checkForVersionChange]: User has not reached new version.');
     }
+    else logging('[checkForVersionChange]: User has not reached new version.');
   },
 
   mainReloadProcess: function() {
@@ -979,6 +985,7 @@ const appFrame = {
       appFrame.finishedLoading();
       appFrame.mainReloadProcess();
       // if user hasn't provided a response to statistics
+      appFrame.checkForVersionChange();
       if (store.get('statHasAnswer') != true && appStates.userIsAdmin == true) {
         setTimeout(() => {
           appFrame.statPrompt();
@@ -1129,7 +1136,6 @@ global.desktop.logic.electronIPCon('toggleStatState', () => {
 // keep note of if the user is running as admin or not
 appFrame.windowsVersionCheck();
 appFrame.checkUserPrivileges();
-appFrame.checkForVersionChange();
 
 // if auto-update checking is enabled and updates are enabled, check for them
 if (updatesEnabled == true && store.get('appUpdateAutoCheck') == true) appFrame.checkForAppUpdate({
@@ -1149,6 +1155,11 @@ Safe Surfer team.`);
 // REMOVE THIS after a while, as user's will have their stat data migrated in no time
 if (store.get('teleHistory') !== undefined) store.set('statHistory', store.get('teleHistory'));
 if (store.get('statHistory') !== undefined) store.delete('teleHistory');
+if (store.get('lastVersionTosendStatistics') !== undefined) store.set('lastVersionInstalled', store.get('lastVersionTosendStatistics'));
+if (store.get('lastVersionInstalled') !== undefined) store.delete('lastVersionTosendStatistics');
+
+// if lastVersionInstalled hasn't been stated, save the current settings
+if (store.get('lastVersionInstalled') === undefined) store.set('lastVersionInstalled', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
 
 // connect button in html to a function
 $('#toggleButton').bind('click', appFrame.toggleServiceState);

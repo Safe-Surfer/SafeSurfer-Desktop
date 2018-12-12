@@ -24,8 +24,8 @@ arg="$1"
 resolvconf="/etc/resolv.conf"
 primaryDNS="104.197.28.121"
 secondaryDNS="104.155.237.225"
-appVersion="1.0.0rc4"
-appBuild="9"
+appVersion="1.0.0"
+appBuild="10"
 
 function sudoUserCheck() {
 # check if user is root

@@ -31,8 +31,14 @@ macOS: `make build-macos` or `npm run package-macos`
 
 Please note that building Windows versions on Linux or macOS requires [Wine](https://www.winehq.org) to be installed as a prerequisite, this can be installed via your distro's repos on Linux, or through brew on macOS.  
 
+### Sign Windows binaries
+`npm run sign-win-exe [file]`  
+Sign Windows binaries so Windows smartscreen doesn't freakout.  
+
 ### Packaging dependencies
+.app (macOS): [Xcode](https://itunes.apple.com/app/xcode/id497799835)  
 AppImage: `rpm2cpio wget tar ar`  
+AppX: [Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk), also is a good idea to have WSL + Ubuntu installed to make things easier.  
 deb: `debhelper devscripts`  
 flatpak:  
 - `flatpak-builder`  
@@ -46,9 +52,11 @@ Notes:
 - You may need to specify SSCLILOCATION as an environment variable followed by the directory of which `sscli` should be located in a package, to get the app to see and use it
 
 ### Packaging
-appimage: `make prep-appimage && make build-appimage`  
+AppImage: `make prep-appimage && make build-appimage`  
+AppX (32-bit): `bash -c 'make BUILDMODE=release UPDATES=false configure' && npm run package-win-appx32 && npm run sign-win-exe release-builds\\safesurferdesktop-win32-ia32\\safesurferdesktop.exe && npm run build-win-appx32`  
+AppX: `bash -c 'make BUILDMODE=release UPDATES=false configure' && npm run package-win-appx && npm run sign-win-exe release-builds\\safesurferdesktop-win32-ia32\\safesurferdesktop.exe && npm run build-win-appx`  
 deb: `make deb-pkg`  
-dmg: `npm run build-macos-dmg`  
+dmg: `make macos-publish-prepare`  
 exe: use iss file in [support\\windows\\inno-script](support/windows/inno-script)  
 flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)  
 linux binary zip: `make build-linuxzip`  

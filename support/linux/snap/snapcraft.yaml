@@ -1,5 +1,5 @@
 name: safesurfer-desktop
-version: 1.0.0rc4
+version: 1.0.0
 summary: Keep safe in the digitial surf with Safe Surfer.
 description: >
   Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS settings for you (on a device, not network).
@@ -10,7 +10,7 @@ confinement: classic
 parts:
   safesurferdesktop:
     plugin: dump
-    source: http://142.93.48.189/files/desktop/9-$SNAPCRAFT_PROJECT_VERSION/SafeSurfer-Desktop-$SNAPCRAFT_PROJECT_VERSION-9-linux.zip
+    source: http://142.93.48.189/files/desktop/10-$SNAPCRAFT_PROJECT_VERSION/SafeSurfer-Desktop-$SNAPCRAFT_PROJECT_VERSION-10-linux.zip
     after:
       - desktop-gtk3
     stage-packages:

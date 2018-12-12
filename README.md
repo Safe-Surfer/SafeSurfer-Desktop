@@ -5,10 +5,10 @@
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
 </a>
 <a href="http://142.93.48.189">
-    <img src="https://img.shields.io/badge/version-1.0.0rc4-brightgreen.svg" />
+    <img src="https://img.shields.io/badge/version-1.0.0-brightgreen.svg" />
 </a>
 <a href="http://142.93.48.189">
-    <img src="https://img.shields.io/badge/build-9-orange.svg" />
+    <img src="https://img.shields.io/badge/build-10-orange.svg" />
 </a>
 
 ![Safe Surfer logo](./assets/media/icons/png/128x128.png)  
@@ -26,11 +26,8 @@ Our aim for this project is to make it as easy as possible to get families and p
 
 For enterprise/business use, we recommmend to apply the DNS settings on a router which devices are connected to.  
 
-### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0rc4)
-## Install the latest release candidate
-We need testers.  
-If you're wanting to test this software, please download the binaries or source and give it a go.  
-Our temporary site is found [here](http://142.93.48.189).  
+### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0)
+Download from this version from [here](http://142.93.48.189).  
 
 ## Features
 - Toggle DNS settings with one button  

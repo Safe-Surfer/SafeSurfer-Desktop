@@ -16,49 +16,9 @@
     </p>
   </description>
   <releases>
-    <release version="1.0.0rc4" date="2018-11-26">
+    <release version="1.0.0" date="2018-12-11">
       <description>
-        <p>This release marks the fourth release candidate of Safe Surfer's desktop app.</p>
-      </description>
-    </release>
-    <release version="1.0.0rc3" date="2018-11-14">
-      <description>
-        <p>This release marks the third release candidate of Safe Surfer's desktop app.</p>
-      </description>
-    </release>
-    <release version="1.0.0rc2" date="2018-11-07">
-      <description>
-        <p>This release marks the second release candidate of Safe Surfer's desktop app.</p>
-      </description>
-    </release>
-    <release version="1.0.0rc1" date="2018-10-26">
-      <description>
-        <p>This release marks the first release candidate of Safe Surfer's desktop app.</p>
-      </description>
-    </release>
-    <release version="1.0.0b5" date="2018-10-12">
-      <description>
-        <p>This release marks the fifth beta of Safe Surfer's desktop app.</p>
-      </description>
-    </release>
-    <release version="1.0.0b4" date="2018-10-5">
-      <description>
-        <p>This release marks the fourth beta of Safe Surfer's desktop app.</p>
-      </description>
-    </release>
-    <release version="1.0.0b3" date="2018-09-26">
-      <description>
-        <p>This release marks the third beta of Safe Surfer's desktop app.</p>
-      </description>
-    </release>
-    <release version="1.0.0b2" date="2018-09-14">
-      <description>
-        <p>This release marks the second beta of Safe Surfer's desktop app.</p>
-      </description>
-    </release>
-    <release version="1.0.0b1" date="2018-09-10">
-      <description>
-        <p>This release marks the first beta of Safe Surfer's desktop app.</p>
+        <p>This release marks the inital public release of Safe Surfer's desktop app.</p>
       </description>
     </release>
   </releases>

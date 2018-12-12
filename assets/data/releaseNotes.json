@@ -1,0 +1,15 @@
+{
+	"items": [
+		"added diagnostics menu in support, in app menu",
+		"added supported for AppX (Windows Store) and Snap (Ubuntu Snapstore)",
+		"added macOS version dmg support",
+		"updated translations",
+		"updated menu to be more macOS like on macOS",
+		"updated internet connection lost screen",
+		"updated styling of app",
+		"updated app to take up less space",
+		"updated default and minumum app sizes",
+		"fixed LifeGuard flickering on and off reguarding it's discovery",
+		"fixed internet connection lost screen not displaying"
+	]
+}

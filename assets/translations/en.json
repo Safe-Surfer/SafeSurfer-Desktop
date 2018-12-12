@@ -156,5 +156,8 @@
 	"Opted into beta releases:": "Opted into beta releases:",
 	"Statistics enabled:": "Statistics enabled:",
 	"Operating system:" :"Operating system:",
-	"Locale:": "Locale:"
+	"Locale:": "Locale:",
+	"What's new in version:": "What's new in version:",
+	"Read detailed changelog": "Read detailed changelog",
+	"Here are the improvements and fixes included in this version:": "Here are the improvements and fixes included in this version:"
 }
