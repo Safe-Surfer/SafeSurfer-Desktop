@@ -154,14 +154,14 @@ window.actions = Object.freeze({
     - ${i18n.__("Operating system:")} ${os.platform()}
     - ${i18n.__("Locale:")} ${app.getLocale()}
     ---------------------------------------------
-    - ${i18n.__("The service is enabled:")} ${appStates.serviceEnabled[0]}
-    - ${i18n.__("LifeGuard discovered on network:")} ${appStates.lifeguardFound[0]}
-    - ${i18n.__("Internet is available:")} ${appStates.internet[0]}
-    - ${i18n.__("The app has loaded:")} ${appStates.appHasLoaded}
-    - ${i18n.__("The buttons are locked:")} ${store.get('lockDeactivateButtons')}
-    - ${i18n.__("Opted into beta releases:")} ${store.get('betaCheck')}
-    - ${i18n.__("Statistics enabled:")} ${store.get('statisticAllow')}`
-    if (os.platform() === 'win32') text += `\n    - ${i18n.__("Your version of Windows is compatible:")} ${window.appStates.windowsVersionCompatible}`
+    - ${i18n.__("The service is enabled:")} ${appStates.serviceEnabled[0] === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__("LifeGuard discovered on network:")} ${appStates.lifeguardFound[0] === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__("Internet is available:")} ${appStates.internet[0] === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__("The app has loaded:")} ${appStates.appHasLoaded === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__("The buttons are locked:")} ${store.get('lockDeactivateButtons') === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__("Opted into beta releases:")} ${store.get('betaCheck') === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__("Statistics enabled:")} ${store.get('statisticAllow') === true ? i18n.__('Yes') : i18n.__('No')}`
+    if (os.platform() === 'win32') text += `\n    - ${i18n.__("Your version of Windows is compatible:")} ${window.appStates.windowsVersionCompatible === true ? i18n.__('Yes') : i18n.__('No')}`
     return text;
   }
 });
