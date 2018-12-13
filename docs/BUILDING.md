@@ -38,7 +38,7 @@ Sign Windows binaries so Windows smartscreen doesn't freakout.
 ### Packaging dependencies
 .app (macOS): [Xcode](https://itunes.apple.com/app/xcode/id497799835) or `xcode-select --install`  
 AppImage: `rpm2cpio wget tar ar`  
-AppX: [Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk), also is a good idea to have WSL + Ubuntu installed to make things easier.  
+AppX: [Windows 10 SDK](https://developer.microsoft.com/en-us/windows/downloads/windows-10-sdk), also is a good idea to have [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10) + [Ubuntu](https://www.microsoft.com/en-us/p/ubuntu/9nblggh4msv6?activetab=pivot:overviewtab) or [Git bash](https://git-scm.com/downloads) installed to make things easier.  
 deb: `debhelper devscripts`  
 flatpak:  
 - `flatpak-builder`  
