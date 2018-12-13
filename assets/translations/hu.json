@@ -82,7 +82,7 @@
     "Enable statistic sharing": "Adat megosztásának engedélyezése",
     "About this app": "Az alkalmazásról",
     "No": "Nem",
-    "Please downgrade to version ": "Kérjük minősítse le az előző verzióra ",
+    "Please downgrade to version": "Kérjük minősítse le az előző verzióra",
     "No data is available.": "Adat nem elérhető.",
     "You're opted in.": "Be van választva.",
     "You're not opted in.": "Nincs beválasztva.",
@@ -154,5 +154,6 @@
     "The version of Windows that you seem to be running appears to be not compatible with this app.": "A Windows verzió amit futtat úgy tűnik nem kompatibilis ezzel az alkalmazással.",
     "What's new in version:": "",
     "Read detailed changelog": "",
-    "Here are the improvements and fixes included in this version:": ""
+    "Here are the improvements and fixes included in this version:": "",
+    "Try again": ""
 }

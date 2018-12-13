@@ -56,4 +56,3 @@ if (fs.existsSync(binary) !== true) {
 // call generated command
 if (os.platform() === 'win32') exec(`cd ${ewsCfg.windowsKit} && signtool.exe sign /f ${ewsCfg.devCert} ${binary}`);
 else exec(`signcode -spc ${publicKey} -v ${privateKey} -a sha1 -$ commercial -n SafeSurfer-Desktop -i https://safesurfer.co.nz/ -t http://timestamp.verisign.com/scripts/timstamp.dll -tr 10 ${binary}`);
-

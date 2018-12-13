@@ -10,7 +10,7 @@ confinement: classic
 parts:
   safesurferdesktop:
     plugin: dump
-    source: http://142.93.48.189/files/desktop/10-$SNAPCRAFT_PROJECT_VERSION/SafeSurfer-Desktop-$SNAPCRAFT_PROJECT_VERSION-10-linux.zip
+    source: SafeSurfer-Desktop-Linux.zip
     after:
       - desktop-gtk3
     stage-packages:

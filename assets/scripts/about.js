@@ -28,17 +28,17 @@ const packageJSON = window.desktop.global.packageJSON(),
   $ = window.desktop.global.jquery();
 
 // function to make \n multiline
-$.fn.multiline = function(text){
-    this.html(text);
-    this.html(this.html().replace(/\n/g,'<br/>'));
-    return this;
+$.fn.multiline = function(text) {
+  this.html(text);
+  this.html(this.html().replace(/\n/g,'<br/>'));
+  return this;
 }
 
 // update title
 $("#title").text(i18n.__("About this app"));
 
 // update description text
-$('#description').multiline(`${i18n.__("Version")} ${version}; ${i18n.__("Build")}: ${APPBUILD} (${BUILDMODE})\n&copy; 2018 Safe Surfer, et al.\n\n${i18n.__('This program comes with absolutely no warranty.')}\n${i18n.__('See the GNU General Public License, version 3 or later for details.')}`);
+$('#description').multiline(`${i18n.__("Version")} ${version}; ${i18n.__("Build")}: ${APPBUILD} (${BUILDMODE}).\n&copy; 2018 Safe Surfer, et al.\n\n${i18n.__('This program comes with absolutely no warranty.')}\n${i18n.__('See the GNU General Public License, version 3 or later for details.')}`);
 
 function shrinkLogo() {
   $("#ss-logo").css("height", "180px");

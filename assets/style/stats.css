@@ -52,6 +52,7 @@ body, html {
   right: 0;
   position: absolute;
   margin-bottom: 10px;
+	box-shadow: 5px 10px 28px rgba(0, 0, 0, 0.35);
 }
 
 #statState {

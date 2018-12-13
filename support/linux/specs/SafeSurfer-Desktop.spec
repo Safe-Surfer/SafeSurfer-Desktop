@@ -110,6 +110,7 @@ make BUILDMODE=RELEASE UPDATES=false configure
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli
+/usr/bin/SafeSurfer-Desktop
 /usr/share/bash-completion/completions/sscli
 /usr/share/polkit-1
 /usr/share/polkit-1/actions

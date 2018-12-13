@@ -3,6 +3,7 @@
 		"added diagnostics menu in support, in app menu",
 		"added supported for AppX (Windows Store) and Snap (Ubuntu Snapstore)",
 		"added macOS version dmg support",
+		"added a retry button if elevating to an Administrator fails",
 		"updated translations",
 		"updated menu to be more macOS like on macOS",
 		"updated internet connection lost screen",

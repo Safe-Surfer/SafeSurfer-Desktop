@@ -65,7 +65,6 @@ Read our [translation guide](docs/TRANSLATING.md) to get started!
 ## Notes
 Known issues
 - If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
-- When connected to a LifeGuard network, the screen may flicker between seeing LifeGuard and not
 
 ## System requirements
 Compatible operating systems:  
@@ -78,7 +77,7 @@ Compatible operating systems:
     - Windows 8.1  
 
 Minimum computer specifications  
-CPU: 2 core - 1 GHz - 64-bit  
+CPU: 2 core - 1 GHz - 64-bit or 32-bit  
 RAM: 2 GB of RAM  
 
 ## License

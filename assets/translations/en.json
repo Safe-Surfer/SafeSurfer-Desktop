@@ -91,7 +91,7 @@
 	"Enable statistic sharing": "Enable statistic sharing",
 	"About this app": "About this app",
 	"No": "No",
-	"Please downgrade to version ": "Please downgrade to version ",
+	"Please downgrade to version": "Please downgrade to version",
 	"No data is available.": "No data is available.",
 	"You're opted in.": "You're opted in.",
 	"You're not opted in.": "You're not opted in.",
@@ -159,5 +159,6 @@
 	"Locale:": "Locale:",
 	"What's new in version:": "What's new in version:",
 	"Read detailed changelog": "Read detailed changelog",
-	"Here are the improvements and fixes included in this version:": "Here are the improvements and fixes included in this version:"
+	"Here are the improvements and fixes included in this version:": "Here are the improvements and fixes included in this version:",
+	"Try again": "Try again"
 }

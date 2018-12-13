@@ -12,19 +12,22 @@ check-deps:
 	@if [ ! -d node_modules ]; then echo "Whoops, you're missing node dependencies. Run 'npm i'."; exit 1; fi;
 
 build-linux: check-deps
-	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds
+	npm run package-linux
 
 build-linux32: check-deps
-	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=ia32 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds
+	npm run package-linux32
 
 build-windows: check-deps
-	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"
+	npm run package-win
 
 build-windows32: check-deps
-	node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\"
+	npm run package-win32
 
 build-macos: check-deps
-	node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --prune --out=release-builds --darwinDarkModeSupport=true
+	npm run package-macos
+
+build-mas: check-deps
+	npm run package-macos-mas
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)
@@ -151,8 +154,12 @@ build-appimage:
 	@if [[ "$(DISABLEINTEGRATION)" = true ]]; then touch nz.co.safesurfer.SafeSurfer-Desktop.AppDir/NOINTEGRATION; fi
 	./tools/appimagetool-x86_64.AppImage $(OPTS) nz.co.safesurfer.SafeSurfer-Desktop.AppDir
 
-build-snap:
-	cd support/linux/snap && snapcraft cleanbuild
+build-snap: build-linuxzip
+	rm -rf zip-build
+	mkdir release-builds/snap
+	mv SafeSurfer-Desktop-Linux.zip release-builds/snap
+	cp support/linux/snap/snapcraft.yaml release-builds/snap
+	cd release-builds/snap && snapcraft cleanbuild
 
 compile-win-setup:
 	npm run compile-win-setup
@@ -163,14 +170,14 @@ compile-win-setup32:
 sign-macos:
 	npm run sign-macos-app
 
-macos-publish-prepare:
+build-macos-dmg:
 	make BUILDMODE=RELEASE UPDATES=$(UPDATES) MACOSDEVID=$(MACOSDEVID) configure
 	make build-macos
 	make sign-macos
 	npm run build-macos-dmg
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild
+	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild dist
 	@if grep -q '"BUILDMODE": "release"' ./package.json; then sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json; fi
 	@if grep -q '"enableUpdates": false' ./package.json; then sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json; fi
 	@if ! grep -q "DEVIDSTUFF" ./support/macOS/entitlements.mas.plist && [[ -f "./support/macOS/entitlements.mas.plist.bak" ]]; then mv ./support/macOS/entitlements.mas.plist.bak ./support/macOS/entitlements.mas.plist; fi

@@ -56,7 +56,7 @@ AppImage: `make prep-appimage && make build-appimage`
 AppX (32-bit): `bash -c 'make BUILDMODE=release UPDATES=false configure' && npm run package-win-appx32 && npm run sign-win-exe release-builds\\safesurferdesktop-win32-ia32\\safesurferdesktop.exe && npm run build-win-appx32`  
 AppX: `bash -c 'make BUILDMODE=release UPDATES=false configure' && npm run package-win-appx && npm run sign-win-exe release-builds\\safesurferdesktop-win32-ia32\\safesurferdesktop.exe && npm run build-win-appx`  
 deb: `make deb-pkg`  
-dmg: `make macos-publish-prepare`  
+dmg: `make build-macos-dmg`  
 exe: use iss file in [support\\windows\\inno-script](support/windows/inno-script)  
 flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)  
 linux binary zip: `make build-linuxzip`  

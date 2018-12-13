@@ -83,7 +83,7 @@
     "Enable statistic sharing": "Facilita condivisione di statistiche",
     "About this app": "Informazioni su questo app",
     "No": "No",
-    "Please downgrade to version ": "Per favore ritorna ad una versione precedente ",
+    "Please downgrade to version": "Per favore ritorna ad una versione precedente",
     "No data is available.": "Dati non disponibili.",
     "You're opted in.": "Sei aggiunto.",
     "You're not opted in.": "Non sei aggiunto.",
@@ -154,5 +154,6 @@
     "Great you're now protected! Would you like to lock the buttons that allow deactivation?": "Bene! Adesso sei protetto! Ti piacerebbe bloccare i bottoni che ti permettono di disattivare?",
     "What's new in version:": "",
     "Read detailed changelog": "",
-    "Here are the improvements and fixes included in this version:": ""
+    "Here are the improvements and fixes included in this version:": "",
+    "Try again": ""
 }

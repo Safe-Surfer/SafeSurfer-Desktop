@@ -6,7 +6,7 @@ BuildArch:	x86_64
 License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities
 URL:            https://gitlab.com/safesurfer/%{name}
-Source0:	http://142.93.48.189/files/desktop/9-%{version}/linux-precompiled/%{name}-%{version}-9-linux.zip
+Source0:	http://142.93.48.189/files/desktop/10-%{version}/linux-precompiled/%{name}-%{version}-10-linux.zip
 Requires:       polkit, curl
 BuildRequires:	unzip, desktop-file-utils
 %if 0%{?suse_version}
@@ -18,14 +18,14 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 
 
 %prep
-mkdir %{name}-%{version}-9-linux/
-unzip ../SOURCES/%{name}-%{version}-9-linux.zip -d ./%{name}-%{version}-9-linux/
+mkdir %{name}-%{version}-10-linux/
+unzip ../SOURCES/%{name}-%{version}-10-linux.zip -d ./%{name}-%{version}-10-linux/
 
 %build
 
 
 %install
-cp -r ./%{name}-%{version}-9-linux/. $RPM_BUILD_ROOT/
+cp -r ./%{name}-%{version}-10-linux/. $RPM_BUILD_ROOT/
 
 %files
 /usr/lib64/%{name}
@@ -105,6 +105,7 @@ cp -r ./%{name}-%{version}-9-linux/. $RPM_BUILD_ROOT/
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli
+/usr/bin/SafeSurfer-Desktop
 /usr/share/bash-completion/completions/sscli
 /usr/share/polkit-1
 /usr/share/polkit-1/actions

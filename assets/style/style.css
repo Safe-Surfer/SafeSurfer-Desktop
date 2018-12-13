@@ -156,7 +156,7 @@ body, html {
   left: 0;
   right: 0;
   position: absolute;
-  z-index: -50;
+  z-index: 45;
 }
 
 .mainCenter {
@@ -426,7 +426,11 @@ body, html {
   overflow: hidden;
 }
 
-#privBarText, #privBarText_error, .progressInfoBar_text {
+#privBarText {
+  font-size: 15px;
+}
+
+#privBarText, #privBarText_error, #privBarText_tryAgain, .progressInfoBar_text {
   color: black;
   text-align: center;
   font-family: 'Raleway', sans-serif;
@@ -436,7 +440,7 @@ body, html {
   margin-top: 6px;
 }
 
-#privBarText_error {
+#privBarText_error, #privBarText_tryAgain {
   font-weight: bold;
   background-color: #e5e6e5;
   border-radius: 5px;
@@ -451,12 +455,12 @@ body, html {
   margin-top: 5px;
 }
 
-#privBarText_error:hover {
+#privBarText_error:hover, #privBarText_tryAgain:hover {
   color: black;
   background-color: #c8c9cb;
 }
 
-#privBarText_error:active {
+#privBarText_error:active, #privBarText_tryAgain:active {
   background-color: #a9a9aa;
   top: 1px;
 }
@@ -465,15 +469,36 @@ body, html {
   width: 110%;
   padding-bottom: 90px;
   transition: width 0.4s, padding-bottom 0.4s;
+  height: auto;
+  z-index: -2;
 }
 
 #mainScreen_background_nointernet {
   filter: blur(38px) contrast(20%);
+  height: auto;
+  z-index: -2;
 }
 
 #nointernet_glyph {
   height: 100px;
   width: 100px;
+  height: auto;
+  z-index: 4;
+}
+
+#bigTextNoInternet {
+  color: black;
+}
+
+#mainScreen_background_logo {
+  width:200px;
+  height:200px;
+  z-index:-2;
+}
+
+#bigTextBrandName {
+  color:black;
+  white-space: nowrap;
 }
 
 @media only screen and (max-width: 1099px) {

@@ -83,11 +83,23 @@ fi
 
 function flushAndRestart() {
 # flush and restart DNS related services
-if [ ! -z "$(which nscd)" ]
+local success
+success=false
+if systemctl is-active --quiet nscd
 then
 	systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "* Flushed nscd DNS cache and restarted"
-else
-	echo "ERROR: cannot find nscd"
+	success=true
+fi
+
+if which systemd-resolve > /dev/null
+then
+	systemd-resolve --flush-caches && echo "* Flushed systemd-resolve DNS cache"
+	success=true
+fi
+
+if [ "$success" = false ]
+then
+	echo "ERROR: cannot find nscd or systemd-resolve; failed to flush DNS cache"
 	exit 1
 fi
 }
