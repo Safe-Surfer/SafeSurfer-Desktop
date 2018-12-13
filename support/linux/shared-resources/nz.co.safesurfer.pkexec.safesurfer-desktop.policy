@@ -6,6 +6,7 @@
 
   <action id="nz.co.safesurfer.pkexec.safesurfer-desktop">
     <message gettext-domain="safesurfer-desktop">Authentication is required to toggle Safe Surfer on your device</message>
+    <message xml:lang="de">Authentifizierung ist erforderlich um zu Safe Surfer auf deinem Gerät umzuschalten</message>
     <message xml:lang="it">Autenticazione necessaria per attivare Safe Surfer sul tuo apparato</message>
     <message xml:lang="hu">Hitelesítes sükséges, hogy be tudja kapcsolni a Safe Surfer-t az ezközén</message>
     <message xml:lang="pt">Autenticação necessária para activar Safe Surfer no seu dispositivo</message>
@@ -20,3 +21,4 @@
   </action>
 
 </policyconfig>
+
