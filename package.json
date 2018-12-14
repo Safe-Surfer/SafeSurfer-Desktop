@@ -13,15 +13,15 @@
     "package-linux": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=unitTests",
     "package-linux32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=ia32 --icon=assets/media/icons/png/2000x2000.png --prun=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=unitTests",
     "package-macos": "node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=unitTests",
-    "package-macos-mas": "node_modules/.bin/electron-packager . --overwrite --platform=mas --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=unitTests",
+    "package-macos-mas": "node_modules/.bin/electron-packager . --overwrite --platform=mas --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=unitTests --app-bundle-id=nz.co.safesurfer-safesurfer-desktop",
     "package-win": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\" --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=unitTests",
     "package-win32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\" --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=unitTests",
     "compile-win-setup": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer.iss",
     "compile-win-setup32": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer32.iss",
     "build-macos-dmg": "node_modules/.bin/electron-installer-dmg --icon=./assets/media/icons/mac/icon.icns --background=./support/macOS/dmg-background.png --out=./release-builds ./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app SafeSurfer-Desktop",
     "sign-macos-app": "node_modules/.bin/electron-osx-sign \"./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app\" --verbose",
-    "sign-macos-app-mas": "node_modules/.bin/electron-osx-sign \"./release-builds/SafeSurfer-Desktop-mas-x64/SafeSurfer-Desktop.app\" --verbose",
-    "pack-macos-mas": "node_modules/.bin/electron-osx-flat \"./release-builds/SafeSurfer-Desktop-mas-x64/SafeSurfer-Desktop.app\" --verbose",
+    "sign-macos-app-mas": "node_modules/.bin/electron-osx-sign ./release-builds/SafeSurfer-Desktop-mas-x64/SafeSurfer-Desktop.app --verbose",
+    "pack-macos-mas": "node_modules/.bin/electron-osx-flat ./release-builds/SafeSurfer-Desktop-mas-x64/SafeSurfer-Desktop.app --verbose",
     "package-win-appx": "node_modules/.bin/electron-packager . safesurferdesktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"safesurferdesktop\"",
     "build-win-appx": "node_modules/.bin/electron-windows-store --input-directory=release-builds/safesurferdesktop-win32-x64 --output-directory=release-builds/safesurferdesktop-win32-x64.appx --package-version 1.0.0.0 --package-background-color #00a7d6 --identity-name safesurferdesktop --package-description \"Keep safe in the digitial surf with Safe Surfer\" --package-name safesurferdesktop -m support/windows/appx/AppXManifest.xml --assets support/windows/appx/media",
     "package-win-appx32": "node_modules/.bin/electron-packager . safesurferdesktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"safesurferdesktop\"",
@@ -48,7 +48,7 @@
   },
   "author": "Safe Surfer",
   "build": {
-    "appId": "nz.co.safesurfer.SafeSurfer-Desktop",
+    "appId": "nz.co.safesurfer.safesurfer-desktop",
     "mac": {
       "category": "public.app-category.utilities",
       "target": [

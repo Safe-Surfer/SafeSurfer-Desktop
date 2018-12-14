@@ -7,7 +7,6 @@ all: help
 configure:
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./package.json; fi
 	@if [[ "$(UPDATES)" = false ]]; then sed -i -e 's/"enableUpdates": true/"enableUpdates": false/g' ./package.json; fi
-	@if [[ ! -z "$(MACOSDEVID)" ]]; then cp ./support/macOS/entitlements.mas.plist ./support/macOS/entitlements.mas.plist.bak; sed -i -e "s/DEVIDSTUFF/$(MACOSDEVID)/g" ./support/macOS/entitlements.mas.plist; fi
 check-deps:
 	@if [ ! -d node_modules ]; then echo "Whoops, you're missing node dependencies. Run 'npm i'."; exit 1; fi;
 
