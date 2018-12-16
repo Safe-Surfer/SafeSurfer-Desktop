@@ -86,7 +86,7 @@ module.exports = (app, mainWindow) => {
       label: i18n.__('Support'),
       submenu:
       [
-        {label: i18n.__('Check status in browser'), click() {electron.shell.openExternal('http://check.safesurfer.co.nz/')} },
+        {label: i18n.__('Check status in browser'), click() {electron.shell.openExternal('http://safesurfer.co.nz/check.php')} },
         {label: i18n.__('Report a bug'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/docs/BUGS.md')} },
         {
           label: i18n.__('Diagnostics'),
