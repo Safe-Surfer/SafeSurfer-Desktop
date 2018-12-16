@@ -34,11 +34,13 @@ const {app} = require('electron'),
   i18n = new (require('./i18n.js'));
 var accountIsAssigned = store.get('accountInformation'),
   appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
+  provideUpdateInformation = store.get('provideUpdateInformation'),
   betaCheck = store.get('betaCheck'),
   teleEnabled = store.get('statisticAllow'),
   LINUXPACKAGEFORMAT = process.env.LINUXPACKAGEFORMAT === undefined ? '' : process.env.LINUXPACKAGEFORMAT;
 
 if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
+if (provideUpdateInformation === undefined) store.set('provideUpdateInformation', true);
 if (betaCheck === undefined && BUILDMODE != 'dev') {
   store.set('betaCheck', false);
 }
@@ -126,6 +128,7 @@ module.exports = (app, mainWindow) => {
     [
       {label: i18n.__('Check for update'), click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
       {label: i18n.__('Automatically check for updates'), type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
+      {label: i18n.__('Tell me about changes when I update'), type: 'checkbox', checked: provideUpdateInformation, click() {mainWindow.webContents.send('toggleProvideUpdateInformation', provideUpdateInformation)} },
       {type:'separator'},
       {label: i18n.__('Opt in to beta releases'), type: 'checkbox', checked: betaCheck, click() {mainWindow.webContents.send('betaCheck', betaCheck)} },
     ]
