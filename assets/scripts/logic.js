@@ -905,7 +905,7 @@ const appFrame = {
         featureList += `- ${i}\n`;
       });
       if (store.get('provideUpdateInformation') === true) {
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Read detailed changelog')], message: `${i18n.__("What's new in version:")} ${APPVERSION}\n\n${i18n.__("Here are the improvements and fixes included in this version:")}\n${featureList}`, checkboxLabel: i18n.__("Show me changes when there are updates"), checkboxChecked: true}, (response, checkboxChecked) => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Read detailed changelog')], message: `${i18n.__("What's new in version:")} ${APPVERSION}\n\n${i18n.__("Here are the improvements and fixes included in this version:")}\n${featureList}`, checkboxLabel: i18n.__("Tell me about changes when I update"), checkboxChecked: true}, (response, checkboxChecked) => {
           store.set('provideUpdateInformation', checkboxChecked);
           if (response === 1) desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${APPVERSION}`);
         });
