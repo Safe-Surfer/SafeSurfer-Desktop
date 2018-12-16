@@ -36,8 +36,8 @@ Download from this version from [here](http://142.93.48.189).
 - Configure lifeguard from inside the app (requires mDNS allowed through firewall)  
 
 ## Feedback
-Have you used SafeSurfer-Desktop and want to give feedback?
-Visit our [feedback site](http://safesurfer.co.nz/feedback) to leave us some feedback.
+Have you used SafeSurfer-Desktop and want to give feedback?  
+Visit our [feedback site](http://safesurfer.co.nz/feedback) to leave us some feedback.  
 
 ## Building
 Consult the [build manual](docs/BUILDING.md) for instructions on building and running from source.  
@@ -51,7 +51,7 @@ Read our [contribution guide](docs/CONTRIBUTING.md) to get started!
 We'd love your help on this project, together helping families and individuals stay safe on the internet!  
 
 ## Roadmap
-If you'd like to see our plans for future versions of this app. Check out our [roadmap](docs/ROADMAP.md)
+If you'd like to see our plans for future versions of this app. Check out our [roadmap](docs/ROADMAP.md)  
 
 ### Translating Safe Surfer desktop
 <a href="https://hosted.weblate.org/projects/safe-surfer/translations">
@@ -63,15 +63,15 @@ Help us speak your language!
 Read our [translation guide](docs/TRANSLATING.md) to get started!  
 
 ## Notes
-Known issues
+Known issues  
 - If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
 
 ## System requirements
 Compatible operating systems:  
     - Fedora Workstation (28, 29)  
-    - macOS El Capitan (hasn't been tested on anything newer)  
+    - macOS (El Capitan, Sierra)  
     - openSUSE Leap 15  
-    - Ubuntu (18.04, 14.04)  
+    - Ubuntu (14.04, 18.04, 18.10)  
     - Windows 10 (1803, 1809)  
     - Windows 7 (SP1)  
     - Windows 8.1  

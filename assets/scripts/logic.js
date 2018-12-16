@@ -23,6 +23,7 @@
 const {dialog} = global.desktop.logic.dialogBox(),
   electron = require('electron'),
   ipcRenderer = electron.ipcRenderer,
+  dns = require('dns'),
   app = electron.app ? electron.app : electron.remote.app,
   packageJSON = window.desktop.global.packageJSON(),
   APPBUILD = parseInt(packageJSON.APPBUILD),
@@ -543,8 +544,12 @@ const appFrame = {
       bonjour.findOne({type: "sslifeguard"}, (service) => {
         // if a lifeguard is found
         if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
-          logging(`[checkIfOnLifeGuardNetwork]: found ${service.fqdn}`);
-          resolve(true);
+          dns.lookup(service.host, (err, result) => {
+            if (result === '192.168.8.1') {
+              logging(`[checkIfOnLifeGuardNetwork]: found ${service.fqdn}`);
+              resolve(true);
+            }
+          });
         }
       });
     });
