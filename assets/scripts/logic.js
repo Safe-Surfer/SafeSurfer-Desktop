@@ -35,7 +35,8 @@ const {dialog} = global.desktop.logic.dialogBox(),
   os = require('os'),
   path = require('path'),
   bonjour = global.desktop.logic.bonjour,
-  Request = global.desktop.logic.request(),
+  Request = require('request'),
+  moment = require('moment'),
   $ = require('jquery'),
   store = global.desktop.global.store(),
   i18n = global.desktop.global.i18n(),
@@ -116,7 +117,7 @@ window.actions = Object.freeze({
         appStates: appStates,
         appVersion: APPVERSION,
         buildMode: BUILDMODE,
-        date: global.desktop.logic.moment().format('X'),
+        date: moment().format('X'),
         electronVersion: process.versions.electron,
         node_dns_changerVersion: window.desktop.logic.node_dns_changer.version(),
         os: os.platform(),
@@ -243,7 +244,7 @@ const appFrame = {
     // keep note of which user the app is run as
     if (os.platform() != 'win32') {
       window.appStates.userIsAdmin = true;
-      return
+      return;
     }
     global.desktop.logic.isAdmin().then(admin => {
       window.appStates.userIsAdmin = admin;
@@ -356,7 +357,6 @@ const appFrame = {
 
   toggleServiceState: function() {
     // switch between states
-    logging("[toggleServiceState]: In switch");
     window.appStates.notificationCounter = 0;
     if (window.appStates.toggleLock === true) return;
     switch (window.appStates.serviceEnabled[0]) {
@@ -410,7 +410,7 @@ const appFrame = {
   checkServiceState: function() {
     // check the state of the service
     logging('[checkServiceState]: Getting state of service');
-    Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
+    Request.get('http://safesurfer.co.nz/check.php', (error, response, body) => {
       // since the request has succeeded, we can count the app as loaded
       window.appStates.appHasLoaded = true;
       if ((error < 200 || error >= 300) && error != null) {
@@ -419,7 +419,7 @@ const appFrame = {
       }
       //else window.appStates.internet[0] = true;
 
-      var metaResponse = global.desktop.logic.letsGetMeta(body),
+      var metaResponse = require('lets-get-meta')(body),
         metaSearchProtected = body.search('<meta name="ss_status" content="protected">'),
         metaSearchUnprotected = body.search('<meta name="ss_status" content="unprotected">');
 
@@ -677,7 +677,7 @@ const appFrame = {
     // if the user agrees to it, collect non identifiable information about their setup
     var dataGathered = {
       TYPESEND: "general",
-      DATESENT: global.desktop.logic.moment().format('X'),
+      DATESENT: moment().format('X'),
       APPVERSION: APPVERSION,
       APPBUILD: APPBUILD,
       TYPE: os.type(),
@@ -797,20 +797,6 @@ const appFrame = {
     }
   },
 
-  showUnprivillegedMessage: function() {
-    // display dialog for if the app hasn't been started with root privileges
-    logging("[showUnprivillegedMessage]: User is not admin -- displaying dialog message.");
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Show me how'), i18n.__('Exit')], message: i18n.__('To adjust network settings on your computer, you must run this app as an Administrator.')}, updateResponse => {
-      if (updateResponse == 1) window.close();
-      if (updateResponse == 0) {
-        appFrame.openWindowsUACHelpPage();
-        setTimeout(function() {
-          window.close();
-        },250);
-      }
-    });
-  },
-
   sendAppStateNotifications: function() {
     // send notifications if the app state has changed to the user
     if (window.appStates.serviceEnabled[0] == true && enableNotifications == true) new Notification('Safe Surfer', {
@@ -887,7 +873,7 @@ const appFrame = {
   collectStatistics_update: function() {
     // if the user agrees to it, collect non identifiable information about their setup
     var dataGathered = {
-      DATESENT: global.desktop.logic.moment().format('X'),
+      DATESENT: moment().format('X'),
       TYPESEND: "update",
       APPBUILD: APPBUILD,
       BUILDMODE: BUILDMODE,
@@ -953,6 +939,9 @@ const appFrame = {
 
     if (window.appStates.internet[0] == true) {
       appFrame.hideNoInternetConnection();
+      if (window.appStates.serviceEnabled[0] === undefined && window.appStates.lifeguardFound[0] === true) {
+        window.appStates.serviceEnabled[0] = true;
+      }
       if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined) {
         if (window.appStates.toggleLock == true) {
           // if the state changes of the service being enabled changes
@@ -1063,9 +1052,7 @@ const appFrame = {
 
   windowsVersionCheck: function() {
     // if user is running Windows, make sure that the user is running a compatible version of Windows
-    if (os.platform() != 'win32') {
-      return;
-    }
+    if (os.platform() != 'win32') return;
     var releaseVer = os.release().split('.');
     if (parseInt(releaseVer[0]) == 6 && parseInt(releaseVer[1]) >= 1 || parseInt(releaseVer[0]) == 10) {
       window.appStates.windowsVersionCompatible = true;

@@ -24,7 +24,6 @@
 	"Automatically check for updates":"Automatically check for updates",
 	"Account":"Account",
 	"My Account":"My Account",
-
 	"You are protected": "You are protected",
 	"You are safe to surf the internet": "You are safe to surf the internet",
 	"Stop protection": "Stop protection",
@@ -33,7 +32,6 @@
 	"Get protected": "Get protected",
 	"Woohoo! Getting your computer setup now.": "Woohoo! Getting your computer setup now.",
 	"OK! Restoring your settings now.": "OK! Restoring your settings now.",
-
 	"You're up to date.": "You're up to date.",
 	"Whoops, I couldn't find updates... Something seems to have gone wrong.": "Whoops, I couldn't find updates... Something seems to have gone wrong.",
 	"There is an update available": "There is an update available",
@@ -65,8 +63,6 @@
 	"Forcing the service to be enabled in this manner may have consequences.": "Forcing the service to be enabled in this manner may have consequences.",
 	"Your computer's network configuration could break by doing this action.": "Your computer's network configuration could break by doing this action.",
 	"Show me how": "Show me how",
-	"To adjust network settings on your computer, you must run this app as an Administrator.": "To adjust network settings on your computer, you must run this app as an Administrator.",
-
 	"PROTECTED BY LIFEGUARD": "PROTECTED BY LIFEGUARD",
 	"CONFIGURE LIFEGUARD": "CONFIGURE LIFEGUARD",
 	"YOU ARE PROTECTED": "YOU ARE PROTECTED",
@@ -77,7 +73,6 @@
 	"IT APPEARS THAT YOU'VE LOST YOUR INTERNET CONNECTION.": "IT APPEARS THAT YOU'VE LOST YOUR INTERNET CONNECTION.",
 	"CHECKING SERVICE STATE": "CHECKING SERVICE STATE",
 	"YOU ARE SAFE TO SURF THE INTERNET": "YOU ARE SAFE TO SURF THE INTERNET",
-
 	"You are now safe to surf the internet. Safe Surfer has been setup.": "You are now safe to surf the internet. Safe Surfer has been setup.",
 	"Safe Surfer has been disabled. You are now unprotected.": "Safe Surfer has been disabled. You are now unprotected.",
 	"Ok": "Ok",

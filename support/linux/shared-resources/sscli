@@ -91,7 +91,7 @@ then
 	success=true
 fi
 
-if which systemd-resolve > /dev/null
+if which systemd-resolve 2> /dev/null
 then
 	systemd-resolve --flush-caches && echo "* Flushed systemd-resolve DNS cache"
 	success=true
@@ -153,11 +153,11 @@ EOF
 
 if [ ! -z "$(which curl)" ]
 then
-	fetchCmd="curl -s check.safesurfer.co.nz"
+	fetchCmd="curl -s safesurfer.co.nz/check.php"
 
 elif [ ! -z "$(which wget)" ]
 then
-	fetchCmd="wget -qO- check.safesurfer.co.nz"
+	fetchCmd="wget -qO- safesurfer.co.nz/check.php"
 
 else
 	echo "ERROR: Cannot find 'curl' or 'wget'."
@@ -175,6 +175,7 @@ case "$arg" in
 			setDNSservers
 		fi
 		;;
+
 	disable|-d|--disable)
 		shift
 		sudoUserCheck
@@ -185,13 +186,16 @@ case "$arg" in
 			restoreDNSservers
 		fi
 		;;
+
 	service|-s|--service)
 		sudoUserCheck
 		enableBackgroundService
 		;;
+
 	check|status|-c|--check|-s|--status)
 		VERBOSE=0 checkServiceState && echo "SERVICE: Enabled." || echo "SERIVCE: Disabled."
 		;;
+
 	launch|-l|--launch)
 		[[ "$(whoami)" = "root" ]] && echo "ERROR: You can't launch the desktop app as root." && exit 1
 		echo "Launching desktop app..."
@@ -202,13 +206,16 @@ case "$arg" in
 			exec "${APPRUN}"
 		fi
 		;;
+
 	flush|-f|--flush)
 		sudoUserCheck
 		flushAndRestart
 		;;
+
 	-v|--version)
 		echo -e "\\nVersion: $appVersion\\nBuild: $appBuild"
 		;;
+
 	*)
 		printHelpMenu
 		;;
