@@ -1,20 +1,39 @@
 #!/bin/bash
 
-_sscli()
-{
-	local cur prev
-	_init_completion -s || return
-	case $prev in
-	-e|--enable|-d|--disable)
-		COMPREPLY=( $( compgen -W "-f force" -- ${cur} ) )
-		return
-	;;
-	esac
+# SafeSurfer-Desktop - sscli.completion
 
-	if [[ $cword -eq 1 ]]
-	then
-		COMPREPLY=( $(compgen -W "enable -e --enable disable -d --disable launch -l --launch check -c --check status -s --status service -s --service flush -f --flush help -h --help" -- ${cur}) )
-		return 0
+#
+# Copyright (C) 2018 Caleb Woodbine <info@safesurfer.co.nz>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+#
+
+function _sscli() {
+# completion for sscli
+local cur prev
+_init_completion -s || return
+case $prev in
+-e|--enable|-d|--disable)
+	COMPREPLY=( $( compgen -W "-f force" -- ${cur} ) )
+	return
+;;
+esac
+
+if [[ $cword -eq 1 ]]
+then
+	COMPREPLY=( $(compgen -W "enable -e --enable disable -d --disable launch -l --launch check -c --check status -s --status service -s --service flush -f --flush help -h --help" -- ${cur}) )
+	return 0
 	fi
 }
 
