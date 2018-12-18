@@ -932,7 +932,7 @@ const appFrame = {
     appFrame.checkServiceState();
 
     if (appStates.internetCheckCounter === 3) {
-      appFrame.internetConnectionCheck();
+      if (appStates.toggleLock != true) appFrame.internetConnectionCheck();
       appStates.internetCheckCounter = 0;
     }
     else appStates.internetCheckCounter += 1;
