@@ -410,7 +410,7 @@ const appFrame = {
   checkServiceState: function() {
     // check the state of the service
     logging('[checkServiceState]: Getting state of service');
-    Request.get('http://safesurfer.co.nz/check.php', (error, response, body) => {
+    Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
       // since the request has succeeded, we can count the app as loaded
       window.appStates.appHasLoaded = true;
       if ((error < 200 || error >= 300) && error != null) {

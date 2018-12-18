@@ -153,11 +153,11 @@ EOF
 
 if [ ! -z "$(which curl)" ]
 then
-	fetchCmd="curl -s safesurfer.co.nz/check.php"
+	fetchCmd="curl -s check.safesurfer.co.nz"
 
 elif [ ! -z "$(which wget)" ]
 then
-	fetchCmd="wget -qO- safesurfer.co.nz/check.php"
+	fetchCmd="wget -qO- check.safesurfer.co.nz"
 
 else
 	echo "ERROR: Cannot find 'curl' or 'wget'."
