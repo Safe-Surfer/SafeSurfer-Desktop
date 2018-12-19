@@ -128,6 +128,7 @@ build-appimage:
 	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/512x512/apps
 	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/1024x1024/apps
 	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop nz.co.safesurfer.SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop
+	@cat ./support/linux/AppImage/SafeSurfer-Desktop.desktop.part >> ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop
 	@cp ./assets/media/icons/png/16x16.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/16x16/apps/ss-logo.png
 	@cp ./assets/media/icons/png/24x24.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/24x24/apps/ss-logo.png
 	@cp ./assets/media/icons/png/32x32.png nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/icons/hicolor/32x32/apps/ss-logo.png

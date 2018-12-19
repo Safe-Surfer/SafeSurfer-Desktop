@@ -347,6 +347,8 @@ desktop-file-install --rebuild-mime-info-cache \
 	--dir "$DESTINATION_DIR_DESKTOP" \
 	--mode=755
 
+sed -i -e "s,APPIMAGEFILE,$APPIMAGE,g" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-$(basename $DESKTOP_FILE)"
+
 uninstall_icons
 
 echo "STATUS: Installing icons to user's home directory."
