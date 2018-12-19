@@ -39,8 +39,14 @@ var accountIsAssigned = store.get('accountInformation'),
   teleEnabled = store.get('statisticAllow'),
   LINUXPACKAGEFORMAT = process.env.LINUXPACKAGEFORMAT === undefined ? '' : process.env.LINUXPACKAGEFORMAT;
 
-if (appUpdateAutoCheck === undefined) store.set('appUpdateAutoCheck', true);
-if (provideUpdateInformation === undefined) store.set('provideUpdateInformation', true);
+if (appUpdateAutoCheck === undefined) {
+  store.set('appUpdateAutoCheck', true);
+  appUpdateAutoCheck = store.get('appUpdateAutoCheck');
+}
+if (provideUpdateInformation === undefined) {
+  store.set('provideUpdateInformation', true);
+  provideUpdateInformation = store.get('provideUpdateInformation');
+}
 if (betaCheck === undefined && BUILDMODE != 'dev') {
   store.set('betaCheck', false);
 }
