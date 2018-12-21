@@ -335,7 +335,7 @@ fi
 # we ask the user only if we have found no reason to skip until here
 if [ -z "$APPIMAGE_SILENT_INSTALL" ] && [ ! "$APPIMAGE_UPGRADE" = true ]
 then
-	yesnoPrompt "Install" "Would you like to integrate $APPIMAGE with your system?\\n\\nThis will add it to your applications menu and install icons.\\nIf you don't do this you can still launch the application by double-clicking on the AppImage.\\n\\nPlease note you can remove integration by running '$APPIMAGE --remove-integration'"
+	yesnoPrompt "Install" "Would you like to integrate $APPIMAGE with your system?\\n\\nThis will add it to your applications menu and install icons.\\nIf you don't do this you can still launch the application by double-clicking on the AppImage.\\n\\nPlease note you can remove integration by right clicking on the app icon and choosing the option 'Uninstall', or running '$APPIMAGE --remove-integration'"
 fi
 
 desktop-file-install --rebuild-mime-info-cache \
@@ -346,6 +346,8 @@ desktop-file-install --rebuild-mime-info-cache \
 	--set-icon="ss-logo" --set-key=TryExec --set-value="${APPIMAGE// /\\s}" "$DESKTOP_FILE" \
 	--dir "$DESTINATION_DIR_DESKTOP" \
 	--mode=755
+
+sed -i -e "s,APPIMAGEFILE,$APPIMAGE,g" "$DESTINATION_DIR_DESKTOP/$VENDORPREFIX-$(basename $DESKTOP_FILE)"
 
 uninstall_icons
 

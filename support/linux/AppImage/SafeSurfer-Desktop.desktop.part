@@ -1,0 +1,6 @@
+
+Actions=Uninstall;
+
+[Desktop Action Uninstall]
+Name=Uninstall
+Exec=APPIMAGEFILE -r
