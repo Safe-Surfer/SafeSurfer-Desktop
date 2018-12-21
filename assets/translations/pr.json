@@ -156,5 +156,9 @@
     "Please downgrade to version": "",
     "Try again": "",
     "Tell me about changes when I update": "",
-    "The DNS cache has been flushed.": ""
+    "The DNS cache has been flushed.": "",
+    "Click for information": "",
+    "Click to configure your LifeGuard": "",
+    "Click to disable the service": "",
+    "Click to enable the service": ""
 }

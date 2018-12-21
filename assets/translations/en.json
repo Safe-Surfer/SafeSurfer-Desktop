@@ -157,5 +157,9 @@
 	"Here are the improvements and fixes included in this version:": "Here are the improvements and fixes included in this version:",
 	"Try again": "Try again",
 	"Tell me about changes when I update": "Tell me about changes when I update",
-	"The DNS cache has been flushed.": "The DNS cache has been flushed."
+	"The DNS cache has been flushed.": "The DNS cache has been flushed.",
+	"Click for information": "Click for information",
+	"Click to configure your LifeGuard": "Click to configure your LifeGuard",
+	"Click to disable the service": "Click to disable the service",
+	"Click to enable the service": "Click to enable the service"
 }

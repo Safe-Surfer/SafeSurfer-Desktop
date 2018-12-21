@@ -26,6 +26,7 @@ const packageJSON = window.desktop.global.packageJSON(),
   i18n = window.desktop.global.i18n(),
   logging = window.desktop.global.logging(),
   $ = window.desktop.global.jquery();
+var creatorsInfo = "";
 
 // function to make \n multiline
 $.fn.multiline = function(text) {
@@ -34,8 +35,15 @@ $.fn.multiline = function(text) {
   return this;
 }
 
+packageJSON.creators.map(item => {
+  creatorsInfo += `- ${item.name}`;
+  if (item.id != undefined) creatorsInfo += ` (${item.id})`;
+  if (item.email != undefined) creatorsInfo += ` <${item.email}>`;
+  creatorsInfo += `\n`;
+});
 // update title
 $("#title").text(i18n.__("About this app"));
+$("#logoInfo")[0].title = `${i18n.__("This app was built by:")}\n${creatorsInfo}`;
 
 // update description text
 $('#description').multiline(`${i18n.__("Version")} ${version}; ${i18n.__("Build")}: ${APPBUILD} (${BUILDMODE}).\n&copy; 2018 Safe Surfer, et al.\n\n${i18n.__('This program comes with absolutely no warranty.')}\n${i18n.__('See the GNU General Public License, version 3 or later for details.')}`);

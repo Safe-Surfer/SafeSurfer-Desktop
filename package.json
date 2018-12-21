@@ -30,6 +30,9 @@
     "lintTranslations": "node ./support/lintTranslations.js",
     "genTranslations": "node ./support/genTranslations.js"
   },
+  "creators": [
+  	{"name": "Caleb Woodbine", "id": "gitlab.com/BobyMCbobs"}
+  ],
   "repository": "https://gitlab.com/safesurfer/SafeSurfer-Desktop",
   "keywords": [
     "SafeSurfer",

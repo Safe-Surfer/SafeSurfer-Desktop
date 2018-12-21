@@ -293,6 +293,7 @@ const appFrame = {
         $('.serviceToggle').addClass('serviceToggle_locked');
         $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
         $('.serviceToggle').removeClass('serviceToggle_lifeguard');
+        $("#toggleButtonInfo")[0].title = i18n.__("Click for information");
       }
       // if a lifeguard has been found
       else if (window.appStates.lifeguardFound[0] == true) {
@@ -301,6 +302,7 @@ const appFrame = {
         $('.serviceToggle').addClass('serviceToggle_lifeguard');
         $('.topTextBox_active').addClass('topTextBox_active_lifeguard');
         $('.serviceToggle').removeClass('serviceToggle_locked');
+        $("#toggleButtonInfo")[0].title = i18n.__("Click to configure your LifeGuard");
       }
       else {
         // if lifeguard is not found
@@ -309,6 +311,7 @@ const appFrame = {
         $('.serviceToggle').removeClass('serviceToggle_lifeguard');
         $('.serviceToggle').removeClass('serviceToggle_locked');
         $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
+        $("#toggleButtonInfo")[0].title = i18n.__("Click to disable the service");
       }
       // make sure that button is persistent
       $('.serviceToggle').show();
@@ -319,6 +322,7 @@ const appFrame = {
       $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
       $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
       $('.serviceToggle').addClass('serviceToggle_locked');
+      $("#toggleButtonInfo")[0].title = i18n.__("Click for information");
     }
   },
 
@@ -334,6 +338,7 @@ const appFrame = {
       $('.serviceToggle').show();
       $('.appNoInternetConnectionScreen').hide();
       $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+      $("#toggleButtonInfo")[0].title = i18n.__("Click to enable the service");
     }
   },
 
@@ -1192,6 +1197,8 @@ if (store.get('lastVersionInstalled') === undefined) store.set('lastVersionInsta
 
 // connect button in html to a function
 $('#toggleButton').bind('click', appFrame.toggleServiceState);
+
+$("#toggleButtonInfo")[0].title = i18n.__("The state of the service is being determined. Please wait.");
 
 appFrame.internetConnectionCheck();
 // initalise the rest of the app
