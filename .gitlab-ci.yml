@@ -49,14 +49,14 @@ build:
     - make BUILDMODE="" configure
     - make build-windows
     - npm run compile-win-setup
-    - mv release-builds/SafeSurfer-Desktop-Installer.exe builtBinaries/SafeSurfer-Desktop-x64.exe
+    - mv release-builds/SafeSurfer-Desktop-x64.exe builtBinaries/.
     # clean build
     - make clean
     # build windows (32-bit)
     - make BUILDMODE="" configure
     - make build-windows32
     - npm run compile-win-setup32
-    - mv release-builds/SafeSurfer-Desktop-Installer.exe builtBinaries/SafeSurfer-Desktop-ia32.exe
+    - mv release-builds/SafeSurfer-Desktop-ia32.exe builtBinaries/.
     # hash all binaries
     - cd builtBinaries && sha256sum * > sha256ums.txt && cd ..
   artifacts:

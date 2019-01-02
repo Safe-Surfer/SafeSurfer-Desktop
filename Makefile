@@ -7,6 +7,7 @@ all: help
 configure:
 	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./package.json; fi
 	@if [[ "$(UPDATES)" = false ]]; then sed -i -e 's/"enableUpdates": true/"enableUpdates": false/g' ./package.json; fi
+
 check-deps:
 	@if [ ! -d node_modules ]; then echo "Whoops, you're missing node dependencies. Run 'npm i'."; exit 1; fi;
 
@@ -162,9 +163,11 @@ build-snap: build-linuxzip
 	cd release-builds/snap && snapcraft cleanbuild
 
 compile-win-setup:
+	node support/windows/genwinpath.js
 	npm run compile-win-setup
 
 compile-win-setup32:
+	node support/windows/genwinpath.js
 	npm run compile-win-setup32
 
 sign-macos:
