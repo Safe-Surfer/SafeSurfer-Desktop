@@ -22,16 +22,42 @@ build:
     # make built directory
     - mkdir builtBinaries
     # install deps for build enviroment
-    - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream dpkg devscripts vim nano unzip zip fakeroot bash-completion curl python3-pip libfuse2-32bit binutils
+    - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream wine dpkg devscripts vim nano unzip zip fakeroot bash-completion mono-devel curl libfuse2-32bit binutils
     - zypper in -y -t pattern devel_basis
     # prep dependencies
     - npm i
     # build AppImage
+    - make BUILDMODE="" configure
     - make prep-appimage build-appimage || true
     - cd tools
     - ./appimagetool-x86_64.AppImage --appimage-extract || true
     - ./squashfs-root/AppRun -n -s ../nz.co.safesurfer.SafeSurfer-Desktop.AppDir
     - mv Safe_Surfer-x86_64.AppImage ../builtBinaries/.
+    # clean build
+    - make clean
+    # build macOS & zip it
+    - make BUILDMODE="" configure
+    - make build-macos
+    - cd release-builds/SafeSurfer-Desktop-darwin-x64
+    - zip -q -r SafeSurfer-Desktop-x64.app.zip SafeSurfer-Desktop.app
+    - cd ../..
+    - mv release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop-x64.app.zip builtBinaries/.
+    # clean build
+    - make clean
+    # build windows (64-bit)
+    - make BUILDMODE="" configure
+    - make build-windows
+    - npm run compile-win-setup
+    - mv release-builds/SafeSurfer-Desktop-Installer.exe builtBinaries/SafeSurfer-Desktop-x64.exe
+    # clean build
+    - make clean
+    # build windows (32-bit)
+    - make BUILDMODE="" configure
+    - make build-windows32
+    - npm run compile-win-setup32
+    - mv release-builds/SafeSurfer-Desktop-Installer.exe builtBinaries/SafeSurfer-Desktop-ia32.exe
+    # hash all binaries
+    - cd builtBinaries && sha256sum * > sha256ums.txt && cd ..
   artifacts:
     expire_in: 5 days
     paths:
