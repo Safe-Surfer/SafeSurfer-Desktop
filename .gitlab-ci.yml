@@ -23,7 +23,11 @@ build:
   stage: build
   script:
     - npm i
-    - make prep-appimage build-appimage
+    - make prep-appimage build-appimage || true
+    - cd tools
+    - ./appimagetool-x86_64.AppImage --appimage-extract || true
+    - ./squashfs-root/AppRun -n -s ../nz.co.safesurfer.SafeSurfer-Desktop.AppDir
+    - mv Safe_Surfer-x86_64.AppImage ..
   artifacts:
     expire_in: 5 days
     paths:
