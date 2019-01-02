@@ -22,7 +22,7 @@ build:
   stage: build
   script:
     - npm i
-    - make build-appimage
+    - make prep-appimage build-appimage
   artifacts:
     expire_in: 5 days
     paths:
