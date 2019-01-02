@@ -1,6 +1,7 @@
 image: opensuse/leap
 before_script:
-  - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream dpkg devscripts vim nano unzip zip fakeroot bash-completion curl python3-pip libfuse2-32bit
+  - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream dpkg devscripts vim nano unzip zip fakeroot bash-completion curl python3-pip libfuse2-32bit binutils
+  - zypper in -y -t pattern devel_basis
 
 stages:
   - build
