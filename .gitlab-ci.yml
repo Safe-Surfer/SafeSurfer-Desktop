@@ -15,6 +15,8 @@ pages:
   artifacts:
     paths:
       - public/*
+  only:
+    - tags
 
 build:
   stage: build
@@ -27,8 +29,8 @@ build:
     # prep dependencies
     - npm i
     # build AppImage
-    - make BUILDMODE="" configure
-    - make prep-appimage build-appimage || true
+    - make  BUILDMODE="RELEASE"  configure
+    - make prep-appimage BUILDMODE="RELEASE" build-appimage || true
     - cd tools
     - ./appimagetool-x86_64.AppImage --appimage-extract || true
     - ./squashfs-root/AppRun -n -s ../nz.co.safesurfer.SafeSurfer-Desktop.AppDir
@@ -37,7 +39,7 @@ build:
     # clean build
     - make clean
     # build macOS & zip it
-    - make BUILDMODE="" configure
+    - make  BUILDMODE="RELEASE"  configure
     - make build-macos
     - cd release-builds/SafeSurfer-Desktop-darwin-x64
     - zip -q -r SafeSurfer-Desktop-x64.app.zip SafeSurfer-Desktop.app
@@ -46,14 +48,14 @@ build:
     # clean build
     - make clean
     # build windows (64-bit)
-    - make BUILDMODE="" configure
+    - make  BUILDMODE="RELEASE"  configure
     - make build-windows
     - make compile-win-setup
     - mv release-builds/SafeSurfer-Desktop-x64.exe builtBinaries/.
     # clean build
     - make clean
     # build windows (32-bit)
-    - make BUILDMODE="" configure
+    - make  BUILDMODE="RELEASE"  configure
     - make build-windows32
     - make compile-win-setup32
     - mv release-builds/SafeSurfer-Desktop-ia32.exe builtBinaries/.
@@ -63,3 +65,5 @@ build:
     expire_in: 5 days
     paths:
       - builtBinaries/*
+  only:
+    - tags
