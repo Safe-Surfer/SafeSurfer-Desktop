@@ -1,7 +1,4 @@
 image: opensuse/leap
-before_script:
-  - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream dpkg devscripts vim nano unzip zip fakeroot bash-completion curl python3-pip libfuse2-32bit binutils
-  - zypper in -y -t pattern devel_basis
 
 stages:
   - build
@@ -11,7 +8,7 @@ pages:
   stage: deploy
   script:
     - mkdir .public
-    - cp -r Safe_Surfer-x86_64.AppImage .public
+    - cp -r ../builtBinaries/* .public
     - mv .public public
   dependencies:
     - build
@@ -22,13 +19,20 @@ pages:
 build:
   stage: build
   script:
+    # make built directory
+    - mkdir ../builtBinaries
+    # install deps for build enviroment
+    - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream dpkg devscripts vim nano unzip zip fakeroot bash-completion curl python3-pip libfuse2-32bit binutils
+    - zypper in -y -t pattern devel_basis
+    # prep dependencies
     - npm i
+    # build AppImage
     - make prep-appimage build-appimage || true
     - cd tools
     - ./appimagetool-x86_64.AppImage --appimage-extract || true
     - ./squashfs-root/AppRun -n -s ../nz.co.safesurfer.SafeSurfer-Desktop.AppDir
-    - mv Safe_Surfer-x86_64.AppImage ..
+    - mv Safe_Surfer-x86_64.AppImage ../../builtBinaries/.
   artifacts:
     expire_in: 5 days
     paths:
-      - Safe_Surfer-x86_64.AppImage
+      - ../builtBinaries/*
