@@ -20,12 +20,12 @@
 //
 
 // include libraries
-const {dialog} = global.desktop.logic.dialogBox(),
+const {dialog} = desktop.logic.dialogBox(),
   electron = require('electron'),
   ipcRenderer = electron.ipcRenderer,
   dns = require('dns'),
   app = electron.app ? electron.app : electron.remote.app,
-  packageJSON = window.desktop.global.packageJSON(),
+  packageJSON = desktop.global.packageJSON(),
   APPBUILD = parseInt(packageJSON.APPBUILD),
   APPVERSION = packageJSON.version,
   BUILDMODE = packageJSON.appOptions.BUILDMODE,
@@ -34,14 +34,14 @@ const {dialog} = global.desktop.logic.dialogBox(),
   enableNotifications = packageJSON.appOptions.enableNotifications,
   os = require('os'),
   path = require('path'),
-  bonjour = global.desktop.logic.bonjour,
+  bonjour = desktop.logic.bonjour,
   Request = require('request'),
   moment = require('moment'),
   $ = require('jquery'),
-  store = global.desktop.global.store(),
-  i18n = global.desktop.global.i18n(),
-  logging = global.desktop.global.logging(),
-  LINUXPACKAGEFORMAT = global.desktop.global.linuxpackageformat === undefined ? undefined : global.desktop.global.linuxpackageformat;
+  store = desktop.global.store(),
+  i18n = desktop.global.i18n(),
+  logging = desktop.global.logging(),
+  LINUXPACKAGEFORMAT = desktop.global.linuxpackageformat === undefined ? undefined : desktop.global.linuxpackageformat;
 
 // an object to keep track of multiple things
 window.appStates = {
@@ -63,8 +63,8 @@ window.appStates = {
   binFolder: process.env.SSCLILOCATION === undefined ? `${path.resolve(path.dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION
 }
 
-logging(`INFO: platform  - ${os.platform()}`);
-logging(`INFO: cwd       - ${process.cwd()}`);
+logging(`[INFO]: platform  - ${os.platform()}`);
+logging(`[INFO]: cwd       - ${process.cwd()}`);
 
 window.actions = Object.freeze({
   buttons: {
@@ -117,22 +117,24 @@ window.actions = Object.freeze({
         appStates: appStates,
         appVersion: APPVERSION,
         buildMode: BUILDMODE,
+        isBeta: isBeta,
         date: moment().format('X'),
         electronVersion: process.versions.electron,
-        node_dns_changerVersion: window.desktop.logic.node_dns_changer.version(),
+        node_dns_changerVersion: desktop.logic.node_dns_changer.version,
         os: os.platform(),
         processEnv: process.env,
         userLocale: app.getLocale(),
-        storedInformation: store.store
+        storedInformation: store.store,
+        packageJSON: packageJSON
       }
       if (os.platform() === 'linux') {
         info.linuxPackageFormat = LINUXPACKAGEFORMAT;
       }
       // encode with base64, so it make it easier to send (as it's just a huge block of data)
-      return global.desktop.logic.base64Encode().encode(JSON.stringify(info),'base64');
+      return desktop.logic.base64Encode().encode(JSON.stringify(info),'base64');
     },
     decode: function(info) {
-      return JSON.parse(global.desktop.logic.base64Encode().decode(info,'base64'));
+      return JSON.parse(desktop.logic.base64Encode().decode(info,'base64'));
     }
   },
 
@@ -151,7 +153,8 @@ window.actions = Object.freeze({
 
     - ${i18n.__("Safe Surfer desktop version:")} ${APPVERSION}
     - ${i18n.__("Safe Surfer desktop build:")} ${APPBUILD}
-    - ${i18n.__("node_dns_changer version:")} ${window.desktop.logic.node_dns_changer.version()}
+    - ${i18n.__("node_dns_changer version:")} ${desktop.logic.node_dns_changer.version}
+    - ${i18n.__("App build is beta:")} ${isBeta === true ? i18n.__('Yes') : i18n.__('No')}
     ---------------------------------------------
     - ${i18n.__("Operating system:")} ${os.platform()}
     - ${i18n.__("Locale:")} ${app.getLocale()}
@@ -246,7 +249,7 @@ const appFrame = {
       window.appStates.userIsAdmin = true;
       return;
     }
-    global.desktop.logic.isAdmin().then(admin => {
+    desktop.logic.isAdmin().then(admin => {
       window.appStates.userIsAdmin = admin;
       if (admin == false) appFrame.elevateWindows();
     });
@@ -480,7 +483,7 @@ const appFrame = {
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
         setTimeout(function() {
-          global.desktop.logic.node_dns_changer.setDNSservers({
+          desktop.logic.node_dns_changer.setDNSservers({
             DNSservers: ['104.197.28.121','104.155.237.225'],
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
@@ -522,7 +525,7 @@ const appFrame = {
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
         setTimeout(function() {
-          global.desktop.logic.node_dns_changer.restoreDNSservers({
+          desktop.logic.node_dns_changer.restoreDNSservers({
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
             rmBackup: os.platform() === 'darwin' ? false : true,
@@ -569,7 +572,7 @@ const appFrame = {
   internetConnectionCheck: async function() {
     // check the user's internet connection
     return new Promise((resolve, reject) => {
-      global.desktop.logic.connectivity()((online) => {
+      desktop.logic.connectivity()((online) => {
         logging(`[internetConnectionCheck]: ${online}`);
         window.appStates.appHasLoaded = true;
         window.appStates.internet[0] = online;
@@ -636,11 +639,11 @@ const appFrame = {
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants update.");
-            if (versionRecommended.altLink === undefined) global.desktop.logic.electronOpenExternal(genLink);
-            else global.desktop.logic.electronOpenExternal(versionRecommended.altLink);
+            if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink);
+            else desktop.logic.electronOpenExternal(versionRecommended.altLink);
           }
           else if (updateResponse == 2) {
-            global.desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${versionRecommended.version}`);
+            desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${versionRecommended.version}`);
           }
           else return;
         });
@@ -658,8 +661,8 @@ const appFrame = {
         dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version')} ${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants to downgrade.");
-            if (versionRecommended.altLink === undefined) global.desktop.logic.electronOpenExternal(genLink);
-            else global.desktop.logic.electronOpenExternal(versionRecommended.altLink);
+            if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink);
+            else desktop.logic.electronOpenExternal(versionRecommended.altLink);
           }
           else return;
         });
@@ -670,7 +673,7 @@ const appFrame = {
         if (options.showErrors == true) {
           dialog.showMessageBox(updateErrorDialog, updateResponse => {
             logging("[checkForAppUpdate]: Error.");
-            if (updateResponse == 0) global.desktop.logic.electronOpenExternal(serverAddress);
+            if (updateResponse == 0) desktop.logic.electronOpenExternal(serverAddress);
             return;
           });
         }
@@ -711,7 +714,7 @@ const appFrame = {
 
   sendStatistics: function(source) {
     // send information to server
-    var dataToSend = global.desktop.logic.base64Encode().encode(source,'base64');
+    var dataToSend = desktop.logic.base64Encode().encode(source,'base64');
     // make a post request to the database
     Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
       store.set('statisticAllow', true);
@@ -772,8 +775,8 @@ const appFrame = {
   versionInformationCopy: function() {
     // copy app build information to clipboard
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')}, dialogResponse => {
-      if (dialogResponse != 0) global.desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${window.desktop.logic.node_dns_changer.version()}\nelectron version: ${process.versions.electron}`);
-      if (dialogResponse == 2) global.desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
+      if (dialogResponse != 0) desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${desktop.logic.node_dns_changer.version}\nelectron version: ${process.versions.electron}`);
+      if (dialogResponse == 2) desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
     });
   },
 
@@ -839,7 +842,7 @@ const appFrame = {
   lockAlertMessage: function() {
     // tell the user to go to support for help on unlocking it
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Get support')], message: `${i18n.__("Locked deactivate buttons")}\n${i18n.__("The toggle buttons are locked, unlocking them will require help from support to unlock the buttons.")}`}, response => {
-      if (response == 1) global.desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/contact');
+      if (response == 1) desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/contact');
     });
   },
 
@@ -869,7 +872,7 @@ const appFrame = {
     // give the user a message about donating
     return new Promise((resolve, reject) => {
       dialog.showMessageBox({type: 'info', buttons: [i18n.__('No'), i18n.__('Donate')], message: `${i18n.__('Thank you for using the Safe Surfer desktop app.')}\n${i18n.__('Would you like to support the project and help fund future projects?')}`}, response => {
-        if (response == 1) global.desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/');
+        if (response == 1) desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/');
         resolve(true);
       });
     });
@@ -1022,7 +1025,7 @@ const appFrame = {
 
   openWindowsUACHelpPage: function() {
     // launch a page about how to launch the app as an Administrator (for Windows users)
-    global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/customer/en/portal/articles/2957007-run-app-as-administrator');
+    desktop.logic.electronOpenExternal('https://safesurfer.desk.com/customer/en/portal/articles/2957007-run-app-as-administrator');
   },
 
   permissionLoop: function() {
@@ -1066,7 +1069,7 @@ const appFrame = {
     window.appStates.windowsVersionCompatible = false;
     logging("[windowsVersionCheck]: User is not on a compatible version of Windows");
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("The version of Windows that you seem to be running appears to be not compatible with this app.")}, msgResponse => {
-      if (msgResponse == 1) global.desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
+      if (msgResponse == 1) desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
     });
   }
 };
@@ -1121,7 +1124,7 @@ ipcRenderer.on('showStatHistory', (opt) => {
 ipcRenderer.on('generateDiagnostics', () => {
   // copy diagnostics information to clipboard
   dialog.showMessageBox({type: 'info', buttons: [i18n.__("Yes"), i18n.__("No")], message: `${i18n.__("Diagnostics")}\n\n${i18n.__("Are you sure you want to copy diagnostics data to your clipboard?")}\n\n${i18n.__("Only ever send the data given to Safe Surfer if necessary. The information sent may contain some data detailing about your computer.")}`}, response => {
-    if (response === 0) global.desktop.logic.electronClipboardWriteText(actions.diagnostics.generate());
+    if (response === 0) desktop.logic.electronClipboardWriteText(actions.diagnostics.generate());
   });
 });
 
@@ -1136,7 +1139,7 @@ ipcRenderer.on('goFlushDNScache', () => {
 
 ipcRenderer.on('goOpenMyDeviceLifeGuard', () => {
   if (appStates.lifeguardFound[0] === true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-  else dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}`});
+  else dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}\n\n${i18n.__("If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall.")}`});
 });
 
 ipcRenderer.on('goLockDeactivateButtons', () => {

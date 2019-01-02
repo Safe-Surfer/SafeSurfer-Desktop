@@ -45,13 +45,13 @@ The Safe Surfer command line utility
 Usage: sscli [OPT]
 
 OPTS:
-disable  disable the DNS
-enable   enable the DNS
-flush	 flush the DNS cache
-launch   launch the desktop app
-service  check and enable as service
-status	 get the status of the service
-help     print this menu
+	disable  disable the DNS
+	enable   enable the DNS
+	flush	 flush the DNS cache
+	launch   launch the desktop app
+	service  check and enable as service
+	status	 get the status of the service
+	help     print this menu
 EOF
 }
 
@@ -87,7 +87,7 @@ local success
 success=false
 if systemctl is-active --quiet nscd
 then
-	systemctl is-active --quiet nscd && service nscd reload && service nscd restart && echo "* Flushed nscd DNS cache and restarted"
+	service nscd reload && service nscd restart && echo "* Flushed nscd DNS cache and restarted"
 	success=true
 fi
 
@@ -151,11 +151,11 @@ cat << EOF
 
 EOF
 
-if [ ! -z "$(which curl)" ]
+if [ ! -z "$(which curl 2> /dev/null)" ]
 then
 	fetchCmd="curl -s check.safesurfer.co.nz"
 
-elif [ ! -z "$(which wget)" ]
+elif [ ! -z "$(which wget 2> /dev/null)" ]
 then
 	fetchCmd="wget -qO- check.safesurfer.co.nz"
 

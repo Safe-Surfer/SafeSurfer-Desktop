@@ -1,0 +1,29 @@
+image: opensuse/leap
+before_script:
+  - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream dpkg devscripts vim nano unzip zip fakeroot bash-completion curl python3-pip libfuse2-32bit
+
+stages:
+  - build
+  - deploy
+
+pages:
+  stage: deploy
+  script:
+    - mkdir .public
+    - cp -r Safe_Surfer-x86_64.AppImage .public
+    - mv .public public
+  dependencies:
+    - build
+  artifacts:
+    paths:
+      - public/*
+
+build:
+  stage: build
+  script:
+    - npm i
+    - npm run build-appimage
+  artifacts:
+    expire_in: 5 days
+    paths:
+      - Safe_Surfer-x86_64.AppImage

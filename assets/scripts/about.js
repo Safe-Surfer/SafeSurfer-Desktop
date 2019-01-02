@@ -35,18 +35,20 @@ $.fn.multiline = function(text) {
   return this;
 }
 
+// generate a neat list of creators
 packageJSON.creators.map(item => {
   creatorsInfo += `- ${item.name}`;
-  if (item.id != undefined) creatorsInfo += ` (${item.id})`;
+  if (item.reference != undefined) creatorsInfo += ` (${item.reference})`;
   if (item.email != undefined) creatorsInfo += ` <${item.email}>`;
   creatorsInfo += `\n`;
 });
+
 // update title
 $("#title").text(i18n.__("About this app"));
 $("#logoInfo")[0].title = `${i18n.__("This app was built by:")}\n${creatorsInfo}`;
 
 // update description text
-$('#description').multiline(`${i18n.__("Version")} ${version}; ${i18n.__("Build")}: ${APPBUILD} (${BUILDMODE}).\n&copy; 2018 Safe Surfer, et al.\n\n${i18n.__('This program comes with absolutely no warranty.')}\n${i18n.__('See the GNU General Public License, version 3 or later for details.')}`);
+$('#description').multiline(`${i18n.__("Version")}: ${version}; ${i18n.__("Build")}: ${APPBUILD} (${BUILDMODE}).\n&copy; 2018-2019 Safe Surfer, et al.\n\n${i18n.__('This program comes with absolutely no warranty.')}\n${i18n.__('See the GNU General Public License, version 3 or later for details.')}`);
 
 function shrinkLogo() {
   $("#ss-logo").css("height", "180px");
