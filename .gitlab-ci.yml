@@ -46,6 +46,7 @@ build:
     # clean build
     - make clean
     # build windows (64-bit)
+    - winepath -w $(pwd)
     - make BUILDMODE="" configure
     - make build-windows
     - npm run compile-win-setup
