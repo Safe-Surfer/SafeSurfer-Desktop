@@ -1,7 +1,6 @@
 image: opensuse/leap
 
 stages:
-  - tests
   - build
   - deploy
 
@@ -18,20 +17,6 @@ pages:
       - public/*
   only:
     - tags
-
-tests:
-  stage: tests
-  script:
-    # make built directory
-    - mkdir builtBinaries
-    # install required packages
-    - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream appstream-glib unzip zip fakeroot bash-completion curl libfuse2-32bit binutils
-    # prep dependencies
-    - npm i
-    # verify appstream data
-    - appstream-util validate-relax support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml
-    # run electron tests on app
-    - npm test
 
 build:
   stage: build
