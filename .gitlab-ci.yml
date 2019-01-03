@@ -17,6 +17,7 @@ pages:
       - public/*
   only:
     - tags
+    - master
 
 build:
   stage: build
@@ -61,11 +62,10 @@ build:
     - mv release-builds/SafeSurfer-Desktop-ia32.exe builtBinaries/.
     # hash all binaries
     - cd builtBinaries && sha256sum * > sha256ums.txt && cd ..
-  dependencies:
-    - tests
   artifacts:
     expire_in: 5 days
     paths:
       - builtBinaries/*
   only:
-    - tag
+    - tags
+    - master

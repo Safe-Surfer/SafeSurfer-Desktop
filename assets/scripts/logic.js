@@ -1139,7 +1139,9 @@ ipcRenderer.on('goFlushDNScache', () => {
 
 ipcRenderer.on('goOpenMyDeviceLifeGuard', () => {
   if (appStates.lifeguardFound[0] === true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-  else dialog.showMessageBox({type: 'info', buttons: [, i18n.__('Ok')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}\n\n${i18n.__("If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall.")}`});
+  else dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Try from web browser')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}\n\n${i18n.__("If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall to use this feature in the app.")}`}, response => {
+    desktop.logic.electronOpenExternal('http://mydevice.safesurfer.co.nz');
+  });
 });
 
 ipcRenderer.on('goLockDeactivateButtons', () => {

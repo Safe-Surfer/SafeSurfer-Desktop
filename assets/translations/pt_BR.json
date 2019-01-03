@@ -161,6 +161,7 @@
     "Click to configure your LifeGuard": "",
     "Click to disable the service": "",
     "Click to enable the service": "",
-    "If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall.": "",
-    "App build is beta:": ""
+    "App build is beta:": "",
+    "If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall to use this feature in the app.": "",
+    "Try from web browser": ""
 }
