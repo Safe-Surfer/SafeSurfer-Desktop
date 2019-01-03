@@ -21,7 +21,7 @@ pages:
 
 tests:
   stage: tests
-  scripts:
+  script:
     # make built directory
     - mkdir builtBinaries
     # install required packages
