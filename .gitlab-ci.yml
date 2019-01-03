@@ -29,7 +29,7 @@ tests:
     # prep dependencies
     - npm i
     # verify appstream data
-    - appstream-util validate support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml
+    - appstream-util validate-relax support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml
     # run electron tests on app
     - npm test
 
