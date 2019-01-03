@@ -25,7 +25,7 @@ tests:
     # make built directory
     - mkdir builtBinaries
     # install required packages
-    - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream unzip zip fakeroot bash-completion curl libfuse2-32bit binutils
+    - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream appstream-glib unzip zip fakeroot bash-completion curl libfuse2-32bit binutils
     # prep dependencies
     - npm i
     # verify appstream data
