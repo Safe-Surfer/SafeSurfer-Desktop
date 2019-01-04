@@ -15,7 +15,7 @@ tests:
     # prep dependencies
     - npm i
     # verify appstream data
-    - appstream-util validate support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml
+    - appstream-util validate-relax support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml
     # setup env
     - export DISPLAY=:1
     # run electron tests on app
