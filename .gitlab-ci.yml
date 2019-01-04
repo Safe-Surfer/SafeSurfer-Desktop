@@ -1,8 +1,25 @@
 image: opensuse/leap
 
 stages:
+  - tests
   - build
   - deploy
+
+tests:
+  stage: tests
+  script:
+    # make built directory
+    - mkdir builtBinaries
+    # install required packages
+    - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream unzip zip fakeroot bash-completion curl libfuse2-32bit binutils
+    # prep dependencies
+    - npm i
+    # verify appstream data
+    - appstream-util validate support/linux/shared-resources/SafeSurfer-Desktop.appdata.xml
+    # setup env
+    - export DISPLAY=:1
+    # run electron tests on app
+    - npm test
 
 pages:
   stage: deploy
@@ -63,6 +80,8 @@ build:
     - mv release-builds/SafeSurfer-Desktop-ia32.exe builtBinaries/.
     # hash all binaries
     - cd builtBinaries && sha256sum * > sha256ums.txt && cd ..
+  dependencies:
+    - tests
   artifacts:
     expire_in: 5 days
     paths:
