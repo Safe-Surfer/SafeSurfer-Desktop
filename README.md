@@ -48,7 +48,7 @@ Check out our [bug reporting guide](docs/BUGS.md).
 
 ## Contributing
 Read our [contribution guide](docs/CONTRIBUTING.md) to get started!  
-We'd love your help on this project, together helping families and individuals stay safe on the internet!  
+We'd love your help improving this project, together helping families and individuals stay safe on the internet!  
 
 ## Roadmap
 If you'd like to see our plans for future versions of this app. Check out our [roadmap](docs/ROADMAP.md)  

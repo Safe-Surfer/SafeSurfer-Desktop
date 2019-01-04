@@ -269,7 +269,7 @@ const appFrame = {
         break;
 
       case 'darwin':
-        appFrame.exec("osascript -e 'do shell script \"killall -HUP mDNSResponder; killall mDNSResponderHelper; dscacheutil -flushcache\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'").then(response => {
+        appFrame.exec(`osascript -e 'do shell script "killall -HUP mDNSResponder; killall mDNSResponderHelper; dscacheutil -flushcache" with prompt "${i18n.__("Flush DNS cache to refresh network settings")}\\n" with administrator privileges'`).then(response => {
           if (response === true) flushedMessage();
         });
         break;
@@ -442,7 +442,7 @@ const appFrame = {
         logging('[checkServiceState]: Get Request - Service enabled');
       }
       // if neither are returned
-      else if (metaResponse.ss_status !== 'protected' && metaResponse.ss_status !== 'unprotected' ) {
+      else if (metaResponse.ss_status !== 'protected' && metaResponse.ss_status !== 'unprotected') {
         logging("[checkServiceState]: Get Request - Can't see protection state from meta tag");
         // check internet connection
         if (window.appStates.internet[0] == true) {
@@ -475,8 +475,7 @@ const appFrame = {
     switch (os.platform()) {
       case 'linux':
         appFrame.exec(`${appStates.binFolder}sscli enable ${forced === true ? "force": ""}`).then(response => {
-          if (response === true && forced === true && alerts === true) appFrame.toggleSuccess();
-          else if (response === false) appFrame.resetToggling();
+          if (response === false) appFrame.resetToggling();
         });
         break;
 
@@ -517,8 +516,7 @@ const appFrame = {
       case 'linux':
         // if sscli is able to be copied to /tmp, run it
         appFrame.exec(`${appStates.binFolder}sscli disable ${forced === true ? "force": ""}`).then(response => {
-            if (response === true && forced === true && alerts === true) appFrame.toggleSuccess();
-            else if (response === false) appFrame.resetToggling();
+            if (response === false) appFrame.resetToggling();
           });
         break;
 
@@ -636,7 +634,7 @@ const appFrame = {
 
       if (buildRecommended > parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // update available
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}${versionRecommended.isBeta === true ? " [beta]" : ""}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants update.");
             if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink);
@@ -658,7 +656,7 @@ const appFrame = {
 
       else if (buildRecommended < parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // user must downgrade
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version')} ${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
+        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version')} ${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}${versionRecommended.isBeta === true ? " [beta]" : ""}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
           if (updateResponse == 0) {
             logging("[checkForAppUpdate]: User wants to downgrade.");
             if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink);
@@ -858,7 +856,7 @@ const appFrame = {
             appFrame.exec(`/sbin/reboot`);
             break;
           case 'darwin':
-            appFrame.exec("osascript -e 'do shell script \"reboot\" with prompt \"Reboot to apply settings\\n\" with administrator privileges'");
+            appFrame.exec(`osascript -e 'do shell script "reboot" with prompt "${i18n.__("Reboot to apply settings")}\\n" with administrator privileges'`);
             break;
           default:
             dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")});
@@ -923,8 +921,9 @@ const appFrame = {
   },
 
   toggleSuccess: function() {
+    // when the service is enabled, display 3 messages
     appFrame.resetToggling();
-    if (window.appStates.serviceEnabled[0] == true) {
+    if (window.appStates.serviceEnabled[0] === true) {
       appFrame.lockEnableMessage().then(response => {
         if (response) return appFrame.donationMessage();
       }).then(response => {
@@ -945,24 +944,24 @@ const appFrame = {
     }
     else appStates.internetCheckCounter += 1;
 
-    if (window.appStates.internet[0] == true) {
+    if (window.appStates.serviceEnabled[0] === undefined && window.appStates.lifeguardFound[0] === true) {
+      window.appStates.serviceEnabled[0] = true;
+    }
+
+    if (window.appStates.internet[0] === true) {
       appFrame.hideNoInternetConnection();
-      if (window.appStates.serviceEnabled[0] === undefined && window.appStates.lifeguardFound[0] === true) {
-        window.appStates.serviceEnabled[0] = true;
-      }
-      if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined) {
-        if (window.appStates.toggleLock == true) {
-          // if the state changes of the service being enabled changes
-          logging('[mainReloadProcess]: State has changed.');
-          appFrame.sendAppStateNotifications();
-          window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0];
-          appFrame.toggleSuccess();
-        }
-      }
     }
     else {
       appFrame.displayNoInternetConnection();
       appStates.lifeguardOnNetworkLock = false;
+    }
+
+    if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined && window.appStates.toggleLock == true) {
+      // if the state changes of the service being enabled changes
+      logging('[mainReloadProcess]: State has changed.');
+      appFrame.sendAppStateNotifications();
+      window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0];
+      appFrame.toggleSuccess();
     }
 
     if (appStates.serviceEnabled[0] === false) appStates.lifeguardOnNetworkLock = false;
@@ -998,7 +997,6 @@ const appFrame = {
     }
     else if ($("#progressBar").css("height") == "20px") window.appStates.progressBarCounter += 1;
 
-    // update the screen to show how the service state (... etc) is
     appFrame.affirmServiceState();
     if (appStates.lifeguardOnNetworkLock !== true) window.appStates.lifeguardFound[0] = false;
     logging("[mainReloadProcess]: end reload");
@@ -1015,11 +1013,13 @@ const appFrame = {
       appFrame.mainReloadProcess();
       // if user hasn't provided a response to statistics
       appFrame.checkForVersionChange();
+      // after 3 seconds, if the user has run the app as Admin (if Windows), provide prompt requesting to send stats
       if (store.get('statHasAnswer') != true && appStates.userIsAdmin == true) {
         setTimeout(() => {
           appFrame.statPrompt();
         }, 3000);
       }
+    // wait one second before exiting the init screen
     }, 1000);
   },
 
@@ -1033,7 +1033,7 @@ const appFrame = {
     setTimeout(() => {
       logging(`[permissionLoop]: loop #${appStates.elevationFailureCount}`);
       if (appStates.userIsAdmin != true) {
-        if (appStates.elevationFailureCount < 33) {
+        if (appStates.elevationFailureCount < 30) {
           $('#privBar').css("height", "40px");
           $('#privBarText').text(i18n.__('Please wait while the app asks for Administrative privileges'));
         }
@@ -1192,10 +1192,14 @@ Yours,
 Safe Surfer team.`);
 
 // REMOVE THIS after a while, as user's will have their stat data migrated in no time
-if (store.get('teleHistory') !== undefined) store.set('statHistory', store.get('teleHistory'));
-if (store.get('statHistory') !== undefined) store.delete('teleHistory');
-if (store.get('lastVersionTosendStatistics') !== undefined) store.set('lastVersionInstalled', store.get('lastVersionTosendStatistics'));
-if (store.get('lastVersionInstalled') !== undefined) store.delete('lastVersionTosendStatistics');
+if (store.get('teleHistory') !== undefined) {
+  store.set('statHistory', store.get('teleHistory'));
+  if (store.get('statHistory') !== undefined) store.delete('teleHistory');
+}
+if (store.get('lastVersionTosendStatistics') !== undefined) {
+  store.set('lastVersionInstalled', store.get('lastVersionTosendStatistics'));
+  if (store.get('lastVersionInstalled') !== undefined) store.delete('lastVersionTosendStatistics');
+}
 
 // if lastVersionInstalled hasn't been stated, save the current settings
 if (store.get('lastVersionInstalled') === undefined) store.set('lastVersionInstalled', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});

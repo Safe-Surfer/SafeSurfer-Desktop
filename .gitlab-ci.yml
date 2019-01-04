@@ -21,16 +21,17 @@ pages:
 
 build:
   stage: build
-  script:
-    # make built directory
-    - mkdir builtBinaries
+  before_script:
     # install deps for build enviroment
     - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream wine unzip zip fakeroot bash-completion mono-devel curl libfuse2-32bit binutils
     - zypper in -y -t pattern devel_basis
+  script:
+    # make built directory
+    - mkdir builtBinaries
     # prep dependencies
     - npm i
     # build AppImage
-    - make  BUILDMODE="RELEASE"  configure
+    - make BUILDMODE="RELEASE" configure
     - make prep-appimage BUILDMODE="RELEASE" build-appimage || true
     - cd tools
     - ./appimagetool-x86_64.AppImage --appimage-extract || true
@@ -40,7 +41,7 @@ build:
     # clean build
     - make clean
     # build macOS & zip it
-    - make  BUILDMODE="RELEASE"  configure
+    - make BUILDMODE="RELEASE" configure
     - make build-macos
     - cd release-builds/SafeSurfer-Desktop-darwin-x64
     - zip -q -r SafeSurfer-Desktop-x64.app.zip SafeSurfer-Desktop.app
@@ -49,14 +50,14 @@ build:
     # clean build
     - make clean
     # build windows (64-bit)
-    - make  BUILDMODE="RELEASE"  configure
+    - make BUILDMODE="RELEASE" configure
     - make build-windows
     - make compile-win-setup
     - mv release-builds/SafeSurfer-Desktop-x64.exe builtBinaries/.
     # clean build
     - make clean
     # build windows (32-bit)
-    - make  BUILDMODE="RELEASE"  configure
+    - make BUILDMODE="RELEASE" configure
     - make build-windows32
     - make compile-win-setup32
     - mv release-builds/SafeSurfer-Desktop-ia32.exe builtBinaries/.
