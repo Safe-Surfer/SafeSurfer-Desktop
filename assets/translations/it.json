@@ -165,5 +165,6 @@
     "If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall to use this feature in the app.": "",
     "Try from web browser": "",
     "Reboot to apply settings": "",
-    "Flush DNS cache to refresh network settings": ""
+    "Flush DNS cache to refresh network settings": "",
+    "The service appears to be setup on a router, the app cannot disable it.": ""
 }

@@ -166,5 +166,6 @@
 	"App build is beta:": "App build is beta:",
 	"Try from web browser": "Try from web browser",
 	"Reboot to apply settings": "Reboot to apply settings",
-	"Flush DNS cache to refresh network settings": "Flush DNS cache to refresh network settings"
+	"Flush DNS cache to refresh network settings": "Flush DNS cache to refresh network settings",
+	"The service appears to be setup on a router, the app cannot disable it.": "The service appears to be setup on a router, the app cannot disable it."
 }

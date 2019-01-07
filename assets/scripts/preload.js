@@ -31,7 +31,8 @@ global.desktop = Object.freeze({
     logging: () => require('./logging.js'),
     Store: () => require('electron-store'),
     store: () => new Store(),
-    loadLogic: () => require('./logic.js')
+    loadLogic: () => require('./logic.js'),
+    dns: require("dns")
   },
   logic: {
     node_dns_changer: require('node_dns_changer'),

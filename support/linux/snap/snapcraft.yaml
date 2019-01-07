@@ -23,20 +23,15 @@ parts:
       - libpulse0
       - libxss1
       - libxtst6
-
-  curl:
-    plugin: autotools
-    source-type: tar
-    source: https://github.com/curl/curl/releases/download/curl-7_62_0/curl-7.62.0.tar.xz
-    build-packages:
-      - g++
-      - gcc
-      - make
+      - curl
 
 apps:
   safesurferdesktop:
     command: usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
     desktop: usr/share/applications/SafeSurfer-Desktop.desktop
+    plugs: [x11, wayland, network, network-bind, shutdown, gsettings, home, desktop, browser-support]
+    environment:
+      TMPDIR: $XDG_RUNTIME_DIR
 
   sscli:
     command: usr/bin/sscli

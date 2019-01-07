@@ -60,7 +60,8 @@ window.appStates = {
   toggleLock: false,
   macOSuseDHCP: true,
   guiSudo: "pkexec",
-  binFolder: process.env.SSCLILOCATION === undefined ? `${path.resolve(path.dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION
+  binFolder: process.env.SSCLILOCATION === undefined ? `${path.resolve(path.dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION,
+  dnsSettingsOnRouter: undefined
 }
 
 logging(`[INFO]: platform  - ${os.platform()}`);
@@ -283,23 +284,12 @@ const appFrame = {
   },
 
   displayProtection: function() {
-    // show the user that the service has been enabled
+    logging("[displayProtection]: service state is protected");
     if (window.appStates.internet[0] == true) {
-      logging("[displayProtection]: service state is protected");
       $(".serviceActiveScreen").show();
       $(".serviceInactiveScreen").hide();
-      // if buttons have been locked
       $('#subTextProtected').html(i18n.__('YOU ARE SAFE TO SURF THE INTERNET').toUpperCase());
-      if (store.get('lockDeactivateButtons') == true) {
-        $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
-        $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
-        $('.serviceToggle').addClass('serviceToggle_locked');
-        $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
-        $('.serviceToggle').removeClass('serviceToggle_lifeguard');
-        $("#toggleButtonInfo")[0].title = i18n.__("Click for information");
-      }
-      // if a lifeguard has been found
-      else if (window.appStates.lifeguardFound[0] == true) {
+      if (window.appStates.lifeguardFound[0] == true) {
         $("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD").toUpperCase());
         $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD").toUpperCase());
         $('.serviceToggle').addClass('serviceToggle_lifeguard');
@@ -307,8 +297,15 @@ const appFrame = {
         $('.serviceToggle').removeClass('serviceToggle_locked');
         $("#toggleButtonInfo")[0].title = i18n.__("Click to configure your LifeGuard");
       }
+      else if (store.get('lockDeactivateButtons') == true) {
+        $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
+        $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
+        $('.serviceToggle').addClass('serviceToggle_locked');
+        $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
+        $('.serviceToggle').removeClass('serviceToggle_lifeguard');
+        $("#toggleButtonInfo")[0].title = i18n.__("Click for information");
+      }
       else {
-        // if lifeguard is not found
         $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
         $("#toggleButton").html(i18n.__("STOP PROTECTION").toUpperCase());
         $('.serviceToggle').removeClass('serviceToggle_lifeguard');
@@ -316,16 +313,10 @@ const appFrame = {
         $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
         $("#toggleButtonInfo")[0].title = i18n.__("Click to disable the service");
       }
-      // make sure that button is persistent
-      $('.serviceToggle').show();
+      if (appStates.dnsSettingsOnRouter === true) $('.serviceToggle').hide();
+      else $('.serviceToggle').show();
       $('.appNoInternetConnectionScreen').hide();
       $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
-    }
-    else if (store.get('lockDeactivateButtons') == true) {
-      $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
-      $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
-      $('.serviceToggle').addClass('serviceToggle_locked');
-      $("#toggleButtonInfo")[0].title = i18n.__("Click for information");
     }
   },
 
@@ -964,6 +955,8 @@ const appFrame = {
       appFrame.toggleSuccess();
     }
 
+    appStates.dnsSettingsOnRouter = desktop.global.dns.getServers().indexOf("104.197.28.121") == -1 && desktop.global.dns.getServers().indexOf("104.155.237.225") == -1 && appStates.lifeguardFound[0] == false && appStates.serviceEnabled[0] === true;
+
     if (appStates.serviceEnabled[0] === false) appStates.lifeguardOnNetworkLock = false;
 
     // if the service is enabled, check if a lifeguard is on the network
@@ -1103,7 +1096,8 @@ ipcRenderer.on('goForceEnable', () => {
 
 ipcRenderer.on('goForceDisable', () => {
   // when deactivate button is pressed from menu bar
-  appFrame.forceToggleWarning({wantedState: false});
+  if (appStates.dnsSettingsOnRouter === true) dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("The service appears to be setup on a router, the app cannot disable it.")});
+  else appFrame.forceToggleWarning({wantedState: false});
 });
 
 ipcRenderer.on('goBuildToClipboard', () => {
@@ -1143,6 +1137,18 @@ ipcRenderer.on('goOpenMyDeviceLifeGuard', () => {
     desktop.logic.electronOpenExternal('http://mydevice.safesurfer.co.nz');
   });
 });
+
+ipcRenderer.on("configureBlockedSites", () => {
+  if (appStates.serviceEnabled[0] === false) {
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("The service must be enabled before you can configure the blocked sites.")});
+    return;
+  }
+  else if (appStates.serviceEnabled[0] === true && appStates.lifeguardFound[0] === true) {
+    window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
+    return;
+  }
+  window.open('https://www.safesurfer.co.nz/api/1.0/public/control.php');
+})
 
 ipcRenderer.on('goLockDeactivateButtons', () => {
   // give a prompt about locking the toggle button

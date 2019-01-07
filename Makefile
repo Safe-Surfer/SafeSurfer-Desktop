@@ -155,12 +155,17 @@ build-appimage:
 	@if [[ "$(DISABLEINTEGRATION)" = true ]]; then touch nz.co.safesurfer.SafeSurfer-Desktop.AppDir/NOINTEGRATION; fi
 	./tools/appimagetool-x86_64.AppImage $(OPTS) nz.co.safesurfer.SafeSurfer-Desktop.AppDir
 
-build-snap: build-linuxzip
+prep-snap: build-linuxzip
 	rm -rf zip-build
 	mkdir release-builds/snap
 	mv SafeSurfer-Desktop-Linux.zip release-builds/snap
 	cp support/linux/snap/snapcraft.yaml release-builds/snap
+
+build-snap:
 	cd release-builds/snap && snapcraft cleanbuild
+
+build-snap-docker:
+	docker run -it --rm -v "$(shell pwd)/release-builds/snap":/build -w /build snapcore/snapcraft bash -c "(apt update && snapcraft) || bash"
 
 compile-win-setup:
 	node support/windows/genwinpath.js

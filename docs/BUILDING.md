@@ -45,7 +45,7 @@ flatpak:
 - `org.freedesktop.Sdk//1.6`  
 - `io.atom.electron.BaseApp//stable` (depending on JSON file)  
 rpm: `rpmbuild`  
-snap: `snapcraft lxd build-essential`  
+snap: `snapcraft lxd build-essential` or `docker`  
 Windows installer: [Inno Setup](http://www.jrsoftware.org/isinfo.php)  
 
 Notes:
@@ -61,6 +61,7 @@ exe: use iss file in [support\\windows\\inno-script](support/windows/inno-script
 flatpak: `make prep-flatpak && make build-flatpak` or JSON file in [support/linux/flatpak](support/linux/flatpak)  
 linux binary zip: `make build-linuxzip`  
 rpm: use spec file in [support/linux/specs](support/linux/specs)  
+snap: `make prep-snap build-snap-docker`  
 
 Notes:
 - for use in inno scripts, you must adjust path to the compiled folder in the scripts (under files --> source).  
