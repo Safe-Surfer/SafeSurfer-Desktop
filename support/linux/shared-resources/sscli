@@ -91,7 +91,7 @@ then
 	success=true
 fi
 
-if which systemd-resolve 2> /dev/null
+if [ -x $(which systemd-resolve 2> /dev/null) ]
 then
 	systemd-resolve --flush-caches && echo "* Flushed systemd-resolve DNS cache"
 	success=true

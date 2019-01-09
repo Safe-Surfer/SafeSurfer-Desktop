@@ -13,5 +13,5 @@ dist
 parts
 stage
 prime
-snap/.snapcraft
+**/.snapcraft
 safesurfer-desktop_*_*.snap

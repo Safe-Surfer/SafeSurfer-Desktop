@@ -38,6 +38,7 @@ const {dialog} = desktop.logic.dialogBox(),
   Request = require('request'),
   moment = require('moment'),
   $ = require('jquery'),
+  defaultGateway = require("default-gateway"),
   store = desktop.global.store(),
   i18n = desktop.global.i18n(),
   logging = desktop.global.logging(),
@@ -61,7 +62,6 @@ window.appStates = {
   macOSuseDHCP: true,
   guiSudo: "pkexec",
   binFolder: process.env.SSCLILOCATION === undefined ? `${path.resolve(path.dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION,
-  dnsSettingsOnRouter: undefined,
   lifeguardIsSearching: false
 }
 
@@ -314,8 +314,7 @@ const appFrame = {
         $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
         $("#toggleButtonInfo")[0].title = i18n.__("Click to disable the service");
       }
-      if (appStates.dnsSettingsOnRouter === true) $('.serviceToggle').hide();
-      else $('.serviceToggle').show();
+      $('.serviceToggle').show();
       $('.appNoInternetConnectionScreen').hide();
       $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
     }
@@ -364,10 +363,8 @@ const appFrame = {
       case true:
         logging('[toggleServiceState]: trying toggle disable');
         if (window.appStates.lifeguardFound[0] == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-        else {
-          if (store.get('lockDeactivateButtons') != true) appFrame.displayDisableWarning();
-          else appFrame.lockAlertMessage();
-        }
+        else if (store.get('lockDeactivateButtons') != true) appFrame.displayDisableWarning();
+        else appFrame.lockAlertMessage();
         break;
 
       // if service is disabled
@@ -953,8 +950,6 @@ const appFrame = {
       appFrame.toggleSuccess();
     }
 
-    appStates.dnsSettingsOnRouter = desktop.global.dns.getServers().indexOf("104.197.28.121") == -1 && desktop.global.dns.getServers().indexOf("104.155.237.225") == -1 && appStates.lifeguardFound[0] == false && appStates.serviceEnabled[0] === true;
-
     if (appStates.serviceEnabled[0] === false) appStates.lifeguardOnNetworkLock = false;
 
     // if the service is enabled, check if a lifeguard is on the network
@@ -1094,8 +1089,7 @@ ipcRenderer.on('goForceEnable', () => {
 
 ipcRenderer.on('goForceDisable', () => {
   // when deactivate button is pressed from menu bar
-  if (appStates.dnsSettingsOnRouter === true) dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("The service appears to be setup on a router, the app cannot disable it.")});
-  else appFrame.forceToggleWarning({wantedState: false});
+  appFrame.forceToggleWarning({wantedState: false});
 });
 
 ipcRenderer.on('goBuildToClipboard', () => {
@@ -1210,7 +1204,6 @@ if (store.get('lastVersionInstalled') === undefined) store.set('lastVersionInsta
 
 // connect button in html to a function
 $('#toggleButton').bind('click', appFrame.toggleServiceState);
-
 $("#toggleButtonInfo")[0].title = i18n.__("The state of the service is being determined. Please wait.");
 
 appFrame.internetConnectionCheck();
