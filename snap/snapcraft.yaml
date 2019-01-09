@@ -9,8 +9,18 @@ confinement: classic
 
 parts:
   safesurferdesktop:
-    plugin: dump
-    source: SafeSurfer-Desktop-Linux.zip
+    plugin: nil
+    override-build: |
+      curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+      apt-get install -y nodejs
+      npm i
+      make BUILDMODE=RELEASE UPDATES=false configure
+      make build-linux
+      make DESTDIR=$SNAPCRAFT_PART_INSTALL install
+    build-packages:
+      - nodejs
+      - npm
+      - build-essential
     after:
       - desktop-gtk3
     stage-packages:
