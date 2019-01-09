@@ -5,11 +5,11 @@
     <key>com.apple.developer.team-identifier</key>
     <string>TEAMID</string>
     <key>com.apple.application-identifier</key>
-    <string>TEAMID.nz.co.safesurfer.safesurfer-desktop</string>
+    <string>TEADMID.nz.co.safesurfer.safesurfer-desktop</string>
     <key>com.apple.security.app-sandbox</key>
     <true/>
     <key>com.apple.security.application-groups</key>
-    <string>nz.co.safesurfer.safesurfer-desktop</string>
+    <string>TEADMID.nz.co.safesurfer.safesurfer-desktop</string>
     <key>com.apple.security.files.user-selected.read-only</key>
     <true/>
     <key>com.apple.security.files.user-selected.read-write</key>
@@ -20,5 +20,6 @@
     <true/>
   </dict>
 </plist>
+
 
 

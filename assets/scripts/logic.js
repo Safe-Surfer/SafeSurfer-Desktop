@@ -61,7 +61,8 @@ window.appStates = {
   macOSuseDHCP: true,
   guiSudo: "pkexec",
   binFolder: process.env.SSCLILOCATION === undefined ? `${path.resolve(path.dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION,
-  dnsSettingsOnRouter: undefined
+  dnsSettingsOnRouter: undefined,
+  lifeguardIsSearching: false
 }
 
 logging(`[INFO]: platform  - ${os.platform()}`);
@@ -505,7 +506,6 @@ const appFrame = {
     window.appStates.toggleLock = true;
     switch (os.platform()) {
       case 'linux':
-        // if sscli is able to be copied to /tmp, run it
         appFrame.exec(`${appStates.binFolder}sscli disable ${forced === true ? "force": ""}`).then(response => {
             if (response === false) appFrame.resetToggling();
           });
@@ -631,9 +631,7 @@ const appFrame = {
             if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink);
             else desktop.logic.electronOpenExternal(versionRecommended.altLink);
           }
-          else if (updateResponse == 2) {
-            desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${versionRecommended.version}`);
-          }
+          else if (updateResponse == 2) desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${versionRecommended.version}`);
           else return;
         });
       }
