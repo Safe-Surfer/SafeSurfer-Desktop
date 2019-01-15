@@ -496,11 +496,6 @@ body, html {
   z-index:-2;
 }
 
-#bigTextBrandName {
-  color:black;
-  white-space: nowrap;
-}
-
 @media only screen and (max-width: 1099px) {
   .subText {
     font-size: 1.5em;

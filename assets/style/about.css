@@ -50,6 +50,8 @@
 
 #bigTextBrandName {
   padding-top: 0px;
+  color:black;
+  white-space: nowrap;
 }
 
 .mainCenter_logo {
@@ -73,5 +75,9 @@
   .mainCenter_logo {
     top: 55%;
     transform: translate(-50%, -55%);
+  }
+
+  #bigTextBrandName {
+    white-space: normal;
   }
 }
