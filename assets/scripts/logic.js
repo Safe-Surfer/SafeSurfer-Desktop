@@ -455,7 +455,7 @@ const appFrame = {
     $(".progressInfoBar_text").html(i18n.__("Please wait while the service is being enabled"));
     $('.progressInfoBar').css("height", "30px");
     if (enableNotifications == true && window.appStates.notificationCounter == 0) new Notification('Safe Surfer', {
-      body: i18n.__('Woohoo! Getting your computer setup now.'),
+      body: i18n.__('Woohoo! Getting your computer set up now.'),
       icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
     });
     window.appStates.notificationCounter += 1;
@@ -733,7 +733,7 @@ const appFrame = {
           break;
 
         case 1:
-          dialog.showMessageBox({type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is setup on your computer")}\n\n${i18n.__("We are also interested in updates, so with statistic sharing we will also be notified of which version you've updated to.")}`}, dialogResponse => {
+          dialog.showMessageBox({type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is set up on your computer")}\n\n${i18n.__("We are also interested in updates, so with statistic sharing we will also be notified of which version you've updated to.")}`}, dialogResponse => {
             // if user agrees to sending stats
             switch (dialogResponse) {
               case 0:
@@ -791,7 +791,7 @@ const appFrame = {
   sendAppStateNotifications: function() {
     // send notifications if the app state has changed to the user
     if (window.appStates.serviceEnabled[0] == true && enableNotifications == true) new Notification('Safe Surfer', {
-      body: i18n.__('You are now safe to surf the internet. Safe Surfer has been setup.'),
+      body: i18n.__('You are now safe to surf the Internet. Safe Surfer has been set up.'),
       icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
     });
     else if (window.appStates.serviceEnabled[0] == false && enableNotifications == true) new Notification('Safe Surfer', {
@@ -831,7 +831,7 @@ const appFrame = {
 
   displayRebootMessage: function() {
     // tell the user to reboot
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Restart now'), i18n.__('Ignore')], message: `${i18n.__("Ok, your computer is setup.")}\n${i18n.__("We recommend you restart your computer to ensure that the settings have applied everywhere on it.")}`}, updateResponse => {
+    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Restart now'), i18n.__('Ignore')], message: `${i18n.__("Ok, your computer is set up.")}\n${i18n.__("We recommend you restart your computer to ensure that the settings have applied everywhere on it.")}`}, updateResponse => {
       if (updateResponse == 0) {
         switch (os.platform()) {
           case 'win32':

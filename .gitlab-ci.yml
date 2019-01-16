@@ -42,25 +42,16 @@ build:
     - make clean
     # build macOS & zip it
     - make BUILDMODE="RELEASE" configure
-    - make build-macos
-    - cd release-builds/SafeSurfer-Desktop-darwin-x64
-    - zip -q -r SafeSurfer-Desktop-x64.app.zip SafeSurfer-Desktop.app
-    - cd ../..
-    - mv release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop-x64.app.zip builtBinaries/.
+    - make build-macos || true
+    - mv dist/SafeSurfer-Desktop-*-mac.zip builtBinaries/.
     # clean build
     - make clean
     # build windows (64-bit)
     - make BUILDMODE="RELEASE" configure
     - make build-windows
-    - make compile-win-setup
-    - mv release-builds/SafeSurfer-Desktop-x64.exe builtBinaries/.
+    - mv dist/SafeSurfer-Desktop\ *.exe builtBinaries/.
     # clean build
     - make clean
-    # build windows (32-bit)
-    - make BUILDMODE="RELEASE" configure
-    - make build-windows32
-    - make compile-win-setup32
-    - mv release-builds/SafeSurfer-Desktop-ia32.exe builtBinaries/.
     # hash all binaries
     - cd builtBinaries && sha256sum * > sha256ums.txt && cd ..
   artifacts:

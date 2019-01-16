@@ -11,8 +11,10 @@
     "sscli": "bash ./support/linux/shared-resources/sscli",
     "electron-builder": "node_modules/.bin/electron-builder",
     "electron-icon-maker": "node_modules/.bin/electron-icon-maker",
-    "package-linux": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=x64 --icon=assets/media/icons/png/2000x2000.png --prun=true --out=release-builds --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
-    "package-linux32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=linux --arch=ia32 --icon=assets/media/icons/png/2000x2000.png --prun=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
+    "build": "node_modules/.bin/electron-builder --platform all",
+    "build:win": "node_modules/.bin/electron-builder --win --ia32 --x64",
+    "build:linux": "node_modules/.bin/electron-builder --linux --x64",
+    "build:macos": "node_modules/.bin/electron-builder --mac",
     "package-macos": "node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
     "package-macos-mas": "node_modules/.bin/electron-packager . --overwrite --platform=mas --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries --app-bundle-id=nz.co.safesurfer.safesurfer-desktop",
     "package-win": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\" --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
@@ -35,7 +37,7 @@
   "creators": [
     {
       "name": "Caleb Woodbine",
-      "reference": "gitlab.com/BobyMCbobs"
+      "reference": "https://gitlab.com/BobyMCbobs"
     }
   ],
   "repository": "https://gitlab.com/safesurfer/SafeSurfer-Desktop",
@@ -60,14 +62,23 @@
     "mac": {
       "category": "public.app-category.utilities",
       "target": [
-        "pkg",
-        "dmg",
         "zip",
+        "dmg",
         "mas"
       ],
       "icon": "assets/media/icons/mac/icon.icns",
       "entitlements": "support/macOS/entitlements.mac.plist",
-      "type": "distribution"
+      "type": "distribution",
+      "electronLanguages": [
+        "en",
+        "de",
+        "hu",
+        "it",
+        "nb_NO",
+        "pt",
+        "pt_BR",
+        "pt_PT"
+      ]
     },
     "mas": {
       "entitlements": "support/macOS/entitlements.mas.plist",
@@ -87,7 +98,32 @@
           "path": "/Applications"
         }
       ]
-    }
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowElevation": true,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icon.ico",
+      "installerSidebar": "build/installerSidebar.bmp"
+    },
+    "linux": {
+      "target": "dir"
+    },
+    "files": [
+      "!tools/**",
+      "!docs/**",
+      "!screenshots/**",
+      "!support/**",
+      "!builtBinaries/**"
+    ]
   },
   "devDependencies": {
     "electron": "^2.0.10",

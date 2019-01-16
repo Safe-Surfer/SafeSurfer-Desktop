@@ -201,7 +201,7 @@ case "$arg" in
 		echo "Launching desktop app..."
 		if [ -z "$ISAPPIMAGE" ]
 		then
-			"${sscliDir}/../lib64/SafeSurfer-Desktop/SafeSurfer-Desktop"
+			"${sscliDir}/../lib64/SafeSurfer-Desktop/safesurfer-desktop"
 		else
 			exec "${APPRUN}"
 		fi

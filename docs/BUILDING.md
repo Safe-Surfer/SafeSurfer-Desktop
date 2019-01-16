@@ -24,10 +24,9 @@ Notes:
 - Make sure you disable updates, since it will be handled by your package manager
 
 ### Building binaries
-Linux: `make build-linux` or `npm run package-linux`  
-Windows: `make build-windows` or `npm run package-win`  
-Windows 32bit: `make build-windows32` or `npm run package-win32`  
-macOS: `make build-macos` or `npm run package-macos`  
+Linux: `make build-linux` or `npm run build:linux`  
+Windows: `make build-windows` or `npm run build:win`  
+macOS: `make build-macos` or `npm run build:macos`  
 
 Please note that building Windows versions on Linux or macOS requires [Wine](https://www.winehq.org) to be installed as a prerequisite, this can be installed via your distro's repos on Linux, or through brew on macOS.  
 

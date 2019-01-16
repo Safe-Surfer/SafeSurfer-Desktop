@@ -63,14 +63,14 @@ export LD_LIBRARY_PATH="${APPDIR}/usr/lib64":$LD_LIBRARY_PATH
 export APPIMAGE_LIBRARY_PATH="${APPIMAGE_LIBRARY_PATH}:/usr/lib"
 export APPIMAGE_LIBRARY_PATH="${APPIMAGE_LIBRARY_PATH}:/usr/lib64"
 DESKTOP_FILE="$APPDIR/nz.co.safesurfer.SafeSurfer-Desktop.desktop"
-BIN="$APPDIR/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop"
+BIN="$APPDIR/usr/lib64/SafeSurfer-Desktop/safesurfer-desktop"
 
-if [[ ! -x "$(which curl)" ]] && [[ ! -x "$(which wget)" ]]
+if [[ ! -x "$(which curl 2> /dev/null)" ]] && [[ ! -x "$(which wget 2> /dev/null)" ]]
 then
 	export PATH="${APPDIR}/usr/local/bin/curl:${PATH}"
 fi
 
-if [[ ! -x "$(which zenity)" ]] && [[ ! -x "$(which kdialog)" ]] && [[ ! -x "$(which Xdialog)" ]]
+if [[ ! -x "$(which zenity 2> /dev/null)" ]] && [[ ! -x "$(which kdialog 2> /dev/null)" ]] && [[ ! -x "$(which Xdialog 2> /dev/null)" ]]
 then
 	export PATH="${APPDIR}/usr/local/bin/zenity:${PATH}"
 fi
@@ -90,15 +90,18 @@ fi
 
 function errorMsg() {
 # display an error
-if [ -x /usr/bin/zenity ]
+if [ -x $(which zenity 2> /dev/null) ]
 then
-	LD_LIBRARY_PATH="" zenity --error --text "${1}" 2>/dev/null
-elif [ -x /usr/bin/kdialog ]
+	zenity --error --text "${1}" 2>/dev/null
+
+elif [ -x $(which kdialog 2> /dev/null) ]
 then
-	LD_LIBRARY_PATH="" kdialog --msgbox "${1}" 2>/dev/null
-elif [ -x /usr/bin/Xdialog ]
+	kdialog --msgbox "${1}" 2>/dev/null
+
+elif [ -x $(which Xdialog 2> /dev/null) ]
 then
-	LD_LIBRARY_PATH="" Xdialog --msgbox "${1}" 2>/dev/null
+	Xdialog --msgbox "${1}" 2>/dev/null
+
 else
 	echo "${1}"
 fi

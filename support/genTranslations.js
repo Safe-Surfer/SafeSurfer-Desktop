@@ -70,4 +70,4 @@ fs.readdirSync(`${dirAssets}`).forEach(file => {
 });
 
 // summary
-console.log(`${editCount > 0 ? "\n" : ""}${editCount} edited.`)
+console.log(`${editCount > 0 ? "\n" : ""}${editCount} files edited.`)

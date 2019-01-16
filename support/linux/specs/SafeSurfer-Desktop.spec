@@ -36,7 +36,7 @@ make BUILDMODE=RELEASE UPDATES=false configure
 /usr/lib64/%{name}
 /usr/lib64/%{name}/locales
 /usr/lib64/%{name}/resources
-/usr/lib64/%{name}/%{name}
+/usr/lib64/%{name}/safesurfer-desktop
 /usr/lib64/%{name}/blink_image_resources_200_percent.pak
 /usr/lib64/%{name}/LICENSES.chromium.html
 /usr/lib64/%{name}/snapshot_blob.bin

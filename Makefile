@@ -12,22 +12,13 @@ check-deps:
 	@if [ ! -d node_modules ]; then echo "Whoops, you're missing node dependencies. Run 'npm i'."; exit 1; fi;
 
 build-linux: check-deps
-	npm run package-linux
-
-build-linux32: check-deps
-	npm run package-linux32
+	npm run build:linux
 
 build-windows: check-deps
-	npm run package-win
-
-build-windows32: check-deps
-	npm run package-win32
+	npm run build:win
 
 build-macos: check-deps
-	npm run package-macos
-
-build-mas: check-deps
-	npm run package-macos-mas
+	npm run build:macos
 
 install:
 	@mkdir -p $(DESTDIR)$(PREFIX)
@@ -37,7 +28,7 @@ install:
 	@mkdir -p $(DESTDIR)$(COMPLETIONDIR)
 	@mkdir -p $(DESTDIR)/usr/share/polkit-1/actions
 	@mkdir -p $(DESTDIR)/usr/share/metainfo
-	@cp -p -r ./release-builds/SafeSurfer-Desktop-linux-x64/. $(DESTDIR)$(PREFIX)
+	@cp -p -r ./dist/linux-unpacked/. $(DESTDIR)$(PREFIX)
 	@cp ./support/linux/shared-resources/sscli $(DESTDIR)/usr/bin
 	@cp ./support/linux/shared-resources/SafeSurfer-Desktop $(DESTDIR)/usr/bin
 	@cp ./support/linux/shared-resources/SafeSurfer-Desktop.desktop $(DESTDIR)/usr/share/applications/
@@ -45,7 +36,7 @@ install:
 	@cp -p ./support/linux/shared-resources/sscli.completion $(DESTDIR)$(COMPLETIONDIR)/sscli
 	@cp -p ./support/linux/shared-resources/nz.co.safesurfer.pkexec.safesurfer-desktop.policy $(DESTDIR)/usr/share/polkit-1/actions
 	@cp ./assets/media/icons/png/2000x2000.png $(DESTDIR)/usr/share/pixmaps/ss-logo.png
-	@chmod 755 $(DESTDIR)$(PREFIX)/SafeSurfer-Desktop
+	@chmod 755 $(DESTDIR)$(PREFIX)/safesurfer-desktop
 	@chmod 755 $(DESTDIR)/usr/bin/sscli
 	@chmod 755 $(DESTDIR)/usr/bin/SafeSurfer-Desktop
 	@chmod 755 $(DESTDIR)$(COMPLETIONDIR)/sscli
@@ -95,7 +86,7 @@ build-flatpak:
 	cd ./support/linux/flatpak && flatpak-builder flatpak-build nz.co.safesurfer.SafeSurfer-Desktop.json --force-clean
 
 run-flatpak:
-	cd ./support/linux/flatpak && flatpak-builder --run flatpak-build nz.co.safesurfer.SafeSurfer-Desktop.json /app/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop
+	cd ./support/linux/flatpak && flatpak-builder --run flatpak-build nz.co.safesurfer.SafeSurfer-Desktop.json /app/usr/lib64/SafeSurfer-Desktop/safesurfer-desktop
 
 prep-appimage:
 	@if [ -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "appimagetool is already downloaded."; exit 1; fi;
@@ -150,7 +141,7 @@ build-appimage:
 	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/SafeSurfer-Desktop.desktop ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/nz.co.safesurfer.SafeSurfer-Desktop.desktop
 	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/applications/SafeSurfer-Desktop.desktop ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/applications/nz.co.safesurfer.SafeSurfer-Desktop.desktop
 	@mv ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/SafeSurfer-Desktop.appdata.xml ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurfer-Desktop.appdata.xml
-	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop#AppRun#g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/nz.co.safesurfer.SafeSurfer-Desktop.desktop
+	@sed -i -e "s#/usr/lib64/SafeSurfer-Desktop/safesurfer-desktop#AppRun#g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/nz.co.safesurfer.SafeSurfer-Desktop.desktop
 	@sed -i -e "s#<id>SafeSurfer-Desktop.desktop</id>#<id>nz.co.safesurfer.SafeSurfer-Desktop.desktop</id>#g" ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/share/metainfo/nz.co.safesurfer.SafeSurfer-Desktop.appdata.xml
 	@if [[ "$(DISABLEINTEGRATION)" = true ]]; then touch nz.co.safesurfer.SafeSurfer-Desktop.AppDir/NOINTEGRATION; fi
 	./tools/appimagetool-x86_64.AppImage $(OPTS) nz.co.safesurfer.SafeSurfer-Desktop.AppDir
@@ -179,7 +170,7 @@ build-macos-dmg:
 	npm run build-macos-dmg
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild dist safesurfer-desktop_*_*.snap
+	@rm -rf dist deb-build release-builds flatpak-build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild dist safesurfer-desktop_*_*.snap
 	@if grep -q '"BUILDMODE": "release"' ./package.json; then sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json; fi
 	@if grep -q '"enableUpdates": false' ./package.json; then sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json; fi
 	@if ! grep -q "DEVIDSTUFF" ./support/macOS/entitlements.mas.plist && [[ -f "./support/macOS/entitlements.mas.plist.bak" ]]; then mv ./support/macOS/entitlements.mas.plist.bak ./support/macOS/entitlements.mas.plist; fi

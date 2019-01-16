@@ -88,10 +88,7 @@ body, html {
 
 .bigText_init {
   font-size: 6em;
-}
-
-.bigText_init:hover {
-  color: #fff600;
+  color: black;
 }
 
 .bigText_nointernet {
@@ -548,8 +545,9 @@ body, html {
   }
 
   .mainCenter_init {
-    top: 87%
+    top: 87%;
     transform: translate(-50%, -87%);
+    white-space: nowrap;
   }
 
   .serviceToggle {

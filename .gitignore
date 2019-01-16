@@ -2,7 +2,6 @@ node_modules
 .buildconfig
 release-builds
 flatpak-build
-build
 .flatpak-builder
 zip-build
 tools
@@ -15,3 +14,4 @@ stage
 prime
 **/.snapcraft
 safesurfer-desktop_*_*.snap
+**/tags.*
