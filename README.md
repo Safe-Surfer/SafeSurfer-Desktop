@@ -77,7 +77,7 @@ Compatible operating systems:
     - Windows 8.1  
 
 Minimum computer specifications  
-CPU: 2 core - 1 GHz - 64-bit or 32-bit  
+CPU: 2 core - 1 GHz - 64-bit or 32-bit (32-bit is Windows only)  
 RAM: 2 GB of RAM  
 
 ## License

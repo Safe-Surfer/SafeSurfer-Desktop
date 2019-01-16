@@ -150,7 +150,7 @@ build-snap:
 	docker run -it --rm -v "$(shell pwd)":/build -w /build snapcore/snapcraft bash -c "(apt update && snapcraft) || bash"
 
 build-snap-lxd:
-	cd release-builds/snap && snapcraft cleanbuild
+	snapcraft cleanbuild
 
 compile-win-setup:
 	node support/windows/genwinpath.js
