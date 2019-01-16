@@ -15,6 +15,7 @@
     "build:win": "node_modules/.bin/electron-builder --win --ia32 --x64",
     "build:linux": "node_modules/.bin/electron-builder --linux --x64",
     "build:macos": "node_modules/.bin/electron-builder --mac",
+    "build:mas": "make BUILDMODE=RELEASE UPDATES=false MACOSDEVID=$__MACDEVTEAMID configure && if [ ! -f embedded.provisionprofile ]; then echo '!Cannot find file: embedded.provisionprofile'; exit 1; fi && node_modules/.bin/electron-builder --mac mas",
     "package-macos": "node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
     "package-macos-mas": "node_modules/.bin/electron-packager . --overwrite --platform=mas --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries --app-bundle-id=nz.co.safesurfer.safesurfer-desktop",
     "package-win": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\" --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
@@ -83,7 +84,8 @@
     "mas": {
       "entitlements": "support/macOS/entitlements.mas.plist",
       "type": "distribution",
-      "category": "public.app-category.utilities"
+      "category": "public.app-category.utilities",
+      "provisioningProfile": "embedded.provisionprofile"
     },
     "dmg": {
       "contents": [
@@ -111,8 +113,7 @@
       "perMachine": false,
       "allowElevation": true,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon": "build/icon.ico",
-      "installerSidebar": "build/installerSidebar.bmp"
+      "installerIcon": "build/icon.ico"
     },
     "linux": {
       "target": "dir"
