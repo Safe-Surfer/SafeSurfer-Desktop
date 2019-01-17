@@ -82,6 +82,12 @@ Minimum computer specifications:
 CPU: 1 core - 1 GHz - 64-bit or 32-bit (32-bit is Windows only)  
 RAM: 512 MB of RAM  
 
+## Repos
+| Type | Site |
+| - | - |
+| Main | [GitLab](https://gitlab.com/safesurfer/SafeSurfer-Desktop) |
+| Mirror | [GitHub](https://github.com/Safe-Surfer/SafeSurfer-Desktop) |
+
 ## License
 Copyright 2018-2019 Safe Surfer.  
 This project is licensed under the [GPL-3.0](http://www.gnu.org/licenses/gpl-3.0.html) and is [Free Software](https://www.gnu.org/philosophy/free-sw.en.html).  

@@ -43,6 +43,7 @@
   "author": "Safe Surfer",
   "build": {
     "appId": "nz.co.safesurfer.safesurfer-desktop",
+    "buildVersion": "10",
     "mac": {
       "category": "public.app-category.utilities",
       "target": [
