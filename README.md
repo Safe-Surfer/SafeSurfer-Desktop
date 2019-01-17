@@ -14,7 +14,7 @@
 ![Safe Surfer logo](./assets/media/icons/png/128x128.png)  
 # SafeSurfer-Desktop
 Official Safe Surfer desktop app, built with Electron.
-</br>
+
 ![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
 For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
 
