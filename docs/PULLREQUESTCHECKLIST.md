@@ -7,9 +7,9 @@ Here are a short list of things to check before submitting a pull request.
 - [ ] Are the changes useful, helpful, and/or a good idea?  
 
 ## Code
-- [ ] Is your code consistent with the project--Do all areas of the project appear to be written in a similar way?  
+- [ ] Is your code consistent with the project -- Do all areas of the project appear to be written in a similar way?  
 - [ ] Does your code not break anything else in the project?
 
 ## Translation
 - [ ] Is your translation concise yet keep it's meaning?  
-- [ ] Does it keep visual appearence (not break CSS)?  
+- [ ] Does it keep visual appearance (doesn't break CSS)?  

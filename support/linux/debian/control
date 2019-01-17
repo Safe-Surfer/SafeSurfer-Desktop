@@ -8,4 +8,4 @@ Homepage: http://safesurfer.co.nz
 Package: safesurfer-desktop
 Architecture: amd64
 Depends: policykit-1, curl, libgconf2-4
-Description: Keep safe in the digitial surf with Safe Surfer.
+Description: Keeping you safe in the digitial surf with Safe Surfer.

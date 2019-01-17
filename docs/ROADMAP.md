@@ -1,4 +1,4 @@
-# Roadmap
+# Road map
 
 List of features we plan to add to the app in it's future
 

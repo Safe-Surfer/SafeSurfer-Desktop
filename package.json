@@ -2,38 +2,21 @@
   "name": "SafeSurfer-Desktop",
   "version": "1.0.0",
   "APPBUILD": "10",
-  "description": "The SafeSurfer desktop app",
+  "description": "Keeping you safe in the digitial surf with Safe Surfer",
   "main": "./assets/scripts/main.js",
   "license": "GPL-3.0",
   "scripts": {
     "test": "mocha",
     "start": "node support/start.js",
-    "sscli": "bash ./support/linux/shared-resources/sscli",
-    "electron-builder": "node_modules/.bin/electron-builder",
-    "electron-icon-maker": "node_modules/.bin/electron-icon-maker",
     "build": "node_modules/.bin/electron-builder --platform all",
     "build:win": "node_modules/.bin/electron-builder --win --ia32 --x64",
     "build:linux": "node_modules/.bin/electron-builder --linux --x64",
     "build:macos": "node_modules/.bin/electron-builder --mac",
-    "build:mas": "make BUILDMODE=RELEASE UPDATES=false MACOSDEVID=$__MACDEVTEAMID configure && if [ ! -f embedded.provisionprofile ]; then echo '!Cannot find file: embedded.provisionprofile'; exit 1; fi && node_modules/.bin/electron-builder --mac mas",
-    "package-macos": "node_modules/.bin/electron-packager . --overwrite --platform=darwin --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
-    "package-macos-mas": "node_modules/.bin/electron-packager . --overwrite --platform=mas --arch=x64 --icon=assets/media/icons/mac/icon.icns --prune --out=release-builds --darwinDarkModeSupport=true --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries --app-bundle-id=nz.co.safesurfer.safesurfer-desktop",
-    "package-win": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\" --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
-    "package-win32": "node_modules/.bin/electron-packager . SafeSurfer-Desktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"SafeSurfer-Desktop\" --ignore=tools --ignore=docs --ignore=screenshots --ignore=support --ignore=builtBinaries",
-    "compile-win-setup": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer.iss",
-    "compile-win-setup32": "node ./support/windows/compile.js ./support/windows/inno-script/build-windows-installer32.iss",
-    "build-macos-dmg": "node_modules/.bin/electron-installer-dmg --icon=./assets/media/icons/mac/icon.icns --background=./support/macOS/dmg-background.png --out=./release-builds ./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app SafeSurfer-Desktop",
-    "sign-macos-app": "node_modules/.bin/electron-osx-sign \"./release-builds/SafeSurfer-Desktop-darwin-x64/SafeSurfer-Desktop.app\" --verbose",
-    "sign-macos-app-mas": "node_modules/.bin/electron-osx-sign ./release-builds/SafeSurfer-Desktop-mas-x64/SafeSurfer-Desktop.app --verbose",
-    "pack-macos-mas": "node_modules/.bin/electron-osx-flat ./release-builds/SafeSurfer-Desktop-mas-x64/SafeSurfer-Desktop.app --verbose",
-    "package-win-appx": "node_modules/.bin/electron-packager . safesurferdesktop --overwrite --asar --platform=win32 --arch=x64 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"safesurferdesktop\"",
-    "build-win-appx": "node_modules/.bin/electron-windows-store --input-directory=release-builds/safesurferdesktop-win32-x64 --output-directory=release-builds/safesurferdesktop-win32-x64.appx --package-version 1.0.0.0 --package-background-color #00a7d6 --identity-name safesurferdesktop --package-description \"Keep safe in the digitial surf with Safe Surfer\" --package-name safesurferdesktop -m support/windows/appx/AppXManifest.xml --assets support/windows/appx/media",
-    "package-win-appx32": "node_modules/.bin/electron-packager . safesurferdesktop --overwrite --asar --platform=win32 --arch=ia32 --icon=assets/media/icons/win/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"safesurferdesktop\"",
-    "build-win-appx32": "node_modules/.bin/electron-windows-store --input-directory=release-builds/safesurferdesktop-win32-ia32 --output-directory=release-builds/safesurferdesktop-win32-ia32.appx --package-version 1.0.0.0 --package-background-color #00a7d6 --identity-name safesurferdesktop --package-description \"Keep safe in the digitial surf with Safe Surfer\" --package-name safesurferdesktop -m support/windows/appx/AppXManifest.xml --assets support/windows/appx/media",
+    "build:mas": "if [ ! -f embedded.provisionprofile ]; then echo '[!] Cannot find file: embedded.provisionprofile'; exit 1; fi && make BUILDMODE=RELEASE UPDATES=false MACOSDEVID=$__MACDEVTEAMID configure && node_modules/.bin/electron-builder --mac mas",
+    "build:appx": "node_modules/.bin/electron-builder --win appx --ia32 --x64",
     "sign-win-exe": "node ./support/windows/sign.js",
     "lintTranslations": "node ./support/lintTranslations.js",
-    "genTranslations": "node ./support/genTranslations.js",
-    "genwinpath": "node ./support/windows/genwinpath.js"
+    "genTranslations": "node ./support/genTranslations.js"
   },
   "creators": [
     {
@@ -115,6 +98,24 @@
       "allowToChangeInstallationDirectory": true,
       "installerIcon": "build/icon.ico"
     },
+    "appx": {
+      "applicationId": "safesurferdesktop",
+      "backgroundColor": "#00a7d6",
+      "displayName": "safesurferdesktop",
+      "identityName": "safesurferdesktop",
+      "publisher": "CN=safesurfer",
+      "publisherDisplayName": "Safe Surfer",
+      "languages": [
+        "en",
+        "de",
+        "hu",
+        "it",
+        "nb_NO",
+        "pt",
+        "pt_BR",
+        "pt_PT"
+      ]
+    },
     "linux": {
       "target": "dir"
     },
@@ -129,12 +130,10 @@
   "devDependencies": {
     "electron": "^2.0.10",
     "electron-builder": "^20.28.2",
-    "electron-icon-maker": "0.0.4",
     "electron-installer-dmg": "^2.0.0",
     "electron-osx-sign": "^0.4.11",
     "electron-packager": "^12.1.1",
     "electron-windows-store": "^2.1.0",
-    "innosetup-compiler": "^5.5.9",
     "mocha": "^5.2.0",
     "os-locale": "^3.0.1",
     "spectron": "^5.0.0"

@@ -1,7 +1,7 @@
 Name:           SafeSurfer-Desktop
 Version:        1.0.0
 Release:        0
-Summary:        Keep safe in the digitial surf with Safe Surfer
+Summary:        Keeping you safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
 License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities

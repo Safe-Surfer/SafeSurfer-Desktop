@@ -65,3 +65,4 @@ function growLogo() {
 }
 
 logging("[about]: loaded");
+

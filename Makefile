@@ -152,23 +152,6 @@ build-snap:
 build-snap-lxd:
 	snapcraft cleanbuild
 
-compile-win-setup:
-	node support/windows/genwinpath.js
-	npm run compile-win-setup
-
-compile-win-setup32:
-	node support/windows/genwinpath.js
-	npm run compile-win-setup32
-
-sign-macos:
-	npm run sign-macos-app
-
-build-macos-dmg:
-	make BUILDMODE=RELEASE UPDATES=$(UPDATES) MACOSDEVID=$(MACOSDEVID) configure
-	make build-macos
-	make sign-macos
-	npm run build-macos-dmg
-
 clean:
 	@rm -rf dist deb-build release-builds flatpak-build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild dist safesurfer-desktop_*_*.snap
 	@if grep -q '"BUILDMODE": "release"' ./package.json; then sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json; fi

@@ -44,7 +44,7 @@ Steps to report bugs:
 `assets/media` is where all artwork it stored.  
 `assets/translations` is where all the translation JSON files are stored.  
 `assets/scripts/logic.js` is where most of the code is.  
-`assets/scripts/main.js` initalises the app.  
+`assets/scripts/main.js` initialises the app.  
 `assets/scripts/menu.js` is where the code for the app's menu lives.  
 `assets/scripts/i18n.js` is the framework for translating.  
 `support/{linux, windows, macOS}` is where the platform specific files are stored.  
@@ -57,5 +57,5 @@ Simply write in the given fields, a description of the feature that is of reques
 For information regarding translating Safe Surfer desktop, please read [TRANSLATING.md](TRANSLATING.md)  
 
 ## Notes
-For the NodeJS library from NPM which is responsible for changing the DNS settings, please check out [node_dns_changer](https://www.npmjs.com/package/node_dns_changer) on NPM or on [GitLab](https://gitlab.com/BobyMCbobs/node_dns_changer).  
+For the nodejs library from npm which is responsible for changing the DNS settings, please check out [node_dns_changer](https://www.npmjs.com/package/node_dns_changer) on npm or on [GitLab](https://gitlab.com/BobyMCbobs/node_dns_changer).  
 This library is very important to the project, so it should also be supported.  

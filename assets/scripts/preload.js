@@ -20,7 +20,7 @@
 //
 
 var Store = require('electron-store'),
- store = new Store()
+ store = new Store();
 
 global.desktop = Object.freeze({
   global: {
