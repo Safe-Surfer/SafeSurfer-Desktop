@@ -28,8 +28,14 @@ Our aim for this project is to make it as easy as possible to get families and p
 
 For enterprise/business use, we recommend to apply the DNS settings on a router which devices are connected to, please refer to the [Safe Surfer website](http://safesurfer.co.nz).  
 
-### Latest [release information](https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0)
-Download from this version from [here](http://142.93.48.189).  
+### [Download](https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases)
+Windows Store (coming soon)  
+macOS App Store (coming soon)  
+snapcraft store (coming soon)  
+Ubuntu PPA: ppa:bobymcbobs/safesurfer - safesurfer-desktop  
+[openSUSE and Fedora via OBS](https://software.opensuse.org/download.html?project=home%3ABoby_MC_bobs&package=SafeSurfer-Desktop)  
+
+For [Windows (64-bit/32-bit), AppImage, and dmg](https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases).  
 
 ## Features
 - Toggle DNS settings with one button  
