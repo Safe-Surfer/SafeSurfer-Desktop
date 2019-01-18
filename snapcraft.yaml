@@ -39,7 +39,6 @@ apps:
   safesurferdesktop:
     command: usr/lib64/SafeSurfer-Desktop/safesurfer-desktop
     desktop: usr/share/applications/SafeSurfer-Desktop.desktop
-    plugs: [x11, wayland, network, network-bind, shutdown, gsettings, home, desktop, browser-support]
     environment:
       TMPDIR: $XDG_RUNTIME_DIR
 
