@@ -130,7 +130,7 @@
       "!Makefile",
       "!package-lock.json",
       "!README.md",
-      "!snapcraft.yaml",
+      "!snapcraft.yaml"
     ]
   },
   "devDependencies": {
