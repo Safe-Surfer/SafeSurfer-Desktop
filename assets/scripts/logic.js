@@ -576,13 +576,10 @@ const appFrame = {
     // for for app update
     var remoteData,
      versionList = [],
-     serverAddress = "142.93.48.189",
-     serverPort = 80,
-     serverDataFile = "/files/desktop/version-information.json",
      updateErrorDialog = {type: 'info', buttons: [i18n.__('Manually check on downloads page'), i18n.__('Ok')], message: i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong.")};
 
-    logging(`[checkForAppUpdate]: About to fetch http://${serverAddress}:${serverPort}${serverDataFile}`);
-    Request.get(`http://${serverAddress}:${serverPort}${serverDataFile}`, (error, response, body) => {
+    logging(`[checkForAppUpdate]: About to fetch https://raw.githubusercontent.com/Safe-Surfer/SafeSurfer-Desktop-version-information/master/version-information.json`);
+    Request.get("https://raw.githubusercontent.com/Safe-Surfer/SafeSurfer-Desktop-version-information/master/version-information.json", (error, response, body) => {
       if ((error < 200 || error >= 300) && error != null) {
         // if something goes wrong
         logging(`[checkForAppUpdate]: HTTP error ${error}`);
@@ -603,19 +600,19 @@ const appFrame = {
         versionList = [...versionList, build.build];
       });
 
-      var genLink = `${remoteData.linkBase}/files/desktop/${buildRecommended}-${versionRecommended.version}/SafeSurfer-Desktop-${versionRecommended.version}-${buildRecommended}-${os.arch()}`;
+      var genLink = `${remoteData.linkBase}/download/${versionRecommended.version}`;
       switch (os.platform()) {
         case 'linux':
-          if (LINUXPACKAGEFORMAT == 'appimage') genLink = `${genLink}.AppImage`;
+          if (LINUXPACKAGEFORMAT == 'appimage') genLink = `${genLink}/Safe_Surfer-x86_64.AppImage`;
           else genLink = remoteData.linkBase;
           break;
 
         case 'win32':
-          genLink = `${genLink}.exe`;
+          genLink = `${genLink}/SafeSurfer-Desktop Setup.exe`;
           break;
 
         case 'darwin':
-          genLink = `${genLink}.dmg`;
+          genLink = `${genLink}/SafeSurfer-Desktop.dmg`;
           break;
       }
 
@@ -656,7 +653,7 @@ const appFrame = {
         if (options.showErrors == true) {
           dialog.showMessageBox(updateErrorDialog, updateResponse => {
             logging("[checkForAppUpdate]: Error.");
-            if (updateResponse == 0) desktop.logic.electronOpenExternal(serverAddress);
+            if (updateResponse == 0) desktop.logic.electronOpenExternal("https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases");
             return;
           });
         }
