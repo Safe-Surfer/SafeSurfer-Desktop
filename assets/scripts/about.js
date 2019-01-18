@@ -20,7 +20,7 @@
 //
 
 const packageJSON = window.desktop.global.packageJSON(),
-  APPBUILD = packageJSON.APPBUILD,
+  APPBUILD = packageJSON.build.buildVersion,
   version = packageJSON.version,
   BUILDMODE = packageJSON.appOptions.BUILDMODE,
   i18n = window.desktop.global.i18n(),

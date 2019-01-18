@@ -1,7 +1,6 @@
 {
   "name": "SafeSurfer-Desktop",
   "version": "1.0.0",
-  "APPBUILD": "10",
   "description": "Keeping you safe in the digitial surf with Safe Surfer",
   "main": "./assets/scripts/main.js",
   "license": "GPL-3.0",
@@ -48,8 +47,7 @@
       "category": "public.app-category.utilities",
       "target": [
         "zip",
-        "dmg",
-        "mas"
+        "dmg"
       ],
       "icon": "assets/media/icons/mac/icon.icns",
       "entitlements": "support/macOS/entitlements.mac.plist",
@@ -72,6 +70,8 @@
       "provisioningProfile": "embedded.provisionprofile"
     },
     "dmg": {
+      "background": "build/background.png",
+      "icon": "build/icon.icns",
       "contents": [
         {
           "x": 110,
@@ -87,8 +87,7 @@
     },
     "win": {
       "target": [
-        "nsis",
-        "portable"
+        "nsis"
       ],
       "icon": "build/icon.ico"
     },
@@ -125,7 +124,13 @@
       "!docs/**",
       "!screenshots/**",
       "!support/**",
-      "!builtBinaries/**"
+      "!builtBinaries/**",
+      "!.gitlab",
+      "!.gitlab-ci.yml",
+      "!Makefile",
+      "!package-lock.json",
+      "!README.md",
+      "!snapcraft.yaml",
     ]
   },
   "devDependencies": {

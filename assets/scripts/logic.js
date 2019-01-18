@@ -26,7 +26,7 @@ const {dialog} = desktop.logic.dialogBox(),
   dns = require('dns'),
   app = electron.app ? electron.app : electron.remote.app,
   packageJSON = desktop.global.packageJSON(),
-  APPBUILD = parseInt(packageJSON.APPBUILD),
+  APPBUILD = parseInt(packageJSON.build.buildVersion) || packageJSON.build.buildVersion,
   APPVERSION = packageJSON.version,
   BUILDMODE = packageJSON.appOptions.BUILDMODE,
   isBeta = packageJSON.appOptions.isBeta,
@@ -608,7 +608,7 @@ const appFrame = {
           break;
 
         case 'win32':
-          genLink = `${genLink}/SafeSurfer-Desktop Setup.exe`;
+          genLink = `${genLink}/SafeSurfer-Desktop.Setup.exe`;
           break;
 
         case 'darwin':
@@ -1051,7 +1051,7 @@ const appFrame = {
     window.appStates.windowsVersionCompatible = false;
     logging("[windowsVersionCheck]: User is not on a compatible version of Windows");
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("The version of Windows that you seem to be running appears to be not compatible with this app.")}, msgResponse => {
-      if (msgResponse == 1) desktop.logic.electronOpenExternal('https://safesurfer.desk.com/desktop-app-required-specs');
+      if (msgResponse == 1) desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop#system-requirements');
     });
   }
 };

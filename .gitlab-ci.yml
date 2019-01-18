@@ -42,7 +42,7 @@ build:
     - make clean
     # build macOS & zip it
     - make BUILDMODE="RELEASE" configure
-    - make build-macos || true
+    - node_modules/.bin/electron-builder --mac zip
     - mv dist/SafeSurfer-Desktop-*-mac.zip builtBinaries/.
     # clean build
     - make clean

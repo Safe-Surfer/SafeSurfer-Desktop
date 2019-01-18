@@ -28,7 +28,7 @@ const {app} = require('electron'),
   packageJSON = require('../../package.json'),
   BUILDMODE = packageJSON.appOptions.BUILDMODE,
   APPVERSION = packageJSON.version,
-  APPBUILD = packageJSON.APPBUILD,
+  APPBUILD = packageJSON.build.buildVersion,
   isBeta = packageJSON.appOptions.isBeta,
   updatesEnabled =  process.env.SAFESURFER_APPUPDATES !== undefined ? JSON.parse(process.env.SAFESURFER_APPUPDATES) : packageJSON.appOptions.enableUpdates,
   i18n = new (require('./i18n.js'));
