@@ -4,10 +4,10 @@
 <a href="https://hosted.weblate.org/projects/safe-surfer/translations">
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
 </a>
-<a href="http://142.93.48.189">
+<a href="https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases">
     <img src="https://img.shields.io/badge/version-1.0.0-brightgreen.svg" />
 </a>
-<a href="http://142.93.48.189">
+<a href="https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases">
     <img src="https://img.shields.io/badge/build-10-orange.svg" />
 </a>
 
