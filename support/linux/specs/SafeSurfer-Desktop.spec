@@ -126,7 +126,7 @@ make BUILDMODE=RELEASE UPDATES=false configure
 
 
 %changelog
-* Fri Dec 12 2018 caleb
+* Fri Dec 18 2019 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0
 
 * Fri Nov 26 2018 caleb
