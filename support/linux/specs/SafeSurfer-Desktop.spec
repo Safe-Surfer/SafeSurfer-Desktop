@@ -100,13 +100,12 @@ make BUILDMODE=RELEASE UPDATES=false configure
 /usr/lib64/%{name}/ui_resources_200_percent.pak
 /usr/lib64/%{name}/icudtl.dat
 /usr/lib64/%{name}/pdf_viewer_resources.pak
-/usr/lib64/%{name}/version
 /usr/lib64/%{name}/libffmpeg.so
 /usr/lib64/%{name}/resources/app.asar
 /usr/lib64/%{name}/resources/electron.asar
 /usr/lib64/%{name}/views_resources_200_percent.pak
 /usr/lib64/%{name}/libnode.so
-/usr/lib64/%{name}/LICENSE
+/usr/lib64/%{name}/LICENSE.electron.txt
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli
@@ -126,7 +125,7 @@ make BUILDMODE=RELEASE UPDATES=false configure
 
 
 %changelog
-* Fri Dec 18 2019 caleb
+* Fri Jan 19 2019 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.0
 
 * Fri Nov 26 2018 caleb

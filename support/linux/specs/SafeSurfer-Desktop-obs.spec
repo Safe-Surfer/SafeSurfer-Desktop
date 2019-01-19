@@ -5,8 +5,8 @@ Summary:        Keeping you safe in the digitial surf with Safe Surfer
 BuildArch:	x86_64
 License:        GPL-3.0
 Group:		Productivity/Networking/DNS/Utilities
-URL:            https://gitlab.com/safesurfer/%{name}
-Source0:	http://142.93.48.189/files/desktop/10-%{version}/linux-precompiled/%{name}-%{version}-10-linux.zip
+URL:            https://github.com/Safe-Surfer/%{name}
+Source0:	https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases/download/%{version}/SafeSurfer-Desktop-Linux.zip
 Requires:       polkit, curl
 BuildRequires:	unzip, desktop-file-utils
 %if 0%{?suse_version}
@@ -18,14 +18,14 @@ Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS set
 
 
 %prep
-mkdir %{name}-%{version}-10-linux/
-unzip ../SOURCES/%{name}-%{version}-10-linux.zip -d ./%{name}-%{version}-10-linux/
+mkdir %{name}-Linux/
+unzip ../SOURCES/%{name}-Linux.zip -d ./%{name}-Linux/
 
 %build
 
 
 %install
-cp -r ./%{name}-%{version}-10-linux/. $RPM_BUILD_ROOT/
+cp -r ./%{name}-Linux/. $RPM_BUILD_ROOT/
 
 %files
 /usr/lib64/%{name}
@@ -95,13 +95,12 @@ cp -r ./%{name}-%{version}-10-linux/. $RPM_BUILD_ROOT/
 /usr/lib64/%{name}/ui_resources_200_percent.pak
 /usr/lib64/%{name}/icudtl.dat
 /usr/lib64/%{name}/pdf_viewer_resources.pak
-/usr/lib64/%{name}/version
 /usr/lib64/%{name}/libffmpeg.so
 /usr/lib64/%{name}/resources/app.asar
 /usr/lib64/%{name}/resources/electron.asar
 /usr/lib64/%{name}/views_resources_200_percent.pak
 /usr/lib64/%{name}/libnode.so
-/usr/lib64/%{name}/LICENSE
+/usr/lib64/%{name}/LICENSE.electron.txt
 /usr/share/pixmaps/ss-logo.png
 /usr/share/applications/SafeSurfer-Desktop.desktop
 /usr/bin/sscli
