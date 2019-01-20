@@ -1,6 +1,7 @@
 {
   "name": "SafeSurfer-Desktop",
   "version": "1.0.0",
+  "APPBUILD": "10",
   "description": "Keeping you safe in the digitial surf with Safe Surfer",
   "main": "./assets/scripts/main.js",
   "license": "GPL-3.0",
@@ -11,7 +12,7 @@
     "build:win": "node_modules/.bin/electron-builder --win --ia32 --x64",
     "build:linux": "node_modules/.bin/electron-builder --linux --x64",
     "build:macos": "node_modules/.bin/electron-builder --mac",
-    "build:mas": "if [ ! -f embedded.provisionprofile ]; then echo '[!] Cannot find file: embedded.provisionprofile'; exit 1; fi && make BUILDMODE=RELEASE UPDATES=false MACOSDEVID=$__MACDEVTEAMID configure && node_modules/.bin/electron-builder --mac mas",
+    "build:mas": "if [ ! -f embedded.provisionprofile ]; then echo '[!] Cannot find file: embedded.provisionprofile'; exit 1; fi && make UPDATES=false MACOSDEVID=$__MACDEVTEAMID configure && node_modules/.bin/electron-builder --mac mas",
     "build:appx": "node_modules/.bin/electron-builder --win appx --ia32 --x64",
     "sign-win-exe": "node ./support/windows/sign.js",
     "lintTranslations": "node ./support/lintTranslations.js",
@@ -31,7 +32,6 @@
     "surfer"
   ],
   "appOptions": {
-    "BUILDMODE": "dev",
     "isBeta": false,
     "enableUpdates": true,
     "enableNotifications": true,

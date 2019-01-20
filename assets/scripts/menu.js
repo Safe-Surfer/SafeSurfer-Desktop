@@ -26,9 +26,8 @@ const {app} = require('electron'),
   Store = require('electron-store'),
   store = new Store(),
   packageJSON = require('../../package.json'),
-  BUILDMODE = packageJSON.appOptions.BUILDMODE,
   APPVERSION = packageJSON.version,
-  APPBUILD = packageJSON.build.buildVersion,
+  APPBUILD = parseInt(packageJSON.APPBUILD),
   isBeta = packageJSON.appOptions.isBeta,
   updatesEnabled =  process.env.SAFESURFER_APPUPDATES !== undefined ? JSON.parse(process.env.SAFESURFER_APPUPDATES) : packageJSON.appOptions.enableUpdates,
   i18n = new (require('./i18n.js'));
@@ -47,7 +46,7 @@ if (provideUpdateInformation === undefined) {
   store.set('provideUpdateInformation', true);
   provideUpdateInformation = store.get('provideUpdateInformation');
 }
-if (betaCheck === undefined && BUILDMODE != 'dev') {
+if (betaCheck === undefined) {
   store.set('betaCheck', false);
 }
 else if (isBeta == true) {
@@ -124,7 +123,7 @@ module.exports = (app, mainWindow) => {
         {label: i18n.__('Translate this app'), click() {electron.shell.openExternal('https://hosted.weblate.org/projects/safe-surfer/translations/')} },
         {label: i18n.__('Donate'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/donate-now/')}},
         {type:'separator'},
-        {label:`${i18n.__("Version")}: ${APPVERSION}:${APPBUILD}${BUILDMODE}`, click() {mainWindow.webContents.send('goBuildToClipboard')} },
+        {label:`${i18n.__("Version")}: ${APPVERSION}:${APPBUILD}`, click() {mainWindow.webContents.send('goBuildToClipboard')} },
         {type:'separator'},
         {label: i18n.__('About this app'), click() {mainWindow.webContents.send('showAboutMenu')} }
       ]

@@ -26,9 +26,8 @@ const {dialog} = desktop.logic.dialogBox(),
   dns = require('dns'),
   app = electron.app ? electron.app : electron.remote.app,
   packageJSON = desktop.global.packageJSON(),
-  APPBUILD = parseInt(packageJSON.build.buildVersion) || packageJSON.build.buildVersion,
+  APPBUILD = parseInt(packageJSON.APPBUILD) || packageJSON.APPBUILD,
   APPVERSION = packageJSON.version,
-  BUILDMODE = packageJSON.appOptions.BUILDMODE,
   isBeta = packageJSON.appOptions.isBeta,
   updatesEnabled = process.env.SAFESURFER_APPUPDATES !== undefined ? JSON.parse(process.env.SAFESURFER_APPUPDATES) : packageJSON.appOptions.enableUpdates,
   enableNotifications = packageJSON.appOptions.enableNotifications,
@@ -117,7 +116,6 @@ window.actions = Object.freeze({
         appBuild: APPBUILD,
         appStates: appStates,
         appVersion: APPVERSION,
-        buildMode: BUILDMODE,
         isBeta: isBeta,
         date: moment().format('X'),
         electronVersion: process.versions.electron,
@@ -675,7 +673,7 @@ const appFrame = {
       ARCH: os.arch(),
       LOCALE: app.getLocale(),
       LIFEGUARDSTATE: window.appStates.lifeguardFound[0],
-      BUILDMODE: BUILDMODE,
+      BUILDMODE: "release",
       ISSERVICEENABLED: window.appStates.serviceEnabled[0],
     };
     if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
@@ -755,7 +753,7 @@ const appFrame = {
   versionInformationCopy: function() {
     // copy app build information to clipboard
     dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')}, dialogResponse => {
-      if (dialogResponse != 0) desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nBuildMode: ${BUILDMODE}\nnode_dns_changer version: ${desktop.logic.node_dns_changer.version}\nelectron version: ${process.versions.electron}`);
+      if (dialogResponse != 0) desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nnode_dns_changer version: ${desktop.logic.node_dns_changer.version}\nelectron version: ${process.versions.electron}`);
       if (dialogResponse == 2) desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
     });
   },
@@ -864,7 +862,7 @@ const appFrame = {
       DATESENT: moment().format('X'),
       TYPESEND: "update",
       APPBUILD: APPBUILD,
-      BUILDMODE: BUILDMODE,
+      BUILDMODE: "release",
       APPVERSION: APPVERSION,
       PLATFORM: os.platform(),
       ISSERVICEENABLED: window.appStates.serviceEnabled[0]
@@ -1056,7 +1054,7 @@ const appFrame = {
   }
 };
 
-if (BUILDMODE == 'dev') window.appFrame = Object.freeze(appFrame);
+if (packageJSON.appOptions.disableNodeIntegration === false) window.appFrame = Object.freeze(appFrame);
 
 ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
   // if user changes the state of auto check for updates

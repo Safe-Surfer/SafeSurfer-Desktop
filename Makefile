@@ -5,7 +5,6 @@ COMPLETIONDIR = /usr/share/bash-completion/completions
 all: help
 
 configure:
-	@if [[ "$(BUILDMODE)" = "RELEASE" ]]; then sed -i -e 's/"BUILDMODE": "dev"/"BUILDMODE": "release"/g' ./package.json; fi
 	@if [[ "$(UPDATES)" = false ]]; then sed -i -e 's/"enableUpdates": true/"enableUpdates": false/g' ./package.json; fi
 	@if [[ ! -z "$(MACOSDEVID)" ]]; then cp ./support/macOS/entitlements.mas.plist ./support/macOS/entitlements.mas.plist.bak; sed -i -e "s/DEVIDSTUFF/$(MACOSDEVID)/g" ./support/macOS/entitlements.mas.plist; fi
 
@@ -53,7 +52,7 @@ uninstall:
 	@rm -rf $(DESTDIR)/usr/share/pixmaps/ss-logo.png
 
 prep-deb:
-	make BUILDMODE=$(BUILDMODE) UPDATES=false configure
+	make UPDATES=false configure
 	make build-linux
 	@mkdir -p deb-build/safesurfer-desktop/debian/safesurfer-desktop
 	@cp -p -r support/linux/debian/. deb-build/safesurfer-desktop/debian
@@ -62,15 +61,15 @@ prep-deb:
 	@mv deb-build/safesurfer-desktop/debian/copyright deb-build/safesurfer-desktop/debian/safesurfer-desktop/usr/share/doc/safesurfer-desktop
 
 deb-pkg:
-	make BUILDMODE=$(BUILDMODE) prep-deb
+	make prep-deb
 	@cd deb-build/safesurfer-desktop/debian && debuild -b
 
 deb-src:
-	make BUILDMODE=$(BUILDMODE) prep-deb
+	make prep-deb
 	@cd deb-build/safesurfer-desktop/debian && debuild -S
 
 build-linuxzip:
-	make BUILDMODE=$(BUILDMODE) UPDATES=false configure
+	make UPDATES=false configure
 	make build-linux
 	@mkdir -p zip-build
 	@make DESTDIR=zip-build install
@@ -104,7 +103,7 @@ prep-appimage:
 
 build-appimage:
 	@if [ ! -x "./tools/appimagetool-x86_64.AppImage" ]; then echo "Please run 'make prep-appimage'."; exit 1; fi;
-	make BUILDMODE=$(BUILDMODE) UPDATES=$(UPDATES) configure
+	make UPDATES=$(UPDATES) configure
 	make build-linux
 	make DESTDIR=nz.co.safesurfer.SafeSurfer-Desktop.AppDir install
 	@mkdir -p ./nz.co.safesurfer.SafeSurfer-Desktop.AppDir/usr/lib
@@ -155,7 +154,6 @@ build-snap-lxd:
 
 clean:
 	@rm -rf dist deb-build release-builds flatpak-build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild dist safesurfer-desktop_*_*.snap
-	@if grep -q '"BUILDMODE": "release"' ./package.json; then sed -i -e 's/"BUILDMODE": "release"/"BUILDMODE": "dev"/g' ./package.json; fi
 	@if grep -q '"enableUpdates": false' ./package.json; then sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json; fi
 	@if ! grep -q "DEVIDSTUFF" ./support/macOS/entitlements.mas.plist && [[ -f "./support/macOS/entitlements.mas.plist.bak" ]]; then mv ./support/macOS/entitlements.mas.plist.bak ./support/macOS/entitlements.mas.plist; fi
 

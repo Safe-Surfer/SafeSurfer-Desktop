@@ -14,7 +14,7 @@ parts:
       curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
       apt-get install -y nodejs
       npm i
-      make BUILDMODE=RELEASE UPDATES=false configure
+      make UPDATES=false configure
       make build-linux
       make DESTDIR=$SNAPCRAFT_PART_INSTALL install
     build-packages:

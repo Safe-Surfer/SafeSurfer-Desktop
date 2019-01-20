@@ -17,10 +17,9 @@ These are required to run, and should be included somewhere when packaging.
 `npm start`  
 
 ### Configure the build (if needed)
-`make BUILDMODE=DEV UPDATES=true configure`  
-i.e: `make BUILDMODE=RELEASE UPDATES=false configure`  
+`make UPDATES=true configure`  
+i.e: `make UPDATES=false configure`  
 Notes:
-- BUILDMODE lets the app know if it's a release build or a dev build  
 - UPDATES refers to the functionality of the app where it can check for a new version. Make sure you disable updates, since it will be handled by your package manager
 
 ### Building binaries
@@ -57,7 +56,7 @@ rpm: use spec file in [support/linux/specs](support/linux/specs)
 snap: `make build-snap`  
 
 ##### Windows
-AppX (32-bit/64-bit): `bash -c 'make BUILDMODE=release UPDATES=false configure' && npm run build:appx`  
+AppX (32-bit/64-bit): `bash -c 'make UPDATES=false configure' && npm run build:appx`  
 exe (installer and portable exe): `npm run build:win`  
 
 ##### macOS

@@ -31,8 +31,7 @@ build:
     # prep dependencies
     - npm i
     # build AppImage
-    - make BUILDMODE="RELEASE" configure
-    - make prep-appimage BUILDMODE="RELEASE" build-appimage || true
+    - make prep-appimage build-appimage || true
     - cd tools
     - ./appimagetool-x86_64.AppImage --appimage-extract || true
     - ./squashfs-root/AppRun -n -s ../nz.co.safesurfer.SafeSurfer-Desktop.AppDir
@@ -41,13 +40,11 @@ build:
     # clean build
     - make clean
     # build macOS & zip it
-    - make BUILDMODE="RELEASE" configure
     - node_modules/.bin/electron-builder --mac zip
     - mv dist/SafeSurfer-Desktop-*-mac.zip builtBinaries/.
     # clean build
     - make clean
     # build windows (64-bit)
-    - make BUILDMODE="RELEASE" configure
     - make build-windows
     - mv dist/SafeSurfer-Desktop\ *.exe builtBinaries/.
     # clean build

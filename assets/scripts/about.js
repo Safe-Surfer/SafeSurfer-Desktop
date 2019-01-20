@@ -20,9 +20,8 @@
 //
 
 const packageJSON = window.desktop.global.packageJSON(),
-  APPBUILD = packageJSON.build.buildVersion,
+  APPBUILD = parseInt(packageJSON.APPBUILD),
   version = packageJSON.version,
-  BUILDMODE = packageJSON.appOptions.BUILDMODE,
   i18n = window.desktop.global.i18n(),
   logging = window.desktop.global.logging(),
   $ = window.desktop.global.jquery();
@@ -48,7 +47,7 @@ $("#title").text(i18n.__("About this app"));
 $("#logoInfo")[0].title = `${i18n.__("This app was built by:")}\n${creatorsInfo}`;
 
 // update description text
-$('#description').multiline(`${i18n.__("Version")}: ${version}; ${i18n.__("Build")}: ${APPBUILD} (${BUILDMODE}).\n&copy; 2018-2019 Safe Surfer, et al.\n\n${i18n.__('This program comes with absolutely no warranty.')}\n${i18n.__('See the GNU General Public License, version 3 or later for details.')}`);
+$('#description').multiline(`${i18n.__("Version")}: ${version}; ${i18n.__("Build")}: ${APPBUILD}.\n&copy; 2018-2019 Safe Surfer, et al.\n\n${i18n.__('This program comes with absolutely no warranty.')}\n${i18n.__('See the GNU General Public License, version 3 or later for details.')}`);
 
 function shrinkLogo() {
   $("#ss-logo").css("height", "180px");

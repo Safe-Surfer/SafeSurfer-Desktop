@@ -83,7 +83,7 @@ function createWindow() {
 app.on('ready', function(window) {
   switch (args[0]) {
     case '-v': case '--version': case 'version': case '/v': case '/version':
-      console.log(`SafeSurfer-Desktop ${packageJSON.version}:${packageJSON.build.buildVersion}${packageJSON.appOptions.BUILDMODE}`);
+      console.log(`SafeSurfer-Desktop ${packageJSON.version}:${packageJSON.APPBUILD}`);
       app.quit();
       break;
 
