@@ -112,10 +112,8 @@ app.on('browser-window-created', (event, window) => {
 
 // behave like a macOS app, don't quit when user presses the red button
 app.on('window-all-closed', function() {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-})
+  app.quit();
+});
 
 // if the window still hasn't been created
 app.on('activate', function() {

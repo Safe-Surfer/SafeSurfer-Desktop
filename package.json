@@ -136,10 +136,6 @@
   "devDependencies": {
     "electron": "^2.0.10",
     "electron-builder": "^20.28.2",
-    "electron-installer-dmg": "^2.0.0",
-    "electron-osx-sign": "^0.4.11",
-    "electron-packager": "^12.1.1",
-    "electron-windows-store": "^2.1.0",
     "mocha": "^5.2.0",
     "os-locale": "^3.0.1",
     "spectron": "^5.0.0"
@@ -153,7 +149,6 @@
     "jquery": "^3.3.1",
     "lets-get-meta": "^2.1.1",
     "moment": "^2.22.2",
-    "node-dns-sd": "^0.2.0",
     "node_dns_changer": "^1.1.7",
     "nodejs-base64-encode": "0.0.2",
     "request": "^2.88.0",

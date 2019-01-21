@@ -79,16 +79,14 @@ module.exports = (app, mainWindow) => {
             {label: i18n.__('Activate'), click() {mainWindow.webContents.send('goForceEnable')} },
             {label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} },
             {type:'separator'},
-            {label: `${i18n.__('Flush DNS cache')}${os.platform() === 'darwin' ? " (experimental)" : ""}`, click() {mainWindow.webContents.send('goFlushDNScache')} },
+            {label: i18n.__('Flush DNS cache'), click() {mainWindow.webContents.send('goFlushDNScache')} },
             {type:'separator'},
             {label: i18n.__('Lock deactivate buttons'), click() {mainWindow.webContents.send('goLockDeactivateButtons')} }
           ]
         },
         {label: i18n.__('Configure LifeGuard device'), click() {mainWindow.webContents.send('goOpenMyDeviceLifeGuard')} },
         {label: i18n.__('Give feedback'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
-        {label: i18n.__('Help'), click() {electron.shell.openExternal('https://safesurfer.desk.com/')}, accelerator: 'CmdOrCtrl+H' },
-        {type:'separator'},
-        {label: i18n.__('Exit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+        {label: i18n.__('Help'), click() {electron.shell.openExternal('https://safesurfer.desk.com/')} }
       ]
     },
     {
@@ -123,9 +121,7 @@ module.exports = (app, mainWindow) => {
         {label: i18n.__('Translate this app'), click() {electron.shell.openExternal('https://hosted.weblate.org/projects/safe-surfer/translations/')} },
         {label: i18n.__('Donate'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/donate-now/')}},
         {type:'separator'},
-        {label:`${i18n.__("Version")}: ${APPVERSION}:${APPBUILD}`, click() {mainWindow.webContents.send('goBuildToClipboard')} },
-        {type:'separator'},
-        {label: i18n.__('About this app'), click() {mainWindow.webContents.send('showAboutMenu')} }
+        {label:`${i18n.__("Version")}: ${APPVERSION}:${APPBUILD}`, click() {mainWindow.webContents.send('goBuildToClipboard')} }
       ]
     },
   ];
@@ -165,9 +161,32 @@ module.exports = (app, mainWindow) => {
     ]
   }
   // add seperate menu for name and quit, like on standard macOS apps
-  if (os.platform() == 'darwin') {
-    menu[0].label = "SafeSurfer-Desktop";
-    menu[0].submenu[5].label = i18n.__("Quit");
+  if (os.platform() === 'darwin') {
+    menu.unshift(
+      {
+        label: "SafeSurfer-Desktop",
+        submenu:
+        [
+          {label: i18n.__('About SafeSurfer-Desktop'), click() {mainWindow.webContents.send('showAboutMenu')} },
+          {type:'separator'},
+          {role: 'hide'},
+          {role: 'hideothers'},
+          {role: 'unhide'},
+          {type:'separator'},
+          {label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+        ]
+      }
+    );
+  }
+  else {
+    menu[2].submenu.push(
+      {type:'separator'},
+      {label: i18n.__('About this app'), click() {mainWindow.webContents.send('showAboutMenu')} }
+    );
+    menu[0].submenu.push(
+        {type:'separator'},
+        {label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+    )
   }
   return menu;
 }
