@@ -149,7 +149,7 @@
     "jquery": "^3.3.1",
     "lets-get-meta": "^2.1.1",
     "moment": "^2.22.2",
-    "node_dns_changer": "^1.1.7",
+    "node_dns_changer": "^1.1.8",
     "nodejs-base64-encode": "0.0.2",
     "request": "^2.88.0",
     "shelljs": "^0.8.2"

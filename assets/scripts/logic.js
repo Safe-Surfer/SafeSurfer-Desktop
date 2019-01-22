@@ -512,7 +512,8 @@ const appFrame = {
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
             rmBackup: os.platform() === 'darwin' ? false : true,
-            macOSuseDHCP: appStates.macOSuseDHCP
+            macOSuseDHCP: appStates.macOSuseDHCP,
+            windowsPreferNetsh: true
           }).then(response => {
             if (response === true && forced === true && appStates.serviceEnabled[0] === false && alerts === true) appFrame.toggleSuccess();
           });
