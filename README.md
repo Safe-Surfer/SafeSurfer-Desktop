@@ -72,7 +72,7 @@ Read our [translation guide](docs/TRANSLATING.md) to get started!
 
 ## Notes
 Known issues  
-- If you are using Hyper-V, you may need to manually remove the DNS settings from Control Panel
+- If you are using Hyper-V, you may need to manually remove the DNS settings from each interface in Control Panel > Network and Internet > Network Connections
 
 ## System requirements
 Known compatible operating systems:  
