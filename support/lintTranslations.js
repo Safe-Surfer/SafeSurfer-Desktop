@@ -23,8 +23,7 @@
   A small program for displaying untranslated lines in given translation files
 */
 
-const app = require('electron'),
- osLocale = require('os-locale'),
+const osLocale = require('os-locale'),
  fs = require('fs'),
  path = require('path');
 var translationJSON, englishJSON, keyList = {},

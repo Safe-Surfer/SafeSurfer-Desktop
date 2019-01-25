@@ -27,8 +27,7 @@ var dirAssets;
 if (fs.existsSync(path.join('..', 'assets', 'translations'))) dirAssets = path.join('..', 'assets', 'translations');
 else if (fs.existsSync(path.resolve(path.join('.', 'assets', 'translations')))) dirAssets = path.resolve(path.join('.', 'assets', 'translations'));
 const enTranslation = require(path.join(`${dirAssets}`, 'en.json'));
-var languageToFix,
-  localeName,
+var localeName,
   localeFile,
   keysAdded = 0,
   keysDeleted = 0,
@@ -70,4 +69,4 @@ fs.readdirSync(`${dirAssets}`).forEach(file => {
 });
 
 // summary
-console.log(`${editCount > 0 ? "\n" : ""}${editCount} files edited.`)
+console.log(`${editCount > 0 ? "\n" : ""}${editCount} files edited.`);

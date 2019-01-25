@@ -49,7 +49,7 @@
         "zip",
         "dmg"
       ],
-      "icon": "assets/media/icons/mac/icon.icns",
+      "icon": "build/icon.icns",
       "entitlements": "support/macOS/entitlements.mac.plist",
       "type": "distribution",
       "electronLanguages": [
@@ -130,7 +130,8 @@
       "!Makefile",
       "!package-lock.json",
       "!README.md",
-      "!snapcraft.yaml"
+      "!snapcraft.yaml",
+      "!embedded.provisionprofile"
     ]
   },
   "devDependencies": {

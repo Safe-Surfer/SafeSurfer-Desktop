@@ -33,9 +33,8 @@ Windows Store (coming soon)
 macOS App Store (coming soon)  
 snapcraft store (coming soon)  
 Ubuntu PPA: ppa:bobymcbobs/safesurfer - safesurfer-desktop  
-[openSUSE and Fedora via OBS](https://software.opensuse.org/download.html?project=home%3ABoby_MC_bobs&package=SafeSurfer-Desktop)  
-
-For [Windows (64-bit/32-bit), AppImage, or macOS dmg](https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases).  
+openSUSE and Fedora: [OBS](https://software.opensuse.org/download.html?project=home%3ABoby_MC_bobs&package=SafeSurfer-Desktop)  
+[Windows (64-bit/32-bit)</br>AppImage</br>macOS dmg](https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases)  
 
 ## Features
 - Toggle DNS settings with one button  

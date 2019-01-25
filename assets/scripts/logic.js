@@ -550,7 +550,7 @@ const appFrame = {
   publishDesktopAppOnNetwork: function(state) {
     // bonjour public to network for device discovery
     if (state == "enable") bonjour.publish({name: 'Safe Surfer Desktop', type: 'ssdesktop', port: 3158});
-    if (state == "disable") bonjour.unpublishAll();
+    else if (state == "disable") bonjour.unpublishAll();
   },
 
   internetConnectionCheck: async function() {
@@ -594,6 +594,7 @@ const appFrame = {
       remoteData = JSON.parse(body);
       var versionRecommended;
       buildRecommended = parseInt(store.get('betaCheck') == true ? remoteData.recommendedBuild : remoteData.recommendedBetaBuild);
+      if (remoteData.recommendedBuildOverride[os.platform()] !== null) buildRecommended = remoteData.recommendedBuildOverride[os.platform()];
       remoteData.versions.map(build => {
         if (build.build == buildRecommended) versionRecommended = build;
         versionList = [...versionList, build.build];

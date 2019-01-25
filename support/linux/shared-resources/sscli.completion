@@ -24,7 +24,7 @@ function _sscli() {
 local cur prev
 _init_completion -s || return
 case $prev in
--e|--enable|-d|--disable)
+-e|--enable|enable|-d|--disable|disable)
 	COMPREPLY=( $( compgen -W "-f force" -- ${cur} ) )
 	return
 ;;

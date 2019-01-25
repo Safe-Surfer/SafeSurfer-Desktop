@@ -22,6 +22,11 @@
 var Store = require('electron-store'),
  store = new Store();
 
+var _setImmediate = setImmediate;
+process.once('loaded', function() {
+  global.setImmediate = _setImmediate;
+});
+
 global.desktop = Object.freeze({
   global: {
     jquery: () => require('jquery'),

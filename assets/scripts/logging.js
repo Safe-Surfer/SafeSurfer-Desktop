@@ -19,9 +19,11 @@
 // along with SafeSurfer-Desktop.  If not, see <https://www.gnu.org/licenses/>.
 //
 
+const moment = require('moment');
+
 // export function
 module.exports = function(...text) {
   loggingEnable = typeof appStates === 'undefined' ? false : window.appStates.enableLogging;
   // logging is enabled via config file or variable
-  if (require('../../package.json').appOptions.enableLogging == true || loggingEnable == true) console.log(text.join(' '));
+  if (require('../../package.json').appOptions.enableLogging == true || loggingEnable == true) console.log(`${moment().format()} ${text.join(' ')}`);
 }

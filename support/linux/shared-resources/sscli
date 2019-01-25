@@ -42,9 +42,9 @@ function printHelpMenu() {
 cat << EOF
 The Safe Surfer command line utility
 
-Usage: sscli [OPT]
+Usage: sscli [option]
 
-OPTS:
+Options:
 	disable  disable the DNS
 	enable   enable the DNS
 	flush	 flush the DNS cache
@@ -91,7 +91,7 @@ then
 	success=true
 fi
 
-if [ -x $(which systemd-resolve 2> /dev/null) ]
+if [ -x $(which systemd-resolve 2> /dev/null) ] && [ ! -z $(which systemd-resolve 2> /dev/null) ]
 then
 	systemd-resolve --flush-caches && echo "* Flushed systemd-resolve DNS cache"
 	success=true
