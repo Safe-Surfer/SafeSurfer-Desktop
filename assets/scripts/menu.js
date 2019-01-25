@@ -20,50 +20,50 @@
 //
 
 // create app menu
-const {app} = require('electron'),
-  electron = require('electron'),
-  os = require('os'),
-  Store = require('electron-store'),
-  store = new Store(),
-  packageJSON = require('../../package.json'),
-  APPVERSION = packageJSON.version,
-  APPBUILD = parseInt(packageJSON.APPBUILD),
-  isBeta = packageJSON.appOptions.isBeta,
-  updatesEnabled =  process.env.SAFESURFER_APPUPDATES !== undefined ? JSON.parse(process.env.SAFESURFER_APPUPDATES) : packageJSON.appOptions.enableUpdates,
-  i18n = new (require('./i18n.js'));
-var accountIsAssigned = store.get('accountInformation'),
-  appUpdateAutoCheck = store.get('appUpdateAutoCheck'),
-  provideUpdateInformation = store.get('provideUpdateInformation'),
-  betaCheck = store.get('betaCheck'),
-  teleEnabled = store.get('statisticAllow'),
-  LINUXPACKAGEFORMAT = process.env.LINUXPACKAGEFORMAT === undefined ? '' : process.env.LINUXPACKAGEFORMAT;
+const { app } = require('electron')
+const electron = require('electron')
+const os = require('os')
+const Store = require('electron-store')
+const store = new Store()
+const packageJSON = require('../../package.json')
+const APPVERSION = packageJSON.version
+const APPBUILD = parseInt(packageJSON.APPBUILD)
+const isBeta = packageJSON.appOptions.isBeta
+const updatesEnabled = process.env.SAFESURFER_APPUPDATES !== undefined ? JSON.parse(process.env.SAFESURFER_APPUPDATES) : packageJSON.appOptions.enableUpdates
+const i18n = new (require('./i18n.js'))()
+
+var accountIsAssigned = store.get('accountInformation')
+var appUpdateAutoCheck = store.get('appUpdateAutoCheck')
+var provideUpdateInformation = store.get('provideUpdateInformation')
+var betaCheck = store.get('betaCheck')
+var teleEnabled = store.get('statisticAllow')
+var LINUXPACKAGEFORMAT = process.env.LINUXPACKAGEFORMAT === undefined ? '' : process.env.LINUXPACKAGEFORMAT
 
 if (appUpdateAutoCheck === undefined) {
-  store.set('appUpdateAutoCheck', true);
-  appUpdateAutoCheck = store.get('appUpdateAutoCheck');
+  store.set('appUpdateAutoCheck', true)
+  appUpdateAutoCheck = store.get('appUpdateAutoCheck')
 }
 if (provideUpdateInformation === undefined) {
-  store.set('provideUpdateInformation', true);
-  provideUpdateInformation = store.get('provideUpdateInformation');
+  store.set('provideUpdateInformation', true)
+  provideUpdateInformation = store.get('provideUpdateInformation')
 }
 if (betaCheck === undefined) {
-  store.set('betaCheck', false);
-}
-else if (isBeta == true) {
-  store.set('betaCheck', true);
+  store.set('betaCheck', false)
+} else if (isBeta == true) {
+  store.set('betaCheck', true)
 }
 
 // REMOVE THIS after a while, as user's will have their stat data migrated in no time
 if (store.get('telemetryHasAnswer') !== undefined) {
-  store.set('statHasAnswer', store.get('telemetryHasAnswer'));
-  if (store.get('statHasAnswer') !== undefined) store.delete('telemetryHasAnswer');
+  store.set('statHasAnswer', store.get('telemetryHasAnswer'))
+  if (store.get('statHasAnswer') !== undefined) store.delete('telemetryHasAnswer')
 }
 if (store.get('telemetryAllow') !== undefined) {
-  store.set('statisticAllow', store.get('telemetryAllow'));
-  if (store.get('statisticAllow') !== undefined) store.delete('telemetryAllow');
+  store.set('statisticAllow', store.get('telemetryAllow'))
+  if (store.get('statisticAllow') !== undefined) store.delete('telemetryAllow')
 }
 
-betaCheck = store.get('betaCheck');
+betaCheck = store.get('betaCheck')
 
 module.exports = (app, mainWindow) => {
   var menu = [
@@ -71,73 +71,75 @@ module.exports = (app, mainWindow) => {
       label: i18n.__('General'),
       submenu:
       [
-        /*{label: i18n.__('Configure blocked sites'), click() {mainWindow.webContents.send('configureBlockedSites')} },*/
+        /* {label: i18n.__('Configure blocked sites'), click() {mainWindow.webContents.send('configureBlockedSites')} }, */
         {
           label: i18n.__('Toggle'),
           submenu:
           [
-            {label: i18n.__('Activate'), click() {mainWindow.webContents.send('goForceEnable')} },
-            {label: i18n.__('Deactivate'), click() {mainWindow.webContents.send('goForceDisable')} },
-            {type:'separator'},
-            {label: i18n.__('Flush DNS cache'), click() {mainWindow.webContents.send('goFlushDNScache')} },
-            {type:'separator'},
-            {label: i18n.__('Lock deactivate buttons'), click() {mainWindow.webContents.send('goLockDeactivateButtons')} }
+            { label: i18n.__('Activate'), click () { mainWindow.webContents.send('goForceEnable') } },
+            { label: i18n.__('Deactivate'), click () { mainWindow.webContents.send('goForceDisable') } },
+            { type: 'separator' },
+            { label: i18n.__('Flush DNS cache'), click () { mainWindow.webContents.send('goFlushDNScache') } },
+            { type: 'separator' },
+            { label: i18n.__('Lock deactivate buttons'), click () { mainWindow.webContents.send('goLockDeactivateButtons') } }
           ]
         },
-        {label: i18n.__('Configure LifeGuard device'), click() {mainWindow.webContents.send('goOpenMyDeviceLifeGuard')} },
-        {label: i18n.__('Give feedback'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/feedback/')} },
-        {label: i18n.__('Help'), click() {electron.shell.openExternal('https://safesurfer.desk.com/')} }
+        { label: i18n.__('Configure LifeGuard device'), click () { mainWindow.webContents.send('goOpenMyDeviceLifeGuard') } },
+        { label: i18n.__('Give feedback'), click () { electron.shell.openExternal('http://www.safesurfer.co.nz/feedback/') } },
+        { label: i18n.__('Help'), click () { electron.shell.openExternal('https://safesurfer.desk.com/') } }
       ]
     },
     {
       label: i18n.__('Support'),
       submenu:
       [
-        {label: i18n.__('Check status in browser'), click() {electron.shell.openExternal('http://safesurfer.co.nz/check.php')} },
-        {label: i18n.__('Report a bug'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/docs/BUGS.md')} },
+        { label: i18n.__('Check status in browser'), click () { electron.shell.openExternal('http://safesurfer.co.nz/check.php') } },
+        { label: i18n.__('Report a bug'), click () { electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/blob/master/docs/BUGS.md') } },
         {
           label: i18n.__('Diagnostics'),
           submenu:
           [
-            {label: i18n.__('Get statuses'), click() {mainWindow.webContents.send('getStatuses')}},
-            {type:'separator'},
-            {label: i18n.__('Copy diagnostics information to clipboard'), click() {mainWindow.webContents.send('generateDiagnostics')}}
+            { label: i18n.__('Get statuses'), click () { mainWindow.webContents.send('getStatuses') } },
+            { type: 'separator' },
+            { label: i18n.__('Copy diagnostics information to clipboard'), click () { mainWindow.webContents.send('generateDiagnostics') } }
           ]
         },
-        {type:'separator'},
-        {label: i18n.__('Restart app'), click() {app.relaunch(); app.quit()} },
-        {label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' },
-        {type:'separator'},
-        {label: i18n.__('I need help with my addiction'), click() {electron.shell.openExternal('https://thelightproject.co.nz/need-help/i-need-help/')} },
+        { type: 'separator' },
+        { label: i18n.__('Restart app'), click () { app.relaunch(); app.quit() } },
+        { label: i18n.__('Dev tools'), role: 'toggleDevTools', accelerator: 'CmdOrCtrl+D' },
+        { type: 'separator' },
+        { label: i18n.__('I need help with my addiction'), click () { electron.shell.openExternal('https://thelightproject.co.nz/need-help/i-need-help/') } }
       ]
     },
     {
       label: i18n.__('Info'),
       submenu:
       [
-        {label: i18n.__('About us'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/the-cause/')} },
-        {label: i18n.__('Contact us'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/contact/')} },
-        {label: i18n.__('Contribute to this project'), click() {electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop')} },
-        {label: i18n.__('Translate this app'), click() {electron.shell.openExternal('https://hosted.weblate.org/projects/safe-surfer/translations/')} },
-        {label: i18n.__('Donate'), click() {electron.shell.openExternal('http://www.safesurfer.co.nz/donate-now/')}},
-        {type:'separator'},
-        {label:`${i18n.__("Version")}: ${APPVERSION}:${APPBUILD}`, click() {mainWindow.webContents.send('goBuildToClipboard')} }
+        { label: i18n.__('About us'), click () { electron.shell.openExternal('http://www.safesurfer.co.nz/the-cause/') } },
+        { label: i18n.__('Contact us'), click () { electron.shell.openExternal('http://www.safesurfer.co.nz/contact/') } },
+        { label: i18n.__('Contribute to this project'), click () { electron.shell.openExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop') } },
+        { label: i18n.__('Translate this app'), click () { electron.shell.openExternal('https://hosted.weblate.org/projects/safe-surfer/translations/') } },
+        { label: i18n.__('Donate'), click () { electron.shell.openExternal('http://www.safesurfer.co.nz/donate-now/') } },
+        { type: 'separator' },
+        { label: `${i18n.__('Version')}: ${APPVERSION}:${APPBUILD}`, click () { mainWindow.webContents.send('goBuildToClipboard') } }
       ]
-    },
-  ];
+    }
+  ]
 
   // show updates menu if enabled and platform is not Linux (as updates will be handled else where)
-  if (updatesEnabled == true) menu[1].submenu.splice(2, 0, {
-    label: i18n.__('Updates'),
-    submenu:
-    [
-      {label: i18n.__('Check for update'), click() {mainWindow.webContents.send('checkIfUpdateAvailable')} },
-      {label: i18n.__('Automatically check for updates'), type: 'checkbox', checked: appUpdateAutoCheck, click() {mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck)} },
-      {label: i18n.__('Tell me about changes when I update'), type: 'checkbox', checked: provideUpdateInformation, click() {mainWindow.webContents.send('toggleProvideUpdateInformation', provideUpdateInformation)} },
-      {type:'separator'},
-      {label: i18n.__('Opt in to beta releases'), type: 'checkbox', checked: betaCheck, click() {mainWindow.webContents.send('betaCheck', betaCheck)} },
-    ]
-  });
+  if (updatesEnabled == true) {
+    menu[1].submenu.splice(2, 0, {
+      label: i18n.__('Updates'),
+      submenu:
+      [
+        { label: i18n.__('Check for update'), click () { mainWindow.webContents.send('checkIfUpdateAvailable') } },
+        { label: i18n.__('Automatically check for updates'), type: 'checkbox', checked: appUpdateAutoCheck, click () { mainWindow.webContents.send('toggleAppUpdateAutoCheck', appUpdateAutoCheck) } },
+        { label: i18n.__('Tell me about changes when I update'), type: 'checkbox', checked: provideUpdateInformation, click () { mainWindow.webContents.send('toggleProvideUpdateInformation', provideUpdateInformation) } },
+        { type: 'separator' },
+        { label: i18n.__('Opt in to beta releases'), type: 'checkbox', checked: betaCheck, click () { mainWindow.webContents.send('betaCheck', betaCheck) } }
+      ]
+    })
+  }
 
   // add statistic sharing menu, once user has inputted answer
   if (store.get('statHasAnswer') == true) {
@@ -145,48 +147,49 @@ module.exports = (app, mainWindow) => {
       label: i18n.__('Statistics'),
       submenu:
       [
-        {label: i18n.__('Enable statistic sharing'), type: 'checkbox', checked: teleEnabled, click() {mainWindow.webContents.send('toggleStatState')} },
-        {type:'separator'},
-        {label: i18n.__('View statistic data'), click() {mainWindow.webContents.send('showStatHistory')} }
+        { label: i18n.__('Enable statistic sharing'), type: 'checkbox', checked: teleEnabled, click () { mainWindow.webContents.send('toggleStatState') } },
+        { type: 'separator' },
+        { label: i18n.__('View statistic data'), click () { mainWindow.webContents.send('showStatHistory') } }
       ]
-    });
+    })
   }
 
   // account stuff (not yet implemented)
-  if (accountIsAssigned == true) menu[3] = {
-    label: i18n.__('Account'),
-    submenu:
-    [
-      {label: i18n.__('My Account'), click() {} },
-    ]
+  if (accountIsAssigned == true) {
+    menu[3] = {
+      label: i18n.__('Account'),
+      submenu:
+      [
+        { label: i18n.__('My Account'), click () {} }
+      ]
+    }
   }
   // add seperate menu for name and quit, like on standard macOS apps
   if (os.platform() === 'darwin') {
     menu.unshift(
       {
-        label: "SafeSurfer-Desktop",
+        label: 'SafeSurfer-Desktop',
         submenu:
         [
-          {label: i18n.__('About SafeSurfer-Desktop'), click() {mainWindow.webContents.send('showAboutMenu')} },
-          {type:'separator'},
-          {role: 'hide'},
-          {role: 'hideothers'},
-          {role: 'unhide'},
-          {type:'separator'},
-          {label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+          { label: i18n.__('About SafeSurfer-Desktop'), click () { mainWindow.webContents.send('showAboutMenu') } },
+          { type: 'separator' },
+          { role: 'hide' },
+          { role: 'hideothers' },
+          { role: 'unhide' },
+          { type: 'separator' },
+          { label: i18n.__('Quit'), click () { app.quit() }, accelerator: 'CmdOrCtrl+Q' }
         ]
       }
-    );
-  }
-  else {
+    )
+  } else {
     menu[2].submenu.push(
-      {type:'separator'},
-      {label: i18n.__('About this app'), click() {mainWindow.webContents.send('showAboutMenu')} }
-    );
+      { type: 'separator' },
+      { label: i18n.__('About this app'), click () { mainWindow.webContents.send('showAboutMenu') } }
+    )
     menu[0].submenu.push(
-        {type:'separator'},
-        {label: i18n.__('Quit'), click() {app.quit()}, accelerator: 'CmdOrCtrl+Q' }
+      { type: 'separator' },
+      { label: i18n.__('Quit'), click () { app.quit() }, accelerator: 'CmdOrCtrl+Q' }
     )
   }
-  return menu;
+  return menu
 }

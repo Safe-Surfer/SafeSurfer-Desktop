@@ -20,21 +20,20 @@
 //
 
 // import libraries
-const {app, BrowserWindow, Menu, clipboard, globalShortcut, ipcMain} = require('electron'),
-  path = require('path'),
-  windowStateKeeper = require('electron-window-state'),
-  packageJSON = require('../../package.json'),
-  isBeta = packageJSON.appOptions.isBeta,
-  args = process.argv.slice(process.argv[1] !== '.' ? 1 : 2, process.argv.length);
+const { app, BrowserWindow, Menu, clipboard, globalShortcut, ipcMain } = require('electron')
+const path = require('path')
+const windowStateKeeper = require('electron-window-state')
+const packageJSON = require('../../package.json')
+const isBeta = packageJSON.appOptions.isBeta
+const args = process.argv.slice(process.argv[1] !== '.' ? 1 : 2, process.argv.length)
+let mainWindow
 
-let mainWindow;
-
-function createWindow() {
+function createWindow () {
   // Create the browser window.
   let mainWindowState = windowStateKeeper({
     defaultWidth: 480,
     defaultHeight: 600
-  });
+  })
 
   var windowObj = {
     /* set default sizing */
@@ -56,68 +55,68 @@ function createWindow() {
   }
 
   // if app is a beta, add message beta to title
-  if (isBeta == true) windowObj.title += " (beta)";
-  mainWindow = new BrowserWindow(windowObj);
+  if (isBeta == true) windowObj.title += ' (beta)'
+  mainWindow = new BrowserWindow(windowObj)
 
   // load in main html document
-  mainWindow.loadFile(path.join(__dirname, '..', 'html', 'index.html'));
+  mainWindow.loadFile(path.join(__dirname, '..', 'html', 'index.html'))
   mainWindow.on('closed', () => {
-    mainWindow = null;
-  });
+    mainWindow = null
+  })
 
   mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
-    mainWindow.focus();
-  });
+    mainWindow.show()
+    mainWindow.focus()
+  })
 
   // set menu from menu.js
   Menu.setApplicationMenu(
     Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
-  );
-  mainWindowState.manage(mainWindow);
-  mainWindow.setAutoHideMenuBar(false);
-  mainWindow.setMenuBarVisibility(true);
+  )
+  mainWindowState.manage(mainWindow)
+  mainWindow.setAutoHideMenuBar(false)
+  mainWindow.setMenuBarVisibility(true)
 }
 
 // create window when app is ready
-app.on('ready', function(window) {
+app.on('ready', function (window) {
   switch (args[0]) {
     case '-v': case '--version': case 'version': case '/v': case '/version':
-      console.log(`SafeSurfer-Desktop ${packageJSON.version}:${packageJSON.APPBUILD}`);
-      app.quit();
-      break;
+      console.log(`SafeSurfer-Desktop ${packageJSON.version}:${packageJSON.APPBUILD}`)
+      app.quit()
+      break
 
     default:
-      createWindow();
-      break;
+      createWindow()
+      break
   }
-});
+})
 
 // reload the menu on command
 ipcMain.on('updateAppMenu', (event, arg) => {
   Menu.setApplicationMenu(
     Menu.buildFromTemplate(require('./menu.js')(app, mainWindow))
-  );
-});
+  )
+})
 
 // use Ctrl^H or Cmd^H to toggle menu bar
 app.on('browser-window-created', (event, window) => {
-  window.setAutoHideMenuBar(true);
-  window.setMenuBarVisibility(false);
+  window.setAutoHideMenuBar(true)
+  window.setMenuBarVisibility(false)
   globalShortcut.register('CmdOrCtrl+H', () => {
-    window.setAutoHideMenuBar(!window.isMenuBarAutoHide());
-    window.setMenuBarVisibility(!window.isMenuBarVisible());
-  });
-});
+    window.setAutoHideMenuBar(!window.isMenuBarAutoHide())
+    window.setMenuBarVisibility(!window.isMenuBarVisible())
+  })
+})
 
 // behave like a macOS app, don't quit when user presses the red button
-app.on('window-all-closed', function() {
-  app.quit();
-});
+app.on('window-all-closed', function () {
+  app.quit()
+})
 
 // if the window still hasn't been created
-app.on('activate', function() {
+app.on('activate', function () {
   if (mainWindow === null) {
-    createWindow();
+    createWindow()
   }
-});
+})

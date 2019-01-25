@@ -21,52 +21,55 @@
   A small program for generating the missing translations from the English one
 */
 
-const fs = require('fs'),
-  path = require('path');
-var dirAssets;
-if (fs.existsSync(path.join('..', 'assets', 'translations'))) dirAssets = path.join('..', 'assets', 'translations');
-else if (fs.existsSync(path.resolve(path.join('.', 'assets', 'translations')))) dirAssets = path.resolve(path.join('.', 'assets', 'translations'));
-const enTranslation = require(path.join(`${dirAssets}`, 'en.json'));
-var localeName,
-  localeFile,
-  keysAdded = 0,
-  keysDeleted = 0,
-  editCount = 0;
+const fs = require('fs')
+const path = require('path')
+
+var dirAssets
+
+if (fs.existsSync(path.join('..', 'assets', 'translations'))) dirAssets = path.join('..', 'assets', 'translations')
+else if (fs.existsSync(path.resolve(path.join('.', 'assets', 'translations')))) dirAssets = path.resolve(path.join('.', 'assets', 'translations'))
+const enTranslation = require(path.join(`${dirAssets}`, 'en.json'))
+
+var localeName
+var localeFile
+var keysAdded = 0
+var keysDeleted = 0
+var editCount = 0
 
 // iterate through all translation files
 fs.readdirSync(`${dirAssets}`).forEach(file => {
-  keysAdded = 0;
-  keysDeleted = 0;
+  keysAdded = 0
+  keysDeleted = 0
   if (file.split('.')[0] != 'en') {
-    localeName = path.join(`${dirAssets}`,`${file.split('.')[0]}.json`);
-    localeFile = require(`${localeName}`);
+    localeName = path.join(`${dirAssets}`, `${file.split('.')[0]}.json`)
+    localeFile = require(`${localeName}`)
     // iterate through all keys in English base translation
     for (var key in enTranslation) {
       // if a key from English base isn't in the current translation
       if (!(enTranslation[key] in localeFile)) {
-        localeFile[key] = "";
-        keysAdded += 1;
+        localeFile[key] = ''
+        keysAdded += 1
       }
     }
     // iterate through all keys in translation
     for (var key in localeFile) {
       // if a key is in translation but not base, delete it
       if (!(key in enTranslation)) {
-        delete localeFile[key];
-        keysDeleted += 1;
+        delete localeFile[key]
+        keysDeleted += 1
       }
     }
     // if anything has been edited
     if (keysAdded != 0 || keysDeleted != 0) {
-      console.log(`[${editCount}] ${file.split('.')[0]} edited. ${keysAdded} added. ${keysDeleted} removed.`);
+      console.log(`[${editCount}] ${file.split('.')[0]} edited. ${keysAdded} added. ${keysDeleted} removed.`)
       // write edited locale
       fs.writeFile(localeName, JSON.stringify(localeFile, null, 4), (err) => {
-        if (err !== null) console.log(err);
-      });
-      editCount += 1;
+        if (err !== null) console.log(err)
+      })
+      editCount += 1
     }
   }
-});
+})
 
 // summary
-console.log(`${editCount > 0 ? "\n" : ""}${editCount} files edited.`);
+console.log(`${editCount > 0 ? '\n' : ''}${editCount} files edited.`)

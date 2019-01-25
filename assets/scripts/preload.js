@@ -19,26 +19,26 @@
 // along with SafeSurfer-Desktop.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-var Store = require('electron-store'),
- store = new Store();
+var Store = require('electron-store')
+var store = new Store()
 
-var _setImmediate = setImmediate;
-process.once('loaded', function() {
-  global.setImmediate = _setImmediate;
-});
+var _setImmediate = setImmediate
+process.once('loaded', function () {
+  global.setImmediate = _setImmediate
+})
 
 global.desktop = Object.freeze({
   global: {
     jquery: () => require('jquery'),
     linuxpackageformat: process.env.LINUXPACKAGEFORMAT === undefined ? undefined : process.env.LINUXPACKAGEFORMAT,
     packageJSON: () => require('../../package.json'),
-    i18n: () => new (require('./i18n.js')),
+    i18n: () => new (require('./i18n.js'))(),
     logging: () => require('./logging.js'),
     Store: () => require('electron-store'),
     store: () => new Store(),
     loadLogic: () => require('./logic.js'),
-    dns: require("dns"),
-    isDev: process.env.NODE_ENV === "dev"
+    dns: require('dns'),
+    isDev: process.env.NODE_ENV === 'dev'
   },
   logic: {
     node_dns_changer: require('node_dns_changer'),
@@ -52,4 +52,4 @@ global.desktop = Object.freeze({
     base64Encode: () => require('nodejs-base64-encode'),
     connectivity: () => require('connectivity')
   }
-});
+})

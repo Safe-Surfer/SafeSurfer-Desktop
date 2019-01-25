@@ -19,36 +19,37 @@
 // along with SafeSurfer-Desktop.  If not, see <https://www.gnu.org/licenses/>.
 //
 
-const path = require("path"),
-  electron = require('electron'),
-  logging = require('./logging.js'),
-  fs = require('fs'),
-  testLanguage = require('../../package.json').appOptions.testLanguage;
-let loadedLanguage,
-  app = electron.app ? electron.app : electron.remote.app;
-var locale = testLanguage === null ? app.getLocale() : testLanguage;
+const path = require('path')
+const electron = require('electron')
+const logging = require('./logging.js')
+const fs = require('fs')
+const testLanguage = require('../../package.json').appOptions.testLanguage
+let loadedLanguage
+
+let app = electron.app ? electron.app : electron.remote.app
+var locale = testLanguage === null ? app.getLocale() : testLanguage
 
 // export undefined function
-module.exports = i18n;
+module.exports = i18n
 
 // define translation loading function
-function i18n() {
+function i18n () {
   // if there is no language set in config
-  if (fs.existsSync(path.join(__dirname, '..', 'translations', locale + '.json'))) loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'translations', locale + '.json'), 'utf8'));
+  if (fs.existsSync(path.join(__dirname, '..', 'translations', locale + '.json'))) loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'translations', locale + '.json'), 'utf8'))
   // if the langauge set in system or config doesn't have a locale
-  else loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'translations', 'en.json'), 'utf8'));
+  else loadedLanguage = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'translations', 'en.json'), 'utf8'))
 }
 
 // export function
-i18n.prototype.__ = function(phrase) {
-  let translation = loadedLanguage[phrase];
+i18n.prototype.__ = function (phrase) {
+  let translation = loadedLanguage[phrase]
   // if the translation doesn't exist
   if (translation === undefined || translation === '') {
     // use the phrase which doesn't have a translation from en.json
-    translation = phrase;
-    logging(`[i18n] ${locale} phrase not defined: '${phrase}'`);
+    translation = phrase
+    logging(`[i18n] ${locale} phrase not defined: '${phrase}'`)
   }
-  if (translation == phrase && locale != 'en-US') logging(`[i18n] ${locale} phrase not translated: '${phrase}'`);
-  else if (translation === undefined) logging(`[i18n] ${locale} phrase '${phrase}' is not in translation JSON files`);
-  return translation;
+  if (translation == phrase && locale != 'en-US') logging(`[i18n] ${locale} phrase not translated: '${phrase}'`)
+  else if (translation === undefined) logging(`[i18n] ${locale} phrase '${phrase}' is not in translation JSON files`)
+  return translation
 }

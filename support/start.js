@@ -26,11 +26,12 @@
     > npm start
 */
 
-const os = require('os'),
-  path = require('path');
+const os = require('os')
+const path = require('path')
+
 // Setting up env variables
-if (os.platform() === 'linux') process.env.SSCLILOCATION = `${process.cwd()}/support/linux/shared-resources/`;
+if (os.platform() === 'linux') process.env.SSCLILOCATION = `${process.cwd()}/support/linux/shared-resources/`
 require('child_process').exec(`${path.join('node_modules', '.bin', 'electron')} . ${process.argv[2]}`, (err, stdout, stderr) => {
-  console.log(stdout);
-  if (err || stderr) console.log(`[callProgram]: output error - ${err} - ${stderr}`);
-});
+  console.log(stdout)
+  if (err || stderr) console.log(`[callProgram]: output error - ${err} - ${stderr}`)
+})

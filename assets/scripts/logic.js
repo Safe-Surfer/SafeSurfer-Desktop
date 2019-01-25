@@ -20,34 +20,34 @@
 //
 
 // include libraries
-const {dialog} = desktop.logic.dialogBox(),
-  electron = require('electron'),
-  ipcRenderer = electron.ipcRenderer,
-  dns = require('dns'),
-  app = electron.app ? electron.app : electron.remote.app,
-  packageJSON = desktop.global.packageJSON(),
-  APPBUILD = parseInt(packageJSON.APPBUILD) || packageJSON.APPBUILD,
-  APPVERSION = packageJSON.version,
-  isBeta = packageJSON.appOptions.isBeta,
-  updatesEnabled = process.env.SAFESURFER_APPUPDATES !== undefined ? JSON.parse(process.env.SAFESURFER_APPUPDATES) : packageJSON.appOptions.enableUpdates,
-  enableNotifications = packageJSON.appOptions.enableNotifications,
-  os = require('os'),
-  path = require('path'),
-  bonjour = desktop.logic.bonjour,
-  Request = require('request'),
-  moment = require('moment'),
-  $ = require('jquery'),
-  store = desktop.global.store(),
-  i18n = desktop.global.i18n(),
-  logging = desktop.global.logging(),
-  LINUXPACKAGEFORMAT = desktop.global.linuxpackageformat === undefined ? undefined : desktop.global.linuxpackageformat;
+const { dialog } = desktop.logic.dialogBox()
+const electron = require('electron')
+const ipcRenderer = electron.ipcRenderer
+const dns = require('dns')
+const app = electron.app ? electron.app : electron.remote.app
+const packageJSON = desktop.global.packageJSON()
+const APPBUILD = parseInt(packageJSON.APPBUILD) || packageJSON.APPBUILD
+const APPVERSION = packageJSON.version
+const isBeta = packageJSON.appOptions.isBeta
+const updatesEnabled = process.env.SAFESURFER_APPUPDATES !== undefined ? JSON.parse(process.env.SAFESURFER_APPUPDATES) : packageJSON.appOptions.enableUpdates
+const enableNotifications = packageJSON.appOptions.enableNotifications
+const os = require('os')
+const path = require('path')
+const bonjour = desktop.logic.bonjour
+const Request = require('request')
+const moment = require('moment')
+const $ = require('jquery')
+const store = desktop.global.store()
+const i18n = desktop.global.i18n()
+const logging = desktop.global.logging()
+const LINUXPACKAGEFORMAT = desktop.global.linuxpackageformat === undefined ? undefined : desktop.global.linuxpackageformat
 
 // an object to keep track of multiple things
 window.appStates = {
-  serviceEnabled: [undefined, undefined,],
-  internet: [undefined, undefined,],
+  serviceEnabled: [undefined, undefined],
+  internet: [undefined, undefined],
   internetCheckCounter: 0,
-  lifeguardFound: [undefined, undefined,],
+  lifeguardFound: [undefined, undefined],
   lifeguardOnNetworkLock: false,
   appHasLoaded: false,
   enableLogging: packageJSON.appOptions.enableLogging,
@@ -58,59 +58,59 @@ window.appStates = {
   elevateWindows_unable: false,
   toggleLock: false,
   macOSuseDHCP: true,
-  guiSudo: "pkexec",
+  guiSudo: 'pkexec',
   binFolder: process.env.SSCLILOCATION === undefined ? `${path.resolve(path.dirname(process.argv[0]), '..', '..', 'bin')}/` : process.env.SSCLILOCATION,
   lifeguardIsSearching: false
 }
 
-logging(`[INFO]: platform  - ${os.platform()}`);
-logging(`[INFO]: cwd       - ${process.cwd()}`);
+logging(`[INFO]: platform  - ${os.platform()}`)
+logging(`[INFO]: cwd       - ${process.cwd()}`)
 
 window.actions = Object.freeze({
   buttons: {
-    unlock: function() {
-      store.set('lockDeactivateButtons', false);
-      logging('[unlockButton]: button has been unlocked');
+    unlock: function () {
+      store.set('lockDeactivateButtons', false)
+      logging('[unlockButton]: button has been unlocked')
     },
 
-    lock: function() {
-      store.set('lockDeactivateButtons', true);
-      logging('[unlockButton]: button has been locked');
+    lock: function () {
+      store.set('lockDeactivateButtons', true)
+      logging('[unlockButton]: button has been locked')
     }
   },
 
   logging: {
-    enable: function() {
-      window.appStates.enableLogging = true;
+    enable: function () {
+      window.appStates.enableLogging = true
     },
 
-    disable: function() {
-      window.appStates.enableLogging = false;
+    disable: function () {
+      window.appStates.enableLogging = false
     }
   },
 
   stats: {
-    clear: function() {
-      store.delete('statHistory');
-      console.log("Stats have been emptied locally");
+    clear: function () {
+      store.delete('statHistory')
+      console.log('Stats have been emptied locally')
     },
 
-    uncompleted: function() {
-      store.set('statHasAnswer', false);
-      console.log("Stats will be prompted again");
+    uncompleted: function () {
+      store.set('statHasAnswer', false)
+      console.log('Stats will be prompted again')
     }
   },
 
   config: {
     macOS: {
-      dhcp: function() {
-        appStates.macOSuseDHCP = !appStates.macOSuseDHCP;
+      dhcp: function () {
+        appStates.macOSuseDHCP = !appStates.macOSuseDHCP
       }
     }
   },
 
   diagnostics: {
-    generate: function() {
+    generate: function () {
       // bundle together a bunch of information that will be of use to diagnosing issues
       var info = {
         appBuild: APPBUILD,
@@ -127,48 +127,48 @@ window.actions = Object.freeze({
         packageJSON: packageJSON
       }
       if (os.platform() === 'linux') {
-        info.linuxPackageFormat = LINUXPACKAGEFORMAT;
+        info.linuxPackageFormat = LINUXPACKAGEFORMAT
       }
       // encode with base64, so it make it easier to send (as it's just a huge block of data)
-      return desktop.logic.base64Encode().encode(JSON.stringify(info),'base64');
+      return desktop.logic.base64Encode().encode(JSON.stringify(info), 'base64')
     },
-    decode: function(info) {
-      return JSON.parse(desktop.logic.base64Encode().decode(info,'base64'));
+    decode: function (info) {
+      return JSON.parse(desktop.logic.base64Encode().decode(info, 'base64'))
     }
   },
 
-  flushdnscache: function() {
+  flushdnscache: function () {
     // flush the DNS cache per OS
-    appFrame.flushDNScache();
+    appFrame.flushDNScache()
   },
 
-  updatemenu: function() {
-    ipcRenderer.send('updateAppMenu', true);
+  updatemenu: function () {
+    ipcRenderer.send('updateAppMenu', true)
   },
 
-  status: function() {
+  status: function () {
     // display human readable information
-    var text = `${i18n.__("Status")}
+    var text = `${i18n.__('Status')}
 
-    - ${i18n.__("Safe Surfer desktop version:")} ${APPVERSION}
-    - ${i18n.__("Safe Surfer desktop build:")} ${APPBUILD}
-    - ${i18n.__("node_dns_changer version:")} ${desktop.logic.node_dns_changer.version}
-    - ${i18n.__("App build is beta:")} ${isBeta === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__('Safe Surfer desktop version:')} ${APPVERSION}
+    - ${i18n.__('Safe Surfer desktop build:')} ${APPBUILD}
+    - ${i18n.__('node_dns_changer version:')} ${desktop.logic.node_dns_changer.version}
+    - ${i18n.__('App build is beta:')} ${isBeta === true ? i18n.__('Yes') : i18n.__('No')}
     ---------------------------------------------
-    - ${i18n.__("Operating system:")} ${os.platform()}
-    - ${i18n.__("Locale:")} ${app.getLocale()}
+    - ${i18n.__('Operating system:')} ${os.platform()}
+    - ${i18n.__('Locale:')} ${app.getLocale()}
     ---------------------------------------------
-    - ${i18n.__("The service is enabled:")} ${appStates.serviceEnabled[0] === true ? i18n.__('Yes') : i18n.__('No')}
-    - ${i18n.__("LifeGuard discovered on network:")} ${appStates.lifeguardFound[0] === true ? i18n.__('Yes') : i18n.__('No')}
-    - ${i18n.__("Internet is available:")} ${appStates.internet[0] === true ? i18n.__('Yes') : i18n.__('No')}
-    - ${i18n.__("The app has loaded:")} ${appStates.appHasLoaded === true ? i18n.__('Yes') : i18n.__('No')}
-    - ${i18n.__("The buttons are locked:")} ${store.get('lockDeactivateButtons') === true ? i18n.__('Yes') : i18n.__('No')}
-    - ${i18n.__("Opted into beta releases:")} ${store.get('betaCheck') === true ? i18n.__('Yes') : i18n.__('No')}
-    - ${i18n.__("Statistics enabled:")} ${store.get('statisticAllow') === true ? i18n.__('Yes') : i18n.__('No')}`
-    if (os.platform() === 'win32') text += `\n    - ${i18n.__("Your version of Windows is compatible:")} ${window.appStates.windowsVersionCompatible === true ? i18n.__('Yes') : i18n.__('No')}`
-    return text;
+    - ${i18n.__('The service is enabled:')} ${appStates.serviceEnabled[0] === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__('LifeGuard discovered on network:')} ${appStates.lifeguardFound[0] === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__('Internet is available:')} ${appStates.internet[0] === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__('The app has loaded:')} ${appStates.appHasLoaded === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__('The buttons are locked:')} ${store.get('lockDeactivateButtons') === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__('Opted into beta releases:')} ${store.get('betaCheck') === true ? i18n.__('Yes') : i18n.__('No')}
+    - ${i18n.__('Statistics enabled:')} ${store.get('statisticAllow') === true ? i18n.__('Yes') : i18n.__('No')}`
+    if (os.platform() === 'win32') text += `\n    - ${i18n.__('Your version of Windows is compatible:')} ${window.appStates.windowsVersionCompatible === true ? i18n.__('Yes') : i18n.__('No')}`
+    return text
   }
-});
+})
 
 // print some useful commands
 window.help = `Help menu
@@ -195,476 +195,468 @@ Flush DNS cache manually
 
 
 If this is not the help that you require, please consider contacting our support
-  http://www.safesurfer.co.nz/contact`;
+  http://www.safesurfer.co.nz/contact`
 
 // functions
 const appFrame = {
-  callProgram: async function(command) {
+  callProgram: async function (command) {
     // call a child process
     return new Promise((resolve, reject) => {
-      logging(`[callProgram]: calling - ${command}`);
+      logging(`[callProgram]: calling - ${command}`)
       // command will be executed as: comand [ARGS]
       require('child_process').exec(command, (err, stdout, stderr) => {
-        logging(`[callProgram]: output -\n${stdout}\n`);
+        logging(`[callProgram]: output -\n${stdout}\n`)
         if (err || stderr) {
-          logging(`[callProgram]: output error - ${err} - ${stderr}\n`);
-          resolve(false);
+          logging(`[callProgram]: output error - ${err} - ${stderr}\n`)
+          resolve(false)
         }
-        if (!err && !stderr) resolve(true);
-      });
-    });
+        if (!err && !stderr) resolve(true)
+      })
+    })
   },
 
-  exec: function(command) {
+  exec: function (command) {
     // a standard platform based exec function
     return new Promise((resolve, reject) => {
       switch (os.platform()) {
         case 'linux':
           appFrame.callProgram(`${appStates.guiSudo} ${command}`).then(response => {
-            resolve(response);
-          });
-          break;
+            resolve(response)
+          })
+          break
 
         default:
           appFrame.callProgram(command).then(response => {
-            resolve(response);
-          });
-          break;
+            resolve(response)
+          })
+          break
       }
-    });
+    })
   },
 
-  elevateWindows: function() {
+  elevateWindows: function () {
     // call a child process
     appFrame.exec(`powershell Start-Process '${process.argv0}' -ArgumentList '.' -Verb runAs`).then((response) => {
-      logging(`[elevateWindows]: response was '${response}'.`);
-      if (response == true) window.close();
-    });
+      logging(`[elevateWindows]: response was '${response}'.`)
+      if (response == true) window.close()
+    })
   },
 
-  checkUserPrivileges: function() {
+  checkUserPrivileges: function () {
     // keep note of which user the app is run as
     if (os.platform() != 'win32') {
-      window.appStates.userIsAdmin = true;
-      return;
+      window.appStates.userIsAdmin = true
+      return
     }
     desktop.logic.isAdmin().then(admin => {
-      window.appStates.userIsAdmin = admin;
-      if (admin == false) appFrame.elevateWindows();
-    });
+      window.appStates.userIsAdmin = admin
+      if (admin == false) appFrame.elevateWindows()
+    })
   },
 
-  flushDNScache: function() {
+  flushDNScache: function () {
     // flush the DNS cache per OS
-    var flushedMessage = function() {
-      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__('The DNS cache has been flushed.')})
+    var flushedMessage = function () {
+      dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: i18n.__('The DNS cache has been flushed.') })
     }
 
     switch (os.platform()) {
       case 'linux':
         appFrame.exec(`${appStates.binFolder}sscli flush`).then(response => {
-          if (response === true) flushedMessage();
-        });
-        break;
+          if (response === true) flushedMessage()
+        })
+        break
 
       case 'darwin':
-        appFrame.exec(`osascript -e 'do shell script "killall -HUP mDNSResponder; killall mDNSResponderHelper; dscacheutil -flushcache" with prompt "${i18n.__("Flush DNS cache to refresh network settings")}\\n" with administrator privileges'`).then(response => {
-          if (response === true) flushedMessage();
-        });
-        break;
+        appFrame.exec(`osascript -e 'do shell script "killall -HUP mDNSResponder; killall mDNSResponderHelper; dscacheutil -flushcache" with prompt "${i18n.__('Flush DNS cache to refresh network settings')}\\n" with administrator privileges'`).then(response => {
+          if (response === true) flushedMessage()
+        })
+        break
 
       case 'win32':
         appFrame.exec('ipconfig /flushdns').then(response => {
-          if (response === true) flushedMessage();
-        });
-        break;
+          if (response === true) flushedMessage()
+        })
+        break
     }
   },
 
-  displayProtection: function() {
-    logging("[displayProtection]: service state is protected");
+  displayProtection: function () {
+    logging('[displayProtection]: service state is protected')
     if (window.appStates.internet[0] == true) {
-      $(".serviceActiveScreen").show();
-      $(".serviceInactiveScreen").hide();
-      $('#subTextProtected').html(i18n.__('YOU ARE SAFE TO SURF THE INTERNET').toUpperCase());
+      $('.serviceActiveScreen').show()
+      $('.serviceInactiveScreen').hide()
+      $('#subTextProtected').html(i18n.__('YOU ARE SAFE TO SURF THE INTERNET').toUpperCase())
       if (window.appStates.lifeguardFound[0] == true) {
-        $("#bigTextProtected").html(i18n.__("PROTECTED BY LIFEGUARD").toUpperCase());
-        $("#toggleButton").html(i18n.__("CONFIGURE LIFEGUARD").toUpperCase());
-        $('.serviceToggle').addClass('serviceToggle_lifeguard');
-        $('.topTextBox_active').addClass('topTextBox_active_lifeguard');
-        $('.serviceToggle').removeClass('serviceToggle_locked');
-        $("#toggleButtonInfo")[0].title = i18n.__("Click to configure your LifeGuard");
+        $('#bigTextProtected').html(i18n.__('PROTECTED BY LIFEGUARD').toUpperCase())
+        $('#toggleButton').html(i18n.__('CONFIGURE LIFEGUARD').toUpperCase())
+        $('.serviceToggle').addClass('serviceToggle_lifeguard')
+        $('.topTextBox_active').addClass('topTextBox_active_lifeguard')
+        $('.serviceToggle').removeClass('serviceToggle_locked')
+        $('#toggleButtonInfo')[0].title = i18n.__('Click to configure your LifeGuard')
+      } else if (store.get('lockDeactivateButtons') == true) {
+        $('#bigTextProtected').html(i18n.__('YOU ARE PROTECTED').toUpperCase())
+        $('#toggleButton').html(i18n.__('LOCKED').toUpperCase())
+        $('.serviceToggle').addClass('serviceToggle_locked')
+        $('.topTextBox_active').removeClass('topTextBox_active_lifeguard')
+        $('.serviceToggle').removeClass('serviceToggle_lifeguard')
+        $('#toggleButtonInfo')[0].title = i18n.__('Click for information')
+      } else {
+        $('#bigTextProtected').html(i18n.__('YOU ARE PROTECTED').toUpperCase())
+        $('#toggleButton').html(i18n.__('STOP PROTECTION').toUpperCase())
+        $('.serviceToggle').removeClass('serviceToggle_lifeguard')
+        $('.serviceToggle').removeClass('serviceToggle_locked')
+        $('.topTextBox_active').removeClass('topTextBox_active_lifeguard')
+        $('#toggleButtonInfo')[0].title = i18n.__('Click to disable the service')
       }
-      else if (store.get('lockDeactivateButtons') == true) {
-        $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
-        $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
-        $('.serviceToggle').addClass('serviceToggle_locked');
-        $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
-        $('.serviceToggle').removeClass('serviceToggle_lifeguard');
-        $("#toggleButtonInfo")[0].title = i18n.__("Click for information");
-      }
-      else {
-        $("#bigTextProtected").html(i18n.__("YOU ARE PROTECTED").toUpperCase());
-        $("#toggleButton").html(i18n.__("STOP PROTECTION").toUpperCase());
-        $('.serviceToggle').removeClass('serviceToggle_lifeguard');
-        $('.serviceToggle').removeClass('serviceToggle_locked');
-        $('.topTextBox_active').removeClass('topTextBox_active_lifeguard');
-        $("#toggleButtonInfo")[0].title = i18n.__("Click to disable the service");
-      }
-      $('.serviceToggle').show();
-      $('.appNoInternetConnectionScreen').hide();
-      $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+      $('.serviceToggle').show()
+      $('.appNoInternetConnectionScreen').hide()
+      $('.appNoInternetConnectionScreen').parent().css('z-index', 2)
     }
   },
 
-  displayUnprotection: function() {
+  displayUnprotection: function () {
     // show the user that the service has been enabled
     if (window.appStates.internet[0] == true) {
-      logging("[displayUnprotection]: service state is unprotected");
-      $(".serviceInactiveScreen").show();
-      $(".serviceActiveScreen").hide();
-      $('#bigTextUnprotected').text(i18n.__('DANGER AHEAD').toUpperCase());
-      $("#toggleButton").html(i18n.__("GET PROTECTED").toUpperCase());
-      $('#subTextUnprotected').text(i18n.__('YOU ARE NOT PROTECTED IN THE ONLINE SURF').toUpperCase());
-      $('.serviceToggle').show();
-      $('.appNoInternetConnectionScreen').hide();
-      $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
-      $("#toggleButtonInfo")[0].title = i18n.__("Click to enable the service");
+      logging('[displayUnprotection]: service state is unprotected')
+      $('.serviceInactiveScreen').show()
+      $('.serviceActiveScreen').hide()
+      $('#bigTextUnprotected').text(i18n.__('DANGER AHEAD').toUpperCase())
+      $('#toggleButton').html(i18n.__('GET PROTECTED').toUpperCase())
+      $('#subTextUnprotected').text(i18n.__('YOU ARE NOT PROTECTED IN THE ONLINE SURF').toUpperCase())
+      $('.serviceToggle').show()
+      $('.appNoInternetConnectionScreen').hide()
+      $('.appNoInternetConnectionScreen').parent().css('z-index', 2)
+      $('#toggleButtonInfo')[0].title = i18n.__('Click to enable the service')
     }
   },
 
-  displayNoInternetConnection: function() {
+  displayNoInternetConnection: function () {
     // show the user that they don't have an internet connection
-    $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE LOST YOUR INTERNET CONNECTION.").toUpperCase());
-    $('.appNoInternetConnectionScreen').show();
-    $('.appNoInternetConnectionScreen').parent().css('z-index', 58);
-    $('.bigText_nointernet').show();
-    $('.serviceActiveScreen').hide();
-    $('.serviceInactiveScreen').hide();
-    $('.serviceToggle').hide();
+    $('#bigTextNoInternet').text(i18n.__("IT APPEARS THAT YOU'VE LOST YOUR INTERNET CONNECTION.").toUpperCase())
+    $('.appNoInternetConnectionScreen').show()
+    $('.appNoInternetConnectionScreen').parent().css('z-index', 58)
+    $('.bigText_nointernet').show()
+    $('.serviceActiveScreen').hide()
+    $('.serviceInactiveScreen').hide()
+    $('.serviceToggle').hide()
   },
 
-  hideNoInternetConnection: function() {
+  hideNoInternetConnection: function () {
     // hide the internet connection loss screen
-    $('.serviceToggle').show();
-    $('.appNoInternetConnectionScreen').hide();
-    $('.appNoInternetConnectionScreen').parent().css('z-index', 2);
+    $('.serviceToggle').show()
+    $('.appNoInternetConnectionScreen').hide()
+    $('.appNoInternetConnectionScreen').parent().css('z-index', 2)
   },
 
-  toggleServiceState: function() {
+  toggleServiceState: function () {
     // switch between states
-    window.appStates.notificationCounter = 0;
-    if (window.appStates.toggleLock === true) return;
+    window.appStates.notificationCounter = 0
+    if (window.appStates.toggleLock === true) return
     switch (window.appStates.serviceEnabled[0]) {
       // if service is enabled
       case true:
-        logging('[toggleServiceState]: trying toggle disable');
-        if (window.appStates.lifeguardFound[0] == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-        else if (store.get('lockDeactivateButtons') != true) appFrame.displayDisableWarning();
-        else appFrame.lockAlertMessage();
-        break;
+        logging('[toggleServiceState]: trying toggle disable')
+        if (window.appStates.lifeguardFound[0] == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard')
+        else if (store.get('lockDeactivateButtons') != true) appFrame.displayDisableWarning()
+        else appFrame.lockAlertMessage()
+        break
 
       // if service is disabled
       case false:
-        logging('[toggleServiceState]: trying toggle enable');
-        appFrame.enableServicePerPlatform({});
-        break;
+        logging('[toggleServiceState]: trying toggle enable')
+        appFrame.enableServicePerPlatform({})
+        break
 
       default:
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("The state of the service is being determined. Please wait.")});
-        break;
+        dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: i18n.__('The state of the service is being determined. Please wait.') })
+        break
     }
   },
 
-  displayDisableWarning: function() {
+  displayDisableWarning: function () {
     // make sure the user really wants to disable the service
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('No'), i18n.__('Yes')], message: i18n.__("Are you sure that you want to disable Safe Surfer on this computer?")}, response => {
-      if (response == 1) appFrame.disableServicePerPlatform({});
-    });
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('No'), i18n.__('Yes')], message: i18n.__('Are you sure that you want to disable Safe Surfer on this computer?') }, response => {
+      if (response == 1) appFrame.disableServicePerPlatform({})
+    })
   },
 
-  affirmServiceState: function() {
+  affirmServiceState: function () {
     // affirm the state of the service
-    logging("[affirmServiceState]: Affirming the state");
+    logging('[affirmServiceState]: Affirming the state')
     switch (window.appStates.serviceEnabled[0]) {
       case false:
-        logging('[affirmServiceState]: trying affirm disable');
-        appFrame.displayUnprotection();
-        return;
-        break;
+        logging('[affirmServiceState]: trying affirm disable')
+        appFrame.displayUnprotection()
+        return
+        break
 
       case true:
-        logging('[affirmServiceState]: trying affirm enable');
-        appFrame.displayProtection();
-        return;
-        break;
+        logging('[affirmServiceState]: trying affirm enable')
+        appFrame.displayProtection()
+
+        break
     }
   },
 
-  checkServiceState: function() {
+  checkServiceState: function () {
     // check the state of the service
-    logging('[checkServiceState]: Getting state of service');
+    logging('[checkServiceState]: Getting state of service')
     Request.get('http://check.safesurfer.co.nz', (error, response, body) => {
       // since the request has succeeded, we can count the app as loaded
-      window.appStates.appHasLoaded = true;
+      window.appStates.appHasLoaded = true
       if ((error < 200 || error >= 300) && error != null) {
-        logging(`[checkServiceState]: HTTP error: ${error}`);
-        return;
+        logging(`[checkServiceState]: HTTP error: ${error}`)
+        return
       }
-      //else window.appStates.internet[0] = true;
+      // else window.appStates.internet[0] = true;
 
-      var metaResponse = require('lets-get-meta')(body),
-        metaSearchProtected = body.search('<meta name="ss_status" content="protected">'),
-        metaSearchUnprotected = body.search('<meta name="ss_status" content="unprotected">');
+      var metaResponse = require('lets-get-meta')(body)
+      var metaSearchProtected = body.search('<meta name="ss_status" content="protected">')
+      var metaSearchUnprotected = body.search('<meta name="ss_status" content="unprotected">')
 
-      logging(`[checkServiceState]: metaResponse.ss_status :: ${metaResponse.ss_status}`);
+      logging(`[checkServiceState]: metaResponse.ss_status :: ${metaResponse.ss_status}`)
       if (metaSearchUnprotected != -1 || metaResponse.ss_state == 'unprotected') {
-        window.appStates.serviceEnabled[0] = false;
-        logging('[checkServiceState]: Get Request - Service disabled');
+        window.appStates.serviceEnabled[0] = false
+        logging('[checkServiceState]: Get Request - Service disabled')
       }
       // if the meta tag returns protected
       else if (metaSearchProtected != -1 || metaResponse.ss_status == 'protected') {
-        window.appStates.serviceEnabled[0] = true;
-        logging('[checkServiceState]: Get Request - Service enabled');
+        window.appStates.serviceEnabled[0] = true
+        logging('[checkServiceState]: Get Request - Service enabled')
       }
       // if neither are returned
       else if (metaResponse.ss_status !== 'protected' && metaResponse.ss_status !== 'unprotected') {
-        logging("[checkServiceState]: Get Request - Can't see protection state from meta tag");
+        logging("[checkServiceState]: Get Request - Can't see protection state from meta tag")
         // check internet connection
         if (window.appStates.internet[0] == true) {
-          logging('[checkServiceState]: Get Request - Unsure of state');
-        }
-        else if (error !== undefined || window.appStates.internet[0] != true) logging('[checkServiceState]: NETWORK - Internet connection unavailable');
+          logging('[checkServiceState]: Get Request - Unsure of state')
+        } else if (error !== undefined || window.appStates.internet[0] != true) logging('[checkServiceState]: NETWORK - Internet connection unavailable')
       }
-    });
+    })
   },
 
-  resetToggling: function() {
-    $('#progressBar').css("height", "0px");
-    window.appStates.progressBarCounter = 0;
-    window.appStates.notificationCounter = 0;
-    $('.progressInfoBar').css("height", "0px");
-    window.appStates.toggleLock = false;
+  resetToggling: function () {
+    $('#progressBar').css('height', '0px')
+    window.appStates.progressBarCounter = 0
+    window.appStates.notificationCounter = 0
+    $('.progressInfoBar').css('height', '0px')
+    window.appStates.toggleLock = false
   },
 
-  enableServicePerPlatform: function({forced = false, alerts = true}) {
+  enableServicePerPlatform: function ({ forced = false, alerts = true }) {
     // apply DNS settings
-    $('#progressBar').css("height", "20px");
-    $(".progressInfoBar_text").html(i18n.__("Please wait while the service is being enabled"));
-    $('.progressInfoBar').css("height", "30px");
-    if (enableNotifications == true && window.appStates.notificationCounter == 0) new Notification('Safe Surfer', {
-      body: i18n.__('Woohoo! Getting your computer set up now.'),
-      icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
-    });
-    window.appStates.notificationCounter += 1;
-    window.appStates.toggleLock = true;
+    $('#progressBar').css('height', '20px')
+    $('.progressInfoBar_text').html(i18n.__('Please wait while the service is being enabled'))
+    $('.progressInfoBar').css('height', '30px')
+    if (enableNotifications == true && window.appStates.notificationCounter == 0) {
+      new Notification('Safe Surfer', {
+        body: i18n.__('Woohoo! Getting your computer set up now.'),
+        icon: path.join(__dirname, '..', 'media', 'icons', 'win', 'icon.ico')
+      })
+    }
+    window.appStates.notificationCounter += 1
+    window.appStates.toggleLock = true
     switch (os.platform()) {
       case 'linux':
-        appFrame.exec(`${appStates.binFolder}sscli enable ${forced === true ? "force": ""}`).then(response => {
-          if (response === false) appFrame.resetToggling();
-        });
-        break;
+        appFrame.exec(`${appStates.binFolder}sscli enable ${forced === true ? 'force' : ''}`).then(response => {
+          if (response === false) appFrame.resetToggling()
+        })
+        break
 
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
-        setTimeout(function() {
+        setTimeout(function () {
           desktop.logic.node_dns_changer.setDNSservers({
-            DNSservers: ['104.197.28.121','104.155.237.225'],
+            DNSservers: ['104.197.28.121', '104.155.237.225'],
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
             mkBackup: true
           }).then(response => {
-            if (response === true && forced === true && appStates.serviceEnabled[0] === true && alerts === true) appFrame.toggleSuccess();
-          });
+            if (response === true && forced === true && appStates.serviceEnabled[0] === true && alerts === true) appFrame.toggleSuccess()
+          })
           // if service has still not been enabled, try again
           if (window.appStates.serviceEnabled[0] == false && os.platform() != 'darwin') {
-            logging("[enableServicePerPlatform]: Service is still not enabled -- trying again.");
+            logging('[enableServicePerPlatform]: Service is still not enabled -- trying again.')
             // don't repeat if macOS
-            appFrame.enableServicePerPlatform({forced, alerts: false});
+            appFrame.enableServicePerPlatform({ forced, alerts: false })
           }
-        },3000);
-        break;
+        }, 3000)
+        break
     }
   },
 
-  disableServicePerPlatform: function({forced = false, alerts = true}) {
+  disableServicePerPlatform: function ({ forced = false, alerts = true }) {
     // restore DNS settings
-    $(".progressInfoBar_text").html(i18n.__("Please wait while the service is being disabled"));
-    $('.progressInfoBar').css("height", "30px");
-    $('#progressBar').css("height", "20px");
-    if (enableNotifications == true && window.appStates.notificationCounter == 0) new Notification('Safe Surfer', {
-      body: i18n.__('OK! Restoring your settings now.'),
-      icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
-    });
-    window.appStates.notificationCounter += 1;
-    window.appStates.toggleLock = true;
+    $('.progressInfoBar_text').html(i18n.__('Please wait while the service is being disabled'))
+    $('.progressInfoBar').css('height', '30px')
+    $('#progressBar').css('height', '20px')
+    if (enableNotifications == true && window.appStates.notificationCounter == 0) {
+      new Notification('Safe Surfer', {
+        body: i18n.__('OK! Restoring your settings now.'),
+        icon: path.join(__dirname, '..', 'media', 'icons', 'win', 'icon.ico')
+      })
+    }
+
+    window.appStates.notificationCounter += 1
+    window.appStates.toggleLock = true
+
     switch (os.platform()) {
       case 'linux':
-        appFrame.exec(`${appStates.binFolder}sscli disable ${forced === true ? "force": ""}`).then(response => {
-            if (response === false) appFrame.resetToggling();
-          });
-        break;
+        appFrame.exec(`${appStates.binFolder}sscli disable ${forced === true ? 'force' : ''}`).then(response => {
+          if (response === false) appFrame.resetToggling()
+        })
+        break
 
       default:
         // if the host OS is not Linux, use the node_dns_changer module to modify system DNS settings
-        setTimeout(function() {
+        setTimeout(function () {
           desktop.logic.node_dns_changer.restoreDNSservers({
             DNSbackupName: 'before_safesurfer',
             loggingEnable: window.appStates.enableLogging,
-            rmBackup: os.platform() === 'darwin' ? false : true,
+            rmBackup: os.platform() !== 'darwin',
             macOSuseDHCP: appStates.macOSuseDHCP,
             windowsPreferNetsh: true
           }).then(response => {
-            if (response === true && forced === true && appStates.serviceEnabled[0] === false && alerts === true) appFrame.toggleSuccess();
-          });
+            if (response === true && forced === true && appStates.serviceEnabled[0] === false && alerts === true) appFrame.toggleSuccess()
+          })
           // if service has still not been enabled, try again
           if (window.appStates.serviceEnabled[0] == true && os.platform() != 'darwin') {
-            logging("[disableServicePerPlatform]: Service is still not disabled -- trying again.");
+            logging('[disableServicePerPlatform]: Service is still not disabled -- trying again.')
             // don't repeat if macOS
-            appFrame.disableServicePerPlatform({forced, alerts: false});
+            appFrame.disableServicePerPlatform({ forced, alerts: false })
           }
-        },3000);
-        break;
+        }, 3000)
+        break
     }
   },
 
-  checkIfOnLifeGuardNetwork: async function() {
+  checkIfOnLifeGuardNetwork: async function () {
     // check if current device is on lifeguard network
     return new Promise((resolve, reject) => {
-      logging('[checkIfOnLifeGuardNetwork]: Checking if on lifeguard network');
+      logging('[checkIfOnLifeGuardNetwork]: Checking if on lifeguard network')
       // start searching for lifeguard with bonjour
-      bonjour.findOne({type: "sslifeguard"}, (service) => {
+      bonjour.findOne({ type: 'sslifeguard' }, (service) => {
         // if a lifeguard is found
         if (service.fqdn.indexOf('_sslifeguard._tcp') != -1) {
           dns.lookup(service.host, (err, result) => {
             if (result === '192.168.8.1') {
-              logging(`[checkIfOnLifeGuardNetwork]: found ${service.fqdn}`);
-              resolve(true);
+              logging(`[checkIfOnLifeGuardNetwork]: found ${service.fqdn}`)
+              resolve(true)
             }
-          });
+          })
         }
-      });
-    });
+      })
+    })
   },
 
-  publishDesktopAppOnNetwork: function(state) {
+  publishDesktopAppOnNetwork: function (state) {
     // bonjour public to network for device discovery
-    if (state == "enable") bonjour.publish({name: 'Safe Surfer Desktop', type: 'ssdesktop', port: 3158});
-    else if (state == "disable") bonjour.unpublishAll();
+    if (state == 'enable') bonjour.publish({ name: 'Safe Surfer Desktop', type: 'ssdesktop', port: 3158 })
+    else if (state == 'disable') bonjour.unpublishAll()
   },
 
-  internetConnectionCheck: async function() {
+  internetConnectionCheck: async function () {
     // check the user's internet connection
     return new Promise((resolve, reject) => {
       desktop.logic.connectivity()((online) => {
-        logging(`[internetConnectionCheck]: ${online}`);
-        window.appStates.appHasLoaded = true;
-        window.appStates.internet[0] = online;
-        resolve(online);
-      });
-    });
+        logging(`[internetConnectionCheck]: ${online}`)
+        window.appStates.appHasLoaded = true
+        window.appStates.internet[0] = online
+        resolve(online)
+      })
+    })
   },
 
-  finishedLoading: function() {
+  finishedLoading: function () {
     // close loading screen
-    $('.appLoadingScreen').hide();
-    window.appStates.appHasLoaded = true;
+    $('.appLoadingScreen').hide()
+    window.appStates.appHasLoaded = true
   },
 
-  checkForAppUpdate: function(options) {
+  checkForAppUpdate: function (options) {
     // for for app update
-    var remoteData,
-     versionList = [],
-     updateErrorDialog = {type: 'info', buttons: [i18n.__('Manually check on downloads page'), i18n.__('Ok')], message: i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong.")};
+    var remoteData
+    var versionList = []
+    var updateErrorDialog = { type: 'info', buttons: [i18n.__('Manually check on downloads page'), i18n.__('Ok')], message: i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong.") }
 
-    logging(`[checkForAppUpdate]: About to fetch https://raw.githubusercontent.com/Safe-Surfer/SafeSurfer-Desktop-version-information/master/version-information.json`);
-    Request.get("https://raw.githubusercontent.com/Safe-Surfer/SafeSurfer-Desktop-version-information/master/version-information.json", (error, response, body) => {
+    logging(`[checkForAppUpdate]: About to fetch https://raw.githubusercontent.com/Safe-Surfer/SafeSurfer-Desktop-version-information/master/version-information.json`)
+    Request.get('https://raw.githubusercontent.com/Safe-Surfer/SafeSurfer-Desktop-version-information/master/version-information.json', (error, response, body) => {
       if ((error < 200 || error >= 300) && error != null) {
         // if something goes wrong
-        logging(`[checkForAppUpdate]: HTTP error ${error}`);
+        logging(`[checkForAppUpdate]: HTTP error ${error}`)
         if (options.showErrors == true) {
           dialog.showMessageBox(updateErrorDialog, updateResponse => {
-            return;
-          });
+          })
         }
-        return console.dir(error);
+        return console.dir(error)
       }
-      //window.appStates.internet[0] = true;
+      // window.appStates.internet[0] = true;
       // read the data as JSON
-      remoteData = JSON.parse(body);
-      var versionRecommended;
-      buildRecommended = parseInt(store.get('betaCheck') == true ? remoteData.recommendedBuild : remoteData.recommendedBetaBuild);
-      if (remoteData.recommendedBuildOverride[os.platform()] !== null) buildRecommended = remoteData.recommendedBuildOverride[os.platform()];
+      remoteData = JSON.parse(body)
+      var versionRecommended
+      buildRecommended = parseInt(store.get('betaCheck') == true ? remoteData.recommendedBuild : remoteData.recommendedBetaBuild)
+      if (remoteData.recommendedBuildOverride[os.platform()] !== null) buildRecommended = remoteData.recommendedBuildOverride[os.platform()]
       remoteData.versions.map(build => {
-        if (build.build == buildRecommended) versionRecommended = build;
-        versionList = [...versionList, build.build];
-      });
+        if (build.build == buildRecommended) versionRecommended = build
+        versionList = [...versionList, build.build]
+      })
 
-      var genLink = `${remoteData.linkBase}/download/${versionRecommended.version}`;
+      var genLink = `${remoteData.linkBase}/download/${versionRecommended.version}`
       switch (os.platform()) {
         case 'linux':
-          if (LINUXPACKAGEFORMAT == 'appimage') genLink = `${genLink}/Safe_Surfer-x86_64.AppImage`;
-          else genLink = remoteData.linkBase;
-          break;
+          if (LINUXPACKAGEFORMAT == 'appimage') genLink = `${genLink}/Safe_Surfer-x86_64.AppImage`
+          else genLink = remoteData.linkBase
+          break
 
         case 'win32':
-          genLink = `${genLink}/SafeSurfer-Desktop.Setup.exe`;
-          break;
+          genLink = `${genLink}/SafeSurfer-Desktop.Setup.exe`
+          break
 
         case 'darwin':
-          genLink = `${genLink}/SafeSurfer-Desktop.dmg`;
-          break;
+          genLink = `${genLink}/SafeSurfer-Desktop.dmg`
+          break
       }
 
       if (buildRecommended > parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // update available
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available' )} (v${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}${versionRecommended.isBeta === true ? " [beta]" : ""}). ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
+        dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Yes'), i18n.__('No'), i18n.__('View changelog')], message: `${i18n.__('There is an update available')} (v${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}${versionRecommended.isBeta === true ? ' [beta]' : ''}). ${i18n.__('Do you want to install it now?')}` }, updateResponse => {
           if (updateResponse == 0) {
-            logging("[checkForAppUpdate]: User wants update.");
-            if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink);
-            else desktop.logic.electronOpenExternal(versionRecommended.altLink);
-          }
-          else if (updateResponse == 2) desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${versionRecommended.version}`);
-          else return;
-        });
-      }
-
-      else if (buildRecommended == parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1 && options.current == true) {
+            logging('[checkForAppUpdate]: User wants update.')
+            if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink)
+            else desktop.logic.electronOpenExternal(versionRecommended.altLink)
+          } else if (updateResponse == 2) desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${versionRecommended.version}`)
+          else return
+        })
+      } else if (buildRecommended == parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1 && options.current == true) {
         // up to date
-        logging("[checkForAppUpdate]: User has the latest version installed.");
-        dialog.showMessageBox({type: 'info', buttons: ['Ok'], message: i18n.__("You're up to date.")}, updateResponse => {});
-        return;
-      }
-
-      else if (buildRecommended < parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
+        logging('[checkForAppUpdate]: User has the latest version installed.')
+        dialog.showMessageBox({ type: 'info', buttons: ['Ok'], message: i18n.__("You're up to date.") }, updateResponse => {})
+      } else if (buildRecommended < parseInt(APPBUILD) && versionList.indexOf(buildRecommended) == -1) {
         // user must downgrade
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version')} ${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}${versionRecommended.isBeta === true ? " [beta]" : ""}. ${i18n.__('Do you want to install it now?')}`}, updateResponse => {
+        dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Please downgrade to version')} ${versionRecommended.version}:${versionRecommended.build}${versionRecommended.buildMode}${versionRecommended.isBeta === true ? ' [beta]' : ''}. ${i18n.__('Do you want to install it now?')}` }, updateResponse => {
           if (updateResponse == 0) {
-            logging("[checkForAppUpdate]: User wants to downgrade.");
-            if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink);
-            else desktop.logic.electronOpenExternal(versionRecommended.altLink);
-          }
-          else return;
-        });
-      }
-
-      else {
+            logging('[checkForAppUpdate]: User wants to downgrade.')
+            if (versionRecommended.altLink === undefined) desktop.logic.electronOpenExternal(genLink)
+            else desktop.logic.electronOpenExternal(versionRecommended.altLink)
+          } else return
+        })
+      } else {
         // if something goes wrong
         if (options.showErrors == true) {
           dialog.showMessageBox(updateErrorDialog, updateResponse => {
-            logging("[checkForAppUpdate]: Error.");
-            if (updateResponse == 0) desktop.logic.electronOpenExternal("https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases");
-            return;
-          });
+            logging('[checkForAppUpdate]: Error.')
+            if (updateResponse == 0) desktop.logic.electronOpenExternal('https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases')
+          })
         }
       }
-    });
+    })
   },
 
-  collectStatistics_general: function() {
+  collectStatistics_general: function () {
     // if the user agrees to it, collect non identifiable information about their setup
     var dataGathered = {
-      TYPESEND: "general",
+      TYPESEND: 'general',
       DATESENT: moment().format('X'),
       APPVERSION: APPVERSION,
       APPBUILD: APPBUILD,
@@ -675,506 +667,503 @@ const appFrame = {
       ARCH: os.arch(),
       LOCALE: app.getLocale(),
       LIFEGUARDSTATE: window.appStates.lifeguardFound[0],
-      BUILDMODE: "release",
-      ISSERVICEENABLED: window.appStates.serviceEnabled[0],
-    };
-    if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
-    return JSON.stringify(dataGathered);
+      BUILDMODE: 'release',
+      ISSERVICEENABLED: window.appStates.serviceEnabled[0]
+    }
+    if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT
+    return JSON.stringify(dataGathered)
   },
 
-  storeInitalData: function(input) {
+  storeInitalData: function (input) {
   // write inital data from sharing to cache
-    if (store.get('statHistory') === undefined) store.set('statHistory', [input]);
+    if (store.get('statHistory') === undefined) store.set('statHistory', [input])
     else {
-      var previous = store.get('statHistory');
-      previous = [...previous, input];
-      store.set('statHistory', previous);
+      var previous = store.get('statHistory')
+      previous = [...previous, input]
+      store.set('statHistory', previous)
     }
   },
 
-  sendStatistics: function(source) {
+  sendStatistics: function (source) {
     // send information to server
-    var dataToSend = desktop.logic.base64Encode().encode(source,'base64');
+    var dataToSend = desktop.logic.base64Encode().encode(source, 'base64')
     // make a post request to the database
-    Request.post('http://142.93.48.189:3000/', {form:{tel_data:dataToSend}}, (err, response, body) => {
-      store.set('statisticAllow', true);
-      logging({"[sendStatistics]: DATA": 'Sent.', "[sendStatistics]: STATDATA": source});
-      if (err >= 400 && err <= 599) {
-        logging('[sendStatistics]: Could not send -- error ${err}');
-        return;
-      }
-    });
+    Request.post('http://142.93.48.189:3000/', { form: { tel_data: dataToSend } }, (err, response, body) => {
+      store.set('statisticAllow', true)
+      logging({ '[sendStatistics]: DATA': 'Sent.', '[sendStatistics]: STATDATA': source })
+      if (err >= 400 && err <= 599) logging('[sendStatistics]: Could not send -- error ${err}')
+    })
   },
 
-  statPrompt: function() {
+  statPrompt: function () {
     // ask if user wants to participate in statistics
-    var sharingData = appFrame.collectStatistics_general(),
-      dialogUserAllow = function() {
-        appFrame.sendStatistics(sharingData);
-        store.set('statHasAnswer', true);
-        store.set('statisticAllow', true);
-        appFrame.storeInitalData(sharingData);
-      },
-      dialogUserDisallow = function() {
-        store.set('statHasAnswer', true);
-        store.set('statisticAllow', false);
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Return')], message: i18n.__("Nothing has been sent.")}, dialogResponse => {});
-      }
+    var sharingData = appFrame.collectStatistics_general()
+    var dialogUserAllow = function () {
+      appFrame.sendStatistics(sharingData)
+      store.set('statHasAnswer', true)
+      store.set('statisticAllow', true)
+      appFrame.storeInitalData(sharingData)
+    }
+    var dialogUserDisallow = function () {
+      store.set('statHasAnswer', true)
+      store.set('statisticAllow', false)
+      dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Return')], message: i18n.__('Nothing has been sent.') }, dialogResponse => {})
+    }
 
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: `${i18n.__("Statistics")}\n\n${i18n.__("We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.")}\n${i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.")}\n- ${i18n.__("Safe Surfer team")}`}, dialogResponse => {
-      logging("[statPrompt]: User has agreed to the prompt.");
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Yes, I will participate'), i18n.__('I want to see what will be sent'), i18n.__('No, thanks')], message: `${i18n.__('Statistics')}\n\n${i18n.__('We want to improve this app, one way that we can achieve this is by collecting small non-identifiable pieces of information about the devices that our app runs on.')}\n${i18n.__("As a user you\'re able to help us out.--You can respond to help us out if you like.")}\n- ${i18n.__('Safe Surfer team')}` }, dialogResponse => {
+      logging('[statPrompt]: User has agreed to the prompt.')
       // if user agrees to sending stats
       switch (dialogResponse) {
         case 0:
-          dialogUserAllow();
-          break;
+          dialogUserAllow()
+          break
 
         case 1:
-          dialog.showMessageBox({type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__("Here is what will be sent:")}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__("Which operating system you use")}\n- ${i18n.__("How many CPU cores you have")}\n - ${i18n.__("The language you have set")}\n - ${i18n.__("If the service is set up on your computer")}\n\n${i18n.__("We are also interested in updates, so with statistic sharing we will also be notified of which version you've updated to.")}`}, dialogResponse => {
+          dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Send'), i18n.__("Don't send")], message: `${i18n.__('Here is what will be sent:')}\n\n${sharingData}\n\n${i18n.__("In case you don't understand this data, it includes (such things as):")}\n- ${i18n.__('Which operating system you use')}\n- ${i18n.__('How many CPU cores you have')}\n - ${i18n.__('The language you have set')}\n - ${i18n.__('If the service is set up on your computer')}\n\n${i18n.__("We are also interested in updates, so with statistic sharing we will also be notified of which version you've updated to.")}` }, dialogResponse => {
             // if user agrees to sending stats
             switch (dialogResponse) {
               case 0:
-                dialogUserAllow();
-                break;
+                dialogUserAllow()
+                break
 
               case 1:
-                dialogUserDisallow();
-                break;
+                dialogUserDisallow()
+                break
             }
-          });
-          break;
+          })
+          break
 
         case 2:
-          dialogUserDisallow();
-          break;
+          dialogUserDisallow()
+          break
       }
-      ipcRenderer.send('updateAppMenu', true);
-    });
+      ipcRenderer.send('updateAppMenu', true)
+    })
   },
 
-  versionInformationCopy: function() {
+  versionInformationCopy: function () {
     // copy app build information to clipboard
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?')}, dialogResponse => {
-      if (dialogResponse != 0) desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nnode_dns_changer version: ${desktop.logic.node_dns_changer.version}\nelectron version: ${process.versions.electron}`);
-      if (dialogResponse == 2) desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new');
-    });
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('No, return to app'), i18n.__('Just copy information'), i18n.__('Yes')], message: i18n.__('Do you want to copy the version information of this build of SafeSurfer-Desktop and go to the GitLab page to report an issue?') }, dialogResponse => {
+      if (dialogResponse != 0) desktop.logic.electronClipboardWriteText(`Platform: ${process.platform}\nVersion: ${APPVERSION}\nBuild: ${APPBUILD}\nnode_dns_changer version: ${desktop.logic.node_dns_changer.version}\nelectron version: ${process.versions.electron}`)
+      if (dialogResponse == 2) desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/issues/new')
+    })
   },
 
-  forceToggleWarning: function({wantedState}) {
+  forceToggleWarning: function ({ wantedState }) {
     // display warning message as this could break settings
-    if (window.appStates.lifeguardFound[0] == true) dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.")}, dialogResponse => {});
+    if (window.appStates.lifeguardFound[0] == true) dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("You can't toggle the service, since you're on a LifeGuard network.") }, dialogResponse => {})
     else {
       if (wantedState == window.appStates.serviceEnabled[0]) {
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: `${i18n.__('The service is already in the state which you request.')}\n${i18n.__('Forcing the service to be enabled in this manner may have consequences.')}\n${i18n.__('Your computer\'s network configuration could break by doing this action.')}`}, dialogResponse => {
+        dialog.showMessageBox({ type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__('I understand and wish to continue')], message: `${i18n.__('The service is already in the state which you request.')}\n${i18n.__('Forcing the service to be enabled in this manner may have consequences.')}\n${i18n.__('Your computer\'s network configuration could break by doing this action.')}` }, dialogResponse => {
           if (dialogResponse == 1) {
-            if (window.appStates.serviceEnabled[0] == true) appFrame.enableServicePerPlatform({forced: true});
+            if (window.appStates.serviceEnabled[0] == true) appFrame.enableServicePerPlatform({ forced: true })
             else {
-              if (store.get('lockDeactivateButtons') != true) appFrame.disableServicePerPlatform({forced: true});
-              else appFrame.lockAlertMessage();
+              if (store.get('lockDeactivateButtons') != true) appFrame.disableServicePerPlatform({ forced: true })
+              else appFrame.lockAlertMessage()
             }
           }
-        });
-      }
-      else {
+        })
+      } else {
         if (window.appStates.serviceEnabled[0] == true) {
-          if (store.get('lockDeactivateButtons') != true) appFrame.disableServicePerPlatform({forced: true});
-          else appFrame.lockAlertMessage();
-        }
-        else appFrame.enableServicePerPlatform({forced: true});
+          if (store.get('lockDeactivateButtons') != true) appFrame.disableServicePerPlatform({ forced: true })
+          else appFrame.lockAlertMessage()
+        } else appFrame.enableServicePerPlatform({ forced: true })
       }
     }
   },
 
-  sendAppStateNotifications: function() {
+  sendAppStateNotifications: function () {
     // send notifications if the app state has changed to the user
-    if (window.appStates.serviceEnabled[0] == true && enableNotifications == true) new Notification('Safe Surfer', {
-      body: i18n.__('You are now safe to surf the Internet. Safe Surfer has been set up.'),
-      icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
-    });
-    else if (window.appStates.serviceEnabled[0] == false && enableNotifications == true) new Notification('Safe Surfer', {
-      body: i18n.__('Safe Surfer has been disabled. You are now unprotected.'),
-      icon: path.join(__dirname, "..", "media", "icons", "win", "icon.ico")
-    });
+    if (window.appStates.serviceEnabled[0] == true && enableNotifications == true) {
+      new Notification('Safe Surfer', {
+        body: i18n.__('You are now safe to surf the Internet. Safe Surfer has been set up.'),
+        icon: path.join(__dirname, '..', 'media', 'icons', 'win', 'icon.ico')
+      })
+    } else if (window.appStates.serviceEnabled[0] == false && enableNotifications == true) {
+      new Notification('Safe Surfer', {
+        body: i18n.__('Safe Surfer has been disabled. You are now unprotected.'),
+        icon: path.join(__dirname, '..', 'media', 'icons', 'win', 'icon.ico')
+      })
+    }
   },
 
-  lockDeactivateButtons: function() {
+  lockDeactivateButtons: function () {
     // disallow pressing of deactivate
-    $("#toggleButton").html(i18n.__("LOCKED").toUpperCase());
-    store.set('lockDeactivateButtons', true);
+    $('#toggleButton').html(i18n.__('LOCKED').toUpperCase())
+    store.set('lockDeactivateButtons', true)
   },
 
-  lockEnableMessage: async function() {
+  lockEnableMessage: async function () {
     // tell the user to reboot
     return new Promise((resolve, reject) => {
-      dialog.showMessageBox({type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Great you're now protected! Would you like to lock the buttons that allow deactivation?")}\n${i18n.__("Unlocking the buttons will require help from support.")}`}, response => {
-        if (response == 1) resolve(true);
-        if (response == 0) dialog.showMessageBox({type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__("Lock deactivate buttons")}\n${i18n.__("Are you absolutely sure that you want to lock deactivate buttons?")}`}, response => {
-          if (response == 0) resolve(true);
-          if (response == 1) {
-            appFrame.lockDeactivateButtons();
-            resolve(true);
-          }
-        });
-      });
-    });
+      dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Lock deactivate buttons')}\n${i18n.__("Great you're now protected! Would you like to lock the buttons that allow deactivation?")}\n${i18n.__('Unlocking the buttons will require help from support.')}` }, response => {
+        if (response == 1) resolve(true)
+        if (response == 0) {
+          dialog.showMessageBox({ type: 'info', buttons: [i18n.__('No, nevermind'), i18n.__("Yes, I'm absolutely sure")], message: `${i18n.__('Lock deactivate buttons')}\n${i18n.__('Are you absolutely sure that you want to lock deactivate buttons?')}` }, response => {
+            if (response == 0) resolve(true)
+            if (response == 1) {
+              appFrame.lockDeactivateButtons()
+              resolve(true)
+            }
+          })
+        }
+      })
+    })
   },
 
-  lockAlertMessage: function() {
+  lockAlertMessage: function () {
     // tell the user to go to support for help on unlocking it
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Get support')], message: `${i18n.__("Locked deactivate buttons")}\n${i18n.__("The toggle buttons are locked, unlocking them will require help from support to unlock the buttons.")}`}, response => {
-      if (response == 1) desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/contact');
-    });
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok'), i18n.__('Get support')], message: `${i18n.__('Locked deactivate buttons')}\n${i18n.__('The toggle buttons are locked, unlocking them will require help from support to unlock the buttons.')}` }, response => {
+      if (response == 1) desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/contact')
+    })
   },
 
-  displayRebootMessage: function() {
+  displayRebootMessage: function () {
     // tell the user to reboot
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Restart now'), i18n.__('Ignore')], message: `${i18n.__("Ok, your computer is set up.")}\n${i18n.__("We recommend you restart your computer to ensure that the settings have applied everywhere on it.")}`}, updateResponse => {
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Restart now'), i18n.__('Ignore')], message: `${i18n.__('Ok, your computer is set up.')}\n${i18n.__('We recommend you restart your computer to ensure that the settings have applied everywhere on it.')}` }, updateResponse => {
       if (updateResponse == 0) {
         switch (os.platform()) {
           case 'win32':
-            appFrame.exec('shutdown /r /t 0');
-            break;
+            appFrame.exec('shutdown /r /t 0')
+            break
           case 'linux':
-            appFrame.exec(`/sbin/reboot`);
-            break;
+            appFrame.exec(`/sbin/reboot`)
+            break
           case 'darwin':
-            appFrame.exec(`osascript -e 'do shell script "reboot" with prompt "${i18n.__("Reboot to apply settings")}\\n" with administrator privileges'`);
-            break;
+            appFrame.exec(`osascript -e 'do shell script "reboot" with prompt "${i18n.__('Reboot to apply settings')}\\n" with administrator privileges'`)
+            break
           default:
-            dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.")});
-            break;
+            dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("I'm unable to reboot for you, please reboot manually.") })
+            break
         }
       }
-    });
+    })
   },
 
-  donationMessage: async function() {
+  donationMessage: async function () {
     // give the user a message about donating
     return new Promise((resolve, reject) => {
-      dialog.showMessageBox({type: 'info', buttons: [i18n.__('No'), i18n.__('Donate')], message: `${i18n.__('Thank you for using the Safe Surfer desktop app.')}\n${i18n.__('Would you like to support the project and help fund future projects?')}`}, response => {
-        if (response == 1) desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/');
-        resolve(true);
-      });
-    });
+      dialog.showMessageBox({ type: 'info', buttons: [i18n.__('No'), i18n.__('Donate')], message: `${i18n.__('Thank you for using the Safe Surfer desktop app.')}\n${i18n.__('Would you like to support the project and help fund future projects?')}` }, response => {
+        if (response == 1) desktop.logic.electronOpenExternal('http://www.safesurfer.co.nz/donate-now/')
+        resolve(true)
+      })
+    })
   },
 
-  collectStatistics_update: function() {
+  collectStatistics_update: function () {
     // if the user agrees to it, collect non identifiable information about their setup
     var dataGathered = {
       DATESENT: moment().format('X'),
-      TYPESEND: "update",
+      TYPESEND: 'update',
       APPBUILD: APPBUILD,
-      BUILDMODE: "release",
+      BUILDMODE: 'release',
       APPVERSION: APPVERSION,
       PLATFORM: os.platform(),
       ISSERVICEENABLED: window.appStates.serviceEnabled[0]
     }
-    if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT;
-    return JSON.stringify(dataGathered);
+    if (os.platform() == 'linux' && LINUXPACKAGEFORMAT !== undefined && LINUXPACKAGEFORMAT !== '') dataGathered.LINUXPACKAGEFORMAT = LINUXPACKAGEFORMAT
+    return JSON.stringify(dataGathered)
   },
 
-  checkForVersionChange: function() {
+  checkForVersionChange: function () {
     // if the version of the app has been updated, let the statistic server know, if allowed by user
-    var previousVersionData;
-    logging("[checkForVersionChange]: Checking if user has reached a newer version");
-    previousVersionData = store.get('lastVersionInstalled');
+    var previousVersionData
+    logging('[checkForVersionChange]: Checking if user has reached a newer version')
+    previousVersionData = store.get('lastVersionInstalled')
     if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
-      var featureList = "";
+      var featureList = ''
       require('../data/releaseNotes.json').items.map(i => {
-        featureList += `- ${i}\n`;
-      });
+        featureList += `- ${i}\n`
+      })
       if (store.get('provideUpdateInformation') === true) {
-        dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Read detailed changelog')], message: `${i18n.__("What's new in version:")} ${APPVERSION}\n\n${i18n.__("Here are the improvements and fixes included in this version:")}\n${featureList}`, checkboxLabel: i18n.__("Tell me about changes when I update"), checkboxChecked: true}, (response, checkboxChecked) => {
-          store.set('provideUpdateInformation', checkboxChecked);
-          if (response === 1) desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${APPVERSION}`);
-        });
-        ipcRenderer.send('updateAppMenu', true);
+        dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok'), i18n.__('Read detailed changelog')], message: `${i18n.__("What's new in version:")} ${APPVERSION}\n\n${i18n.__('Here are the improvements and fixes included in this version:')}\n${featureList}`, checkboxLabel: i18n.__('Tell me about changes when I update'), checkboxChecked: true }, (response, checkboxChecked) => {
+          store.set('provideUpdateInformation', checkboxChecked)
+          if (response === 1) desktop.logic.electronOpenExternal(`https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/${APPVERSION}`)
+        })
+        ipcRenderer.send('updateAppMenu', true)
       }
-      store.set('lastVersionInstalled', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
+      store.set('lastVersionInstalled', { APPBUILD: APPBUILD, APPVERSION: APPVERSION })
       if (store.get('statisticAllow') == true) {
-        logging('[checkForVersionChange]: Sending update data');
-        appFrame.sendStatistics(appFrame.collectStatistics_update());
-        var previous = store.get('statHistory');
-        previous = [...previous, JSON.stringify(dataGathered)];
-        store.set('statHistory', previous);
+        logging('[checkForVersionChange]: Sending update data')
+        appFrame.sendStatistics(appFrame.collectStatistics_update())
+        var previous = store.get('statHistory')
+        previous = [...previous, JSON.stringify(dataGathered)]
+        store.set('statHistory', previous)
       }
-    }
-    else logging('[checkForVersionChange]: User has not reached new version.');
+    } else logging('[checkForVersionChange]: User has not reached new version.')
   },
 
-  toggleSuccess: function() {
+  toggleSuccess: function () {
     // when the service is enabled, display 3 messages
-    appFrame.resetToggling();
+    appFrame.resetToggling()
     if (window.appStates.serviceEnabled[0] === true) {
       appFrame.lockEnableMessage().then(response => {
-        if (response) return appFrame.donationMessage();
+        if (response) return appFrame.donationMessage()
       }).then(response => {
-        if (response) return appFrame.displayRebootMessage();
-      });
-    }
-    else appFrame.displayRebootMessage();
+        if (response) return appFrame.displayRebootMessage()
+      })
+    } else appFrame.displayRebootMessage()
   },
 
-  mainReloadProcess: function() {
+  mainReloadProcess: function () {
     // reload function
-    logging("[mainReloadProcess]: begin reload");
-    appFrame.checkServiceState();
+    logging('[mainReloadProcess]: begin reload')
+    appFrame.checkServiceState()
 
     if (appStates.internetCheckCounter === 3) {
-      if (appStates.toggleLock != true) appFrame.internetConnectionCheck();
-      appStates.internetCheckCounter = 0;
-    }
-    else appStates.internetCheckCounter += 1;
+      if (appStates.toggleLock != true) appFrame.internetConnectionCheck()
+      appStates.internetCheckCounter = 0
+    } else appStates.internetCheckCounter += 1
 
     if (window.appStates.serviceEnabled[0] === undefined && window.appStates.lifeguardFound[0] === true) {
-      window.appStates.serviceEnabled[0] = true;
+      window.appStates.serviceEnabled[0] = true
     }
 
     if (window.appStates.internet[0] === true) {
-      appFrame.hideNoInternetConnection();
-    }
-    else {
-      appFrame.displayNoInternetConnection();
-      appStates.lifeguardOnNetworkLock = false;
+      appFrame.hideNoInternetConnection()
+    } else {
+      appFrame.displayNoInternetConnection()
+      appStates.lifeguardOnNetworkLock = false
     }
 
     if (window.appStates.serviceEnabled[0] != window.appStates.serviceEnabled[1] && window.appStates.serviceEnabled[1] !== undefined && window.appStates.toggleLock == true) {
       // if the state changes of the service being enabled changes
-      logging('[mainReloadProcess]: State has changed.');
-      appFrame.sendAppStateNotifications();
-      window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0];
-      appFrame.toggleSuccess();
+      logging('[mainReloadProcess]: State has changed.')
+      appFrame.sendAppStateNotifications()
+      window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0]
+      appFrame.toggleSuccess()
     }
 
-    if (appStates.serviceEnabled[0] === false) appStates.lifeguardOnNetworkLock = false;
+    if (appStates.serviceEnabled[0] === false) appStates.lifeguardOnNetworkLock = false
 
     // if the service is enabled, check if a lifeguard is on the network
-    if (appStates.lifeguardOnNetworkLock !== true) appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
-      window.appStates.lifeguardFound[0] = lgstate;
-      if (appStates.lifeguardFound[0] === true) appStates.lifeguardOnNetworkLock = true;
-    });
+    if (appStates.lifeguardOnNetworkLock !== true) {
+      appFrame.checkIfOnLifeGuardNetwork().then((lgstate) => {
+        window.appStates.lifeguardFound[0] = lgstate
+        if (appStates.lifeguardFound[0] === true) appStates.lifeguardOnNetworkLock = true
+      })
+    }
 
     if (window.appStates.lifeguardFound[0] != window.appStates.lifeguardFound[1]) {
       // if the state of a lifeguard being on the network changes
-      logging('[mainReloadProcess]: LIFEGUARDSTATE State has changed.');
-      window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
-      if (appStates.lifeguardFound[0] === true) appStates.lifeguardOnNetworkLock = true;
+      logging('[mainReloadProcess]: LIFEGUARDSTATE State has changed.')
+      window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0]
+      if (appStates.lifeguardFound[0] === true) appStates.lifeguardOnNetworkLock = true
     }
 
     if (window.appStates.internet[0] != window.appStates.internet[1]) {
       // if the state of the internet connection changes
-      logging('[mainReloadProcess]: NETWORK State has changed.');
-      window.appStates.internet[1] = window.appStates.internet[0];
+      logging('[mainReloadProcess]: NETWORK State has changed.')
+      window.appStates.internet[1] = window.appStates.internet[0]
     }
 
     // if there are undefined states
-    if (window.appStates.serviceEnabled[1] === undefined) window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0];
-    if (window.appStates.internet[1] === undefined) window.appStates.internet[1] = window.appStates.internet[0];
-    if (window.appStates.lifeguardFound[1] === undefined) window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0];
+    if (window.appStates.serviceEnabled[1] === undefined) window.appStates.serviceEnabled[1] = window.appStates.serviceEnabled[0]
+    if (window.appStates.internet[1] === undefined) window.appStates.internet[1] = window.appStates.internet[0]
+    if (window.appStates.lifeguardFound[1] === undefined) window.appStates.lifeguardFound[1] = window.appStates.lifeguardFound[0]
     if (window.appStates.progressBarCounter == 20) {
-      window.appStates.progressBarCounter = 0;
-      window.appStates.toggleLock = false;
-      $('#progressBar').css("height", "0px");
-      $('.progressInfoBar').css("height", "0px");
-    }
-    else if ($("#progressBar").css("height") == "20px") window.appStates.progressBarCounter += 1;
+      window.appStates.progressBarCounter = 0
+      window.appStates.toggleLock = false
+      $('#progressBar').css('height', '0px')
+      $('.progressInfoBar').css('height', '0px')
+    } else if ($('#progressBar').css('height') == '20px') window.appStates.progressBarCounter += 1
 
-    appFrame.affirmServiceState();
-    if (appStates.lifeguardOnNetworkLock !== true) window.appStates.lifeguardFound[0] = false;
-    logging("[mainReloadProcess]: end reload");
-    setTimeout(appFrame.mainReloadProcess, 1000);
+    appFrame.affirmServiceState()
+    if (appStates.lifeguardOnNetworkLock !== true) window.appStates.lifeguardFound[0] = false
+    logging('[mainReloadProcess]: end reload')
+    setTimeout(appFrame.mainReloadProcess, 1000)
   },
 
-  initApp: function() {
+  initApp: function () {
     // initalise rest of app
-    appFrame.checkServiceState();
+    appFrame.checkServiceState()
     setTimeout(() => {
       // run main process which loops
-      logging("[initApp]: finishing initalising");
-      appFrame.finishedLoading();
-      appFrame.mainReloadProcess();
+      logging('[initApp]: finishing initalising')
+      appFrame.finishedLoading()
+      appFrame.mainReloadProcess()
       // if user hasn't provided a response to statistics
-      appFrame.checkForVersionChange();
+      appFrame.checkForVersionChange()
       // after 3 seconds, if the user has run the app as Admin (if Windows), provide prompt requesting to send stats
       if (store.get('statHasAnswer') != true && appStates.userIsAdmin == true) {
         setTimeout(() => {
-          appFrame.statPrompt();
-        }, 3000);
+          appFrame.statPrompt()
+        }, 3000)
       }
     // wait one second before exiting the init screen
-    }, 1000);
+    }, 1000)
   },
 
-  openWindowsUACHelpPage: function() {
+  openWindowsUACHelpPage: function () {
     // launch a page about how to launch the app as an Administrator (for Windows users)
-    desktop.logic.electronOpenExternal('https://safesurfer.desk.com/customer/en/portal/articles/2957007-run-app-as-administrator');
+    desktop.logic.electronOpenExternal('https://safesurfer.desk.com/customer/en/portal/articles/2957007-run-app-as-administrator')
   },
 
-  permissionLoop: function() {
+  permissionLoop: function () {
     // loop until user is admin
     setTimeout(() => {
-      logging(`[permissionLoop]: loop #${appStates.elevationFailureCount}`);
+      logging(`[permissionLoop]: loop #${appStates.elevationFailureCount}`)
       if (appStates.userIsAdmin != true) {
         if (appStates.elevationFailureCount < 30) {
-          $('#privBar').css("height", "40px");
-          $('#privBarText').text(i18n.__('Please wait while the app asks for Administrative privileges'));
+          $('#privBar').css('height', '40px')
+          $('#privBarText').text(i18n.__('Please wait while the app asks for Administrative privileges'))
+        } else {
+          logging('[permissionLoop]: unable to elevate, now providing users with help')
+          $('#privBarText_error').bind('click', appFrame.openWindowsUACHelpPage)
+          $('#privBarText_tryAgain').bind('click', appFrame.elevateWindows)
+          $('#privBarText_error').text(i18n.__('Help me to run this app as an Administrator'))
+          $('#privBarText_tryAgain').text(i18n.__('Try again'))
+          $('#privBarText').text(i18n.__("I can't seem run this app as an Administrator for you."))
+          $('#privBar').css('height', '155px')
+          appStates.elevateWindows_unable = true
         }
-        else {
-          logging("[permissionLoop]: unable to elevate, now providing users with help");
-          $('#privBarText_error').bind('click', appFrame.openWindowsUACHelpPage);
-          $('#privBarText_tryAgain').bind('click', appFrame.elevateWindows);
-          $('#privBarText_error').text(i18n.__('Help me to run this app as an Administrator'));
-          $('#privBarText_tryAgain').text(i18n.__('Try again'));
-          $('#privBarText').text(i18n.__("I can't seem run this app as an Administrator for you."));
-          $('#privBar').css("height", "155px");
-          appStates.elevateWindows_unable = true;
-        }
-        appStates.elevationFailureCount += 1;
-        if (appStates.elevateWindows_unable !== true) appFrame.permissionLoop();
+        appStates.elevationFailureCount += 1
+        if (appStates.elevateWindows_unable !== true) appFrame.permissionLoop()
+      } else {
+        logging('[permissionLoop]: elevation successful... now relaunching with Administrator privileges')
+        $('#privBar').css('height', '0px')
+        appFrame.initApp()
       }
-      else {
-        logging("[permissionLoop]: elevation successful... now relaunching with Administrator privileges");
-        $('#privBar').css("height", "0px");
-        appFrame.initApp();
-      }
-    }, 500);
+    }, 500)
   },
 
-  windowsVersionCheck: function() {
+  windowsVersionCheck: function () {
     // if user is running Windows, make sure that the user is running a compatible version of Windows
-    if (os.platform() != 'win32') return;
-    var releaseVer = os.release().split('.');
+    if (os.platform() != 'win32') return
+    var releaseVer = os.release().split('.')
     if (parseInt(releaseVer[0]) == 6 && parseInt(releaseVer[1]) >= 1 || parseInt(releaseVer[0]) == 10) {
-      window.appStates.windowsVersionCompatible = true;
-      return;
+      window.appStates.windowsVersionCompatible = true
+      return
     }
-    window.appStates.windowsVersionCompatible = false;
-    logging("[windowsVersionCheck]: User is not on a compatible version of Windows");
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__("The version of Windows that you seem to be running appears to be not compatible with this app.")}, msgResponse => {
-      if (msgResponse == 1) desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop#system-requirements');
-    });
+    window.appStates.windowsVersionCompatible = false
+    logging('[windowsVersionCheck]: User is not on a compatible version of Windows')
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok'), i18n.__('Help')], message: i18n.__('The version of Windows that you seem to be running appears to be not compatible with this app.') }, msgResponse => {
+      if (msgResponse == 1) desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop#system-requirements')
+    })
   }
-};
+}
 
-if (packageJSON.appOptions.disableNodeIntegration === false) window.appFrame = Object.freeze(appFrame);
+if (packageJSON.appOptions.disableNodeIntegration === false) window.appFrame = Object.freeze(appFrame)
 
 ipcRenderer.on('toggleAppUpdateAutoCheck', (event, arg) => {
   // if user changes the state of auto check for updates
-  logging(`[windowsVersionCheck]: UPDATES Auto check state changed to ${!arg}`);
-  store.set('appUpdateAutoCheck', !arg);
-});
+  logging(`[windowsVersionCheck]: UPDATES Auto check state changed to ${!arg}`)
+  store.set('appUpdateAutoCheck', !arg)
+})
 
 ipcRenderer.on('betaCheck', (event, arg) => {
   // if user changes the state of auto check for updates
-  logging(`[windowsVersionCheck]: UPDATES Beta state changed to ${!arg}`);
-  store.set('betaCheck', !arg);
-});
+  logging(`[windowsVersionCheck]: UPDATES Beta state changed to ${!arg}`)
+  store.set('betaCheck', !arg)
+})
 
 ipcRenderer.on('checkIfUpdateAvailable', (event, arg) => {
   // when user wants to check for app update using button in menu bar
   appFrame.checkForAppUpdate({
     current: true,
     showErrors: true
-  });
-});
+  })
+})
 
 ipcRenderer.on('goForceEnable', () => {
   // when activate button is pressed from menu bar
-  appFrame.forceToggleWarning({wantedState: true});
-});
+  appFrame.forceToggleWarning({ wantedState: true })
+})
 
 ipcRenderer.on('goForceDisable', () => {
   // when deactivate button is pressed from menu bar
-  appFrame.forceToggleWarning({wantedState: false});
-});
+  appFrame.forceToggleWarning({ wantedState: false })
+})
 
 ipcRenderer.on('goBuildToClipboard', () => {
   // when version information is pressed from menu bar
-  appFrame.versionInformationCopy();
-});
+  appFrame.versionInformationCopy()
+})
 
 ipcRenderer.on('showAboutMenu', (opt) => {
   // go to about app page
-  window.open(path.join(__dirname, '..', 'html', 'about.html'), i18n.__("About this app"));
-});
+  window.open(path.join(__dirname, '..', 'html', 'about.html'), i18n.__('About this app'))
+})
 
 ipcRenderer.on('showStatHistory', (opt) => {
   // go to statistic sharing page
-  window.open(path.join(__dirname, '..', 'html', 'stats.html'), i18n.__("View statistic data"));
-});
+  window.open(path.join(__dirname, '..', 'html', 'stats.html'), i18n.__('View statistic data'))
+})
 
 ipcRenderer.on('generateDiagnostics', () => {
   // copy diagnostics information to clipboard
-  dialog.showMessageBox({type: 'info', buttons: [i18n.__("Yes"), i18n.__("No")], message: `${i18n.__("Diagnostics")}\n\n${i18n.__("Are you sure you want to copy diagnostics data to your clipboard?")}\n\n${i18n.__("Only ever send the data given to Safe Surfer if necessary. The information sent may contain some data detailing about your computer.")}`}, response => {
-    if (response === 0) desktop.logic.electronClipboardWriteText(actions.diagnostics.generate());
-  });
-});
+  dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Yes'), i18n.__('No')], message: `${i18n.__('Diagnostics')}\n\n${i18n.__('Are you sure you want to copy diagnostics data to your clipboard?')}\n\n${i18n.__('Only ever send the data given to Safe Surfer if necessary. The information sent may contain some data detailing about your computer.')}` }, response => {
+    if (response === 0) desktop.logic.electronClipboardWriteText(actions.diagnostics.generate())
+  })
+})
 
 ipcRenderer.on('getStatuses', () => {
-  dialog.showMessageBox({type: 'info', buttons: [i18n.__("Ok")], message: actions.status()});
-});
+  dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: actions.status() })
+})
 
 ipcRenderer.on('goFlushDNScache', () => {
   // go to statistic sharing page
-  appFrame.flushDNScache();
-});
+  appFrame.flushDNScache()
+})
 
 ipcRenderer.on('goOpenMyDeviceLifeGuard', () => {
-  if (appStates.lifeguardFound[0] === true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-  else dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok'), i18n.__('Try from web browser')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}\n\n${i18n.__("If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall to use this feature in the app.")}`}, response => {
-    desktop.logic.electronOpenExternal('http://mydevice.safesurfer.co.nz');
-  });
-});
+  if (appStates.lifeguardFound[0] === true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard')
+  else {
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok'), i18n.__('Try from web browser')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}\n\n${i18n.__('If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall to use this feature in the app.')}` }, response => {
+      desktop.logic.electronOpenExternal('http://mydevice.safesurfer.co.nz')
+    })
+  }
+})
 
-ipcRenderer.on("configureBlockedSites", () => {
+ipcRenderer.on('configureBlockedSites', () => {
   if (appStates.serviceEnabled[0] === false) {
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: i18n.__("The service must be enabled before you can configure the blocked sites.")});
-    return;
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: i18n.__('The service must be enabled before you can configure the blocked sites.') })
+    return
+  } else if (appStates.serviceEnabled[0] === true && appStates.lifeguardFound[0] === true) {
+    window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard')
+    return
   }
-  else if (appStates.serviceEnabled[0] === true && appStates.lifeguardFound[0] === true) {
-    window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard');
-    return;
-  }
-  window.open('https://www.safesurfer.co.nz/api/1.0/public/control.php');
+  window.open('https://www.safesurfer.co.nz/api/1.0/public/control.php')
 })
 
 ipcRenderer.on('goLockDeactivateButtons', () => {
   // give a prompt about locking the toggle button
   if (appStates.serviceEnabled[0] != true) {
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You must enable the service before you can lock it.')}`});
-    return;
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You must enable the service before you can lock it.')}` })
+    return
   }
   if (store.get('lockDeactivateButtons') === true) {
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You appear to already have locked the buttons.')}`});
-    return;
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: `${i18n.__('You appear to already have locked the buttons.')}` })
+    return
   }
   if (appStates.lifeguardFound[0] === true) {
-    dialog.showMessageBox({type: 'info', buttons: [i18n.__('No'), i18n.__('Yes')], message: `${i18n.__('You appear to be on a LifeGuard network, the settings given from the LifeGuard cannot be disabled when on this network, are you sure you still want to lock the buttons?')}`}, response => {
-      if (response === 0) return;
-      if (response === 1) appFrame.lockEnableMessage();
-    });
-  }
-  else appFrame.lockEnableMessage();
-});
+    dialog.showMessageBox({ type: 'info', buttons: [i18n.__('No'), i18n.__('Yes')], message: `${i18n.__('You appear to be on a LifeGuard network, the settings given from the LifeGuard cannot be disabled when on this network, are you sure you still want to lock the buttons?')}` }, response => {
+      if (response === 0) return
+      if (response === 1) appFrame.lockEnableMessage()
+    })
+  } else appFrame.lockEnableMessage()
+})
 
 ipcRenderer.on('toggleStatState', () => {
   // changing the statistic sharing state
-  store.set('statisticAllow', !store.get('statisticAllow'));
-});
+  store.set('statisticAllow', !store.get('statisticAllow'))
+})
 
 ipcRenderer.on('toggleProvideUpdateInformation', () => {
-  store.set('provideUpdateInformation', !store.get('provideUpdateInformation'));
-});
+  store.set('provideUpdateInformation', !store.get('provideUpdateInformation'))
+})
 
 // keep note of if the user is running as admin or not
-appFrame.windowsVersionCheck();
-appFrame.checkUserPrivileges();
+appFrame.windowsVersionCheck()
+appFrame.checkUserPrivileges()
 
 // if auto-update checking is enabled and updates are enabled, check for them
-if (updatesEnabled == true && store.get('appUpdateAutoCheck') == true) appFrame.checkForAppUpdate({
-  current: false,
-  showErrors: false
-});
+if (updatesEnabled == true && store.get('appUpdateAutoCheck') == true) {
+  appFrame.checkForAppUpdate({
+    current: false,
+    showErrors: false
+  })
+}
 
 // log a message in the console for devs; yeah that's probably you if you're reading this :)
 console.log(`> Are you a developer? Do you want to help us with this project?
@@ -1183,27 +1172,27 @@ If so, join us by going to:
   - http://www.safesurfer.co.nz/become-safe-safe-volunteer
 
 Yours,
-Safe Surfer team.`);
+Safe Surfer team.`)
 
 // REMOVE THIS after a while, as user's will have their stat data migrated in no time
 if (store.get('teleHistory') !== undefined) {
-  store.set('statHistory', store.get('teleHistory'));
-  if (store.get('statHistory') !== undefined) store.delete('teleHistory');
+  store.set('statHistory', store.get('teleHistory'))
+  if (store.get('statHistory') !== undefined) store.delete('teleHistory')
 }
 if (store.get('lastVersionTosendStatistics') !== undefined) {
-  store.set('lastVersionInstalled', store.get('lastVersionTosendStatistics'));
-  if (store.get('lastVersionInstalled') !== undefined) store.delete('lastVersionTosendStatistics');
+  store.set('lastVersionInstalled', store.get('lastVersionTosendStatistics'))
+  if (store.get('lastVersionInstalled') !== undefined) store.delete('lastVersionTosendStatistics')
 }
 
 // if lastVersionInstalled hasn't been stated, save the current settings
-if (store.get('lastVersionInstalled') === undefined) store.set('lastVersionInstalled', {APPBUILD: APPBUILD, APPVERSION: APPVERSION});
+if (store.get('lastVersionInstalled') === undefined) store.set('lastVersionInstalled', { APPBUILD: APPBUILD, APPVERSION: APPVERSION })
 
 // connect button in html to a function
-$('#toggleButton').bind('click', appFrame.toggleServiceState);
-$("#toggleButtonInfo")[0].title = i18n.__("The state of the service is being determined. Please wait.");
+$('#toggleButton').bind('click', appFrame.toggleServiceState)
+$('#toggleButtonInfo')[0].title = i18n.__('The state of the service is being determined. Please wait.')
 
-appFrame.internetConnectionCheck();
+appFrame.internetConnectionCheck()
 // initalise the rest of the app
-if (appStates.userIsAdmin == true) appFrame.initApp();
+if (appStates.userIsAdmin == true) appFrame.initApp()
 // since the user isn't admin, we'll keep checking just in case
-else appFrame.permissionLoop();
+else appFrame.permissionLoop()
