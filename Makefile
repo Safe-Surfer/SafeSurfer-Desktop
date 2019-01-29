@@ -153,7 +153,7 @@ build-snap-lxd:
 	snapcraft cleanbuild
 
 clean:
-	@rm -rf dist deb-build release-builds flatpak-build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) ./support/linux/flatpak/generated-sources.json ./support/linux/flatpak/flatpak-npm-generator.py ./support/linux/flatpak/inline\ data ./support/linux/flatpak/flatpak-build ./support/linux/flatpak/.flatpak-builder SafeSurfer-Desktop.snapbuild dist safesurfer-desktop_*_*.snap
+	@rm -rf dist deb-build release-builds flatpak-build .flatpak-builder zip-build SafeSurfer-Desktop-Linux.zip Safe_Surfer-x86_64.AppImage nz.co.safesurfer.SafeSurfer-Desktop.AppDir $(DESTDIR) SafeSurfer-Desktop.snapbuild dist safesurfer-desktop_*_*.snap
 	@if grep -q '"enableUpdates": false' ./package.json; then sed -i -e 's/"enableUpdates": false/"enableUpdates": true/g' ./package.json; fi
 	@if ! grep -q "DEVIDSTUFF" ./support/macOS/entitlements.mas.plist && [[ -f "./support/macOS/entitlements.mas.plist.bak" ]]; then mv ./support/macOS/entitlements.mas.plist.bak ./support/macOS/entitlements.mas.plist; fi
 

@@ -1,39 +1,39 @@
 {
-    "app-id": "nz.co.safesurfer.SafeSurfer-Desktop",
-    "runtime": "org.freedesktop.Platform",
-    "runtime-version": "1.6",
-    "branch": "stable",
-    "sdk": "org.freedesktop.Sdk",
-    "base": "io.atom.electron.BaseApp",
-    "base-version": "stable",
-    "command": "/app/usr/lib64/SafeSurfer-Desktop/safesurfer-desktop",
-    "separate-locales": false,
-    "finish-args": [
-        "--share=ipc",
-        "--share=network",
-        "--socket=x11",
-        "--device=all",
-        "--allow=devel",
-        "--talk-name=org.freedesktop.Notifications",
-        "--talk-name=ca.desrt.dconf",
-        "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
-    ],
-    "modules": [
-        {
-            "name": "SafeSurfer-Desktop",
-            "buildsystem": "simple",
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases/download/1.0.0/SafeSurfer-Desktop-Linux.zip",
-                    "sha256": "7f51f77d41fc2bd22852290d39a8868fe35e88697692883fa71c0654a1b14e1f",
-                    "dest": "main"
-                }
-            ],
-            "build-commands": [
-            	"mkdir -p /app/usr",
-                "cp -ra main/* /app/usr/."
-            ]
-        }
-    ]
+	"app-id": "nz.co.safesurfer.SafeSurfer-Desktop",
+	"runtime": "org.freedesktop.Platform",
+	"runtime-version": "1.6",
+	"branch": "stable",
+	"sdk": "org.freedesktop.Sdk",
+	"base": "io.atom.electron.BaseApp",
+	"base-version": "stable",
+	"command": "/app/usr/lib64/SafeSurfer-Desktop/safesurfer-desktop",
+	"separate-locales": false,
+	"finish-args": [
+		"--share=ipc",
+		"--share=network",
+		"--socket=x11",
+		"--device=all",
+		"--allow=devel",
+		"--talk-name=org.freedesktop.Notifications",
+		"--talk-name=ca.desrt.dconf",
+		"--env=DCONF_USER_CONFIG_DIR=.config/dconf"
+	],
+	"modules": [
+		{
+			"name": "SafeSurfer-Desktop",
+			"buildsystem": "simple",
+			"sources": [
+				{
+					"type": "archive",
+					"url": "https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases/download/1.0.0/SafeSurfer-Desktop-Linux.zip",
+					"sha256": "7f51f77d41fc2bd22852290d39a8868fe35e88697692883fa71c0654a1b14e1f",
+					"dest": "main"
+				}
+			],
+			"build-commands": [
+				"mkdir -p /app/usr",
+				"cp -ra main/* /app/usr/."
+			]
+		}
+	]
 }
