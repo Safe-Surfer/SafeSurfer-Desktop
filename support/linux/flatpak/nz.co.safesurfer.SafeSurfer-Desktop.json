@@ -6,20 +6,15 @@
     "sdk": "org.freedesktop.Sdk",
     "base": "io.atom.electron.BaseApp",
     "base-version": "stable",
-    "command": "/app/usr/lib64/SafeSurfer-Desktop/SafeSurfer-Desktop",
+    "command": "/app/usr/lib64/SafeSurfer-Desktop/safesurfer-desktop",
     "separate-locales": false,
     "finish-args": [
         "--share=ipc",
-        "--socket=x11",
-        "--socket=pulseaudio",
         "--share=network",
-        "--share=ipc",
         "--socket=x11",
         "--device=all",
         "--allow=devel",
         "--talk-name=org.freedesktop.Notifications",
-        "--env=PATH=/app/bin:/usr/bin:/run/host/usr/bin/",
-        "--env=LD_LIBRARY_PATH=/app/lib:/usr/lib/ffmpeg/lib:/run/host/lib",
         "--talk-name=ca.desrt.dconf",
         "--env=DCONF_USER_CONFIG_DIR=.config/dconf"
     ],
@@ -30,8 +25,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "http://142.93.48.189/files/desktop/10-1.0.0/SafeSurfer-Desktop-1.0.0-10-linux.zip",
-                    "sha256": "2f9a217d7dfa74a99255a1feacccb3a7930a43feb6733bab838a2bb2c7952dcb",
+                    "url": "https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases/download/1.0.0/SafeSurfer-Desktop-Linux.zip",
+                    "sha256": "7f51f77d41fc2bd22852290d39a8868fe35e88697692883fa71c0654a1b14e1f",
                     "dest": "main"
                 }
             ],

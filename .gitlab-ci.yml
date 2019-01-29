@@ -1,4 +1,4 @@
-image: opensuse/leap
+image: ubuntu
 
 stages:
   - build
@@ -22,16 +22,20 @@ pages:
 build:
   stage: build
   before_script:
+    - echo "Pacific/Auckland" > /etc/timezone
+    - apt update
+    - apt upgrade -y
     # install deps for build enviroment
-    - zypper in -y git nodejs npm8 tar bzip2 wget fuse AppStream wine unzip zip mono-devel curl libfuse2-32bit binutils
-    - zypper in -y -t pattern devel_basis
-  script:
+    - DEBIAN_FRONTEND=noninteractive apt install -yq nodejs npm tar bzip2 wget fuse wine-stable unzip zip mono-devel curl libfuse2 binutils bash-completion fakeroot html2text libmd0 build-essential rpm2cpio cpio
+    - dpkg --add-architecture i386 && apt update && apt install -y wine32
     # make built directory
     - mkdir builtBinaries
     # prep dependencies
     - npm i
+  script:
     # build AppImage
-    - make prep-appimage build-appimage || true
+    - make prep-appimage
+    - make build-appimage || true
     - cd tools
     - ./appimagetool-x86_64.AppImage --appimage-extract || true
     - ./squashfs-root/AppRun -n -s ../nz.co.safesurfer.SafeSurfer-Desktop.AppDir
@@ -45,6 +49,7 @@ build:
     # clean build
     - make clean
     # build windows (64-bit)
+    - export LANG=
     - make build-windows
     - mv dist/SafeSurfer-Desktop\ *.exe builtBinaries/.
     # clean build
