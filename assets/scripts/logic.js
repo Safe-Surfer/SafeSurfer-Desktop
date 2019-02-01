@@ -67,26 +67,13 @@ logging(`[INFO]: platform  - ${os.platform()}`)
 logging(`[INFO]: cwd       - ${process.cwd()}`)
 
 window.actions = Object.freeze({
-  buttons: {
-    unlock: function () {
-      store.set('lockDeactivateButtons', false)
-      logging('[unlockButton]: button has been unlocked')
-    },
-
-    lock: function () {
-      store.set('lockDeactivateButtons', true)
-      logging('[unlockButton]: button has been locked')
-    }
+  buttons: function () {
+      store.set('lockDeactivateButtons', !store.get('lockDeactivateButtons'))
+      console.log(`Buttons have been ${store.get('lockDeactivateButtons') === false ? "unlocked" : "locked"}`)
   },
 
-  logging: {
-    enable: function () {
-      window.appStates.enableLogging = true
-    },
-
-    disable: function () {
-      window.appStates.enableLogging = false
-    }
+  logging: function () {
+    window.appStates.enableLogging = !window.appStates.enableLogging
   },
 
   stats: {
