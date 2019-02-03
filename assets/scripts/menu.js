@@ -149,7 +149,8 @@ module.exports = (app, mainWindow) => {
       [
         { label: i18n.__('Enable statistic sharing'), type: 'checkbox', checked: teleEnabled, click () { mainWindow.webContents.send('toggleStatState') } },
         { type: 'separator' },
-        { label: i18n.__('View statistic data'), click () { mainWindow.webContents.send('showStatHistory') } }
+        { label: i18n.__('View statistic data'), click () { mainWindow.webContents.send('showStatHistory') } },
+        { label: i18n.__('View crowdsourced stats'), click () { electron.shell.openExternal('http://142.93.48.189:3000') } }
       ]
     })
   }
@@ -188,7 +189,7 @@ module.exports = (app, mainWindow) => {
     )
     menu[0].submenu.push(
       { type: 'separator' },
-      { label: i18n.__('Quit'), click () { app.quit() }, accelerator: 'CmdOrCtrl+Q' }
+      { label: i18n.__('Exit'), click () { app.quit() }, accelerator: 'Alt+F4' }
     )
   }
   return menu

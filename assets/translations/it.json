@@ -167,5 +167,6 @@
     "Reboot to apply settings": "",
     "Flush DNS cache to refresh network settings": "",
     "The service appears to be set up on a router, the app cannot disable it.": "",
-    "About SafeSurfer-Desktop": ""
+    "About SafeSurfer-Desktop": "",
+    "View crowdsourced stats": ""
 }
