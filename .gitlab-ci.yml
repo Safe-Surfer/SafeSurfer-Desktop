@@ -26,34 +26,48 @@ build:
     - apt update
     - apt upgrade -y
     # install deps for build enviroment
-    - DEBIAN_FRONTEND=noninteractive apt install -yq nodejs npm tar bzip2 wget fuse wine-stable unzip zip mono-devel curl libfuse2 binutils bash-completion fakeroot html2text libmd0 build-essential rpm2cpio cpio
+    - DEBIAN_FRONTEND=noninteractive apt install -yq nodejs npm tar bzip2 wget fuse wine-stable unzip zip mono-devel curl libfuse2 binutils bash-completion fakeroot html2text libmd0 build-essential rpm2cpio cpio jq
     - dpkg --add-architecture i386 && apt update && apt install -y wine32
     # make built directory
     - mkdir builtBinaries
     # prep dependencies
     - npm i
+    # download appimage dependencies
+    - make prep-appimage
   script:
     # build AppImage
-    - make prep-appimage
     - make build-appimage || true
     - cd tools
     - ./appimagetool-x86_64.AppImage --appimage-extract || true
     - ./squashfs-root/AppRun -n -s ../nz.co.safesurfer.SafeSurfer-Desktop.AppDir
-    - mv Safe_Surfer-x86_64.AppImage ../builtBinaries/.
+    # update names of zip
+    - support/renameBinaries.sh Safe_Surfer-x86_64.AppImage
+    - mv SafeSurfer-Desktop-x86_64-*.AppImage ../builtBinaries/.
     - cd ..
     # clean build
     - make clean
+
+    # build Linux binary zip
+    - make build-linuxzip
+    # update names of zip
+    - support/renameBinaries.sh SafeSurfer-Desktop-Linux.zip
+    - mv SafeSurfer-Desktop-Linux-*.zip builtBinaries/.
+    # clean build
+    - make clean
+
     # build macOS & zip it
     - node_modules/.bin/electron-builder --mac zip
     - mv dist/SafeSurfer-Desktop-*-mac.zip builtBinaries/.
     # clean build
     - make clean
+
     # build windows (64-bit)
     - export LANG=
     - make build-windows
     - mv dist/SafeSurfer-Desktop\ *.exe builtBinaries/.
     # clean build
     - make clean
+
     # hash all binaries
     - cd builtBinaries && sha256sum * > sha256ums.txt && cd ..
   artifacts:

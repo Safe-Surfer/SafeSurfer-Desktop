@@ -5,10 +5,10 @@
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
 </a>
 <a href="https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases">
-    <img src="https://img.shields.io/badge/version-1.0.0-brightgreen.svg" />
+    <img src="https://img.shields.io/badge/version-1.0.1-brightgreen.svg" />
 </a>
 <a href="https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases">
-    <img src="https://img.shields.io/badge/build-10-orange.svg" />
+    <img src="https://img.shields.io/badge/build-13-orange.svg" />
 </a>
 
 ![Safe Surfer logo](./assets/media/icons/png/128x128.png)  

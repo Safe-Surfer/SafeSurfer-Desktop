@@ -6,7 +6,7 @@ flatpak-build
 zip-build
 tools
 nz.co.safesurfer.SafeSurfer-Desktop.AppDir
-Safe_Surfer-x86_64.AppImage
+*.AppImage
 deb-build
 dist
 parts
@@ -20,4 +20,5 @@ support/linux/flatpak/generated-sources.json
 support/linux/flatpak/flatpak-npm-generator.py
 support/linux/flatpak/inline\ data
 support/linux/flatpak/flatpak-build/**
-support/linux/flatpak/.flatpak-builder 
+support/linux/flatpak/.flatpak-builder
+*.zip
