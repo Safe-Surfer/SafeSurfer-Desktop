@@ -22,3 +22,5 @@ support/linux/flatpak/inline\ data
 support/linux/flatpak/flatpak-build/**
 support/linux/flatpak/.flatpak-builder
 *.zip
+builtBinaries
+*.exe

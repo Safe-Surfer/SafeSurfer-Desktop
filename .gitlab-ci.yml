@@ -61,6 +61,8 @@ build:
     # update names of binaries
     - support/renameBinaries.sh builtBinaries/Safe_Surfer-x86_64.AppImage
     - support/renameBinaries.sh builtBinaries/SafeSurfer-Desktop-Linux.zip
+    - support/renameBinaries.sh builtBinaries/SafeSurfer-Desktop-*-mac.zip
+    - support/renameBinaries.sh builtBinaries/SafeSurfer-Desktop\ *.exe
 
     # hash all binaries
     - cd builtBinaries && sha256sum * > sha256ums.txt && cd ..

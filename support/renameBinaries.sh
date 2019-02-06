@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # SafeSurfer-Desktop - renameBinaries.sh (support file)
 
@@ -23,30 +23,41 @@
 # Correct the names of various binary files
 #
 
+inFile="$1"
 
-if [ -z "$1" ]
+if [ -z "$inFile" ]
 then
 	echo "Please provide a filename."
 	exit 1
 fi
 
-if [ ! -f "$1" ]
+if [ ! -f "$inFile" ]
 then
 	echo "File doesn't exist."
 	exit 1
 fi
 
 currentVersion="$(jq -r '.version' package.json)"
+currentBuild="$(jq -r '.APPBUILD' package.json)"
 
-case "$(basename $1)" in
+inFileBaseName=$(basename "$inFile")
+inFileDirName=$(dirname "$inFile")
+
+case "$inFileBaseName" in
 	Safe_Surfer-x86_64.AppImage)
-		mv "$1" "$(dirname $1)/SafeSurfer-Desktop-x86_64-${currentVersion}.AppImage"
-		[ ! "$?" -eq 0 ] && echo "Unable to rename AppImage."
+		mv "$inFile" "$inFileDirName/SafeSurfer-Desktop-x86_64-${currentVersion}-${currentBuild}.AppImage" || echo "Unable to rename AppImage."
 	;;
 
 	SafeSurfer-Desktop-Linux.zip)
-		mv "$1" "$(dirname $1)/SafeSurfer-Desktop-${currentVersion}-linux.zip"
-		[ ! "$?" -eq 0 ] && echo "Unable to rename zip."
+		mv "$inFile" "$inFileDirName/SafeSurfer-Desktop-${currentVersion}-${currentBuild}-linux.zip" || echo "Unable to rename zip."
+	;;
+
+	SafeSurfer-Desktop-*-mac.zip)
+		mv "$inFile" "$inFileDirName/SafeSurfer-Desktop-${currentVersion}-${currentBuild}-mac.zip" || echo "Unable to rename macOS zip."
+	;;
+
+	SafeSurfer-Desktop\ *.exe)
+		mv "$inFile" "$inFileDirName/SafeSurfer-Desktop-${currentVersion}-${currentBuild}.exe" || echo "Unable to rename Windows exe."
 	;;
 
 	*)
