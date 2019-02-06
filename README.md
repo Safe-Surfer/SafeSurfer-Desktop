@@ -4,10 +4,10 @@
 <a href="https://hosted.weblate.org/projects/safe-surfer/translations">
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
 </a>
-<a href="https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases">
+<a href="https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases">
     <img src="https://img.shields.io/badge/version-1.0.1-brightgreen.svg" />
 </a>
-<a href="https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases">
+<a href="https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases">
     <img src="https://img.shields.io/badge/build-13-orange.svg" />
 </a>
 
@@ -28,13 +28,13 @@ Our aim for this project is to make it as easy as possible to get families and p
 
 For enterprise/business use, we recommend to apply the DNS settings on a router which devices are connected to, please refer to the [Safe Surfer website](http://safesurfer.co.nz).  
 
-### [Download](https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases)
+### [Download](https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases)
 Windows Store (coming soon)  
 macOS App Store (coming soon)  
 snapcraft store (coming soon)  
 Ubuntu PPA: ppa:bobymcbobs/safesurfer - safesurfer-desktop  
 openSUSE and Fedora: [OBS](https://software.opensuse.org/download.html?project=home%3ABoby_MC_bobs&package=SafeSurfer-Desktop)  
-[Windows (64-bit/32-bit)</br>AppImage</br>macOS dmg](https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases)  
+[Windows (64-bit/32-bit)</br>AppImage</br>macOS dmg](https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases)  
 
 ## Features
 - Toggle DNS settings with one button  
