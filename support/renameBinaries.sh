@@ -45,7 +45,7 @@ case "$(basename $1)" in
 	;;
 
 	SafeSurfer-Desktop-Linux.zip)
-		mv "$1" "$(dirname $1)/SafeSurfer-Desktop-Linux-${currentVersion}.zip"
+		mv "$1" "$(dirname $1)/SafeSurfer-Desktop-${currentVersion}-linux.zip"
 		[ ! "$?" -eq 0 ] && echo "Unable to rename zip."
 	;;
 

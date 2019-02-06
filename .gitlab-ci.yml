@@ -1,4 +1,4 @@
-image: ubuntu
+image: registry.gitlab.com/safesurfer/safesurfer-desktop
 
 stages:
   - build
@@ -22,15 +22,9 @@ pages:
 build:
   stage: build
   before_script:
-    - echo "Pacific/Auckland" > /etc/timezone
-    - apt update
-    - apt upgrade -y
-    # install deps for build enviroment
-    - DEBIAN_FRONTEND=noninteractive apt install -yq nodejs npm tar bzip2 wget fuse wine-stable unzip zip mono-devel curl libfuse2 binutils bash-completion fakeroot html2text libmd0 build-essential rpm2cpio cpio jq
-    - dpkg --add-architecture i386 && apt update && apt install -y wine32
     # make built directory
     - mkdir builtBinaries
-    # prep dependencies
+    # prep project dependencies
     - npm i
     # download appimage dependencies
     - make prep-appimage
@@ -40,18 +34,14 @@ build:
     - cd tools
     - ./appimagetool-x86_64.AppImage --appimage-extract || true
     - ./squashfs-root/AppRun -n -s ../nz.co.safesurfer.SafeSurfer-Desktop.AppDir
-    # update names of zip
-    - support/renameBinaries.sh Safe_Surfer-x86_64.AppImage
-    - mv SafeSurfer-Desktop-x86_64-*.AppImage ../builtBinaries/.
+    - mv Safe_Surfer-x86_64.AppImage ../builtBinaries/.
     - cd ..
     # clean build
     - make clean
 
     # build Linux binary zip
     - make build-linuxzip
-    # update names of zip
-    - support/renameBinaries.sh SafeSurfer-Desktop-Linux.zip
-    - mv SafeSurfer-Desktop-Linux-*.zip builtBinaries/.
+    - mv SafeSurfer-Desktop-Linux.zip builtBinaries/.
     # clean build
     - make clean
 
@@ -67,6 +57,10 @@ build:
     - mv dist/SafeSurfer-Desktop\ *.exe builtBinaries/.
     # clean build
     - make clean
+
+    # update names of binaries
+    - support/renameBinaries.sh builtBinaries/Safe_Surfer-x86_64.AppImage
+    - support/renameBinaries.sh builtBinaries/SafeSurfer-Desktop-Linux.zip
 
     # hash all binaries
     - cd builtBinaries && sha256sum * > sha256ums.txt && cd ..
