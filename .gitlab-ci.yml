@@ -68,6 +68,3 @@ build:
     expire_in: 5 days
     paths:
       - builtBinaries/*
-  only:
-    - tags
-    - master
