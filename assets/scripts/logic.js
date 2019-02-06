@@ -567,8 +567,8 @@ const appFrame = {
     var versionList = []
     var updateErrorDialog = { type: 'info', buttons: [i18n.__('Manually check on downloads page'), i18n.__('Ok')], message: i18n.__("Whoops, I couldn't find updates... Something seems to have gone wrong.") }
 
-    logging(`[checkForAppUpdate]: About to fetch https://raw.githubusercontent.com/Safe-Surfer/SafeSurfer-Desktop-version-information/master/version-information.json`)
-    Request.get('https://raw.githubusercontent.com/Safe-Surfer/SafeSurfer-Desktop-version-information/master/version-information.json', (error, response, body) => {
+    logging(`[checkForAppUpdate]: About to fetch https://gitlab.com/safesurfer/safesurfer-desktop-version-information/raw/master/version-information.json`)
+    Request.get('https://gitlab.com/safesurfer/safesurfer-desktop-version-information/raw/master/version-information.json', (error, response, body) => {
       if ((error < 200 || error >= 300) && error != null) {
         // if something goes wrong
         logging(`[checkForAppUpdate]: HTTP error ${error}`)
@@ -633,7 +633,7 @@ const appFrame = {
         if (options.showErrors == true) {
           dialog.showMessageBox(updateErrorDialog, updateResponse => {
             logging('[checkForAppUpdate]: Error.')
-            if (updateResponse == 0) desktop.logic.electronOpenExternal('https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases')
+            if (updateResponse == 0) desktop.logic.electronOpenExternal('https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases')
           })
         }
       }
