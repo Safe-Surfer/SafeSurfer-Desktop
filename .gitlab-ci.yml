@@ -17,7 +17,6 @@ pages:
       - public/*
   only:
     - tags
-    - master
 
 build:
   stage: build
