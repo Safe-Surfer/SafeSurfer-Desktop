@@ -135,7 +135,7 @@
     ]
   },
   "devDependencies": {
-    "electron": "^2.0.10",
+    "electron": "^4.0.6",
     "electron-builder": "^20.28.2",
     "mocha": "^5.2.0",
     "os-locale": "^3.0.1",
