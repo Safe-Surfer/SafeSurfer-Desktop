@@ -55,7 +55,7 @@ function createWindow () {
   }
 
   // if app is a beta, add message beta to title
-  if (isBeta == true) windowObj.title += ' (beta)'
+  if (isBeta == true) windowObj.title += ` (${packageJSON.version}:${packageJSON.APPBUILD} beta)`
   mainWindow = new BrowserWindow(windowObj)
 
   // load in main html document

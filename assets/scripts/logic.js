@@ -344,7 +344,7 @@ const appFrame = {
       // if service is enabled
       case true:
         logging('[toggleServiceState]: trying toggle disable')
-        if (window.appStates.lifeguardFound[0] == true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard')
+        if (window.appStates.lifeguardFound[0] == true) desktop.logic.electronOpenExternal('http://mydevice.safesurfer.co.nz')
         else if (store.get('lockDeactivateButtons') != true) appFrame.displayDisableWarning()
         else appFrame.lockAlertMessage()
         break
@@ -857,7 +857,7 @@ const appFrame = {
     var previousVersionData
     logging('[checkForVersionChange]: Checking if user has reached a newer version')
     previousVersionData = store.get('lastVersionInstalled')
-    if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD) {
+    if (previousVersionData !== undefined && previousVersionData.APPBUILD < APPBUILD && packageJSON.appOptions.isBeta !== true) {
       var featureList = ''
       require('../data/releaseNotes.json').items.map(i => {
         featureList += `- ${i}\n`
@@ -870,7 +870,7 @@ const appFrame = {
         ipcRenderer.send('updateAppMenu', true)
       }
       store.set('lastVersionInstalled', { APPBUILD: APPBUILD, APPVERSION: APPVERSION })
-      if (store.get('statisticAllow') == true) {
+      if (store.get('statisticAllow') == true && packageJSON.appOptions.enableStatistics === true) {
         logging('[checkForVersionChange]: Sending update data')
         appFrame.sendStatistics(appFrame.collectStatistics_update())
         var previous = store.get('statHistory')
@@ -974,7 +974,7 @@ const appFrame = {
       // after 3 seconds, if the user has run the app as Admin (if Windows), provide prompt requesting to send stats
       if (store.get('statHasAnswer') != true && appStates.userIsAdmin == true) {
         setTimeout(() => {
-          appFrame.statPrompt()
+          if (packageJSON.appOptions.enableStatistics === true) appFrame.statPrompt()
         }, 3000)
       }
     // wait one second before exiting the init screen
@@ -1094,7 +1094,7 @@ ipcRenderer.on('goFlushDNScache', () => {
 })
 
 ipcRenderer.on('goOpenMyDeviceLifeGuard', () => {
-  if (appStates.lifeguardFound[0] === true) window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard')
+  if (appStates.lifeguardFound[0] === true) desktop.logic.electronOpenExternal('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard')
   else {
     dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok'), i18n.__('Try from web browser')], message: `${i18n.__("I can't see a LifeGuard device on your network.")}\n\n${i18n.__('If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall to use this feature in the app.')}` }, response => {
       if (response === 1) desktop.logic.electronOpenExternal('http://mydevice.safesurfer.co.nz')
@@ -1107,10 +1107,10 @@ ipcRenderer.on('configureBlockedSites', () => {
     dialog.showMessageBox({ type: 'info', buttons: [i18n.__('Ok')], message: i18n.__('The service must be enabled before you can configure the blocked sites.') })
     return
   } else if (appStates.serviceEnabled[0] === true && appStates.lifeguardFound[0] === true) {
-    window.open('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard')
+    desktop.logic.electronOpenExternal('http://mydevice.safesurfer.co.nz', 'Safe Surfer - Lifeguard')
     return
   }
-  window.open('https://www.safesurfer.co.nz/api/1.0/public/control.php')
+  desktop.logic.electronOpenExternal('https://www.safesurfer.co.nz/api/1.0/public/control.php')
 })
 
 ipcRenderer.on('goLockDeactivateButtons', () => {

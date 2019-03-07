@@ -15,7 +15,10 @@
 # SafeSurfer-Desktop
 Official Safe Surfer desktop app, built with Electron.
 
-![Safe Surfer](screenshots/SafeSurfer-Desktop-Activated-Standard.png)  
+<a href="https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases">
+    <img src="screenshots/SafeSurfer-Desktop-Activated-Standard.png" />
+</a>
+<br>
 For more screenshots of the app, please refer to the [screenshots](screenshots) folder.  
 
 ## Who is [Safe Surfer](http://safesurfer.co.nz)?
@@ -29,12 +32,15 @@ Our aim for this project is to make it as easy as possible to get families and p
 For enterprise/business use, we recommend to apply the DNS settings on a router which devices are connected to, please refer to the [Safe Surfer website](http://safesurfer.co.nz).  
 
 ### [Download](https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases)
+[Windows (64-bit/32-bit)](https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases)  
+[AppImage](https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases)  
+[macOS dmg](https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases)  
+
 Windows Store (coming soon)  
 macOS App Store (coming soon)  
 snapcraft store (coming soon)  
 Ubuntu PPA: ppa:bobymcbobs/safesurfer - safesurfer-desktop  
 openSUSE and Fedora: [OBS](https://software.opensuse.org/download.html?project=home%3ABoby_MC_bobs&package=SafeSurfer-Desktop)  
-[Windows (64-bit/32-bit)</br>AppImage</br>macOS dmg](https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases)  
 
 ## Features
 - Toggle DNS settings with one button  

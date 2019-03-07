@@ -1,9 +1,5 @@
 {
 	"items": [
-		"added a link to the stats page",
-		"updated macOS app menu and other macOS related elements",
-		"fixed Windows service toggling",
-		"fixed Linux DNS cache flushing",
-		"fixed macOS app icon"
+		"updated translations"
 	]
 }

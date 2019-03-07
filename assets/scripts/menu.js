@@ -142,7 +142,7 @@ module.exports = (app, mainWindow) => {
   }
 
   // add statistic sharing menu, once user has inputted answer
-  if (store.get('statHasAnswer') == true) {
+  if (store.get('statHasAnswer') == true && packageJSON.appOptions.enableStatistics === true) {
     menu[1].submenu.splice(2, 0, {
       label: i18n.__('Statistics'),
       submenu:

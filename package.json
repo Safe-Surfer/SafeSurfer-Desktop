@@ -1,7 +1,7 @@
 {
   "name": "SafeSurfer-Desktop",
-  "version": "1.0.1",
-  "APPBUILD": "13",
+  "version": "1.1.0",
+  "APPBUILD": "14",
   "description": "Keeping you safe in the digitial surf with Safe Surfer",
   "main": "./assets/scripts/main.js",
   "license": "GPL-3.0",
@@ -32,10 +32,11 @@
     "surfer"
   ],
   "appOptions": {
-    "isBeta": false,
+    "isBeta": true,
     "enableUpdates": true,
     "enableNotifications": true,
     "enableLogging": false,
+    "enableStatistics": true,
     "disableNodeIntegration": true,
     "testLanguage": null
   },
