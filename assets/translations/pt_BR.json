@@ -162,11 +162,11 @@
     "Click to disable the service": "Clique para desabilitar o serviço",
     "Click to enable the service": "Clique para habilitar o serviço",
     "App build is beta:": "Versão Beta do aplicativo:",
-    "If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall to use this feature in the app.": "",
+    "If you know for sure that there is a LifeGuard on your network, you may need to allow mDNS (port 5353) through your firewall to use this feature in the app.": "Se você tiver certeza de que há um LifeGuard em sua rede, talvez seja necessário permitir que o mDNS (porta 5353), através do seu firewall, use esse recurso no aplicativo.",
     "Try from web browser": "Tente pelo navegador",
     "Reboot to apply settings": "Reinicie para aplicar as configurações",
     "Flush DNS cache to refresh network settings": "Libere o cache DNS para atualizar as configurações de rede",
     "The service appears to be set up on a router, the app cannot disable it.": "O serviço parece estar configurado em um roteador, o aplicativo não pode desativá-lo.",
     "About SafeSurfer-Desktop": "Sobre o SafeSurfer-Desktop",
-    "View crowdsourced stats": ""
+    "View crowdsourced stats": "Ver estatísticas completas"
 }

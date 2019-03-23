@@ -1,22 +1,23 @@
 image: registry.gitlab.com/safesurfer/safesurfer-desktop
 
 stages:
+  - test
   - build
   - deploy
 
-pages:
-  stage: deploy
+test:
+  stage: test
+  before_script:
+    # setup xvfb
+    - export DISPLAY=:99
+    - Xvfb :99 &
+    - sleep 3
+    # install dependencies
+    - npm i
   script:
-    - mkdir .public
-    - cp -r builtBinaries/* .public
-    - mv .public public
-  dependencies:
-    - build
-  artifacts:
-    paths:
-      - public/*
-  only:
-    - tags
+    - npm test
+  after_script:
+    - kill $(pidof Xvfb) || true
 
 build:
   stage: build
@@ -69,3 +70,17 @@ build:
     expire_in: 5 days
     paths:
       - builtBinaries/*
+
+deploy:
+  stage: deploy
+  script:
+    - mkdir .public
+    - cp -r builtBinaries/* .public
+    - mv .public public
+  dependencies:
+    - build
+  artifacts:
+    paths:
+      - public/*
+  only:
+    - tags
