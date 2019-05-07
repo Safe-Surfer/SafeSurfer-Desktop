@@ -137,7 +137,7 @@
   },
   "devDependencies": {
     "electron": "^4.0.6",
-    "electron-builder": "^20.28.2",
+    "electron-builder": "^20.40.2",
     "mocha": "^5.2.0",
     "os-locale": "^3.0.1",
     "spectron": "^5.0.0",
@@ -149,7 +149,7 @@
     "electron-store": "^2.0.0",
     "electron-window-state": "^5.0.1",
     "is-admin": "^2.1.1",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.1",
     "lets-get-meta": "^2.1.1",
     "moment": "^2.22.2",
     "node_dns_changer": "^1.1.8",
