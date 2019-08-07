@@ -1,6 +1,6 @@
 {
   "name": "SafeSurfer-Desktop",
-  "version": "1.1.0",
+  "version": "1.0.2",
   "APPBUILD": "14",
   "description": "Keeping you safe in the digitial surf with Safe Surfer",
   "main": "./assets/scripts/main.js",
@@ -32,7 +32,7 @@
     "surfer"
   ],
   "appOptions": {
-    "isBeta": true,
+    "isBeta": false,
     "enableUpdates": true,
     "enableNotifications": true,
     "enableLogging": false,
@@ -43,7 +43,7 @@
   "author": "Safe Surfer",
   "build": {
     "appId": "nz.co.safesurfer.safesurfer-desktop",
-    "buildVersion": "10",
+    "buildVersion": "14",
     "mac": {
       "category": "public.app-category.utilities",
       "target": [
@@ -136,25 +136,25 @@
     ]
   },
   "devDependencies": {
-    "electron": "^4.0.6",
-    "electron-builder": "^20.40.2",
-    "mocha": "^5.2.0",
-    "os-locale": "^3.0.1",
-    "spectron": "^5.0.0",
-    "standard": "^12.0.1"
+    "electron": "^6.0.1",
+    "electron-builder": "^21.2.0",
+    "mocha": "^6.2.0",
+    "os-locale": "^4.0.0",
+    "spectron": "^8.0.0",
+    "standard": "^13.1.0"
   },
   "dependencies": {
     "bonjour": "^3.5.0",
-    "connectivity": "^1.0.1",
-    "electron-store": "^2.0.0",
-    "electron-window-state": "^5.0.1",
-    "is-admin": "^2.1.1",
+    "connectivity": "^1.0.2",
+    "electron-store": "^4.0.0",
+    "electron-window-state": "^5.0.3",
+    "is-admin": "^3.0.0",
     "jquery": "^3.4.1",
     "lets-get-meta": "^2.1.1",
-    "moment": "^2.22.2",
+    "moment": "^2.24.0",
     "node_dns_changer": "^1.1.8",
     "nodejs-base64-encode": "0.0.2",
     "request": "^2.88.0",
-    "shelljs": "^0.8.2"
+    "shelljs": "^0.8.3"
   }
 }

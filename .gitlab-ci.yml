@@ -1,5 +1,8 @@
 image: registry.gitlab.com/safesurfer/safesurfer-desktop
 
+include:
+  template: Dependency-Scanning.gitlab-ci.yml
+
 stages:
   - test
   - build

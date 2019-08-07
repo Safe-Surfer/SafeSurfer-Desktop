@@ -103,7 +103,6 @@
 	"Please wait while the app asks for Administrative privileges": "Please wait while the app asks for Administrative privileges",
 	"Help me to run this app as an Administrator": "Help me to run this app as an Administrator",
 	"I can't seem run this app as an Administrator for you.": "I can't seem run this app as an Administrator for you.",
-	"Donate": "Donate",
 	"The version of Windows that you seem to be running appears to be not compatible with this app.": "The version of Windows that you seem to be running appears to be not compatible with this app.",
 	"Please wait while the service is being enabled": "Please wait while the service is being enabled",
 	"Please wait while the service is being disabled": "Please wait while the service is being disabled",
@@ -169,5 +168,6 @@
 	"Flush DNS cache to refresh network settings": "Flush DNS cache to refresh network settings",
 	"The service appears to be set up on a router, the app cannot disable it.": "The service appears to be set up on a router, the app cannot disable it.",
 	"About SafeSurfer-Desktop": "About SafeSurfer-Desktop",
-	"View crowdsourced stats": "View crowdsourced stats"
+	"View crowdsourced stats": "View crowdsourced stats",
+	"This app was built by:": "This app was built by:"
 }

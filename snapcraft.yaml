@@ -1,5 +1,5 @@
 name: safesurfer-desktop
-version: 1.0.1
+version: 1.0.2
 summary: Keep safe in the digitial surf with Safe Surfer.
 description: >
   Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS settings for you (on a device, not network).

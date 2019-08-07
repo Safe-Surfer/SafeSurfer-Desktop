@@ -1,3 +1,10 @@
+safesurfer-desktop (1.0.2) bionic; urgency=medium
+
+  *  Inital release
+  *  Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.2
+
+ -- Caleb Woodbine <calebwoodbine.public@gmail.com>  Thu, 08 Aug 2019 11:17:02 +1200
+
 safesurfer-desktop (1.0.1) bionic; urgency=medium
 
   *  Inital release

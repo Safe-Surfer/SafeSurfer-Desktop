@@ -5,7 +5,7 @@ flatpak-build
 .flatpak-builder
 zip-build
 tools
-nz.co.safesurfer.SafeSurfer-Desktop.AppDir
+**/*.AppDir
 *.AppImage
 deb-build
 dist
@@ -13,7 +13,7 @@ parts
 stage
 prime
 **/.snapcraft
-safesurfer-desktop_*_*.snap
+**/*.snap
 **/tags.*
 embedded.provisionprofile
 support/linux/flatpak/generated-sources.json

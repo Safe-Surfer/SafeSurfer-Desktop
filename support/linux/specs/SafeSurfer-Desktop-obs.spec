@@ -1,14 +1,14 @@
 Name:           SafeSurfer-Desktop
-Version:        1.0.1
+Version:        1.0.2
 Release:        0
 Summary:        Keeping you safe in the digitial surf with Safe Surfer
-BuildArch:	x86_64
+BuildArch:      x86_64
 License:        GPL-3.0
-Group:		Productivity/Networking/DNS/Utilities
-URL:            https://github.com/Safe-Surfer/%{name}
-Source0:	https://github.com/Safe-Surfer/SafeSurfer-Desktop/releases/download/%{version}/SafeSurfer-Desktop-Linux.zip
+Group:          Productivity/Networking/DNS/Utilities
+URL:            https://gitlab.com/safesurfer/%{name}
+Source:         https://gitlab.com/safesurfer/%{name}/-/archive/%{version}/%{name}-%{version}.zip
 Requires:       polkit, curl
-BuildRequires:	unzip, desktop-file-utils
+BuildRequires:  unzip, desktop-file-utils
 %if 0%{?suse_version}
 BuildRequires:  update-desktop-files
 %endif
@@ -114,6 +114,12 @@ cp -r ./%{name}-Linux/. $RPM_BUILD_ROOT/
 
 
 %changelog
+* Fri Feb 08 2019 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.1
+
+* Thu Aug 08 2019 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.2
+
 * Fri Feb 08 2019 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.1
 
