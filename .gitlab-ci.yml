@@ -4,8 +4,14 @@ include:
   template: Dependency-Scanning.gitlab-ci.yml
 
 stages:
+  - test
   - build
   - deploy
+
+test:
+  stage: test
+  script:
+    - echo "No tests set up"
 
 build:
   stage: build
