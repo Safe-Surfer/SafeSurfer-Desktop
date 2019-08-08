@@ -4,23 +4,8 @@ include:
   template: Dependency-Scanning.gitlab-ci.yml
 
 stages:
-  - test
   - build
   - deploy
-
-test:
-  stage: test
-  before_script:
-    # setup xvfb
-    - export DISPLAY=:99
-    - Xvfb :99 &
-    - sleep 3
-    # install dependencies
-    - npm i
-  script:
-    - npm test
-  after_script:
-    - kill $(pidof Xvfb) || true
 
 build:
   stage: build
