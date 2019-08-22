@@ -1,5 +1,5 @@
 Name:           SafeSurfer-Desktop
-Version:        1.0.2
+Version:        1.0.3
 Release:        0
 Summary:        Keeping you safe in the digitial surf with Safe Surfer
 BuildArch:      x86_64
@@ -125,6 +125,12 @@ make UPDATES=false configure
 
 
 %changelog
+* Fri Aug 23 2019 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.3
+
+* Fri Aug 08 2019 caleb
+- Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.2
+
 * Fri Feb 08 2019 caleb
 - Changelog: https://gitlab.com/safesurfer/SafeSurfer-Desktop/tags/1.0.1
 

@@ -24,7 +24,7 @@ arg="$1"
 resolvconf="/etc/resolv.conf"
 primaryDNS="104.197.28.121"
 secondaryDNS="104.155.237.225"
-appVersion="1.0.2"
+appVersion="1.0.3"
 appBuild="14"
 
 function sudoUserCheck() {
@@ -87,19 +87,40 @@ local success
 success=false
 if systemctl is-active --quiet nscd
 then
-	service nscd reload && service nscd restart && echo "* Flushed nscd DNS cache and restarted"
-	success=true
+	if ( service nscd reload && service nscd restart )
+	then
+		echo "* Flushed nscd DNS cache and restarted"
+		success=true
+	else
+		success=false
+	fi
 fi
 
 if [ -x $(which systemd-resolve 2> /dev/null) ] && [ ! -z $(which systemd-resolve 2> /dev/null) ]
 then
-	systemd-resolve --flush-caches && echo "* Flushed systemd-resolve DNS cache"
-	success=true
+	if systemd-resolve --flush-caches
+	then
+		echo "* Flushed systemd-resolve DNS cache"
+		success=true
+	else
+		success=false
+	fi
+fi
+
+if systemctl is-active --quiet NetworkManager
+then
+	if systemctl restart NetworkManager
+	then
+		echo "* Restarted NetworkManager"
+		success=true
+	else
+		success=false
+	fi
 fi
 
 if [ "$success" = false ]
 then
-	echo "ERROR: cannot find nscd or systemd-resolve; failed to flush DNS cache"
+	echo "ERROR: cannot find nscd, or systemd-resolve, or NetworkManager; failed to flush DNS cache"
 	exit 1
 fi
 }

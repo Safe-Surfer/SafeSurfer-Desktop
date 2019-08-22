@@ -16,6 +16,11 @@
     </p>
   </description>
   <releases>
+    <release version="1.0.3" date="2019-08-23">
+      <description>
+        <p>This release marks 1.0.3 of Safe Surfer's desktop app.</p>
+      </description>
+    </release>
     <release version="1.0.2" date="2019-08-08">
       <description>
         <p>This release marks 1.0.2 of Safe Surfer's desktop app.</p>

@@ -5,10 +5,10 @@
     <img src="https://hosted.weblate.org/widgets/safe-surfer/-/translations/svg-badge.svg" alt="Translation status" />
 </a>
 <a href="https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases">
-    <img src="https://img.shields.io/badge/version-1.0.2-brightgreen.svg" />
+    <img src="https://img.shields.io/badge/version-1.0.3-brightgreen.svg" />
 </a>
 <a href="https://gitlab.com/safesurfer/SafeSurfer-Desktop/releases">
-    <img src="https://img.shields.io/badge/build-14-orange.svg" />
+    <img src="https://img.shields.io/badge/build-15-orange.svg" />
 </a>
 
 ![Safe Surfer logo](./assets/media/icons/png/128x128.png)  
@@ -81,16 +81,16 @@ Known issues
 
 ## System requirements
 Known compatible operating systems:  
-- Fedora Workstation (28, 29)  
+- Fedora Workstation (28, 29, 30)  
 - macOS (El Capitan, Sierra, Mojave)  
-- openSUSE Leap 15  
-- Ubuntu (14.04, 18.04, 18.10)  
-- Windows 10 (1803, 1809)  
+- openSUSE Leap (15, 15.1)  
+- Ubuntu (14.04, 18.04, 18.10, 19.04, 19.10)  
+- Windows 10 (1803, 1809, 1903)  
 - Windows 7 (SP1)  
 - Windows 8.1  
 
 Minimum computer specifications:  
-CPU: 1 core - 1 GHz - 64-bit or 32-bit (32-bit is Windows only)  
+CPU: 1 core - 1 GHz - 64-bit or 32-bit (32-bit is only supported on Windows)  
 RAM: 512 MB of RAM  
 
 ## Repos
