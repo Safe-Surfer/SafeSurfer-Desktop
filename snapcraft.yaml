@@ -1,0 +1,46 @@
+name: safesurfer-desktop
+version: 1.0.3
+summary: Keep safe in the digitial surf with Safe Surfer.
+description: >
+  Safe Surfer Desktop is an Electron based app, which sets the Safe Surfer DNS settings for you (on a device, not network).
+
+grade: stable
+confinement: classic
+
+parts:
+  safesurferdesktop:
+    plugin: nil
+    override-build: |
+      curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+      apt-get install -y nodejs
+      npm i
+      make UPDATES=false configure
+      make build-linux
+      make DESTDIR=$SNAPCRAFT_PART_INSTALL install
+    build-packages:
+      - nodejs
+      - npm
+      - build-essential
+    after:
+      - desktop-gtk3
+    stage-packages:
+      - libasound2
+      - libgconf2-4
+      - libnotify4
+      - libnspr4
+      - libnss3
+      - libpcre3
+      - libpulse0
+      - libxss1
+      - libxtst6
+      - curl
+
+apps:
+  safesurferdesktop:
+    command: usr/lib64/SafeSurfer-Desktop/safesurfer-desktop
+    desktop: usr/share/applications/SafeSurfer-Desktop.desktop
+    environment:
+      TMPDIR: $XDG_RUNTIME_DIR
+
+  sscli:
+    command: usr/bin/sscli

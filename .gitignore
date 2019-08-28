@@ -1,0 +1,26 @@
+node_modules
+.buildconfig
+release-builds
+flatpak-build
+.flatpak-builder
+zip-build
+tools
+**/*.AppDir
+*.AppImage
+deb-build
+dist
+parts
+stage
+prime
+**/.snapcraft
+**/*.snap
+**/tags.*
+embedded.provisionprofile
+support/linux/flatpak/generated-sources.json
+support/linux/flatpak/flatpak-npm-generator.py
+support/linux/flatpak/inline\ data
+support/linux/flatpak/flatpak-build/**
+support/linux/flatpak/.flatpak-builder
+*.zip
+builtBinaries
+*.exe
